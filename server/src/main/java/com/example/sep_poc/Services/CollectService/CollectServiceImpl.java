@@ -6,6 +6,7 @@ import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import proto.CollectServiceGrpc;
 import proto.FoodBag.*;
 import proto.CollectServiceGrpc.CollectServiceImplBase;
 
@@ -65,7 +66,7 @@ import java.util.List;
 
     for (FoodBag foodBag : foodBags)
     {
-      FoodBagResponse grpcFoodBag = FoodBagResponse.newBuilder()
+      proto.FoodBag.FoodBagResponse grpcFoodBag = proto.FoodBag.FoodBagResponse.newBuilder()
           .setId(foodBag.getId()).setAddress(foodBag.getAddress())
           .setPickupTime1(foodBag.getPickupTime1())
           .setPickupTime2(foodBag.getPickupTime2()).setType(foodBag.getType())
@@ -76,7 +77,7 @@ import java.util.List;
       foodBagListBuilder.addFoodBags(grpcFoodBag);
     }
 
-    FoodBagList foodBagList = foodBagListBuilder.build();
+    proto.FoodBag.FoodBagList foodBagList = foodBagListBuilder.build();
     responseObserver.onNext(foodBagList);
     responseObserver.onCompleted();
   }
