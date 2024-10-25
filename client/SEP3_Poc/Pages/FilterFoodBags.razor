@@ -1,20 +1,20 @@
 ﻿@page "/foodbags/all"
-@using System.Net.Http.Json
 @using System.Text.Json
+@using SEP3_Poc.Pages
 @inject HttpClient Http
 
-<PageTitle>Food Bags by price</PageTitle>
+<PageTitle>Food Bags</PageTitle>
 
 <h3>Food Bags</h3>
 
 <div>
-    <label for="price1">Price 1:</label>
+    <label for="price1">Price 1: </label>
     <input type="number" id="price1" @bind="price1"/>
 
-    <label for="price2">Price 2:</label>
+    <label for="price2">Price 2: </label>
     <input type="number" id="price2" @bind="price2"/>
 
-    <button @onclick="FilterByPriceRange">Filter</button>
+    <button @onclick="FilterByPriceRangeAsync">Filter</button>
 </div>
 
 @if (filteredFoodBags == null)
@@ -29,33 +29,30 @@ else if (filteredFoodBags.Count == 0)
 }
 else
 {
-    <ul>
-        @foreach (var foodBag in filteredFoodBags)
-        {
-            <p>_________________________</p>
-            <li>@foodBag.Id</li>
-            <li>@foodBag.Address</li>
-            <li>@foodBag.Type</li>
-            <li>@foodBag.Price</li>
-            <li>@foodBag.PickupDate:</li>
-            <li>@foodBag.PickupTime1 - @foodBag.PickupTime2</li>
-            <li>@foodBag.PickupTime2</li>
-            <p>_________________________</p>
-        }
-    </ul>
+    <div class="container">
+        <div class="row">
+            @foreach (var foodBag in filteredFoodBags)
+            {
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <FoodBagCard FoodBag="foodBag" />
+                </div>
+
+            }
+        </div>
+    </div>
 }
 
 @code {
-    private List<Food_Bag> filteredFoodBags = new();
+    private List<FoodBag>? filteredFoodBags = new();
     private short price1;
     private short price2;
 
     protected override async Task OnInitializedAsync()
     {
-        await LoadFoodBags();
+        await LoadFoodBagsAsync();
     }
 
-    private async Task LoadFoodBags()
+    private async Task LoadFoodBagsAsync()
     {
         // Call the API to get all food bags on initialization
         var response = await Http.GetAsync("http://localhost:8080/api/foodbags/all");
@@ -63,18 +60,18 @@ else
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            filteredFoodBags = JsonSerializer.Deserialize<List<Food_Bag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            filteredFoodBags = JsonSerializer.Deserialize<List<FoodBag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
         }
     }
 
-    private async Task FilterByPriceRange()
+    private async Task FilterByPriceRangeAsync()
     {
         var response = await Http.GetAsync($"http://localhost:8080/api/foodbags/price-range?price1={price1}&price2={price2}");
 
         if (response.IsSuccessStatusCode)
         {
             var responseContent = await response.Content.ReadAsStringAsync();
-            filteredFoodBags = JsonSerializer.Deserialize<List<Food_Bag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            filteredFoodBags = JsonSerializer.Deserialize<List<FoodBag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             Console.WriteLine($"Filtered Food Bags Count: {filteredFoodBags.Count}"); // Log the count
         }
         else
@@ -84,17 +81,4 @@ else
         }
     }
 
-    public class Food_Bag
-    {
-        public string Id { get; set; }
-        public string Type { get; set; }
-        public short Price { get; set; }
-        public string Address { get; set; }
-        public string PickupTime1 { get; set; }
-        public string PickupTime2 { get; set; }
-        public string PickupDate { get; set; }
-        public string Collector { get; set; }
-    }
-
 }
-
