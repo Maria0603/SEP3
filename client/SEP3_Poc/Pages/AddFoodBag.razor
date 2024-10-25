@@ -1,0 +1,105 @@
+﻿@page "/foodbags/add"
+@using System.Net.Http.Json
+@using System.Text.Json
+@inject HttpClient Http
+
+<PageTitle>Add Bag</PageTitle>
+
+<h3>Add Food Bag</h3>
+
+<div class="container">
+    <div class="form-group">
+        <label for="address">Address:</label>
+        <input type="text" class="form-control" id="address" @bind="address"/>
+    </div>
+
+    <div class="form-group">
+        <label for="type">Type:</label>
+        <input type="text" class="form-control" id="type" @bind="type"/>
+    </div>
+
+    <div class="form-group">
+        <label for="price">Price:</label>
+        <input type="number" class="form-control" id="price" @bind="price"/>
+    </div>
+
+    <div class="row">
+        <div class="col-3">
+            <div class="form-group">
+                <label for="pickupDate">Pickup Date:</label>
+                <input type="date" class="form-control" id="pickupDate" @bind="pickupDate"/>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="form-group">
+                <label for="pickupTime1">Pickup Time Start:</label>
+                <input type="time" class="form-control" id="pickupTime1" @bind="pickupTime1"/>
+            </div>
+        </div>
+
+        <div class="col-3">
+            <div class="form-group">
+                <label for="pickupTime2">Pickup Time End:</label>
+                <input type="time" class="form-control" id="pickupTime2" @bind="pickupTime2"/>
+            </div>
+        </div>
+    </div>
+
+    <button class="btn btn-primary" @onclick="AddFoodBagAsync">Add</button>
+
+    @if (responseFoodBag != null)
+    {
+        <div class="alert alert-success mt-3">
+            Food Bag added successfully: @responseFoodBag.Type
+        </div>
+    }
+</div>
+
+@code {
+    private Food_Bag responseFoodBag;
+    private string address;
+    private string type;
+    private DateOnly pickupDate;
+    private TimeOnly pickupTime1;
+    private TimeOnly pickupTime2;
+    private short price;
+
+    private async Task AddFoodBagAsync()
+    {
+        var foodBag = new Food_Bag
+        {
+            Type = type,
+            Address = address,
+            Price = price,
+            PickupDate = pickupDate.ToString("yyyy-MM-dd"),
+            PickupTime1 = pickupTime1.ToString("HH:mm:ss"),
+            PickupTime2 = pickupTime2.ToString("HH:mm:ss")
+        };
+
+        var response = await Http.PostAsJsonAsync("http://localhost:8080/api/foodbags/add", foodBag);
+
+        if (response.IsSuccessStatusCode)
+        {
+            responseFoodBag = await response.Content.ReadFromJsonAsync<Food_Bag>();
+            Console.WriteLine($"Food Bag: {responseFoodBag}");
+        }
+        else
+        {
+            Console.WriteLine($"Error: {response.StatusCode}");
+        }
+    }
+
+    public class Food_Bag
+    {
+        public string Id { get; set; }
+        public string Type { get; set; }
+        public short Price { get; set; }
+        public string Address { get; set; }
+        public string PickupTime1 { get; set; }
+        public string PickupTime2 { get; set; }
+        public string PickupDate { get; set; }
+        public string Collector { get; set; }
+    }
+
+}
