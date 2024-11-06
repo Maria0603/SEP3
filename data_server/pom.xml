@@ -7,7 +7,8 @@
         <groupId>com.example.sep3</groupId>
         <artifactId>SEP3</artifactId>
         <version>1.0-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath> <!-- Adjust based on module structure -->
+        <relativePath>../pom.xml
+        </relativePath> <!-- Adjust based on module structure -->
     </parent>
     <groupId>com.example</groupId>
     <artifactId>data_server</artifactId>
@@ -48,9 +49,11 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-mongodb</artifactId>
         </dependency>
+
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <version>3.3.5</version>
         </dependency>
 
         <dependency>
@@ -63,12 +66,32 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
             <scope>test</scope>
+            <version>3.3.5</version>
         </dependency>
 
         <dependency>
             <groupId>com.example.sep3</groupId>
             <artifactId>shared</artifactId>
             <version>0.0.1-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>1.68.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-stub</artifactId>
+            <version>1.40.1</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>4.28.3</version>
         </dependency>
     </dependencies>
 

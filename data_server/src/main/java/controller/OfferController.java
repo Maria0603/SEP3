@@ -4,34 +4,34 @@ import model.Offer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.OfferService;
+import service.OfferServiceImpl;
 
 import java.util.List;
 
 @RestController @RequestMapping("/api/offer") public class OfferController
 {
-  private final OfferService offerService;
+  private final OfferServiceImpl offerServiceImpl;
 
-  @Autowired public OfferController(OfferService offerService)
+  @Autowired public OfferController(OfferServiceImpl offerServiceImpl)
   {
-    this.offerService = offerService;
+    this.offerServiceImpl = offerServiceImpl;
   }
 
   @GetMapping public List<Offer> getAllOffers()
   {
-    return offerService.getAllOffers();
+    return offerServiceImpl.getAllOffers();
   }
 
   @GetMapping("/{id}") public ResponseEntity<Offer> getOfferById(
       @PathVariable String id)
   {
-    return offerService.getOfferById(id).map(ResponseEntity::ok)
+    return offerServiceImpl.getOfferById(id).map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
   @PostMapping public Offer createOffer(@RequestBody Offer offer)
   {
-    return offerService.createOffer(offer);
+    return offerServiceImpl.createOffer(offer);
   }
 
 

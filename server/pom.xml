@@ -110,10 +110,31 @@
             <version>0.0.1-SNAPSHOT</version>
         </dependency>
 
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>io.grpc</groupId>
+            <artifactId>grpc-netty-shaded</artifactId>
+            <version>1.68.1</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>com.google.protobuf</groupId>
+            <artifactId>protobuf-java</artifactId>
+            <version>4.28.3</version>
+        </dependency>
+
     </dependencies>
 
 
     <build>
+        <!--<sourceDirectory>${project.build.directory}/generated-sources/protobuf/java</sourceDirectory>-->
         <extensions>
             <extension>
                 <groupId>kr.motd.maven</groupId>
@@ -135,12 +156,18 @@
                 <version>0.6.1</version>
                 <configuration>
                     <protocArtifact>
-                        com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}
+                        <!--com.google.protobuf:protoc:3.3.0:exe:${os.detected.classifier}-->
+                        com.google.protobuf:protoc:3.17.3:exe:${os.detected.classifier}
+
                     </protocArtifact>
                     <pluginId>grpc-java</pluginId>
                     <pluginArtifact>
-                        io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}
+                        <!--io.grpc:protoc-gen-grpc-java:1.4.0:exe:${os.detected.classifier}-->
+                        io.grpc:protoc-gen-grpc-java:1.63.0:exe:${os.detected.classifier}
                     </pluginArtifact>
+                    <protoSourceRoot>${project.basedir}/src/main/proto</protoSourceRoot>
+                    <outputDirectory>${project.build.directory}/generated-sources/protobuf/java</outputDirectory>
+
                 </configuration>
                 <executions>
                     <execution>

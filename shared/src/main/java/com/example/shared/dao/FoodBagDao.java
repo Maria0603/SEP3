@@ -1,15 +1,10 @@
-package model;
+package com.example.shared.dao;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-
-@Document(collection = "food_bag") public class FoodBag
+public class FoodBagDao
 {
-  @Id
-  private String id;
-  private String status;
+  private String id, status;
 
-  public FoodBag(String id, String status)
+  public FoodBagDao(String id, String status)
   {
     this.id = id;
     this.status = status;
@@ -36,4 +31,3 @@ import org.springframework.data.mongodb.core.mapping.Document;
   }
 
 }
-

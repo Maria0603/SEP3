@@ -1,20 +1,24 @@
-package com.example.server.dao;
+package com.example.shared.dao;
 
-import java.time.LocalDate;
-import java.time.LocalTime;
+//import com.example.sep3.grpc.Time;
+
+import com.example.sep3.grpc.Date;
+import com.example.sep3.grpc.Time;
 
 public class OfferDao
 {
   private String id, title, description;
   private String[] categories;
-  private int price;
-  private LocalDate pickupDate;
-  private LocalTime pickupTimeStart;
-  private LocalTime pickupTimeEnd;
+  private int price, numberOfFoodBags;
+
+  private Date pickupDate;
+  private Time pickupTimeStart;
+  private Time pickupTimeEnd;
+  private String imagePath;
 
   public OfferDao(String id, String title, String description, int price,
-      LocalDate pickupDate, LocalTime pickupTimeStart, LocalTime pickupTimeEnd,
-      String[] categories)
+      Date pickupDate, Time pickupTimeStart, Time pickupTimeEnd,
+      String[] categories, int numberOfFoodBags, String imagePath)
   {
     this.id = id;
     this.title = title;
@@ -24,6 +28,16 @@ public class OfferDao
     this.pickupTimeStart = pickupTimeStart;
     this.pickupTimeEnd = pickupTimeEnd;
     this.categories = categories;
+    this.numberOfFoodBags = numberOfFoodBags;
+    this.imagePath = imagePath;
+  }
+  public String getImagePath()
+  {
+    return imagePath;
+  }
+  public void setImagePath(String imagePath)
+  {
+    this.imagePath = imagePath;
   }
 
   public String getId()
@@ -75,33 +89,42 @@ public class OfferDao
   {
     this.price = price;
   }
+  public int getNumberOfFoodBags()
+  {
+    return numberOfFoodBags;
+  }
 
-  public LocalTime getPickupTimeEnd()
+  public void setNumberOfFoodBags(int numberOfFoodBags)
+  {
+    this.numberOfFoodBags=numberOfFoodBags;
+  }
+
+  public Time getPickupTimeEnd()
   {
     return pickupTimeEnd;
   }
 
-  public void setPickupTimeEnd(LocalTime pickupTimeEnd)
+  public void setPickupTimeEnd(Time pickupTimeEnd)
   {
     this.pickupTimeEnd = pickupTimeEnd;
   }
 
-  public LocalTime getPickupTimeStart()
+  public Time getPickupTimeStart()
   {
     return pickupTimeStart;
   }
 
-  public void setPickupTimeStart(LocalTime pickupTimeStart)
+  public void setPickupTimeStart(Time pickupTimeStart)
   {
     this.pickupTimeStart = pickupTimeStart;
   }
 
-  public LocalDate getPickupDate()
+  public Date getPickupDate()
   {
     return pickupDate;
   }
 
-  public void setPickupDate(LocalDate pickupDate)
+  public void setPickupDate(Date pickupDate)
   {
     this.pickupDate = pickupDate;
   }
