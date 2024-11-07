@@ -1,10 +1,10 @@
-package controller;
+package com.example.data_server.controller;
 
-import model.Offer;
+import com.example.shared.dao.OfferDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import service.OfferServiceImpl;
+import com.example.data_server.service.OfferServiceImpl;
 
 import java.util.List;
 
@@ -17,21 +17,21 @@ import java.util.List;
     this.offerServiceImpl = offerServiceImpl;
   }
 
-  @GetMapping public List<Offer> getAllOffers()
+  @GetMapping public List<OfferDao> getAllOffers()
   {
     return offerServiceImpl.getAllOffers();
   }
 
-  @GetMapping("/{id}") public ResponseEntity<Offer> getOfferById(
+  @GetMapping("/{id}") public ResponseEntity<OfferDao> getOfferById(
       @PathVariable String id)
   {
     return offerServiceImpl.getOfferById(id).map(ResponseEntity::ok)
         .orElse(ResponseEntity.notFound().build());
   }
 
-  @PostMapping public Offer createOffer(@RequestBody Offer offer)
+  @PostMapping public OfferDao createOffer(@RequestBody OfferDao offer)
   {
-    return offerServiceImpl.createOffer(offer);
+    return null;//offerServiceImpl.saveOffer(offer);
   }
 
 

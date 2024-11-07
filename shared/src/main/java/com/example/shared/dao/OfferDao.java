@@ -1,40 +1,48 @@
 package com.example.shared.dao;
 
-//import com.example.sep3.grpc.Time;
-
 import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.Time;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.ArrayList;
+import java.util.List;
+
+@Document(collection="offer")
 public class OfferDao
 {
-  private String id, title, description;
-  private String[] categories;
+  @Id
+  private String id;
+  private String title, description, status;
+  private ArrayList<String> categories;
   private int price, numberOfFoodBags;
 
   private Date pickupDate;
   private Time pickupTimeStart;
   private Time pickupTimeEnd;
-  private String imagePath;
 
-  public OfferDao(String id, String title, String description, int price,
-      Date pickupDate, Time pickupTimeStart, Time pickupTimeEnd,
-      String[] categories, int numberOfFoodBags, String imagePath)
+  private String imagePath;
+  private byte[] image;
+  public OfferDao()
   {
-    this.id = id;
-    this.title = title;
-    this.description = description;
-    this.price = price;
-    this.pickupDate = pickupDate;
-    this.pickupTimeStart = pickupTimeStart;
-    this.pickupTimeEnd = pickupTimeEnd;
-    this.categories = categories;
-    this.numberOfFoodBags = numberOfFoodBags;
-    this.imagePath = imagePath;
+
   }
+
+  public byte[] getImage()
+  {
+    return image;
+  }
+
+  public void setImage(byte[] image)
+  {
+    this.image = image;
+  }
+
   public String getImagePath()
   {
     return imagePath;
   }
+
   public void setImagePath(String imagePath)
   {
     this.imagePath = imagePath;
@@ -59,6 +67,15 @@ public class OfferDao
   {
     this.title = title;
   }
+  public String getStatus()
+  {
+    return status;
+  }
+
+  public void setStatus(String status)
+  {
+    this.status = status;
+  }
 
   public String getDescription()
   {
@@ -70,12 +87,13 @@ public class OfferDao
     this.description = description;
   }
 
-  public String[] getCategories()
+  public ArrayList<String> getCategories()
   {
     return categories;
   }
 
-  public void setCategories(String[] categories)
+
+  public void setCategories(ArrayList<String> categories)
   {
     this.categories = categories;
   }
@@ -89,6 +107,7 @@ public class OfferDao
   {
     this.price = price;
   }
+
   public int getNumberOfFoodBags()
   {
     return numberOfFoodBags;
@@ -96,7 +115,7 @@ public class OfferDao
 
   public void setNumberOfFoodBags(int numberOfFoodBags)
   {
-    this.numberOfFoodBags=numberOfFoodBags;
+    this.numberOfFoodBags = numberOfFoodBags;
   }
 
   public Time getPickupTimeEnd()

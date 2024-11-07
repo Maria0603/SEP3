@@ -10,7 +10,6 @@
 		<relativePath>../pom.xml</relativePath> <!-- Adjust based on module structure -->
 	</parent>
 
-	<groupId>com.example.sep3</groupId>
 	<artifactId>shared</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>shared</name>

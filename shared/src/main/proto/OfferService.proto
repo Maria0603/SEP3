@@ -20,8 +20,8 @@ message SaveOfferRequest {
   Date pickupDate = 5;
   Time pickupTimeStart = 6;
   Time pickupTimeEnd = 7;
-  bytes image=8;
-  repeated string categories = 9;
+  repeated string categories = 8;
+  bytes image=9;
 }
 
 message OfferIdRequest {
@@ -54,25 +54,25 @@ message SaveOfferResponse {
   Time pickupTimeStart = 7;
   Time pickupTimeEnd = 8;
   repeated string categories = 9;
-  bytes imagePath = 10;
+  bytes image = 10;
 }
 
-message OfferList{
+message OfferList {
   repeated OfferResponse offer = 1;
 }
 
-message Time{
-  int32 hour=1;
-  int32 minute=2;
+message Time {
+  int32 hour = 1;
+  int32 minute = 2;
 }
 
-message Date{
-  int32 year=1;
-  int32 month=2;
-  int32 day=3;
+message Date {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
 }
 
-message EmptyMessage{
+message EmptyMessage {
 
 }
 

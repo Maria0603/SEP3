@@ -10,7 +10,6 @@
         <relativePath>../pom.xml
         </relativePath> <!-- Adjust based on module structure -->
     </parent>
-    <groupId>com.example</groupId>
     <artifactId>data_server</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>data_server</name>
@@ -96,6 +95,8 @@
     </dependencies>
 
     <build>
+            <sourceDirectory>${project.basedir}/src/main/java</sourceDirectory>
+            <outputDirectory>${project.build.directory}/classes</outputDirectory>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
