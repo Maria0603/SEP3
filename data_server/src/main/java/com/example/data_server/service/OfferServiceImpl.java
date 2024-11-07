@@ -23,14 +23,14 @@ import java.util.Optional;
 @Service public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase
 {
-  private final OfferRepository offerRepository;
+  @Autowired private OfferRepository offerRepository;
   private final String uploadDir = "../images";
 
+  /*
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
-  }
-
+  }*/
 
   @Override public void getAllOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver)
@@ -159,10 +159,10 @@ import java.util.Optional;
     }
     return imagePath;
   }
+
   private byte[] extractImage(String imagePath)
   {
-    Path filePath = Paths.get(uploadDir, imagePath)
-        .normalize();
+    Path filePath = Paths.get(uploadDir, imagePath).normalize();
     byte[] imageBytes = null;
     try
     {
