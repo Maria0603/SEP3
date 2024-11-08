@@ -1,4 +1,4 @@
-﻿package com.example.server.utility;
+package com.example.server.utility;
 
 import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.SaveOfferRequest;
@@ -47,7 +47,7 @@ public class OfferMapper
     offerDto.setId(offerDao.getId());
     offerDto.setTitle(offerDao.getTitle());
     offerDto.setDescription(offerDao.getDescription());
-    offerDto.setCategories(offerDao.getCategories());
+    /*offerDto.setCategories(offerDao.getCategories());
     offerDto.setPrice(offerDao.getPrice());
     offerDto.setNumberOfFoodBags(offerDao.getNumberOfFoodBags());
 
@@ -58,7 +58,7 @@ public class OfferMapper
     offerDto.setPickupTimeEnd(
         TimeConverter.toTimeDto(offerDao.getPickupTimeEnd()));
 
-    offerDto.setImage(offerDao.getImage());
+    offerDto.setImage(offerDao.getImage());*/
     offerDto.setStatus(offerDao.getStatus());
 
     return offerDto;

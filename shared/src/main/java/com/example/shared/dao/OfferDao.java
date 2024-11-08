@@ -4,25 +4,26 @@ import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.Time;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Document(collection="offer")
-public class OfferDao
+@Document(collection = "offer") public class OfferDao
 {
-  @Id
-  private String id;
-  private String title, description, status;
-  private ArrayList<String> categories;
-  private int price, numberOfFoodBags;
-
-  private DateDao pickupDate;
-  private TimeDao pickupTimeStart;
-  private TimeDao pickupTimeEnd;
-
-  private String imagePath;
+  @Id private String id;
+  @Field("title") private String title;
+  @Field("description") private String description;
+  @Field("status") private String status;
+  @Field("categories") private ArrayList<String> categories;
+  @Field("price") private int price;
+  @Field("number_of_food_bags") private int numberOfFoodBags;
+  @Field("pickup_date") private DateDao pickupDate;
+  @Field("pickup_time_start") private TimeDao pickupTimeStart;
+  @Field("pickup_time_end") private TimeDao pickupTimeEnd;
+  @Field("image_path") private String imagePath;
   private byte[] image;
+
   public OfferDao()
   {
 
@@ -67,6 +68,7 @@ public class OfferDao
   {
     this.title = title;
   }
+
   public String getStatus()
   {
     return status;
@@ -91,7 +93,6 @@ public class OfferDao
   {
     return categories;
   }
-
 
   public void setCategories(ArrayList<String> categories)
   {

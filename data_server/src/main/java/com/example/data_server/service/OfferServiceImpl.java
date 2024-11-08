@@ -1,9 +1,11 @@
 package com.example.data_server.service;
 
+import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.OfferDao;
 import com.example.shared.model.Status;
 import com.google.protobuf.ByteString;
+import com.google.type.DateTime;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -23,20 +25,23 @@ import java.util.Optional;
 @Service public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase
 {
-  @Autowired private OfferRepository offerRepository;
+  private OfferRepository offerRepository;
   private final String uploadDir = "../images";
 
-  /*
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
-  }*/
+  }
 
   @Override public void getAllOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver)
   {
-    List<OfferDao> availableOffers = offerRepository.findByStatus(
-        Status.AVAILABLE.getStatus());
+    System.out.println("Request for all offers");
+    //List<OfferDao> availableOffers = offerRepository.findByStatus(Status.AVAILABLE.getStatus());
+    List<OfferDao> availableOffers = offerRepository.findAll();
+
+    System.out.println(availableOffers.isEmpty());
+
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
     {
@@ -46,11 +51,12 @@ import java.util.Optional;
           .setDescription(offerDao.getDescription())
           .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
           .setNumberOfFoodBags(offerDao.getNumberOfFoodBags())
-          .setPickupDate(offerDao.getPickupDate())
-          .setPickupTimeStart(offerDao.getPickupTimeStart())
-          .setPickupTimeEnd(offerDao.getPickupTimeEnd())
-          .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
-          .addAllCategories(offerDao.getCategories()).build();
+          .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(offerDao.getPickupDate()))
+          .setPickupTimeStart(DateTimeConverter.convertTimeDaoToGrpcTime(offerDao.getPickupTimeStart()))
+          .setPickupTimeEnd(DateTimeConverter.convertTimeDaoToGrpcTime(offerDao.getPickupTimeEnd()))
+           .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
+          .addAllCategories(offerDao.getCategories())
+          .build();
 
       offerListBuilder.addOffer(offerResponse);
     }
@@ -63,6 +69,8 @@ import java.util.Optional;
   @Override public void getOfferById(OfferIdRequest request,
       StreamObserver<OfferResponse> responseObserver)
   {
+    System.out.println("Request for offer by id");
+
     Optional<OfferDao> offer = offerRepository.findById(request.getId());
     if (offer.isPresent())
     {
@@ -71,10 +79,13 @@ import java.util.Optional;
           .setId(offerDao.getId()).setTitle(offerDao.getTitle())
           .setDescription(offerDao.getDescription())
           .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
-          .setNumberOfFoodBags(offerDao.getNumberOfFoodBags())
-          .setPickupDate(offerDao.getPickupDate())
-          .setPickupTimeStart(offerDao.getPickupTimeStart())
-          .setPickupTimeEnd(offerDao.getPickupTimeEnd())
+          .setNumberOfFoodBags(offerDao.getNumberOfFoodBags()).setPickupDate(
+              DateTimeConverter.convertDateDaoToGrpcDate(
+                  offerDao.getPickupDate())).setPickupTimeStart(
+              DateTimeConverter.convertTimeDaoToGrpcTime(
+                  offerDao.getPickupTimeStart())).setPickupTimeEnd(
+              DateTimeConverter.convertTimeDaoToGrpcTime(
+                  offerDao.getPickupTimeEnd()))
           .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
           .addAllCategories(offerDao.getCategories()).build();
 
@@ -88,6 +99,8 @@ import java.util.Optional;
   @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver)
   {
+    System.out.println("Request for save offer");
+
     ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
 
     //create the date and time as grpc Time and Date messages
@@ -108,9 +121,12 @@ import java.util.Optional;
     offer.setTitle(request.getTitle());
     offer.setDescription(request.getDescription());
     offer.setPrice(request.getPrice());
-    offer.setPickupDate(pickupDate);
-    offer.setPickupTimeStart(pickupTimeStart);
-    offer.setPickupTimeEnd(pickupTimeEnd);
+    offer.setPickupDate(
+        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertGrpcTimeToTimeDao(pickupTimeStart));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertGrpcTimeToTimeDao(pickupTimeEnd));
     offer.setCategories(categories);
     offer.setNumberOfFoodBags(request.getNumberOfFoodBags());
 
@@ -130,11 +146,13 @@ import java.util.Optional;
         .setId(createdOffer.getId()).setTitle(createdOffer.getTitle())
         .setDescription(createdOffer.getDescription())
         .setPrice(createdOffer.getPrice())
-        .setNumberOfFoodBags(createdOffer.getNumberOfFoodBags())
-        .setPickupDate(createdOffer.getPickupDate())
-        .setPickupTimeStart(createdOffer.getPickupTimeStart())
-        .setPickupTimeEnd(createdOffer.getPickupTimeEnd())
-        .setImage(request.getImage())
+        .setNumberOfFoodBags(createdOffer.getNumberOfFoodBags()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                createdOffer.getPickupDate())).setPickupTimeStart(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                createdOffer.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                createdOffer.getPickupTimeEnd())).setImage(request.getImage())
         .addAllCategories(createdOffer.getCategories()).build();
 
     responseObserver.onNext(response);

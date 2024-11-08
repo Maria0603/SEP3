@@ -1,11 +1,12 @@
 package com.example.shared.dao;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "time")
-public class TimeDao
+@Document(collection = "time") public class TimeDao
 {
-  private int hour, minute;
+  @Field("hour") private int hour;
+  @Field("minute") private int minute;
 
   public TimeDao(int hour, int minute)
   {
@@ -32,6 +33,5 @@ public class TimeDao
   {
     this.minute = minute;
   }
-
 
 }

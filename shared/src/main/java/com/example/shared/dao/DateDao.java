@@ -1,12 +1,13 @@
 package com.example.shared.dao;
 
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "date")
-public class DateDao
+@Document(collection = "date") public class DateDao
 {
-  private int year, month, day;
-
+  @Field("year") private int year;
+  @Field("month") private int month;
+  @Field("day") private int day;
 
   public DateDao(int year, int month, int day)
   {
@@ -44,6 +45,5 @@ public class DateDao
   {
     this.year = year;
   }
-
 
 }

@@ -1,16 +1,18 @@
 package com.example.server;
 
 import com.example.sep3.grpc.*;
-import com.example.server.Services.CollectService.CollectServiceImpl;
-import com.example.server.Services.FoodManagementService.FoodManagementServiceImpl;
+//import com.example.server.Services.CollectService.CollectServiceImpl;
+//import com.example.server.Services.FoodManagementService.FoodManagementServiceImpl;
 import com.google.protobuf.ByteString;
 import io.grpc.BindableService;
+import io.grpc.Grpc;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
@@ -23,17 +25,18 @@ import java.util.ArrayList;
 
 @SpringBootApplication @EnableMongoRepositories(basePackages = "com.example.server") @EnableCaching public class ServerApplication
 {
-  @Autowired private FoodManagementServiceImpl foodManagementServiceImpl;
-  @Autowired private CollectServiceImpl collectServiceImpl;
+ // @Autowired private FoodManagementServiceImpl foodManagementServiceImpl;
+  //@Autowired private CollectServiceImpl collectServiceImpl;
 
   public static void main(String[] args)
   {
-    SpringApplication.run(ServerApplication.class, args);
+    ApplicationContext context = SpringApplication.run(ServerApplication.class, args);
     System.out.println("Server running...");
 
-    GrpcClient grpcClient = new GrpcClient("localhost", 9090);
+    //GrpcClient grpcClient = new GrpcClient("localhost", 9091);
 
-    OfferList offerList = grpcClient.getAllAvailableOffers();
+    GrpcClient grpcClient = context.getBean(GrpcClient.class);
+    OfferList offerList = grpcClient.getAllAvailableOffers(EmptyMessage.newBuilder().build());
     System.out.println("Offers:  " + offerList);
 
     ArrayList<String> categories = new ArrayList<>();
@@ -58,6 +61,11 @@ import java.util.ArrayList;
     System.out.println("Saved offer id:   " + saveResponse.getId());
 
     grpcClient.shutdown();
+  }
+
+  @Bean public GrpcClient grpcClient()
+  {
+    return new GrpcClient("localhost", 8081);
   }
 
   private static byte[] loadImageAsByteArray(String imagePath)

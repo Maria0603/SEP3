@@ -1,4 +1,4 @@
-﻿package com.example.server;
+package com.example.server;
 
 import com.example.sep3.grpc.*;
 import io.grpc.ManagedChannel;
@@ -16,9 +16,10 @@ import io.grpc.ManagedChannelBuilder;
 
     blockingStub=OfferServiceGrpc.newBlockingStub(channel);
   }
-  public OfferList getAllAvailableOffers()
+
+
+  public OfferList getAllAvailableOffers(EmptyMessage request)
   {
-    EmptyMessage request=EmptyMessage.newBuilder().build();
     return blockingStub.getAllOffers(request);
   }
 
