@@ -1,4 +1,4 @@
-﻿package com.example.shared.model;
+package com.example.shared.model;
 
 public enum Status
 {

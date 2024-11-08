@@ -1,7 +1,9 @@
-﻿package com.example.server.dto;
+package com.example.server.dto;
 
 import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.Time;
+import com.example.shared.dao.DateDao;
+import com.example.shared.dao.TimeDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -13,9 +15,9 @@ public class CreateOfferRequestDto
     private ArrayList<String> categories;
     private int price, numberOfFoodBags;
 
-    private Date pickupDate;
-    private Time pickupTimeStart;
-    private Time pickupTimeEnd;
+    private DateDto pickupDate;
+    private TimeDto pickupTimeStart;
+    private TimeDto pickupTimeEnd;
 
     private byte[] image;
 
@@ -79,32 +81,32 @@ public class CreateOfferRequestDto
       this.numberOfFoodBags = numberOfFoodBags;
     }
 
-    public Time getPickupTimeEnd()
+    public TimeDto getPickupTimeEnd()
     {
       return pickupTimeEnd;
     }
 
-    public void setPickupTimeEnd(Time pickupTimeEnd)
+    public void setPickupTimeEnd(TimeDto pickupTimeEnd)
     {
       this.pickupTimeEnd = pickupTimeEnd;
     }
 
-    public Time getPickupTimeStart()
+    public TimeDto getPickupTimeStart()
     {
       return pickupTimeStart;
     }
 
-    public void setPickupTimeStart(Time pickupTimeStart)
+    public void setPickupTimeStart(TimeDto pickupTimeStart)
     {
       this.pickupTimeStart = pickupTimeStart;
     }
 
-    public Date getPickupDate()
+    public DateDto getPickupDate()
     {
       return pickupDate;
     }
 
-    public void setPickupDate(Date pickupDate)
+    public void setPickupDate(DateDto pickupDate)
     {
       this.pickupDate = pickupDate;
     }

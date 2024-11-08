@@ -1,5 +1,8 @@
 package com.example.shared.dao;
 
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Document(collection = "time")
 public class TimeDao
 {
   private int hour, minute;

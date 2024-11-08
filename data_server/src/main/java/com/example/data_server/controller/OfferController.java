@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import com.example.data_server.service.OfferServiceImpl;
 
 import java.util.List;
-
+/*
 @RestController @RequestMapping("/api/offer") public class OfferController
 {
   private final OfferServiceImpl offerServiceImpl;
@@ -36,4 +36,4 @@ import java.util.List;
 
 
 
-}
+}*/

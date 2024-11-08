@@ -1,9 +1,8 @@
 package com.example.server.Client;
-
+/*
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 import proto.CollectServiceGrpc.*;
-import proto.FoodBag.*;
 import static proto.CollectServiceGrpc.newBlockingStub;
 
 public class TestClient
@@ -32,3 +31,4 @@ public class TestClient
 }
 
 
+*/

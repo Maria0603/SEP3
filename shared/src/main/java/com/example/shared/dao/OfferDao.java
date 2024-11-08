@@ -17,9 +17,9 @@ public class OfferDao
   private ArrayList<String> categories;
   private int price, numberOfFoodBags;
 
-  private Date pickupDate;
-  private Time pickupTimeStart;
-  private Time pickupTimeEnd;
+  private DateDao pickupDate;
+  private TimeDao pickupTimeStart;
+  private TimeDao pickupTimeEnd;
 
   private String imagePath;
   private byte[] image;
@@ -118,32 +118,32 @@ public class OfferDao
     this.numberOfFoodBags = numberOfFoodBags;
   }
 
-  public Time getPickupTimeEnd()
+  public TimeDao getPickupTimeEnd()
   {
     return pickupTimeEnd;
   }
 
-  public void setPickupTimeEnd(Time pickupTimeEnd)
+  public void setPickupTimeEnd(TimeDao pickupTimeEnd)
   {
     this.pickupTimeEnd = pickupTimeEnd;
   }
 
-  public Time getPickupTimeStart()
+  public TimeDao getPickupTimeStart()
   {
     return pickupTimeStart;
   }
 
-  public void setPickupTimeStart(Time pickupTimeStart)
+  public void setPickupTimeStart(TimeDao pickupTimeStart)
   {
     this.pickupTimeStart = pickupTimeStart;
   }
 
-  public Date getPickupDate()
+  public DateDao getPickupDate()
   {
     return pickupDate;
   }
 
-  public void setPickupDate(Date pickupDate)
+  public void setPickupDate(DateDao pickupDate)
   {
     this.pickupDate = pickupDate;
   }
