@@ -52,12 +52,7 @@
             <groupId>org.springframework.data</groupId>
             <artifactId>spring-data-mongodb</artifactId>
         </dependency>
-        <dependency>
-            <groupId>io.grpc</groupId>
-            <artifactId>grpc-stub</artifactId>
-            <version>1.66.0</version>
-            <scope>compile</scope>
-        </dependency>
+
 
 
 
