@@ -1,0 +1,64 @@
+@page "/BagsToPurchase"
+@using System.Text.Json
+@inject HttpClient Http
+
+@code {
+    private FoodBag foodBag = new FoodBag
+    {
+        Id = 1,
+        OldPrice = 99,
+        NewPrice = 39,
+    };
+
+    private int quantity = 1;
+
+    private decimal TotalCost => quantity * foodBag.NewPrice;
+
+    private void IncrementQuantity()
+    {
+        quantity++;
+    }
+
+    private async Task SubmitPurchase()
+    {
+        var purchase = new Purchase
+        {
+            ItemId = foodBag.Id,
+            Quantity = quantity,
+            Price = foodBag.NewPrice,
+            Total = TotalCost
+        };
+        
+        await Http.PostAsJsonAsync("api/purchase", purchase);
+    }
+}
+
+<h3> Purchase </h3>
+
+<div>
+    <label>Item:</label>
+    <span>@foodBag.Id</span>
+</div>
+
+<div>
+    <label>Old Price:</label>
+    <span>@foodBag.OldPrice dkk</span>
+</div>
+
+<div>
+    <label>New Price:</label>
+    <span>@foodBag.NewPrice dkk</span>
+</div>
+
+<div>
+    <label>Quantity:</label>
+    <button @onclick="IncrementQuantity">+</button>
+    <span>@quantity</span>
+</div>
+
+<div>
+    <label>Total Cost:</label>
+    <span>@TotalCost dkk</span>
+</div>
+
+<button @onclick="SubmitPurchase">Submit Purchase</button>
