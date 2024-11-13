@@ -1,9 +1,7 @@
-/* Container and Layout Styling */
 .container {
     padding: 20px;
 }
 
-/* Title Styling */
 .page-title {
     font-size: 24px;
     color: #D11149; 
@@ -12,7 +10,6 @@
     text-align: center;
 }
 
-/* Row and Column Styling */
 .row {
     margin-bottom: 15px;
 }
@@ -21,18 +18,16 @@
     text-align: center;
 }
 
-/* Image Styling */
 .order-image {
-    width: 150px; /* Adjust width as needed to make it smaller */
+    width: 150px; 
     height: auto;
 }
 
-/* Framed and Rounded Image */
 .framed-image {
-    border: 2px solid #ddd; /* Light grey frame */
-    padding: 5px; /* Space between frame and image */
+    border: 2px solid #ddd;
+    padding: 5px; 
     border-radius: 10px; /* Rounded corners */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional shadow */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
 }
 
 /* Section Titles Styling (e.g., "Item Information", "ID and Total Price") */
