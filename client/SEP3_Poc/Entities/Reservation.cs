@@ -1,4 +1,4 @@
-namespace SEP3_Poc.Pages;
+namespace SEP3_Poc.Entities;
 
 public class Reservation
 {

@@ -13,10 +13,7 @@
 
     <ItemGroup>
       <None Include="wwwroot\css\cards.css" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="images\" />
+      <None Include="wwwroot\images\bread.jpg" />
     </ItemGroup>
 
     <ItemGroup>

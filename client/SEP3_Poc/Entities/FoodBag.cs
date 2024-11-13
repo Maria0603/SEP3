@@ -1,5 +1,4 @@
-namespace SEP3_Poc.Pages
-{
+namespace SEP3_Poc.Entities;
     public class FoodBag
     {
         public int Id { get; set; }
@@ -12,4 +11,3 @@ namespace SEP3_Poc.Pages
         public string PickupDate { get; set; }
         public string Collector { get; set; }
     }
-}

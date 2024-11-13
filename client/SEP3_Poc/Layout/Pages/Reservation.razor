@@ -1,67 +1,81 @@
 @page "/reservation"
 @using System.Text.Json
-@using SEP3_Poc.Pages
+@using SEP3_Poc.Entities
+@using Microsoft.VisualBasic
 @inject HttpClient Http
-@inherits LayoutComponentBase
+@inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
 @code {
-
-    private FoodBag foodBag = new FoodBag {
+    private FoodBag foodBag = new FoodBag{
         Id = 1,
         OldPrice = 99,
         NewPrice = 39,
     };
 
+    private Entities.Reservation reservation = new Entities.Reservation(){
+        ItemId = 1,
+        Quantity = 5
+    };
+    
+
     private int quantity = 1;
+    private int amount = 1;
 
-    private decimal TotalCost => quantity * foodBag.NewPrice;
-
-    private void IncrementQuantity() {
-        quantity++;
-    }
+    private decimal TotalCost => amount * foodBag.NewPrice;
 
     private async Task SubmitPurchase() {
-        var purchase = new SEP3_Poc.Pages.Reservation {
+        var purchase = new SEP3_Poc.Entities.Reservation {
             ItemId = foodBag.Id,
-            Quantity = quantity,
+            Quantity = amount,
             Price = foodBag.NewPrice,
             Total = TotalCost
         };
 
         await Http.PostAsJsonAsync("api/purchase", purchase);
     }
-
 }
 
-<div class="page">
+<div class="container">
+    <!-- Centered Title -->
+    <h2 class="page-title text-center">Order Reservation</h2>
 
-    <h3> Reserve Order </h3>
+    <div class="row">
+        <!-- First column for the image -->
+        <div class="col-12 col-md-4 text-center">
+            <img src="images/bread.jpg" alt="Order Image" class="order-image framed-image" />
+        </div>
 
-    <div>
-        <label>Item:</label>
-        <span>@foodBag.Id</span>
+        <!-- Second column for item information -->
+        <div class="col-12 col-md-4">
+            <h4>Item Information</h4>
+            <p><strong>Item:</strong> Fruits and Vegetables</p>
+            <p><strong>Available Quantity:</strong> @Entities.Reservation
+            </p> <!-- Display available quantity -->
+            <p><strong>Old Price:</strong> @foodBag.OldPrice dkk</p>
+            <p><strong>New Price:</strong> @foodBag.NewPrice dkk</p>
+            <!-- Quantity input field -->
+            <div>
+                <label><strong>Quantity:</strong></label>
+                <input type="number" min="1" max="@Entities.Reservation" @bind="quantity" class="quantity-input" />
+            </div>
+        </div>
+
+        <!-- Third column for ID and total price -->
+        <div class="col-12 col-md-4">
+            <h4>ID and Total Price</h4>
+            <p><strong>ID:</strong> @foodBag.Id</p>
+            <p><strong>Total Cost:</strong> @TotalCost dkk</p>
+        </div>
     </div>
 
-    <div>
-        <label>Old Price:</label>
-        <span>@foodBag.OldPrice dkk</span>
+    <!-- Amount input field and Centered "Reserve" button below the columns -->
+    <div class="row">
+        <div class="col-12 text-center">
+            <div class="amount-input-container">
+                <label for="amount"><strong>Amount:</strong></label>
+                <input type="number" id="amount" min="1" @bind="amount" class="amount-input" />
+            </div>
+            <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+        </div>
     </div>
-
-    <div>
-        <label>New Price:</label>
-        <span>@foodBag.NewPrice dkk</span>
-    </div>
-
-    <div>
-        <label>Quantity:</label>
-        <button @onclick="IncrementQuantity">+</button>
-        <span>@quantity</span>
-    </div>
-
-    <div>
-        <label>Total Cost:</label>
-        <span>@TotalCost dkk</span>
-    </div>
-
-    <button @onclick="SubmitPurchase">Submit Purchase</button>
 </div>
