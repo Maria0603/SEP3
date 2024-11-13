@@ -18,7 +18,7 @@
     };
     
 
-    private int quantity = 1;
+    private int quantity = 5;
     private int amount = 1;
 
     private decimal TotalCost => amount * foodBag.NewPrice;
@@ -49,15 +49,9 @@
         <div class="col-12 col-md-4">
             <h4>Item Information</h4>
             <p><strong>Item:</strong> Fruits and Vegetables</p>
-            <p><strong>Available Quantity:</strong> @Entities.Reservation
-            </p> <!-- Display available quantity -->
             <p><strong>Old Price:</strong> @foodBag.OldPrice dkk</p>
             <p><strong>New Price:</strong> @foodBag.NewPrice dkk</p>
-            <!-- Quantity input field -->
-            <div>
-                <label><strong>Quantity:</strong></label>
-                <input type="number" min="1" max="@Entities.Reservation" @bind="quantity" class="quantity-input" />
-            </div>
+            <p><strong> Quantity available:</strong> @reservation.Quantity</p>
         </div>
 
         <!-- Third column for ID and total price -->
@@ -73,7 +67,7 @@
         <div class="col-12 text-center">
             <div class="amount-input-container">
                 <label for="amount"><strong>Amount:</strong></label>
-                <input type="number" id="amount" min="1" @bind="amount" class="amount-input" />
+                <input type="number" id="amount" min="1" max="@reservation.Quantity" @bind="amount" class="amount-input" />
             </div>
             <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
         </div>
