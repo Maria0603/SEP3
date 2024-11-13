@@ -1,6 +1,6 @@
 namespace SEP3_Poc.Pages;
 
-public class Purchase
+public class Reservation
 {
     public int ItemId { get; set; }
     public int Quantity { get; set; }
