@@ -1,12 +1,10 @@
-package com.example.server.Services.OfferService;
+package com.example.server.Services;
 
 import com.example.sep3.grpc.EmptyMessage;
 import com.example.sep3.grpc.OfferList;
 import com.example.sep3.grpc.OfferServiceGrpc;
 import com.example.server.GrpcClient;
-import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 
 @Service public class OfferServiceImpl

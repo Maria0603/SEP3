@@ -1,4 +1,4 @@
-﻿package com.example.server.utility;
+package com.example.server.utility;
 
 import com.example.sep3.grpc.Time;
 import com.example.server.dto.TimeDto;

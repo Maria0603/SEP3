@@ -44,22 +44,7 @@ import java.util.Optional;
 
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
-    {
-
-      OfferResponse offerResponse = OfferResponse.newBuilder()
-          .setId(offerDao.getId()).setTitle(offerDao.getTitle())
-          .setDescription(offerDao.getDescription())
-          .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
-          .setNumberOfFoodBags(offerDao.getNumberOfFoodBags())
-          .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(offerDao.getPickupDate()))
-          .setPickupTimeStart(DateTimeConverter.convertTimeDaoToGrpcTime(offerDao.getPickupTimeStart()))
-          .setPickupTimeEnd(DateTimeConverter.convertTimeDaoToGrpcTime(offerDao.getPickupTimeEnd()))
-           .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
-          .addAllCategories(offerDao.getCategories())
-          .build();
-
-      offerListBuilder.addOffer(offerResponse);
-    }
+      offerListBuilder.addOffer(buildOfferResponse(offerDao)); //method to build the response
 
     OfferList offerListResponse = offerListBuilder.build();
     responseObserver.onNext(offerListResponse);
@@ -75,19 +60,8 @@ import java.util.Optional;
     if (offer.isPresent())
     {
       OfferDao offerDao = offer.get();
-      OfferResponse offerResponse = OfferResponse.newBuilder()
-          .setId(offerDao.getId()).setTitle(offerDao.getTitle())
-          .setDescription(offerDao.getDescription())
-          .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
-          .setNumberOfFoodBags(offerDao.getNumberOfFoodBags()).setPickupDate(
-              DateTimeConverter.convertDateDaoToGrpcDate(
-                  offerDao.getPickupDate())).setPickupTimeStart(
-              DateTimeConverter.convertTimeDaoToGrpcTime(
-                  offerDao.getPickupTimeStart())).setPickupTimeEnd(
-              DateTimeConverter.convertTimeDaoToGrpcTime(
-                  offerDao.getPickupTimeEnd()))
-          .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
-          .addAllCategories(offerDao.getCategories()).build();
+
+      OfferResponse offerResponse=buildOfferResponse(offerDao); //method to build the response
 
       responseObserver.onNext(offerResponse);
       responseObserver.onCompleted();
@@ -95,6 +69,8 @@ import java.util.Optional;
 
     //throw exception or send http status code
   }
+
+
 
   @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver)
@@ -157,6 +133,23 @@ import java.util.Optional;
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
+  }
+
+  private OfferResponse buildOfferResponse(OfferDao offerDao)
+  {
+    return OfferResponse.newBuilder()
+        .setId(offerDao.getId()).setTitle(offerDao.getTitle())
+        .setDescription(offerDao.getDescription())
+        .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
+        .setNumberOfFoodBags(offerDao.getNumberOfFoodBags()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                offerDao.getPickupDate())).setPickupTimeStart(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                offerDao.getPickupTimeEnd()))
+        .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
+        .addAllCategories(offerDao.getCategories()).build();
   }
 
   private String saveImage(byte[] imageBytes, String offerId)

@@ -1,4 +1,4 @@
-﻿package com.example.server.dto;
+package com.example.server.dto;
 
 public class DateDto {
   private int year;
