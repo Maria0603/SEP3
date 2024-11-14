@@ -3,6 +3,7 @@ package com.example.data_server.service;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.OfferDao;
+import com.example.shared.model.Status;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,14 +29,12 @@ import java.util.Optional;
     this.offerRepository = offerRepository;
   }
 
-  @Override public void getAllOffers(EmptyMessage request,
+  @Override public void getAvailableOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver)
   {
     System.out.println("Request for all offers");
-    //List<OfferDao> availableOffers = offerRepository.findByStatus(Status.AVAILABLE.getStatus());
-    List<OfferDao> availableOffers = offerRepository.findAll();
-
-    System.out.println(availableOffers.isEmpty());
+    List<OfferDao> availableOffers = offerRepository.findByStatus(Status.AVAILABLE.getStatus());
+    //List<OfferDao> availableOffers = offerRepository.findAll();
 
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
@@ -89,13 +88,13 @@ import java.util.Optional;
         DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     offer.setCategories(categories);
     offer.setNumberOfFoodBags(request.getNumberOfFoodBags());
+    offer.setStatus(Status.AVAILABLE.getStatus());
 
     //We save the offer in the database to extract the id
     OfferDao createdOffer = offerRepository.save(offer);
 
     //The image will be in the file system as {id}.jpg
     String offerId = createdOffer.getId();
-    // Java code for creating a 200x200 grayscale image byte array
 
     //TODO: delete this part when working with the image, otherwise you will have a bunch of red images
     //<------- for testing purposes
@@ -136,6 +135,7 @@ import java.util.Optional;
 
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
+    System.out.println("Extracted image:" + ByteString.copyFrom(extractImage(offerDao.getImagePath())));
     return OfferResponse.newBuilder().setId(offerDao.getId())
         .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
         .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
@@ -206,21 +206,5 @@ import java.util.Optional;
     }
     return null;
   }
-/*
-  private byte[] extractImage(String imagePath)
-  {
-    Path filePath = Paths.get(uploadDir, imagePath).normalize();
-    byte[] imageBytes = null;
-    try
-    {
-      imageBytes = Files.readAllBytes(filePath);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-
-    }
-    return imageBytes;
-  }*/
 
 }

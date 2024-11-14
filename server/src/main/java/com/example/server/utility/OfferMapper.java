@@ -31,7 +31,7 @@ public class OfferMapper
     offerDao.setPickupTimeEnd(
         TimeConverter.toTimeDao(createOfferRequestDto.getPickupTimeEnd()));
 
-    offerDao.setImage(createOfferRequestDto.getImage());
+    //offerDao.setImage(createOfferRequestDto.getImage());
 
     // Default status
     offerDao.setStatus("available");

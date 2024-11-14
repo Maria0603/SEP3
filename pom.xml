@@ -214,9 +214,7 @@
                 <configuration>
                     <source>21</source>
                     <target>21</target>
-                    <!--New
-                    <compilerArgs> <arg>-parameters</arg> </compilerArgs>-->
-                    <parameters>true</parameters>
+                    <compilerArgs> <arg>-parameters</arg> </compilerArgs>
                 </configuration>
             </plugin>
 

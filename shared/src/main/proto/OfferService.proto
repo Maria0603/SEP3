@@ -9,7 +9,7 @@ package proto;
 service OfferService {
   rpc SaveOffer(SaveOfferRequest) returns (SaveOfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
-  rpc GetAllOffers(EmptyMessage) returns (OfferList);
+  rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
 }
 
 message SaveOfferRequest {

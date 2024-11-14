@@ -22,13 +22,13 @@ import java.util.List;
   @Field("pickup_time_start") private TimeDao pickupTimeStart;
   @Field("pickup_time_end") private TimeDao pickupTimeEnd;
   @Field("image_path") private String imagePath;
-  private byte[] image;
+  //private byte[] image;
 
   public OfferDao()
   {
 
   }
-
+/*
   public byte[] getImage()
   {
     return image;
@@ -37,7 +37,7 @@ import java.util.List;
   public void setImage(byte[] image)
   {
     this.image = image;
-  }
+  }*/
 
   public String getImagePath()
   {

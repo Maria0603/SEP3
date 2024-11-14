@@ -78,6 +78,8 @@
                 <!-- <version>3.3.4</version>-->
             </plugin>
 
+
+
             <plugin>
                 <groupId>org.xolstice.maven.plugins</groupId>
                 <artifactId>protobuf-maven-plugin</artifactId>
