@@ -15,13 +15,14 @@ service OfferService {
 message SaveOfferRequest {
   string title = 1;
   string description = 2;
-  int32 price = 3;
-  int32 numberOfFoodBags = 4;
-  Date pickupDate = 5;
-  Time pickupTimeStart = 6;
-  Time pickupTimeEnd = 7;
-  repeated string categories = 8;
-  bytes image=9;
+  int32 originalPrice = 3;
+  int32 offerPrice = 4;
+  int32 numberOfItems = 5;
+  Date pickupDate = 6;
+  Time pickupTimeStart = 7;
+  Time pickupTimeEnd = 8;
+  repeated string categories = 9;
+  bytes image = 10;
 }
 
 message OfferIdRequest {
@@ -32,29 +33,29 @@ message OfferResponse {
   string id = 1;
   string title = 2;
   string description = 3;
-  int32 price = 4;
-  int32 numberOfFoodBags = 5;
-  Date pickupDate = 6;
-  Time pickupTimeStart = 7;
-  Time pickupTimeEnd = 8;
-  repeated string categories = 9;
-  bytes image = 10;
-  string status = 11;
-  string buyer = 12;
+  int32 originalPrice = 4;
+  int32 offerPrice = 5;
+  int32 numberOfItems = 6;
+  Date pickupDate = 7;
+  Time pickupTimeStart = 8;
+  Time pickupTimeEnd = 9;
+  repeated string categories = 10;
+  bytes image = 11;
+  string status = 12;
 }
-
 
 message SaveOfferResponse {
   string id = 1;
   string title = 2;
   string description = 3;
-  int32 price = 4;
-  int32 numberOfFoodBags = 5;
-  Date pickupDate = 6;
-  Time pickupTimeStart = 7;
-  Time pickupTimeEnd = 8;
-  repeated string categories = 9;
-  bytes image = 10;
+  int32 originalPrice = 4;
+  int32 offerPrice=5;
+  int32 numberOfItems = 6;
+  Date pickupDate = 7;
+  Time pickupTimeStart = 8;
+  Time pickupTimeEnd = 9;
+  repeated string categories = 10;
+  bytes image = 11;
 }
 
 message OfferList {

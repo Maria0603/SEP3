@@ -16,28 +16,48 @@ import java.util.List;
   @Field("description") private String description;
   @Field("status") private String status;
   @Field("categories") private ArrayList<String> categories;
-  @Field("price") private int price;
-  @Field("number_of_food_bags") private int numberOfFoodBags;
+  @Field("original_price") private int originalPrice;
+  @Field("offer_price") private int offerPrice;
+  @Field("number_of_items") private int numberOfItems;
   @Field("pickup_date") private DateDao pickupDate;
   @Field("pickup_time_start") private TimeDao pickupTimeStart;
   @Field("pickup_time_end") private TimeDao pickupTimeEnd;
   @Field("image_path") private String imagePath;
-  //private byte[] image;
+
+  public int getOfferPrice()
+  {
+    return offerPrice;
+  }
+
+  public void setOfferPrice(int offerPrice)
+  {
+    this.offerPrice = offerPrice;
+  }
+
+  public int getOriginalPrice()
+  {
+    return originalPrice;
+  }
+
+  public void setOriginalPrice(int originalPrice)
+  {
+    this.originalPrice = originalPrice;
+  }
+
+  public int getNumberOfItems()
+  {
+    return numberOfItems;
+  }
+
+  public void setNumberOfItems(int numberOfItems)
+  {
+    this.numberOfItems = numberOfItems;
+  }
 
   public OfferDao()
   {
 
   }
-/*
-  public byte[] getImage()
-  {
-    return image;
-  }
-
-  public void setImage(byte[] image)
-  {
-    this.image = image;
-  }*/
 
   public String getImagePath()
   {
@@ -97,26 +117,6 @@ import java.util.List;
   public void setCategories(ArrayList<String> categories)
   {
     this.categories = categories;
-  }
-
-  public int getPrice()
-  {
-    return price;
-  }
-
-  public void setPrice(int price)
-  {
-    this.price = price;
-  }
-
-  public int getNumberOfFoodBags()
-  {
-    return numberOfFoodBags;
-  }
-
-  public void setNumberOfFoodBags(int numberOfFoodBags)
-  {
-    this.numberOfFoodBags = numberOfFoodBags;
   }
 
   public TimeDao getPickupTimeEnd()

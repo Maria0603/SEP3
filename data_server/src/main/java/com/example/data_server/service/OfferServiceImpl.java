@@ -29,12 +29,90 @@ import java.util.Optional;
     this.offerRepository = offerRepository;
   }
 
+  /*
+  message SaveOfferRequest {
+  string title = 1;  string description = 2;  int32 originalPrice = 3;  int32 offerPrice = 4;
+  int32 numberOfItems = 5;  Date pickupDate = 6;  Time pickupTimeStart = 7;
+  Time pickupTimeEnd = 8;  repeated string categories = 9;   bytes image = 10;
+
+  TODO for Matej: The data_server is expecting the image as an array of bytes
+}
+   */
+  @Override public void saveOffer(SaveOfferRequest request,
+      StreamObserver<SaveOfferResponse> responseObserver)
+  {
+    System.out.println("Request for save offer");
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+
+    //The offer has no id or image for now
+    OfferDao offer = new OfferDao();
+
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+
+    offer.setPickupDate(
+        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
+    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
+        request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+    offer.setCategories(categories);
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setStatus(Status.AVAILABLE.getStatus());
+
+    //We save the offer in the database to extract the id
+    OfferDao createdOffer = offerRepository.save(offer);
+
+    //The image will be in the file system as {id}.jpg
+    String offerId = createdOffer.getId();
+
+    //TODO: delete this part when working with the image, otherwise you will have a bunch of red images
+    //<------- for testing purposes
+    String imagePath = null;
+    try
+    {
+      imagePath = saveImage(createImageByteArray(), offerId);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    // ----------------------->
+    //correct line:
+    //String imagePath = saveImage(request.getImage().toByteArray(), offerId);
+
+    //we update the previously null image
+    createdOffer.setImagePath(imagePath);
+    offerRepository.save(createdOffer);
+
+    //We build the response with everything
+    SaveOfferResponse response = SaveOfferResponse.newBuilder()
+        .setId(createdOffer.getId()).setTitle(createdOffer.getTitle())
+        .setDescription(createdOffer.getDescription())
+        .setOfferPrice(createdOffer.getOfferPrice())
+        .setOriginalPrice(createdOffer.getOriginalPrice())
+        .setNumberOfItems(createdOffer.getNumberOfItems()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                createdOffer.getPickupDate())).setPickupTimeStart(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                createdOffer.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                createdOffer.getPickupTimeEnd())).setImage(request.getImage())
+        .addAllCategories(createdOffer.getCategories()).build();
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
   @Override public void getAvailableOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver)
   {
     System.out.println("Request for all offers");
-    List<OfferDao> availableOffers = offerRepository.findByStatus(Status.AVAILABLE.getStatus());
-    //List<OfferDao> availableOffers = offerRepository.findAll();
+    List<OfferDao> availableOffers = offerRepository.findByStatus(
+        Status.AVAILABLE.getStatus());
 
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
@@ -67,79 +145,13 @@ import java.util.Optional;
         new Exception("Error: No offer with ID " + request.getId()));
   }
 
-  @Override public void saveOffer(SaveOfferRequest request,
-      StreamObserver<SaveOfferResponse> responseObserver)
-  {
-    System.out.println("Request for save offer");
-
-    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-
-    //The offer has no id or image for now
-    OfferDao offer = new OfferDao();
-
-    offer.setTitle(request.getTitle());
-    offer.setDescription(request.getDescription());
-    offer.setPrice(request.getPrice());
-    offer.setPickupDate(
-        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
-        request.getPickupTimeStart()));
-    offer.setPickupTimeEnd(
-        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
-    offer.setCategories(categories);
-    offer.setNumberOfFoodBags(request.getNumberOfFoodBags());
-    offer.setStatus(Status.AVAILABLE.getStatus());
-
-    //We save the offer in the database to extract the id
-    OfferDao createdOffer = offerRepository.save(offer);
-
-    //The image will be in the file system as {id}.jpg
-    String offerId = createdOffer.getId();
-
-    //TODO: delete this part when working with the image, otherwise you will have a bunch of red images
-    //<------- for testing purposes
-    String imagePath = null;
-    try
-    {
-      imagePath = saveImage(createImageByteArray(), offerId);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    // ----------------------->
-    //correct line
-    //String imagePath = saveImage(request.getImage().toByteArray(), offerId);
-
-    //we update the previously null image
-    createdOffer.setImagePath(imagePath);
-    offerRepository.save(createdOffer);
-
-    //We build the response with everything
-    SaveOfferResponse response = SaveOfferResponse.newBuilder()
-        .setId(createdOffer.getId()).setTitle(createdOffer.getTitle())
-        .setDescription(createdOffer.getDescription())
-        .setPrice(createdOffer.getPrice())
-        .setNumberOfFoodBags(createdOffer.getNumberOfFoodBags()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                createdOffer.getPickupDate())).setPickupTimeStart(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
-                createdOffer.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
-                createdOffer.getPickupTimeEnd())).setImage(request.getImage())
-        .addAllCategories(createdOffer.getCategories()).build();
-
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
-  }
-
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
-    System.out.println("Extracted image:" + ByteString.copyFrom(extractImage(offerDao.getImagePath())));
     return OfferResponse.newBuilder().setId(offerDao.getId())
         .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
-        .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
-        .setNumberOfFoodBags(offerDao.getNumberOfFoodBags()).setPickupDate(
+        .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
+        .setOriginalPrice(offerDao.getOriginalPrice())
+        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
                 offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
@@ -171,6 +183,8 @@ import java.util.Optional;
     return pathToImage;
   }
 
+
+  //Method to create a dummy red image, for testing purposes; do not delete
   private byte[] createImageByteArray() throws IOException
   {
     // Create a 200x200 BufferedImage with RGB color

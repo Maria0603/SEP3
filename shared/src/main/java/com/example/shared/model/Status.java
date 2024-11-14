@@ -5,7 +5,7 @@ public enum Status
   AVAILABLE("available"), RESERVED("reserved");
   private final String status;
 
-  private Status(String status)
+  Status(String status)
   {
     this.status = status;
   }
