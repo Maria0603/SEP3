@@ -1,24 +1,17 @@
 package com.example.data_server;
 
-import com.example.data_server.service.GrpcServer;
+import com.example.data_server.service.OfferGrpcServer;
 import com.example.data_server.service.OfferServiceImpl;
-import io.grpc.Server;
-import io.grpc.ServerBuilder;
-import io.grpc.BindableService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-
-import java.io.IOException;
 
 @SpringBootApplication @EnableMongoRepositories public class DataServerApplication implements CommandLineRunner
 {
 
-  @Autowired GrpcServer grpcServer;
-  @Autowired private OfferServiceImpl offerServiceImpl;
+  @Autowired OfferGrpcServer offerGrpcServer;
 
   public static void main(String[] args)
   {
@@ -28,17 +21,17 @@ import java.io.IOException;
 
   @Override public void run(String... args) throws Exception
   {
-    grpcServer.start();
+    offerGrpcServer.start();
   }
-  /*
+/*
   @Bean
   public Server grpcOfferService() throws IOException
   {
     Server server = ServerBuilder.forPort(8081)
-        .addService((BindableService) offerServiceImpl)
+        .addService(offerServiceImpl)
         .build()
         .start();
-    System.out.println("gRPC offer server started on port: 50051");
+    System.out.println("gRPC offer server started on port: 8081");
     handleShutdownServer(server);
     return server;
   }

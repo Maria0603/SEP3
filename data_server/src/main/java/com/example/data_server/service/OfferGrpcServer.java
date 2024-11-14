@@ -3,17 +3,16 @@ package com.example.data_server.service;
 import com.example.data_server.repository.OfferRepository;
 import io.grpc.Server;
 import io.grpc.ServerBuilder;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class GrpcServer
+public class OfferGrpcServer
 {
   private Server server;
 
   private final OfferRepository offerRepository;
 
-  public GrpcServer(OfferRepository offerRepository)
+  public OfferGrpcServer(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
   }
@@ -25,7 +24,7 @@ public class GrpcServer
 
     Runtime.getRuntime().addShutdownHook(new Thread(() -> {
       System.err.println("Shutting down since JVM is shutting down.");
-      GrpcServer.this.stop();
+      OfferGrpcServer.this.stop();
     }));
     server.awaitTermination();
   }

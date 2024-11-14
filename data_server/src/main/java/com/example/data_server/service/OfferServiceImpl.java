@@ -3,21 +3,16 @@ package com.example.data_server.service;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.OfferDao;
-import com.example.shared.model.Status;
 import com.google.protobuf.ByteString;
-import com.google.type.DateTime;
 import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.data_server.repository.OfferRepository;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.*;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -26,7 +21,7 @@ import java.util.Optional;
     extends OfferServiceGrpc.OfferServiceImplBase
 {
   private OfferRepository offerRepository;
-  private final String uploadDir = "../images";
+  private final String uploadDirectory = "data_server/images/";
 
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
@@ -69,7 +64,8 @@ import java.util.Optional;
       responseObserver.onCompleted();
     }
 
-    responseObserver.onError(new Exception("Error: No offer with ID " + request.getId()));
+    responseObserver.onError(
+        new Exception("Error: No offer with ID " + request.getId()));
   }
 
   @Override public void saveOffer(SaveOfferRequest request,
@@ -87,8 +83,8 @@ import java.util.Optional;
     offer.setPrice(request.getPrice());
     offer.setPickupDate(
         DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-    offer.setPickupTimeStart(
-        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()));
+    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
+        request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
         DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     offer.setCategories(categories);
@@ -99,7 +95,22 @@ import java.util.Optional;
 
     //The image will be in the file system as {id}.jpg
     String offerId = createdOffer.getId();
-    String imagePath = saveImage(request.getImage().toByteArray(), offerId);
+    // Java code for creating a 200x200 grayscale image byte array
+
+    //TODO: delete this part when working with the image, otherwise you will have a bunch of red images
+    //<------- for testing purposes
+    String imagePath = null;
+    try
+    {
+      imagePath = saveImage(createImageByteArray(), offerId);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
+    // ----------------------->
+    //correct line
+    //String imagePath = saveImage(request.getImage().toByteArray(), offerId);
 
     //we update the previously null image
     createdOffer.setImagePath(imagePath);
@@ -141,23 +152,61 @@ import java.util.Optional;
 
   private String saveImage(byte[] imageBytes, String offerId)
   {
-    String imageDir = "images";
-    String imagePath = imageDir + "/" + offerId + ".jpg";
-    File imageFile = new File(imagePath);
-    try (FileOutputStream fos = new FileOutputStream(imageFile))
+    String pathToImage = null;
+    try
     {
-      fos.write(imageBytes);
+      ByteArrayInputStream inStreamObj = new ByteArrayInputStream(imageBytes);
+      BufferedImage newImage = ImageIO.read(inStreamObj);
+
+      pathToImage = uploadDirectory + offerId + ".jpg";
+      ImageIO.write(newImage, "jpg", new File(pathToImage));
     }
     catch (IOException e)
     {
       e.printStackTrace();
-      /*responseStreamObserver.onError(
+       /*responseStreamObserver.onError(
           io.grpc.Status.INTERNAL.withDescription("Error processing image.")
               .asRuntimeException());*/
     }
-    return imagePath;
+    return pathToImage;
   }
 
+  private byte[] createImageByteArray() throws IOException
+  {
+    // Create a 200x200 BufferedImage with RGB color
+    BufferedImage bufferedImage = new BufferedImage(200, 200,
+        BufferedImage.TYPE_INT_RGB);
+
+    // Fill the image with a solid color
+    for (int y = 0; y < 200; y++)
+      for (int x = 0; x < 200; x++)
+        bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
+
+    // Convert BufferedImage to byte array in JPEG format
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(bufferedImage, "jpg", baos);
+    return baos.toByteArray();
+  }
+
+  private byte[] extractImage(String imagePath)
+  {
+    try
+    {
+      BufferedImage image = ImageIO.read(new File(imagePath));
+      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+      ImageIO.write(image, "jpg", outStreamObj);
+      return outStreamObj.toByteArray();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+       /*responseStreamObserver.onError(
+          io.grpc.Status.INTERNAL.withDescription("Error processing image.")
+              .asRuntimeException());*/
+    }
+    return null;
+  }
+/*
   private byte[] extractImage(String imagePath)
   {
     Path filePath = Paths.get(uploadDir, imagePath).normalize();
@@ -169,10 +218,9 @@ import java.util.Optional;
     catch (IOException e)
     {
       e.printStackTrace();
-      /*responseObserver.onError(new Throwable(
-          String.valueOf(ResponseEntity.status(HttpStatus.NOT_FOUND))));*/
+
     }
     return imageBytes;
-  }
+  }*/
 
 }
