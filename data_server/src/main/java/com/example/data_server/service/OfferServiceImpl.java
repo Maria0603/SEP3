@@ -44,7 +44,8 @@ import java.util.Optional;
 
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
-      offerListBuilder.addOffer(buildOfferResponse(offerDao)); //method to build the response
+      offerListBuilder.addOffer(
+          buildOfferResponse(offerDao)); //method to build the response
 
     OfferList offerListResponse = offerListBuilder.build();
     responseObserver.onNext(offerListResponse);
@@ -61,16 +62,15 @@ import java.util.Optional;
     {
       OfferDao offerDao = offer.get();
 
-      OfferResponse offerResponse=buildOfferResponse(offerDao); //method to build the response
+      OfferResponse offerResponse = buildOfferResponse(
+          offerDao); //method to build the response
 
       responseObserver.onNext(offerResponse);
       responseObserver.onCompleted();
     }
 
-    //throw exception or send http status code
+    responseObserver.onError(new Exception("Error: No offer with ID " + request.getId()));
   }
-
-
 
   @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver)
@@ -78,18 +78,6 @@ import java.util.Optional;
     System.out.println("Request for save offer");
 
     ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-
-    //create the date and time as grpc Time and Date messages
-    Date pickupDate = Date.newBuilder()
-        .setYear(request.getPickupDate().getYear())
-        .setMonth(request.getPickupDate().getMonth())
-        .setDay(request.getPickupDate().getDay()).build();
-    Time pickupTimeStart = Time.newBuilder()
-        .setHour(request.getPickupTimeStart().getHour())
-        .setMinute(request.getPickupTimeStart().getMinute()).build();
-    Time pickupTimeEnd = Time.newBuilder()
-        .setHour(request.getPickupTimeEnd().getHour())
-        .setMinute(request.getPickupTimeEnd().getMinute()).build();
 
     //The offer has no id or image for now
     OfferDao offer = new OfferDao();
@@ -100,9 +88,9 @@ import java.util.Optional;
     offer.setPickupDate(
         DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
     offer.setPickupTimeStart(
-        DateTimeConverter.convertGrpcTimeToTimeDao(pickupTimeStart));
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
-        DateTimeConverter.convertGrpcTimeToTimeDao(pickupTimeEnd));
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     offer.setCategories(categories);
     offer.setNumberOfFoodBags(request.getNumberOfFoodBags());
 
@@ -137,9 +125,8 @@ import java.util.Optional;
 
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
-    return OfferResponse.newBuilder()
-        .setId(offerDao.getId()).setTitle(offerDao.getTitle())
-        .setDescription(offerDao.getDescription())
+    return OfferResponse.newBuilder().setId(offerDao.getId())
+        .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
         .setStatus(offerDao.getStatus()).setPrice(offerDao.getPrice())
         .setNumberOfFoodBags(offerDao.getNumberOfFoodBags()).setPickupDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
