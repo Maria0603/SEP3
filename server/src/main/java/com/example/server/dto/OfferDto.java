@@ -1,15 +1,15 @@
 package com.example.server.dto;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class OfferDto {
 
   private String id;
   private String title;
   private String description;
-  private int price;
-  private int numberOfFoodBags;
+  private int originalPrice;
+  private int offerPrice;
+  private int numberOfItems;
   private DateDto pickupDate;
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
@@ -77,24 +77,24 @@ public class OfferDto {
     this.categories = categories;
   }
 
-  public int getPrice()
+  public int getOriginalPrice()
   {
-    return price;
+    return originalPrice;
   }
 
-  public void setPrice(int price)
+  public void setOriginalPrice(int originalPrice)
   {
-    this.price = price;
+    this.originalPrice = originalPrice;
   }
 
-  public int getNumberOfFoodBags()
+  public int getNumberOfItems()
   {
-    return numberOfFoodBags;
+    return numberOfItems;
   }
 
-  public void setNumberOfFoodBags(int numberOfFoodBags)
+  public void setNumberOfItems(int numberOfItems)
   {
-    this.numberOfFoodBags = numberOfFoodBags;
+    this.numberOfItems = numberOfItems;
   }
 
   public TimeDto getPickupTimeEnd()
@@ -127,5 +127,13 @@ public class OfferDto {
     this.pickupDate = pickupDate;
   }
 
+  public int getOfferPrice()
+  {
+    return offerPrice;
+  }
 
+  public void setOfferPrice(int offerPrice)
+  {
+    this.offerPrice = offerPrice;
+  }
 }

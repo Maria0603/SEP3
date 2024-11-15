@@ -1,4 +1,4 @@
-package com.example.server.Database;
+package com.example.data_server.config;
 
 import com.example.shared.dao.OfferDao;
 import org.springframework.context.annotation.Bean;

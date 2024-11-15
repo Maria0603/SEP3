@@ -20,7 +20,7 @@ import io.grpc.ManagedChannelBuilder;
 
   public OfferList getAllAvailableOffers(EmptyMessage request)
   {
-    return blockingStub.getAllOffers(request);
+    return blockingStub.getAvailableOffers(request);
   }
 
   public SaveOfferResponse saveOffer(SaveOfferRequest request)

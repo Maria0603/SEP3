@@ -1,4 +1,4 @@
-package com.example.server.Database;
+package com.example.server.config;
 
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;

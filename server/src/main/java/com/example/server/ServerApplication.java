@@ -16,6 +16,9 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -25,9 +28,6 @@ import java.util.ArrayList;
 
 @SpringBootApplication @EnableMongoRepositories(basePackages = "com.example.server") @EnableCaching public class ServerApplication
 {
- // @Autowired private FoodManagementServiceImpl foodManagementServiceImpl;
-  //@Autowired private CollectServiceImpl collectServiceImpl;
-
   public static void main(String[] args)
   {
     ApplicationContext context = SpringApplication.run(ServerApplication.class, args);
@@ -46,12 +46,19 @@ import java.util.ArrayList;
         .build();
     Time pickupTimeStart = Time.newBuilder().setHour(10).setMinute(30).build();
     Time pickupTimeEnd = Time.newBuilder().setHour(12).setMinute(30).build();
-    byte[] imageBytes = loadImageAsByteArray(
-        "../../../../../../../data_server/src/main/images/image.jpg");
+    byte[] imageBytes=null;
+    try
+    {
+      imageBytes = createImageByteArray();
+    }
+    catch(IOException e)
+    {
+      e.printStackTrace();
+    }
 
     SaveOfferRequest request = SaveOfferRequest.newBuilder()
-        .setTitle("Titleeeee").setDescription("Description").setPrice(20)
-        .setNumberOfFoodBags(3).addAllCategories(categories)
+        .setTitle("Titleeeee").setDescription("Description").setOfferPrice(20).setOriginalPrice(300)
+        .setNumberOfItems(3).addAllCategories(categories)
         .setPickupDate(pickupDate).setPickupTimeStart(pickupTimeStart)
         .setPickupTimeEnd(pickupTimeEnd)
         .setImage(ByteString.copyFrom(imageBytes)).build();
@@ -81,39 +88,23 @@ import java.util.ArrayList;
       return new byte[0]; // Return an empty byte array if there's an error
     }
   }
-
-/*
-  @Bean
-  public Server grpcFoodManagementService() throws IOException
+  //Method to create a dummy red image, for testing purposes; do not delete
+  private static byte[] createImageByteArray() throws IOException
   {
-    Server server = ServerBuilder.forPort(50051)
-        .addService((BindableService) foodManagementServiceImpl)
-        .build()
-        .start();
-    System.out.println("gRPC food management server started on port: 50051");
-    handleShutdownServer(server);
-    return server;
+    // Create a 200x200 BufferedImage with RGB color
+    BufferedImage bufferedImage = new BufferedImage(200, 200,
+        BufferedImage.TYPE_INT_RGB);
+
+    // Fill the image with a solid color
+    for (int y = 0; y < 200; y++)
+      for (int x = 0; x < 200; x++)
+        bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
+
+    // Convert BufferedImage to byte array in JPEG format
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(bufferedImage, "jpg", baos);
+    return baos.toByteArray();
   }
 
-  @Bean
-  public Server grpcCollectService() throws IOException
-  {
-    Server server = ServerBuilder.forPort(50052)
-        .addService((BindableService) collectServiceImpl)
-        .build()
-        .start();
-    System.out.println("gRPC collect server started on port: 50052");
-    handleShutdownServer(server);
-    return server;
-  }
-
-  private void handleShutdownServer(Server server)
-  {
-    Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-      System.out.println("Shutting down gRPC server...");
-      server.shutdown();
-      System.out.println("gRPC server shut down.");
-    }));
-  }*/
 
 }

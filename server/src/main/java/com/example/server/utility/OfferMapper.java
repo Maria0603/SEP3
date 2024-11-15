@@ -1,18 +1,12 @@
 package com.example.server.utility;
 
-import com.example.sep3.grpc.Date;
-import com.example.sep3.grpc.SaveOfferRequest;
-import com.example.sep3.grpc.Time;
 import com.example.server.dto.CreateOfferRequestDto;
 import com.example.server.dto.OfferDto;
-import com.example.shared.dao.DateDao;
 import com.example.shared.dao.OfferDao;
-import com.example.shared.dao.TimeDao;
-import com.google.protobuf.ByteString;
 
 public class OfferMapper
 {
-//Map CreateOfferRequestDto to OfferDao
+  //Map CreateOfferRequestDto to OfferDao
   public static OfferDao toOfferDao(CreateOfferRequestDto createOfferRequestDto)
   {
     OfferDao offerDao = new OfferDao();
@@ -20,8 +14,9 @@ public class OfferMapper
     offerDao.setTitle(createOfferRequestDto.getTitle());
     offerDao.setDescription(createOfferRequestDto.getDescription());
     offerDao.setCategories(createOfferRequestDto.getCategories());
-    offerDao.setPrice(createOfferRequestDto.getPrice());
-    offerDao.setNumberOfFoodBags(createOfferRequestDto.getNumberOfFoodBags());
+    offerDao.setOriginalPrice(createOfferRequestDto.getOriginalPrice());
+    offerDao.setOfferPrice(createOfferRequestDto.getOfferPrice());
+    offerDao.setNumberOfItems(createOfferRequestDto.getNumberOfItems());
 
     // Convert DateDto to DateDao and TimeDto to TimeDao for saving in the DB
     offerDao.setPickupDate(

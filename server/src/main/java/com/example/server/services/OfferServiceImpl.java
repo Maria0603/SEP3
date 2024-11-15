@@ -1,4 +1,4 @@
-package com.example.server.Services;
+package com.example.server.services;
 
 import com.example.sep3.grpc.EmptyMessage;
 import com.example.sep3.grpc.OfferList;
@@ -19,7 +19,7 @@ import org.springframework.stereotype.Service;
     System.out.println("OfferServiceImpl created");
   }
 
-  public OfferList getAllAvailableOffers()
+  public OfferList getAvailableOffers()
   {
     EmptyMessage request = EmptyMessage.newBuilder().build();
     return client.getAllAvailableOffers(request);

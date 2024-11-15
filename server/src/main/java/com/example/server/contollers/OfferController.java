@@ -1,4 +1,4 @@
-package com.example.server.Contollers;
+package com.example.server.contollers;
 
 import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.SaveOfferRequest;
@@ -6,21 +6,11 @@ import com.example.sep3.grpc.SaveOfferResponse;
 import com.example.sep3.grpc.Time;
 import com.example.server.GrpcClient;
 import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.DateDto;
-import com.example.server.dto.OfferDto;
-import com.example.server.dto.TimeDto;
 import com.example.server.utility.DateConverter;
-import com.example.server.utility.OfferMapper;
 import com.example.server.utility.TimeConverter;
-import com.example.shared.dao.DateDao;
-import com.example.shared.dao.OfferDao;
-import com.example.shared.dao.TimeDao;
-import com.google.protobuf.ByteString;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import static org.apache.tomcat.util.http.FastHttpDateFormat.parseDate;
 
 @RestController @RequestMapping("/offers") public class OfferController
 {

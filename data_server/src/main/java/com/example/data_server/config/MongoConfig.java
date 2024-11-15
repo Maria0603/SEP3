@@ -1,4 +1,4 @@
-package com.example.data_server.repository;
+package com.example.data_server.config;
 
 import com.example.data_server.utility.StringToDateDaoConverter;
 import com.example.data_server.utility.StringToTimeDaoConverter;
