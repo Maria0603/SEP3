@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.*;
     this.grpcClient = grpcClient;
   }
 
-  @PostMapping("/create") public ResponseEntity<String> createOffer(
+  @PostMapping("/new") public ResponseEntity<String> saveOffer(
       @RequestBody CreateOfferRequestDto offerRequestDto)
   {
     try
@@ -43,8 +43,9 @@ import org.springframework.web.bind.annotation.*;
     // Mapping simple fields
     saveOfferRequestBuilder.setTitle(createOfferRequestDto.getTitle());
     saveOfferRequestBuilder.setDescription(createOfferRequestDto.getDescription());
-    saveOfferRequestBuilder.setPrice(createOfferRequestDto.getPrice());
-    saveOfferRequestBuilder.setNumberOfFoodBags(createOfferRequestDto.getNumberOfFoodBags());
+    saveOfferRequestBuilder.setOriginalPrice(createOfferRequestDto.getOriginalPrice());
+    saveOfferRequestBuilder.setOfferPrice(createOfferRequestDto.getOfferPrice());
+    saveOfferRequestBuilder.setNumberOfItems(createOfferRequestDto.getNumberOfItems());
     saveOfferRequestBuilder.addAllCategories(createOfferRequestDto.getCategories());
     saveOfferRequestBuilder.setImage(com.google.protobuf.ByteString.copyFrom(createOfferRequestDto.getImage()));
 

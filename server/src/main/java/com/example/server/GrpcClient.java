@@ -17,8 +17,7 @@ import io.grpc.ManagedChannelBuilder;
     blockingStub=OfferServiceGrpc.newBlockingStub(channel);
   }
 
-
-  public OfferList getAllAvailableOffers(EmptyMessage request)
+  public OfferList getAvailableOffers(EmptyMessage request)
   {
     return blockingStub.getAvailableOffers(request);
   }

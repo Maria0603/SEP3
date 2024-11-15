@@ -22,7 +22,7 @@ import org.springframework.stereotype.Service;
   public OfferList getAvailableOffers()
   {
     EmptyMessage request = EmptyMessage.newBuilder().build();
-    return client.getAllAvailableOffers(request);
+    return client.getAvailableOffers(request);
   }
 
 }

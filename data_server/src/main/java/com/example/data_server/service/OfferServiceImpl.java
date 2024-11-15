@@ -6,6 +6,7 @@ import com.example.shared.dao.OfferDao;
 import com.example.shared.model.Status;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
+import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.example.data_server.repository.OfferRepository;
@@ -18,7 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@Service public class OfferServiceImpl
+@GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase
 {
   private OfferRepository offerRepository;
@@ -27,6 +28,7 @@ import java.util.Optional;
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
+    System.out.println("Data Server started");
   }
 
   /*
@@ -182,7 +184,6 @@ import java.util.Optional;
     }
     return pathToImage;
   }
-
 
   //Method to create a dummy red image, for testing purposes; do not delete
   private byte[] createImageByteArray() throws IOException

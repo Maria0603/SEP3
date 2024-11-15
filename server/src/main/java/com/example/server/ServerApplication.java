@@ -30,13 +30,15 @@ import java.util.ArrayList;
 {
   public static void main(String[] args)
   {
-    ApplicationContext context = SpringApplication.run(ServerApplication.class, args);
+    ApplicationContext context = SpringApplication.run(ServerApplication.class,
+        args);
     System.out.println("Server running...");
 
-    //GrpcClient grpcClient = new GrpcClient("localhost", 9091);
+    //GrpcClient grpcClient = new GrpcClient("localhost", 8081);
 
     GrpcClient grpcClient = context.getBean(GrpcClient.class);
-    OfferList offerList = grpcClient.getAllAvailableOffers(EmptyMessage.newBuilder().build());
+    OfferList offerList = grpcClient.getAvailableOffers(
+        EmptyMessage.newBuilder().build());
     System.out.println("Offers:  " + offerList);
 
     ArrayList<String> categories = new ArrayList<>();
@@ -46,19 +48,19 @@ import java.util.ArrayList;
         .build();
     Time pickupTimeStart = Time.newBuilder().setHour(10).setMinute(30).build();
     Time pickupTimeEnd = Time.newBuilder().setHour(12).setMinute(30).build();
-    byte[] imageBytes=null;
+    byte[] imageBytes = null;
     try
     {
       imageBytes = createImageByteArray();
     }
-    catch(IOException e)
+    catch (IOException e)
     {
       e.printStackTrace();
     }
 
     SaveOfferRequest request = SaveOfferRequest.newBuilder()
-        .setTitle("Titleeeee").setDescription("Description").setOfferPrice(20).setOriginalPrice(300)
-        .setNumberOfItems(3).addAllCategories(categories)
+        .setTitle("Titleeeee").setDescription("Description").setOfferPrice(20)
+        .setOriginalPrice(300).setNumberOfItems(3).addAllCategories(categories)
         .setPickupDate(pickupDate).setPickupTimeStart(pickupTimeStart)
         .setPickupTimeEnd(pickupTimeEnd)
         .setImage(ByteString.copyFrom(imageBytes)).build();
@@ -88,6 +90,7 @@ import java.util.ArrayList;
       return new byte[0]; // Return an empty byte array if there's an error
     }
   }
+
   //Method to create a dummy red image, for testing purposes; do not delete
   private static byte[] createImageByteArray() throws IOException
   {
@@ -105,6 +108,5 @@ import java.util.ArrayList;
     ImageIO.write(bufferedImage, "jpg", baos);
     return baos.toByteArray();
   }
-
 
 }
