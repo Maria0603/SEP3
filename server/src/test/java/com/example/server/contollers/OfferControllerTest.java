@@ -74,7 +74,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     }
   }
 
-  @Test void testZeroValues() throws Exception
+  @Test void saveOffer_testZeroValues() throws Exception
   {
     validRequest.setTitle("");
     performPostAndExpectError("Title must be between 3 and 20 characters");
@@ -128,7 +128,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     performPostAndExpectError("Image must be provided");
   }
 
-  @Test void testOneValidValue() throws Exception
+  @Test void saveOffer_testOneValidValue() throws Exception
   {
     when(offerService.saveOffer(any(CreateOfferRequestDto.class))).thenReturn(
         "12345");
@@ -138,7 +138,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
             content().string(containsString("Offer created with ID: 12345")));
   }
 
-  @Test void testManyValues() throws Exception
+  @Test void saveOffer_testManyValues() throws Exception
   {
     validRequest.setCategories(
         new ArrayList<>(List.of("Category1", "Category2", "Category3")));
@@ -150,7 +150,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
             content().string(containsString("Offer created with ID: 12345")));
   }
 
-  @Test void testBoundaryValues() throws Exception
+  @Test void saveOffer_testBoundaryValues() throws Exception
   {
     validRequest.setTitle("T");
     performPostAndExpectError("Title must be between 3 and 20 characters");
@@ -169,7 +169,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
         .content(asJsonString(validRequest))).andExpect(status().isOk());
   }
 
-  @Test void testIllegalValues() throws Exception
+  @Test void saveOffer_testIllegalValues() throws Exception
   {
     validRequest.setTitle(null);
     performPostAndExpectError("Title must be between 3 and 20 characters");
@@ -180,8 +180,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
   }
 
   @Test
-  void testPickupDateTimeNotInFutureReturnsBadRequest() throws Exception {
-    // Simulate the service throwing an exception for invalid pickup times
+  void saveOffer_testPickupDateTimeNotInFutureReturnsBadRequest() throws Exception {
     CreateOfferRequestDto invalidRequest = new CreateOfferRequestDto();
     invalidRequest.setTitle("Valid Title");
     invalidRequest.setDescription("This is a valid description.");
@@ -219,7 +218,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     doThrow(new IllegalArgumentException("Pickup date and time must be in the future"))
         .when(offerService).saveOffer(Mockito.any(CreateOfferRequestDto.class));
 
-    // Perform the test
     mockMvc.perform(post("/offers")
             .contentType(MediaType.APPLICATION_JSON)
             .content(asJsonString(invalidRequest)))
