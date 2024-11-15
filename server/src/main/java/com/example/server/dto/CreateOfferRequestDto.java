@@ -1,18 +1,43 @@
 package com.example.server.dto;
 
-import java.util.ArrayList;
+import com.example.server.converters.TimeConverter;
+import jakarta.validation.constraints.*;
+import java.util.List;
 
 public class CreateOfferRequestDto
 {
-  private String title, description;
-  private ArrayList<String> categories;
-  private int originalPrice, offerPrice, numberOfItems;
+  @NotNull(message = "Title must be between 3 and 20 characters") @Size(min = 3, max = 20, message = "Title must be between 3 and 20 characters") private String title;
 
-  private DateDto pickupDate;
-  private TimeDto pickupTimeStart;
-  private TimeDto pickupTimeEnd;
+  @NotNull(message = "Description must be between 20 and 50 characters") @Size(min = 20, max = 50, message = "Description must be between 20 and 50 characters") private String description;
 
-  private byte[] image;
+  @NotNull(message = "Original price must be a positive integer") @Positive(message = "Original price must be a positive integer") private Integer originalPrice;
+
+  @NotNull(message = "Offer price must be a positive integer and less than the original price") @Positive(message = "Offer price must be a positive integer and less than the original price") private Integer offerPrice;
+
+  @AssertTrue(message = "Offer price must be a positive integer and less than the original price") private boolean isOfferPriceValid()
+  {
+    return offerPrice != null && originalPrice != null
+        && offerPrice < originalPrice;
+  }
+
+  @NotNull(message = "Number of items must be a positive integer") @Positive(message = "Number of items must be a positive integer") private Integer numberOfItems;
+
+  @NotNull(message = "At least one category must be provided") @Size(min = 1, message = "At least one category must be provided") private List<String> categories;
+
+  @NotNull(message = "Pickup date must be a valid date") private DateDto pickupDate;
+
+  @NotNull(message = "Pickup start time must be provided") private TimeDto pickupTimeStart;
+
+  @NotNull(message = "Pickup end time must be provided") private TimeDto pickupTimeEnd;
+
+  @AssertTrue(message = "Pickup end time must be after start time") private boolean isPickupTimeValid()
+  {
+    return pickupTimeStart != null && pickupTimeEnd != null
+        && (TimeConverter.convertTimeDtoToLocalTime(pickupTimeEnd)
+        .isAfter(TimeConverter.convertTimeDtoToLocalTime(pickupTimeStart)));
+  }
+
+  @NotNull(message = "Image must be provided") private byte[] image;
 
   public byte[] getImage()
   {
@@ -33,6 +58,7 @@ public class CreateOfferRequestDto
   {
     this.title = title;
   }
+
   public String getDescription()
   {
     return description;
@@ -43,13 +69,12 @@ public class CreateOfferRequestDto
     this.description = description;
   }
 
-  public ArrayList<String> getCategories()
+  public List<String> getCategories()
   {
     return categories;
   }
 
-
-  public void setCategories(ArrayList<String> categories)
+  public void setCategories(List<String> categories)
   {
     this.categories = categories;
   }

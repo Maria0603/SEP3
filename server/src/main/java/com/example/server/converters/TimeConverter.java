@@ -4,6 +4,8 @@ import com.example.sep3.grpc.Time;
 import com.example.server.dto.TimeDto;
 import com.example.shared.dao.TimeDao;
 
+import java.time.LocalTime;
+
 public class TimeConverter
 {
   // Convert TimeDto to TimeDao
@@ -42,4 +44,11 @@ public class TimeConverter
     return Time.newBuilder().setHour(timeDto.getHour())
         .setMinute(timeDto.getMinute()).build();
   }
+
+  //Convert TimeDto to LocalTime
+  public static LocalTime convertTimeDtoToLocalTime(TimeDto timeDto)
+  {
+    return LocalTime.of(timeDto.getHour(), timeDto.getMinute());
+  }
+
 }
