@@ -2,7 +2,8 @@ package com.example.server.dto;
 
 import java.util.ArrayList;
 
-public class OfferDto {
+public class OfferResponseDto
+{
 
   private String id;
   private String title;

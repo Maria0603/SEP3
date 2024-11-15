@@ -28,7 +28,7 @@ import java.util.Optional;
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
-    System.out.println("Data Server started");
+    System.out.println("OfferServiceImpl created");
   }
 
   /*

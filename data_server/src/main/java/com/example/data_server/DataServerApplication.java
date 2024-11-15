@@ -14,6 +14,7 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
   public static void main(String[] args)
   {
     SpringApplication.run(DataServerApplication.class, args);
+    System.out.println("Data Server running...");
 
   }
 

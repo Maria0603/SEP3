@@ -4,12 +4,12 @@ import com.example.sep3.grpc.*;
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
 
- public class GrpcClient
+ public class DataServerStub
 {
   private final ManagedChannel channel;
   private final OfferServiceGrpc.OfferServiceBlockingStub blockingStub;
 
-  public GrpcClient(String host, int port)
+  public DataServerStub(String host, int port)
   {
     channel = ManagedChannelBuilder.forAddress(host, port).usePlaintext()
         .usePlaintext().build();

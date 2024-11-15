@@ -1,34 +1,70 @@
 package com.example.server.Client;
-/*
-import io.grpc.ManagedChannel;
-import io.grpc.ManagedChannelBuilder;
-import proto.CollectServiceGrpc.*;
-import static proto.CollectServiceGrpc.newBlockingStub;
 
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+/*
 public class TestClient
 {
   public static void main(String[] args)
   {
 
-    ManagedChannel managedChannel = ManagedChannelBuilder.forAddress(
-        "localhost", 50051).usePlaintext().build();
+    DataServerStub dataServerStub = context.getBean(DataServerStub.class);
+    OfferList offerList = dataServerStub.getAvailableOffers(
+        EmptyMessage.newBuilder().build());
+    System.out.println("Offers:  " + offerList);
 
-    CollectServiceBlockingStub stub = newBlockingStub(
-        managedChannel);
+    ArrayList<String> categories = new ArrayList<>();
+    categories.add("Food");
+    categories.add("Vegan");
+    Date pickupDate = Date.newBuilder().setDay(3).setMonth(6).setYear(2020)
+        .build();
+    Time pickupTimeStart = Time.newBuilder().setHour(10).setMinute(30).build();
+    Time pickupTimeEnd = Time.newBuilder().setHour(12).setMinute(30).build();
+    byte[] imageBytes = null;
+    try
+    {
+      imageBytes = createImageByteArray();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+    }
 
-    EmptyMessage request = EmptyMessage.newBuilder().build();
+    SaveOfferRequest request = SaveOfferRequest.newBuilder()
+        .setTitle("Titleeeee").setDescription("Description").setOfferPrice(20)
+        .setOriginalPrice(300).setNumberOfItems(3).addAllCategories(categories)
+        .setPickupDate(pickupDate).setPickupTimeStart(pickupTimeStart)
+        .setPickupTimeEnd(pickupTimeEnd)
+        .setImage(ByteString.copyFrom(imageBytes)).build();
 
-    FoodBagList response = stub.getFoodBags(request);
+    SaveOfferResponse saveResponse = dataServerStub.saveOffer(request);
 
-    System.out.println(
-        "***************************************************************");
-    System.out.println("Received response: " + response.getFoodBagsList());
-    System.out.println(
-        "===============================================================");
+    System.out.println("Saved offer id:   " + saveResponse.getId());
 
-    managedChannel.shutdown();
   }
+  //Method to create a dummy red image, for testing purposes; do not delete
+  private static byte[] createImageByteArray() throws IOException
+  {
+    // Create a 200x200 BufferedImage with RGB color
+    BufferedImage bufferedImage = new BufferedImage(200, 200,
+        BufferedImage.TYPE_INT_RGB);
+
+    // Fill the image with a solid color
+    for (int y = 0; y < 200; y++)
+      for (int x = 0; x < 200; x++)
+        bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
+
+    // Convert BufferedImage to byte array in JPEG format
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(bufferedImage, "jpg", baos);
+    return baos.toByteArray();
+  }
+
 }
 
+  }
+}
 
 */

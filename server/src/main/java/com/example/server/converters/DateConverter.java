@@ -1,4 +1,4 @@
-package com.example.server.utility;
+package com.example.server.converters;
 
 import com.example.sep3.grpc.Date;
 import com.example.server.dto.DateDto;
