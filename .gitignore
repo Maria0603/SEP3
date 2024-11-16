@@ -1,17 +1,23 @@
 # .NET (ASP.NET) specific files
 # Build results
-client/bin/
-client/obj/
+client/client/bin/
+client/client/obj/
+
 # User-specific files
-client/.vs/
-client/.vscode/
+client/client/.vs/
+client/client/.vscode/
+
 # ASP.NET core secrets storage
-client/appsettings.Development.json
-client/appsettings.json
+client/client/appsettings.Development.json
+client/client/appsettings.json
+
 # Dotnet Core tools and cache
-client/.dnx/
-client/.nuget/
+client/client/.dnx/
+client/client/.nuget/
+
 # ASP.NET temporary files
+client/client/.tmp/
+
 
 # Spring Boot (Java) specific files
 # Build results
