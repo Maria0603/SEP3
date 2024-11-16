@@ -36,6 +36,13 @@
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
+    },
+    "Watch": {
+      "commandName": "Executable",
+      "workingDirectory": ".",
+      "executablePath": "dotnet",
+      "commandLineArgs": "watch run debug --launch-profile https",
+      "cwd": "."
     }
   }
 }
