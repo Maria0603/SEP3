@@ -1,10 +1,57 @@
+# .NET (ASP.NET) specific files
+# Build results
+client/bin/
+client/obj/
+# User-specific files
+client/.vs/
+client/.vscode/
+# ASP.NET core secrets storage
+client/appsettings.Development.json
+client/appsettings.json
+# Dotnet Core tools and cache
+client/.dnx/
+client/.nuget/
+# ASP.NET temporary files
 
-/client/SEP3_Poc/bin
-/client/SEP3_Poc/obj
-client/.idea/.idea.SEP3_Poc/.idea/indexLayout.xml
-client/.idea/.idea.SEP3_Poc/.idea/vcs.xml
-.idea/vcs.xml
-client/.idea/.idea.SEP3_Poc/.idea/encodings.xml
-.idea/indexLayout.xml
-/.idea
-client/.idea/.idea.SEP3_Poc/.idea/.name
+# Spring Boot (Java) specific files
+# Build results
+data_server/target/
+server/target/
+shared/target/
+# Maven wrapper
+.mvn/
+# Maven specific
+*.log
+*.jar
+*.war
+*.ear
+*.class
+# Eclipse and IntelliJ IDEA specific files
+.classpath
+.project
+.idea/
+*.iml
+# Gradle specific (if used in any module)
+.gradle/
+# Java application-specific
+*.db
+
+# OS specific files
+# Windows
+Thumbs.db
+ehthumbs.db
+# macOS
+.DS_Store
+# Linux
+*.swp
+
+# Node.js (if you have front-end code using Node.js)
+node_modules/
+
+# Log files
+*.log
+
+# Other specific files that should not be tracked
+*.bak
+*.swp
+*.swo
