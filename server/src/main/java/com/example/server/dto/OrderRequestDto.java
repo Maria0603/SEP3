@@ -1,12 +1,23 @@
-﻿package com.example.server.dto;
+package com.example.server.dto;
 
-public class PaymentRequestDto
+public class OrderRequestDto
 {
   private String paymentToken; // Token from Stripe.js
+  private int numberOfItems;
   private int amount; // Amount in ore
   private String currency="dkk"; // Currency code
   private String successUrl;
   private String cancelUrl;
+
+  public int getNumberOfItems()
+  {
+    return numberOfItems;
+  }
+
+  public void setNumberOfItems(int numberOfItems)
+  {
+    this.numberOfItems = numberOfItems;
+  }
 
   public String getCancelUrl()
   {
