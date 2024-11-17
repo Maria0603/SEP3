@@ -1,4 +1,4 @@
-﻿package com.example.server.config;
+package com.example.server.config;
 
 import com.stripe.Stripe;
 import org.springframework.beans.factory.annotation.Value;

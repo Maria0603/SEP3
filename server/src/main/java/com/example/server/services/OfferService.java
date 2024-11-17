@@ -7,12 +7,14 @@ import com.example.server.converters.DateConverter;
 import com.example.server.converters.TimeConverter;
 import com.example.server.dto.DateDto;
 import com.example.server.dto.TimeDto;
+import com.stripe.Stripe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.Map;
 
 import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestDto_To_SaveOfferRequest;
 
@@ -23,6 +25,8 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
   @Autowired public OfferService(DataServerStub dataServerStub)
   {
     this.dataServerStub = dataServerStub;
+    Stripe.apiKey = "sk_test_51QLXFcEJybmJ8DbtUW95vPtVV4vCIHtWi7MgOuqlhLngWoki5Bo0iMF8s2Nfxhzpub5gnIAD3d0CUpZBcSAJanmp004vLU11xd";
+
     System.out.println("OfferService created");
   }
 

@@ -1,0 +1,42 @@
+﻿using System.Net.Http.Json;
+using System.Text;
+using System.Text.Json;
+using client.Pages;
+using Newtonsoft.Json;
+using JsonSerializer = System.Text.Json.JsonSerializer;
+
+namespace client.Services;
+
+public class OfferService : IOfferService
+{
+    private readonly HttpClient client;
+
+    public OfferService(HttpClient client)
+    {
+        this.client = client;
+    }
+
+    public async Task<OrderResponseDto> PlaceOrderAsync(string offerId,
+        OrderRequestDto orderRequestDto)
+    {
+        // Send the request to the server to create a Stripe checkout session
+        HttpResponseMessage response =
+            await client.PostAsJsonAsync($"offers/{offerId}",
+                orderRequestDto); //TODO: replace with Jan's endpoint
+        String responseContent = await response.Content.ReadAsStringAsync();
+
+        if (response.IsSuccessStatusCode)
+        {
+            OrderResponseDto orderResponse =
+                JsonSerializer.Deserialize<OrderResponseDto>(responseContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })!;
+            return orderResponse;
+        }
+
+        throw new Exception(
+            $"Error: {response.StatusCode}, {response.ReasonPhrase}");
+    }
+}

@@ -2,31 +2,49 @@
 <html lang="en">
 
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>client</title>
-    <base href="/" />
-    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/app.css" />
-    <link rel="icon" type="image/png" href="favicon.png" />
-    <link href="client.styles.css" rel="stylesheet" />
+    <base href="/"/>
+    <link rel="stylesheet" href="css/bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="css/app.css"/>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <link href="client.styles.css" rel="stylesheet"/>
 </head>
 
 <body>
-    <div id="app">
-        <svg class="loading-progress">
-            <circle r="40%" cx="50%" cy="50%" />
-            <circle r="40%" cx="50%" cy="50%" />
-        </svg>
-        <div class="loading-progress-text"></div>
-    </div>
+<div id="app">
+    <svg class="loading-progress">
+        <circle r="40%" cx="50%" cy="50%"/>
+        <circle r="40%" cx="50%" cy="50%"/>
+    </svg>
+    <div class="loading-progress-text"></div>
+</div>
 
-    <div id="blazor-error-ui">
-        An unhandled error has occurred.
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
-    <script src="_framework/blazor.webassembly.js"></script>
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+<script src="_framework/blazor.webassembly.js"></script>
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    function redirectToStripeCheckout(sessionId) {
+        const stripe = Stripe('pk_test_51QLXFcEJybmJ8Dbt6aLVIXQyVWFAJ3tT0ceyJ73RClLvm25NZ45GX9uTjyCioyLPSiinwM3AiRWVkEnfYySiTGZO00xIEn9OpY'); // Replace with your public key
+        stripe.redirectToCheckout({sessionId: sessionId});
+    }
+
+    async function createStripeToken(cardElement) {
+        const stripe = Stripe('pk_test_51QLXFcEJybmJ8Dbt6aLVIXQyVWFAJ3tT0ceyJ73RClLvm25NZ45GX9uTjyCioyLPSiinwM3AiRWVkEnfYySiTGZO00xIEn9OpY');
+        const {token, error} = await stripe.createToken(cardElement);
+        if (error) {
+            return {success: false, error: error.message};
+        }
+        return {success: true, token: token.id};
+    }
+
+</script>
+
 </body>
 
 </html>
