@@ -1,5 +1,32 @@
 @page "/"
-
 <PageTitle>Home</PageTitle>
 
 <h2> The main page</h2>
+
+@* <OfferComponent ></OfferComponent> *@
+<div class="container">
+<OfferComponent class="offer" OfferData="@offerData"></OfferComponent>
+<OfferComponent class="offer"  OfferData="@offerData"></OfferComponent>
+<OfferComponent class="offer"  OfferData="@offerData"></OfferComponent>
+<OfferComponent class="offer"  OfferData="@offerData"></OfferComponent>
+<OfferComponent class="offer"  OfferData="@offerData"></OfferComponent>
+</div>
+
+@code {
+    private Offer offerData = new Offer
+    {
+        QuantityLeft = 5,
+        IsFavourite = true,
+        BusinessDetails = new Business
+        {
+            Name = "7 Eleven - Horsens",
+            Icon = "img/tempOfferIcon.jpg"
+        },
+        OfferImage = "img/tempOfferImg.jpg",
+        ProductName = "Pastry",
+        PickupTime = DateTimeOffset.Parse("2024-11-18T14:00:00+00:00"),
+        Rating = 3.5m,
+        Distance = 4.3,
+        Price = 39.00m
+    };
+}
