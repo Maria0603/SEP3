@@ -3,6 +3,7 @@ namespace client.Pages;
 public class Offer
 {
     // Information about the top section
+    public int Id { get; set; }
     public int QuantityLeft { get; set; } // For the "5 Left" text
     public bool IsFavourite { get; set; } // For the heart icon to indicate if the offer is a favorite
     public Business BusinessDetails { get; set; } // Business details (name, icon)
