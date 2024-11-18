@@ -1,3 +1,4 @@
+@using SEP3_Poc.Entities
 @inherits ComponentBase
 
 <div class="card foodbag-card mb-4">
@@ -12,7 +13,7 @@
             <li>
                 <strong>Type:</strong> @FoodBag.Type
             </li>
-            <li><strong>Price:</strong> @FoodBag.Price kr</li>
+            <li><strong>Price:</strong> @FoodBag.NewPrice kr</li>
             <li>
                 <strong>Pickup Date:</strong> @FoodBag.PickupDate
             </li>
