@@ -32,4 +32,9 @@
       <_ContentIncludedByDefault Remove="Pages\Reservation.razor" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Entities\" />
+      <Folder Include="Layout\Pages\Components\" />
+    </ItemGroup>
+
 </Project>
