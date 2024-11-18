@@ -56,4 +56,10 @@ public class DateTimeConverter {
     return com.google.type.Date.newBuilder().setYear(dateDao.getYear())
         .setMonth(dateDao.getMonth()).setDay(dateDao.getDay()).build();
   }
+
+  //Get the current date in DateDao format
+  public static DateDao getCurrentDateDao() {
+    java.util.Date date = new java.util.Date();
+    return new DateDao(date.getYear() + 1900, date.getMonth() + 1, date.getDate());
+  }
 }

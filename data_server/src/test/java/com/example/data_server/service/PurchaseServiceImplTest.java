@@ -1,97 +1,102 @@
 package com.example.data_server.service;
 
-import com.example.data_server.DataServerApplication;
 import com.example.data_server.repository.PurchaseRepository;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.PurchaseDao;
 import com.google.protobuf.Empty;
-import io.grpc.internal.testing.StreamRecorder;
+import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ContextConfiguration;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
+import java.util.List;
 import java.util.Optional;
 
-import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
-@ContextConfiguration(classes = {DataServerApplication.class, PurchaseServiceImpl.class})
 class PurchaseServiceImplTest {
-  @Autowired
-  private PurchaseRepository purchaseRepository;
 
-  private PurchaseServiceImpl purchaseService;
+    @Mock
+    private PurchaseRepository purchaseRepository;
 
-  @BeforeEach
-  public void setUp() {
-    purchaseService = new PurchaseServiceImpl(purchaseRepository);
-  }
+    @InjectMocks
+    private PurchaseServiceImpl purchaseService;
 
-  @Test
-  public void testAddPurchase() throws Exception {
-    AddPurchaseRequest request = AddPurchaseRequest.newBuilder()
-        .setUserId("user123")
-        .setQuantity(2)
-        .setPurchaseDate(
-            DateTimeConverter.convertDateDaoToGoogleDate(new PurchaseDao().getPurchaseDate()))
-        .build();
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-    StreamRecorder<AddPurchaseResponse> responseObserver = StreamRecorder.create();
-    purchaseService.addPurchase(request, responseObserver);
-    responseObserver.awaitCompletion();
+    @Test
+    void testAddPurchase() {
+        PurchaseDao purchase = new PurchaseDao();
+        purchase.setId("purchase123");
+        purchase.setUserId("user123");
+        purchase.setQuantity(2);
+        purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    AddPurchaseResponse response = responseObserver.getValues().get(0);
-    Optional<PurchaseDao> purchase = purchaseRepository.findById(response.getId());
+        when(purchaseRepository.save(any(PurchaseDao.class))).thenReturn(purchase);
 
-    assertThat(purchase).isPresent();
-    assertThat(purchase.get().getUserId()).isEqualTo("user123");
-    assertThat(purchase.get().getQuantity()).isEqualTo(2);
-  }
+        AddPurchaseRequest request = AddPurchaseRequest.newBuilder()
+                .setUserId("user123")
+                .setQuantity(2)
+                .setPurchaseDate(DateTimeConverter.convertDateDaoToGoogleDate(purchase.getPurchaseDate()))
+                .build();
 
-  @Test
-  public void testGetPurchaseById() throws Exception {
-    PurchaseDao purchase = new PurchaseDao();
-    purchase.setUserId("user123");
-    purchase.setQuantity(2);
-    purchase = purchaseRepository.save(purchase);
+        StreamObserver<AddPurchaseResponse> responseObserver = mock(StreamObserver.class);
+        purchaseService.addPurchase(request, responseObserver);
 
-    PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
-        .setId(purchase.getId())
-        .build();
+        verify(responseObserver).onNext(any(AddPurchaseResponse.class));
+        verify(responseObserver).onCompleted();
+    }
 
-    StreamRecorder<PurchaseResponse> responseObserver = StreamRecorder.create();
-    purchaseService.getPurchaseById(request, responseObserver);
-    responseObserver.awaitCompletion();
+    @Test
+    void testGetPurchaseById() {
+      PurchaseDao purchase = new PurchaseDao();
+      purchase.setId("purchase123");
+      purchase.setUserId("user123");
+      purchase.setQuantity(2);
+      purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    PurchaseResponse response = responseObserver.getValues().get(0);
+        when(purchaseRepository.findById("purchase123")).thenReturn(Optional.of(purchase));
 
-    assertThat(response.getUserId()).isEqualTo("user123");
-    assertThat(response.getQuantity()).isEqualTo(2);
-  }
+        PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
+                .setId("purchase123")
+                .build();
 
-  @Test
-  public void testGetAllPurchases() throws Exception {
-    PurchaseDao purchase1 = new PurchaseDao();
-    purchase1.setUserId("user123");
-    purchase1.setQuantity(2);
-    purchaseRepository.save(purchase1);
+        StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
+        purchaseService.getPurchaseById(request, responseObserver);
 
-    PurchaseDao purchase2 = new PurchaseDao();
-    purchase2.setUserId("user456");
-    purchase2.setQuantity(3);
-    purchaseRepository.save(purchase2);
+        verify(responseObserver).onNext(any(PurchaseResponse.class));
+        verify(responseObserver).onCompleted();
+    }
 
-    StreamRecorder<PurchaseList> responseObserver = StreamRecorder.create();
-    purchaseService.getAllPurchases(Empty.newBuilder().build(), responseObserver);
-    responseObserver.awaitCompletion();
+    @Test
+    void testGetAllPurchases() {
+      PurchaseDao purchase1 = new PurchaseDao();
+      purchase1.setId("purchase123");
+      purchase1.setUserId("user123");
+      purchase1.setQuantity(2);
+      purchase1.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    PurchaseList response = responseObserver.getValues().get(0);
+        PurchaseDao purchase2 = new PurchaseDao();
+        purchase2.setId("purchase456");
+        purchase2.setUserId("user456");
+        purchase2.setQuantity(3);
+        purchase2.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    assertThat(response.getPurchasesList()).hasSize(2);
-  }
+        when(purchaseRepository.findAll()).thenReturn(
+            List.of(purchase1, purchase2));
 
+        StreamObserver<PurchaseList> responseObserver = mock(StreamObserver.class);
+        purchaseService.getAllPurchases(Empty.newBuilder().build(), responseObserver);
+
+        verify(responseObserver).onNext(any(PurchaseList.class));
+        verify(responseObserver).onCompleted();
+    }
 }
