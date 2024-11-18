@@ -1,15 +1,13 @@
 ﻿syntax = "proto3";
 
-import "OfferService.proto";
 option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "PurchaseServiceProto";
 
 package proto;
 
-//import "google/type/date.proto";
+import "google/type/date.proto";
 import "google/protobuf/empty.proto";
-
 
 
 service PurchaseService {
@@ -22,7 +20,7 @@ message AddPurchaseRequest {
   string offerId = 1;
   string userId = 2;
   int32 quantity = 3;
-  Date purchaseDate = 4;
+  google.type.Date purchaseDate = 4;
 }
 
 message AddPurchaseResponse {
@@ -30,7 +28,7 @@ message AddPurchaseResponse {
   string offerId = 2;
   string userId = 3;
   int32 quantity = 4;
-  Date purchaseDate = 5;
+  google.type.Date purchaseDate = 5;
 }
 
 message PurchaseIdRequest {
@@ -42,7 +40,7 @@ message PurchaseResponse {
   string offerId = 2;
   string userId = 3;
   int32 quantity = 4;
-  Date purchaseDate = 5;
+  google.type.Date purchaseDate = 5;
 }
 
 message PurchaseList {

@@ -21,86 +21,82 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class PurchaseServiceImplTest {
 
-  @Mock private PurchaseRepository purchaseRepository;
+    @Mock
+    private PurchaseRepository purchaseRepository;
 
-  @InjectMocks private PurchaseServiceImpl purchaseService;
+    @InjectMocks
+    private PurchaseServiceImpl purchaseService;
 
-  @BeforeEach void setUp() {
-    MockitoAnnotations.openMocks(this);
-  }
+    @BeforeEach
+    void setUp() {
+        MockitoAnnotations.openMocks(this);
+    }
 
-  @Test void testAddPurchase() {
-    PurchaseDao purchase = new PurchaseDao();
-    purchase.setId("purchase123");
-    purchase.setUserId("user123");
-    purchase.setQuantity(2);
-    purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
+    @Test
+    void testAddPurchase() {
+        PurchaseDao purchase = new PurchaseDao();
+        purchase.setId("purchase123");
+        purchase.setUserId("user123");
+        purchase.setQuantity(2);
+        purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    when(purchaseRepository.save(any(PurchaseDao.class))).thenReturn(purchase);
+        when(purchaseRepository.save(any(PurchaseDao.class))).thenReturn(purchase);
 
-    AddPurchaseRequest request = AddPurchaseRequest.newBuilder()
-        .setUserId("user123").setQuantity(2).setPurchaseDate(
-            DateTimeConverter.convertDateDaoToGoogleDate(
-                purchase.getPurchaseDate())).build();
+        AddPurchaseRequest request = AddPurchaseRequest.newBuilder()
+                .setUserId("user123")
+                .setQuantity(2)
+                .setPurchaseDate(DateTimeConverter.convertDateDaoToGoogleDate(purchase.getPurchaseDate()))
+                .build();
 
-    StreamObserver<AddPurchaseResponse> responseObserver = mock(
-        StreamObserver.class);
-    purchaseService.addPurchase(request, responseObserver);
+        StreamObserver<AddPurchaseResponse> responseObserver = mock(StreamObserver.class);
+        purchaseService.addPurchase(request, responseObserver);
 
-    verify(responseObserver).onNext(any(AddPurchaseResponse.class));
-    verify(responseObserver).onCompleted();
-  }
+        verify(responseObserver).onNext(any(AddPurchaseResponse.class));
+        verify(responseObserver).onCompleted();
+    }
 
-  @Test void testGetPurchaseById() {
-    PurchaseDao purchase = new PurchaseDao();
-    purchase.setId("purchase123");
-    purchase.setUserId("user123");
-    purchase.setQuantity(2);
-    purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
+    @Test
+    void testGetPurchaseById() {
+      PurchaseDao purchase = new PurchaseDao();
+      purchase.setId("purchase123");
+      purchase.setUserId("user123");
+      purchase.setQuantity(2);
+      purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    // Add the purchase to the repository
-    purchaseRepository.save(purchase);
+        when(purchaseRepository.findById("purchase123")).thenReturn(Optional.of(purchase));
 
-    when(purchaseRepository.findById("purchase123")).thenReturn(
-        Optional.of(purchase));
+        PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
+                .setId("purchase123")
+                .build();
 
-    PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
-        .setId("purchase123").build();
+        StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
+        purchaseService.getPurchaseById(request, responseObserver);
 
-    StreamObserver<PurchaseResponse> responseObserver = mock(
-        StreamObserver.class);
-    purchaseService.getPurchaseById(request, responseObserver);
+        verify(responseObserver).onNext(any(PurchaseResponse.class));
+        verify(responseObserver).onCompleted();
+    }
 
-    verify(responseObserver).onNext(argThat(
-        response -> response.getId().equals("purchase123")
-            && response.getUserId().equals("user123")
-            && response.getQuantity() == 2 && response.getPurchaseDate().equals(
-            DateTimeConverter.convertDateDaoToGoogleDate(
-                purchase.getPurchaseDate()))));
-    verify(responseObserver).onCompleted();
-  }
+    @Test
+    void testGetAllPurchases() {
+      PurchaseDao purchase1 = new PurchaseDao();
+      purchase1.setId("purchase123");
+      purchase1.setUserId("user123");
+      purchase1.setQuantity(2);
+      purchase1.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-  @Test void testGetAllPurchases() {
-    PurchaseDao purchase1 = new PurchaseDao();
-    purchase1.setId("purchase123");
-    purchase1.setUserId("user123");
-    purchase1.setQuantity(2);
-    purchase1.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
+        PurchaseDao purchase2 = new PurchaseDao();
+        purchase2.setId("purchase456");
+        purchase2.setUserId("user456");
+        purchase2.setQuantity(3);
+        purchase2.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-    PurchaseDao purchase2 = new PurchaseDao();
-    purchase2.setId("purchase456");
-    purchase2.setUserId("user456");
-    purchase2.setQuantity(3);
-    purchase2.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
+        when(purchaseRepository.findAll()).thenReturn(
+            List.of(purchase1, purchase2));
 
-    when(purchaseRepository.findAll()).thenReturn(
-        List.of(purchase1, purchase2));
+        StreamObserver<PurchaseList> responseObserver = mock(StreamObserver.class);
+        purchaseService.getAllPurchases(Empty.newBuilder().build(), responseObserver);
 
-    StreamObserver<PurchaseList> responseObserver = mock(StreamObserver.class);
-    purchaseService.getAllPurchases(Empty.newBuilder().build(),
-        responseObserver);
-
-    verify(responseObserver).onNext(any(PurchaseList.class));
-    verify(responseObserver).onCompleted();
-  }
+        verify(responseObserver).onNext(any(PurchaseList.class));
+        verify(responseObserver).onCompleted();
+    }
 }
