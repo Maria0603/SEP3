@@ -1,0 +1,55 @@
+.container {
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 24px;
+    color: #D11149;
+    margin-bottom: 20px;
+    font-weight: bold;
+    text-align: center;
+}
+
+.row {
+    margin-bottom: 15px;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.order-image {
+    width: 150px;
+    height: auto;
+}
+
+.framed-image {
+    border: 2px solid #ddd;
+    padding: 5px;
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Section Titles Styling (e.g., "Item Information", "ID and Total Price") */
+h4 {
+    font-size: 18px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+
+.reserve-button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #D11149;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-top: 20px;
+    transition: background-color 0.3s;
+}
+
+.reserve-button:hover {
+    background-color: #D11149;
+}

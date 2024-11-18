@@ -1,9 +1,7 @@
-<<<<<<<< HEAD:client/client/Models/FoodBag.cs
+
 namespace client.Pages
 {
-========
-namespace SEP3_Poc.Entities;
->>>>>>>> sashas_branch:client/SEP3_Poc/Models/FoodBag.cs
+
     public class FoodBag
     {
         public int Id { get; set; }
@@ -16,3 +14,4 @@ namespace SEP3_Poc.Entities;
         public string PickupDate { get; set; }
         public string Collector { get; set; }
     }
+}

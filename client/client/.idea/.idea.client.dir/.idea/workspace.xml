@@ -9,11 +9,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="6a9a41f3-c3a9-40f3-9b4f-11fcf1fbe383" name="Changes" comment="" />
+    <list default="true" id="6a9a41f3-c3a9-40f3-9b4f-11fcf1fbe383" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/Models/Reservation.cs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/.idea.client.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.client.dir/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/App.razor" beforeDir="false" afterPath="$PROJECT_DIR$/App.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Models/FoodBag.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/FoodBag.cs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Home.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pages/Old/FilterFoodBags.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Old/FilterFoodBags.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pages/Old/FoodBagCard.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Old/FoodBagCard.razor" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="TypeScript File" />
+        <option value="CSS File" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_BRANCH_BY_REPOSITORY">
@@ -47,19 +65,21 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;sashas__branch&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    ".NET Launch Settings Profile.client: http.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "sprint__combined",
+    "list.type.of.created.stylesheet": "CSS",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
-  <component name="RunManager" selected=".NET Launch Settings Profile.client: Watch">
+}]]></component>
+  <component name="RunManager" selected=".NET Launch Settings Profile.client: http">
     <configuration name="client: Watch" type="LaunchSettings" factoryName=".NET Launch Settings Profile">
       <option name="LAUNCH_PROFILE_PROJECT_FILE_PATH" value="$PROJECT_DIR$/client.csproj" />
       <option name="LAUNCH_PROFILE_TFM" value="net8.0" />
@@ -115,6 +135,7 @@
       <option name="presentableId" value="Default" />
       <updated>1731921609781</updated>
       <workItem from="1731921610900" duration="613000" />
+      <workItem from="1731923155543" duration="905000" />
     </task>
     <servers />
   </component>
@@ -122,4 +143,7 @@
     <option name="version" value="3" />
   </component>
   <component name="UnityProjectConfiguration" hasMinimizedUI="false" />
+  <component name="VcsManagerConfiguration">
+    <option name="CLEAR_INITIAL_COMMIT_MESSAGE" value="true" />
+  </component>
 </project>
