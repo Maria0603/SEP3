@@ -56,25 +56,35 @@ class PurchaseServiceImplTest {
     }
 
     @Test
-    void testGetPurchaseById() {
-      PurchaseDao purchase = new PurchaseDao();
-      purchase.setId("purchase123");
-      purchase.setUserId("user123");
-      purchase.setQuantity(2);
-      purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
+void testGetPurchaseById() {
+    PurchaseDao purchase = new PurchaseDao();
+    purchase.setId("purchase123");
+    purchase.setUserId("user123");
+    purchase.setQuantity(2);
+    purchase.setPurchaseDate(DateTimeConverter.getCurrentDateDao());
 
-        when(purchaseRepository.findById("purchase123")).thenReturn(Optional.of(purchase));
+    // Add the purchase to the repository
+    purchaseRepository.save(purchase);
 
-        PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
-                .setId("purchase123")
-                .build();
+    when(purchaseRepository.findById("purchase123")).thenReturn(Optional.of(purchase));
 
-        StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
-        purchaseService.getPurchaseById(request, responseObserver);
+    PurchaseIdRequest request = PurchaseIdRequest.newBuilder()
+            .setId("purchase123")
+            .build();
 
-        verify(responseObserver).onNext(any(PurchaseResponse.class));
-        verify(responseObserver).onCompleted();
-    }
+    StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
+    purchaseService.getPurchaseById(request, responseObserver);
+
+    verify(responseObserver).onNext(argThat(response ->
+        response.getId().equals("purchase123") &&
+        response.getUserId().equals("user123") &&
+        response.getQuantity() == 2 &&
+        response.getPurchaseDate().getYear() == DateTimeConverter.convertDateDaoToGoogleDate(purchase.getPurchaseDate()).getYear() &&
+        response.getPurchaseDate().getMonth() == DateTimeConverter.convertDateDaoToGoogleDate(purchase.getPurchaseDate()).getMonth() &&
+        response.getPurchaseDate().getDay() == DateTimeConverter.convertDateDaoToGoogleDate(purchase.getPurchaseDate()).getDay()
+    ));
+    verify(responseObserver).onCompleted();
+}
 
     @Test
     void testGetAllPurchases() {
