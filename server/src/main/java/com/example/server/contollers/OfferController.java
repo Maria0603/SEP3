@@ -1,18 +1,17 @@
 package com.example.server.contollers;
 
-import com.example.sep3.grpc.OfferIdRequest;
-import com.example.sep3.grpc.SaveOfferResponse;
 import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.OrderRequestDto;
+import com.example.server.dto.PlaceOrderRequestDto;
+import com.example.server.dto.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
-import com.example.shared.dao.OfferDao;
-import com.stripe.Stripe;
-import com.stripe.model.PaymentIntent;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController @RequestMapping("/offers") public class OfferController
@@ -41,10 +40,39 @@ import java.util.Map;
     }
   }
 
-  @PostMapping("/{id}") public ResponseEntity<Map<String, String>> placeOrder(
-      @PathVariable String id, @RequestBody OrderRequestDto orderRequest)
+  //@PostMapping("/{id}")
+  @PostMapping("/order") //TODO: change
+  public ResponseEntity<PlaceOrderResponseDto> placeOrder(//@PathVariable String id,
+       @RequestBody PlaceOrderRequestDto orderRequest)
   {
-    return ResponseEntity.ok(new HashMap<>());
-  }
+    System.out.println("Request for place order.");
+    try
+    {
+      // Session parameters
+      Map<String, Object> sessionParams = new HashMap<>();
+      sessionParams.put("payment_method_types", List.of("card"));
+      sessionParams.put("mode", "payment");
+      sessionParams.put("success_url",
+          "https://localhost:7047/orders/success"); //TODO: Store these somewhere
+      sessionParams.put("cancel_url", "https://localhost:7047/orders/failure");
+      sessionParams.put("line_items", List.of(Map.of("price_data",
+          Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
+              "unit_amount", 3400), "quantity",
+          2))); //TODO: Fetch the data from data_server instead
 
+      // Create session
+      Session session = Session.create(sessionParams);
+
+      // Return session URL
+      PlaceOrderResponseDto response = new PlaceOrderResponseDto();
+      response.setUrl(session.getUrl());
+      response.setSessionId(session.getId());
+      return ResponseEntity.ok(response);
+    }
+    catch (StripeException e)
+    {
+      e.printStackTrace();
+      return ResponseEntity.badRequest().build();
+    }
+  }
 }
