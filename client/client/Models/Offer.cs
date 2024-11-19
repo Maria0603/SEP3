@@ -15,14 +15,23 @@ public class Offer
     [JsonIgnore]
     public Business BusinessDetails { get; set; } // Business details (name, icon)
 
+    
     // [JsonPropertyName("image")]
-    // public string Image { get; set; } // Image source URL for the offer
+    [JsonIgnore]
+    public string Image { get; set; } // Image source URL for the offer
 
-    // Information about the bottom section
     [JsonPropertyName("title")]
     public string Title { get; set; } // Product name (Pastry)
+   
+    
+    
     // [JsonPropertyName("pickupDate")]
-    // public DateTime PickupTime { get; set; } // Pickup time (Collect tomorrow 21.00 - 22.00)
+    [JsonIgnore]
+    public DateTime? PickupTime { get; set; } // Pickup time (Collect tomorrow 21.00 - 22.00)
+    
+    
+    
+    
     [JsonIgnore]
     public decimal Rating { get; set; } // Rating value (e.g., 3.5)
     [JsonIgnore]

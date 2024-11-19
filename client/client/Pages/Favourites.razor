@@ -1,6 +1,40 @@
 @page "/favourites"
-<h3>Favourites</h3>
+@inject client.Services.IOfferService OfferService
+<PageTitle>Favourites</PageTitle>
+
+<h2> Favourites</h2>
+
+<div class="container">
+    <CreateOfferComponent OfferData="OfferData"></CreateOfferComponent>
+</div>
+
+
 
 @code {
+    [Parameter] 
+    public Offer OfferData { get; set; } = new Offer();
+
     
+    protected override async Task OnInitializedAsync()
+    {
+        
+    }
+
+
+    // private Offer offerData = new Offer
+    // {
+    //     QuantityLeft = 5,
+    //     IsFavourite = true,
+    //     BusinessDetails = new Business
+    //     {
+    //         Name = "7 Eleven - Horsens",
+    //         Icon = "img/tempOfferIcon.jpg"
+    //     },
+    //     OfferImage = "img/tempOfferImg.jpg",
+    //     ProductName = "Pastry",
+    //     PickupTime = DateTimeOffset.Parse("2024-11-18T14:00:00+00:00"),
+    //     Rating = 3.5m,
+    //     Distance = 4.3,
+    //     Price = 39.00m
+    // };
 }
