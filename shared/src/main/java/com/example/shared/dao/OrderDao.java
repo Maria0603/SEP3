@@ -13,12 +13,12 @@ import org.springframework.data.mongodb.core.mapping.Field;
   @Field("order_date") private DateDao orderDate;
   @Field("order_time") private TimeDao orderTime;
   @Field("status") private String status;
-  @Field("original_price") private int originalPrice;
-  @Field("offer_price") private int offerPrice;
+  @Field("old_price") private int oldOrderPrice;
+  @Field("new_price") private int newOrderPrice;
 
   public OrderDao(String id, OfferDao offer, String userId, int quantity,
-      DateDao orderDate, TimeDao orderTime, String status, int originalPrice,
-      int offerPrice) {
+      DateDao orderDate, TimeDao orderTime, String status, int oldOrderPrice,
+      int newOrderPrice) {
     this.id = id;
     this.offer = offer;
     this.userId = userId;
@@ -26,24 +26,24 @@ import org.springframework.data.mongodb.core.mapping.Field;
     this.orderDate = orderDate;
     this.orderTime = orderTime;
     this.status = status;
-    this.originalPrice = originalPrice;
-    this.offerPrice = offerPrice;
+    this.oldOrderPrice = oldOrderPrice;
+    this.newOrderPrice = newOrderPrice;
   }
 
-  public int getOriginalPrice() {
-    return originalPrice;
+  public int getOldOrderPrice() {
+    return oldOrderPrice;
   }
 
-  public void setOriginalPrice(int originalPrice) {
-    this.originalPrice = originalPrice;
+  public void setOldOrderPrice(int oldOrderPrice) {
+    this.oldOrderPrice = oldOrderPrice;
   }
 
-  public int getOfferPrice() {
-    return offerPrice;
+  public int getNewOrderPrice() {
+    return newOrderPrice;
   }
 
-  public void setOfferPrice(int offerPrice) {
-    this.offerPrice = offerPrice;
+  public void setNewOrderPrice(int newOrderPrice) {
+    this.newOrderPrice = newOrderPrice;
   }
 
   public TimeDao getOrderTime() {

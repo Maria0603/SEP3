@@ -1,7 +1,9 @@
 package com.example.data_server.service;
 
+import com.example.data_server.repository.OfferRepository;
 import com.example.sep3.grpc.*;
 import com.example.data_server.repository.OrderRepository;
+import com.example.shared.dao.OfferDao;
 import com.example.shared.dao.OrderDao;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.shared.model.OrderStatus;
@@ -16,18 +18,20 @@ import java.util.Optional;
 @GrpcService public class OrderServiceImpl
     extends OrderServiceGrpc.OrderServiceImplBase {
 
-  private final OrderRepository OrderRepository;
+  private final OrderRepository orderRepository;
+  private final OfferRepository offerRepository;
 
-  @Autowired public OrderServiceImpl(OrderRepository OrderRepository) {
-    this.OrderRepository = OrderRepository;
+  @Autowired public OrderServiceImpl(OrderRepository orderRepository, OfferRepository offerRepository) {
+    this.orderRepository = orderRepository;
+    this.offerRepository = offerRepository;
   }
 
   @Override public void addOrder(AddOrderRequest request,
       StreamObserver<OrderResponse> responseObserver) {
     System.out.println("Request to add Order");
 
-    OrderDao Order = generateOrderDaoFromAddOrderRequest(request);
-    OrderDao createdOrder = OrderRepository.save(Order);
+    OrderDao Order = generateOrderDaoFromAddOrderRequest(request, offerRepository);
+    OrderDao createdOrder = orderRepository.save(Order);
     buildOrderResponseFromOrderDao(responseObserver, createdOrder);
   }
 
@@ -35,7 +39,7 @@ import java.util.Optional;
       StreamObserver<OrderResponse> responseObserver) {
     System.out.println("Request for Order by id");
 
-    Optional<OrderDao> Order = OrderRepository.findById(request.getId());
+    Optional<OrderDao> Order = orderRepository.findById(request.getId());
     if (Order.isPresent()) {
       OrderDao orderDao = Order.get();
       buildOrderResponseFromOrderDao(responseObserver, orderDao);
@@ -50,7 +54,7 @@ import java.util.Optional;
       StreamObserver<OrderList> responseObserver) {
     System.out.println("Request for all Orders");
 
-    List<OrderDao> Orders = OrderRepository.findAll();
+    List<OrderDao> Orders = orderRepository.findAll();
 
     OrderList.Builder OrderListBuilder = OrderList.newBuilder();
     for (OrderDao orderDao : Orders) {
@@ -73,30 +77,35 @@ import java.util.Optional;
 
   private static OrderResponse getOrderResponseFromOrderDao(OrderDao orderDao) {
     OrderResponse response = OrderResponse.newBuilder()
-        .setId(orderDao.getId()).setUserId(orderDao.getUserId())
-        .setQuantity(orderDao.getQuantity()).setOrderDate(
+        .setId(orderDao.getId())
+        .setUserId(orderDao.getUserId())
+        .setQuantity(orderDao.getQuantity())
+        .setOrderDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
-                orderDao.getOrderDate())).setOrderTime(
+                orderDao.getOrderDate()))
+        .setOrderTime(
             DateTimeConverter.convertTimeDaoToGrpcTime(
-                orderDao.getOrderTime())).setStatus(orderDao.getStatus())
-        .setOriginalPrice(orderDao.getOriginalPrice())
-        .setOfferPrice(orderDao.getOfferPrice()).build();
+                orderDao.getOrderTime()))
+        .setStatus(orderDao.getStatus())
+        .setNewOrderPrice(orderDao.getNewOrderPrice())
+        .setOldOrderPrice(orderDao.getOldOrderPrice())
+        .build();
     return response;
   }
 
- private static OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request, OrderRepository orderRepository) {
+ private static OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request, OfferRepository offerRepository) {
     OrderDao order = new OrderDao();
     order.setUserId(request.getUserId());
     order.setQuantity(request.getQuantity());
-    order.setOrderDate(DateTimeConverter.convertGrpcDateToDateDao(request.getOrderDate()));
-    order.setOrderTime(DateTimeConverter.convertGrpcTimeToTimeDao(request.getOrderTime()));
+    order.setOrderDate(DateTimeConverter.getCurrentDateDao());
+    order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
     order.setStatus(OrderStatus.RESERVED.getStatus());
 
-    Optional<OrderDao> existingOrder = orderRepository.findById(request.getOfferId());
-    if (existingOrder.isPresent()) {
-        OrderDao existingOrderDao = existingOrder.get();
-        order.setOriginalPrice(existingOrderDao.getOriginalPrice() * request.getQuantity());
-        order.setOfferPrice(existingOrderDao.getOfferPrice() * request.getQuantity());
+    Optional<OfferDao> offer = offerRepository.findById(request.getOfferId());
+    if (offer.isPresent()) {
+        OfferDao offerDao = offer.get();
+        order.setOldOrderPrice(offerDao.getOriginalPrice() * request.getQuantity());
+        order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
     } else {
         throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
     }

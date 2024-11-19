@@ -62,4 +62,11 @@ public class DateTimeConverter {
     java.util.Date date = new java.util.Date();
     return new DateDao(date.getYear() + 1900, date.getMonth() + 1, date.getDate());
   }
+
+  //Get current time in TimeDao format
+  public static TimeDao getCurrentTimeDao() {
+    java.util.Date date = new java.util.Date();
+    return new TimeDao(date.getHours(), date.getMinutes());
+  }
+
 }
