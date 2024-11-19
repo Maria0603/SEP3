@@ -10,15 +10,10 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="6a9a41f3-c3a9-40f3-9b4f-11fcf1fbe383" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/Models/Reservation.cs" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/.idea.client.dir/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.client.dir/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/App.razor" beforeDir="false" afterPath="$PROJECT_DIR$/App.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Models/FoodBag.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Models/FoodBag.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pages/Home.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Home.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pages/Old/FilterFoodBags.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Old/FilterFoodBags.razor" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Pages/Old/FoodBagCard.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Old/FoodBagCard.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pages/Make_Reservation.razor" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Pages/Make_Reservation.razor.css" beforeDir="false" afterPath="$PROJECT_DIR$/Pages/Make_Reservation.razor.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/client.csproj" beforeDir="false" afterPath="$PROJECT_DIR$/client.csproj" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,13 +64,14 @@
   "keyToString": {
     ".NET Launch Settings Profile.client: http.executor": "Run",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "sprint__combined",
+    "git-widget-placeholder": "sprint1__combined",
     "list.type.of.created.stylesheet": "CSS",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
     "node.js.selected.package.tslint": "(autodetect)",
     "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "watcher.settings",
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>

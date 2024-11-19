@@ -35,39 +35,67 @@
 }
 
 <div class="container">
-    
-    <h2 class="page-title text-center">Order Reservation</h2>
-
-    <div class="row">
-        <!-- First column for the image -->
-        <div class="col-12 col-md-4 text-center">
-            <img src="images/bread.jpg" alt="Order Image" class="order-image framed-image" />
-        </div>
-
-        <!-- Second column for item information -->
-        <div class="col-12 col-md-4">
-            <h4>Item Information</h4>
-            <p><strong>Item:</strong> Fruits and Vegetables</p>
-            <p><strong>Old Price:</strong> @foodBag.OldPrice dkk</p>
-            <p><strong>New Price:</strong> @foodBag.NewPrice dkk</p>
-            <p><strong> Quantity available:</strong> @reservation.Quantity</p>
-        </div>
-
-        <!-- Third column for ID and total price -->
-        <div class="col-12 col-md-4">
-            <h4>ID and Total Price</h4>
-            <p><strong>ID:</strong> @foodBag.Id</p>
-            <p><strong>Total Cost:</strong> @TotalCost dkk</p>
-        </div>
+    <div>
+        <img src="images/bread2.webp" alt="Offer Image" class="offer-image" />
+        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image" />
+        <header class="BusinessName"> 7 Eleven - Horsens </header>
     </div>
     
-    <div class="row">
-        <div class="col-12 text-center">
-            <div class="amount-input-container">
-                <label for="amount"><strong>Amount:</strong></label>
-                <input type="number" id="amount" min="1" max="@reservation.Quantity" @bind="amount" class="amount-input" />
+
+    <!-- Second column -->
+    <div class="float-container">
+        
+        <div class="float-child">
+            
+            <div class="icon-text">
+                <img src="images/icons/bag.png" alt="bag-icon" class="icon"/>
+                <p class="text-by-icon">Pastry</p>
             </div>
-            <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+
+            <div class="icon-text">
+                <img src="images/icons/star.png" alt="star-icon" class="icon"/>
+                <p class="text-by-icon">Amount Of Stars</p>
+            </div>
+            
+            <div class="icon-text">
+                <img src="images/icons/clock.png" alt="clock-icon" class="icon"/>
+                <p class="text-by-icon">When + Time</p>
+            </div>
+            
         </div>
+        
+        <div class="float-child2">
+            <div class="prices">Old price <br/> New price<br/>
+            </div>
+            
+            <div class="amount-reserve-container">
+                <label for="amount" class="amount-label"><strong>Amount:</strong></label>
+                <input type="number" id="amount" min="1" max="@reservation.Quantity" @bind="amount" class="amount-input" />
+                <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+            </div>
+        
+            </div>
+        
+        
     </div>
+    
+        
+        <div class="location">
+            <div class="location-container">
+                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                <p class="location-text"> Vejlevej 54, 8700, Horsens, + 5KM </p>
+            </div>
+            <img src="images/grey-background.png" alt="grey-background" class="grey-background"/>
+        </div>
+        
+        
+        
+        
+        
+    <p><strong>Item:</strong> Fruits and Vegetables</p>
+    <p><strong>Old Price:</strong> @foodBag.OldPrice dkk</p>
+    <p><strong>New Price:</strong> @foodBag.NewPrice dkk</p>
+    <p><strong> Quantity available:</strong> @reservation.Quantity</p>
 </div>
+
+    

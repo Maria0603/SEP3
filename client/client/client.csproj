@@ -13,7 +13,6 @@
 
     <ItemGroup>
       <None Include="wwwroot\css\cards.css" />
-      <None Include="wwwroot\images\bread.jpg" />
     </ItemGroup>
 
     <ItemGroup>
@@ -35,6 +34,7 @@
     <ItemGroup>
       <Folder Include="Entities\" />
       <Folder Include="Layout\Pages\Components\" />
+      <Folder Include="wwwroot\images\" />
     </ItemGroup>
 
 </Project>
