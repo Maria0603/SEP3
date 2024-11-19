@@ -3,12 +3,11 @@ package com.example.data_server.service;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.OfferDao;
-import com.example.shared.model.Status;
+import com.example.shared.model.OfferStatus;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 import com.example.data_server.repository.OfferRepository;
 
 import javax.imageio.ImageIO;
@@ -63,7 +62,7 @@ import java.util.Optional;
         DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     offer.setCategories(categories);
     offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setStatus(Status.AVAILABLE.getStatus());
+    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
 
     //We save the offer in the database to extract the id
     OfferDao createdOffer = offerRepository.save(offer);
@@ -114,7 +113,7 @@ import java.util.Optional;
   {
     System.out.println("Request for all offers");
     List<OfferDao> availableOffers = offerRepository.findByStatus(
-        Status.AVAILABLE.getStatus());
+        OfferStatus.AVAILABLE.getStatus());
 
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
@@ -179,7 +178,7 @@ import java.util.Optional;
     {
       e.printStackTrace();
        /*responseStreamObserver.onError(
-          io.grpc.Status.INTERNAL.withDescription("Error processing image.")
+          io.grpc.OfferStatus.INTERNAL.withDescription("Error processing image.")
               .asRuntimeException());*/
     }
     return pathToImage;
@@ -216,7 +215,7 @@ import java.util.Optional;
     {
       e.printStackTrace();
        /*responseStreamObserver.onError(
-          io.grpc.Status.INTERNAL.withDescription("Error processing image.")
+          io.grpc.OfferStatus.INTERNAL.withDescription("Error processing image.")
               .asRuntimeException());*/
     }
     return null;

@@ -1,11 +1,11 @@
 package com.example.shared.model;
 
-public enum Status
+public enum OfferStatus
 {
   AVAILABLE("available"), RESERVED("reserved");
   private final String status;
 
-  Status(String status)
+  OfferStatus(String status)
   {
     this.status = status;
   }
