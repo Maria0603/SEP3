@@ -12,11 +12,16 @@ public class HttpOfferService : IOfferService
         this.client = client;
     }
     
-    public async Task<List<Offer>> GetOffersAsync()
+    public async Task<string> GetOffersAsync()
     {
-        // var offers = await client.GetFromJsonAsync<List<Offer>>("api/offers");
-        // Testing purposign url
-        var offers = await client.GetFromJsonAsync<List<Offer>>("c76787b7-9ad7-461e-a7f0-7881b5da4f17");
-        return offers ?? new List<Offer>();
+        var response = await client.GetAsync("offers");
+        var json = await response.Content.ReadAsStringAsync();
+        return json;
+        
+        // var offers = await client.GetFromJsonAsync<List<Offer>>("offers");
+        // return offers ?? new List<Offer>();
+        // return new List<Offer>();
+
+        // return null;
     }
 }

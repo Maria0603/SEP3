@@ -14,8 +14,10 @@ builder.Services.AddTransient<IOfferService, HttpOfferService>();
 
 
 // Configure HttpClient for API calls
-builder.Services.AddScoped(sp => new HttpClient()
-    // { BaseAddress = new Uri("http://localhost:8082/") });
-    { BaseAddress = new Uri("https://run.mocky.io/v3/") });
+builder.Services.AddScoped(sp => new HttpClient
+{
+    BaseAddress = new Uri("http://localhost:8082/api/")
+});
+     //{ BaseAddress = new Uri("https://run.mocky.io/v3/") });
 
 await builder.Build().RunAsync();

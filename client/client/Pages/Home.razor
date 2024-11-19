@@ -4,33 +4,37 @@
 
 <h2> The main page</h2>
 
-@* <OfferComponent ></OfferComponent> *@
 <div class="container">
     @if (offers == null)
     {
-    <p>Loading offers...</p>
+        <p>Loading offers...</p>
     }
     else if (offers.Count == 0)
     {
-    <p>No offers available at the moment.</p>
+        <p>No offers available at the moment.</p>
     }
     else
     {
-    @foreach (var offer in offers)
-    {
-    <OfferComponent class="offer" OfferData="offer"></OfferComponent>
-    }
+        @foreach (var offer in offers)
+        {
+            <OfferComponent class="offer" OfferData="offer"></OfferComponent>
+        }
     }
 </div>
 
+
+
 @code {
-    private List<Offer> offers;
+    private List<Offer>? offers;
+    private string jsonOffers;
+    
     protected override async Task OnInitializedAsync()
     {
         // Call the service to get the offers
         try
         {
-            offers = await OfferService.GetOffersAsync();
+            jsonOffers = await OfferService.GetOffersAsync();
+            Console.WriteLine(jsonOffers);
         }
         catch (Exception ex)
         {

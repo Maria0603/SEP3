@@ -1,11 +1,18 @@
+
+using System.Text.Json.Serialization;
+
 namespace client.Pages;
 
 public class Offer
 {
+    [JsonPropertyName("id")]
     // Information about the top section
     public int Id { get; set; }
+    [JsonPropertyName("numberOfItems")]
     public int QuantityLeft { get; set; } // For the "5 Left" text
+    [JsonIgnore]
     public bool IsFavourite { get; set; } // For the heart icon to indicate if the offer is a favorite
+    [JsonIgnore]
     public Business BusinessDetails { get; set; } // Business details (name, icon)
 
     // Information about the offer image
