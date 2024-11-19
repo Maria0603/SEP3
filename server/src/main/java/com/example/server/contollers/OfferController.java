@@ -48,28 +48,10 @@ import java.util.Map;
     System.out.println("Request for place order.");
     try
     {
-      // Session parameters
-      Map<String, Object> sessionParams = new HashMap<>();
-      sessionParams.put("payment_method_types", List.of("card"));
-      sessionParams.put("mode", "payment");
-      sessionParams.put("success_url",
-          "https://localhost:7047/orders/success"); //TODO: Store these somewhere
-      sessionParams.put("cancel_url", "https://localhost:7047/orders/failure");
-      sessionParams.put("line_items", List.of(Map.of("price_data",
-          Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
-              "unit_amount", 3400), "quantity",
-          2))); //TODO: Fetch the data from data_server instead
-
-      // Create session
-      Session session = Session.create(sessionParams);
-
-      // Return session URL
-      PlaceOrderResponseDto response = new PlaceOrderResponseDto();
-      response.setUrl(session.getUrl());
-      response.setSessionId(session.getId());
+      PlaceOrderResponseDto response = offerService.placeOrder(orderRequest);
       return ResponseEntity.ok(response);
     }
-    catch (StripeException e)
+    catch (IllegalArgumentException e)
     {
       e.printStackTrace();
       return ResponseEntity.badRequest().build();

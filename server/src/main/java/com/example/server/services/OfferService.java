@@ -2,18 +2,22 @@ package com.example.server.services;
 
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
-import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.*;
 import com.example.server.converters.DateConverter;
 import com.example.server.converters.TimeConverter;
-import com.example.server.dto.DateDto;
-import com.example.server.dto.TimeDto;
 import com.stripe.Stripe;
+import com.stripe.exception.StripeException;
+import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestDto_To_SaveOfferRequest;
@@ -21,12 +25,15 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
   private final DataServerStub dataServerStub;
+  @Value("${stripe.success-url}")
+  private String successUrl;
+
+  @Value("${stripe.cancel-url}")
+  private String cancelUrl;
 
   @Autowired public OfferService(DataServerStub dataServerStub)
   {
     this.dataServerStub = dataServerStub;
-    Stripe.apiKey = "sk_test_51QLXFcEJybmJ8DbtUW95vPtVV4vCIHtWi7MgOuqlhLngWoki5Bo0iMF8s2Nfxhzpub5gnIAD3d0CUpZBcSAJanmp004vLU11xd";
-
     System.out.println("OfferService created");
   }
 
@@ -46,6 +53,38 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 
     //return the id; maybe more?
     return response.getId();
+  }
+
+  public PlaceOrderResponseDto placeOrder(PlaceOrderRequestDto requestDto)
+  {
+    try
+    {
+      // Session parameters
+      Map<String, Object> sessionParams = new HashMap<>();
+      sessionParams.put("payment_method_types", List.of("card"));
+      sessionParams.put("mode", "payment");
+      sessionParams.put("success_url",
+          successUrl);
+      sessionParams.put("cancel_url", cancelUrl);
+      sessionParams.put("line_items", List.of(Map.of("price_data",
+          Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
+              "unit_amount", 3400), "quantity",
+          2))); //TODO: Fetch the data from data_server instead
+
+      // Create session
+      Session session = Session.create(sessionParams);
+
+      // Return session URL
+      PlaceOrderResponseDto response = new PlaceOrderResponseDto();
+      response.setUrl(session.getUrl());
+      response.setSessionId(session.getId());
+      return response;
+    }
+    catch (StripeException e)
+    {
+      e.printStackTrace();
+      throw new IllegalArgumentException(e.getMessage());
+    }
   }
 
   private boolean isPickupInFuture(DateDto date, TimeDto time)
