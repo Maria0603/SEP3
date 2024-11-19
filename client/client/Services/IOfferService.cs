@@ -4,5 +4,6 @@ namespace client.Services;
 
 public interface IOfferService
 {
-    public Task<string> GetOffersAsync();
+    public Task<List<Offer>> GetOffersAsync();
+    public Task<string> GetOffersJsonAsync();
 }

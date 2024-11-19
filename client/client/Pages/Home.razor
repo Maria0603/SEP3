@@ -33,8 +33,20 @@
         // Call the service to get the offers
         try
         {
-            jsonOffers = await OfferService.GetOffersAsync();
+            offers = await OfferService.GetOffersAsync();
+            jsonOffers = await OfferService.GetOffersJsonAsync(); // Delete this one
             Console.WriteLine(jsonOffers);
+            if (offers != null)
+            {
+                foreach (var offer in offers)
+                {
+                    Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.Price}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Offers are empty");
+            }
         }
         catch (Exception ex)
         {
