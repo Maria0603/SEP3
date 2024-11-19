@@ -21,8 +21,8 @@ public class OfferService : IOfferService
     {
         // Send the request to the server to create a Stripe checkout session
         HttpResponseMessage response =
-            await client.PostAsJsonAsync($"offers/{offerId}",
-                orderRequestDto); //TODO: replace with Jan's endpoint
+            await client.PostAsJsonAsync($"offers/order",
+                orderRequestDto); //TODO: replace with the right endpoint
         String responseContent = await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
