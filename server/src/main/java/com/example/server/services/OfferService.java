@@ -8,6 +8,7 @@ import com.example.server.converters.TimeConverter;
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -25,11 +26,9 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
   private final DataServerStub dataServerStub;
-  @Value("${stripe.success-url}")
-  private String successUrl;
+  @Value("${stripe.success-url}") private String successUrl;
 
-  @Value("${stripe.cancel-url}")
-  private String cancelUrl;
+  @Value("${stripe.cancel-url}") private String cancelUrl;
 
   @Autowired public OfferService(DataServerStub dataServerStub)
   {
@@ -40,9 +39,10 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
   public String saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
-    if(!isPickupInFuture(offerRequestDto.getPickupDate(), offerRequestDto.getPickupTimeEnd()))
-      throw new IllegalArgumentException("Pickup date and time must be in the future");
-
+    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
+        offerRequestDto.getPickupTimeEnd()))
+      throw new IllegalArgumentException(
+          "Pickup date and time must be in the future");
 
     //Transform the dto to grpc message
     SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
@@ -63,13 +63,13 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
       Map<String, Object> sessionParams = new HashMap<>();
       sessionParams.put("payment_method_types", List.of("card"));
       sessionParams.put("mode", "payment");
-      sessionParams.put("success_url",
-          successUrl);
+      sessionParams.put("success_url", successUrl);
       sessionParams.put("cancel_url", cancelUrl);
       sessionParams.put("line_items", List.of(Map.of("price_data",
           Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
-              "unit_amount", 3400), "quantity",
-          2))); //TODO: Fetch the data from data_server instead
+              //this is the amount in ore; it must be above 250, as established by Stripe
+              "unit_amount", 3400),
+          "quantity", 2))); //TODO: Fetch the data from data_server instead
 
       // Create session
       Session session = Session.create(sessionParams);

@@ -6,12 +6,14 @@ import org.springframework.context.annotation.Configuration;
 
 import javax.annotation.PostConstruct;
 
-//I think this is Jan's part, but I want to play
 @Configuration
 public class StripeConfig {
 
   @Value("${stripe.secret.key}")
   private String secretKey;
+
+  @Value("${stripe.public.key}")
+  private String publicKey;
 
   @PostConstruct
   public void init() {

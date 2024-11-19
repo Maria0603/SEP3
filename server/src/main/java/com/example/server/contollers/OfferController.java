@@ -54,7 +54,7 @@ import java.util.Map;
     catch (IllegalArgumentException e)
     {
       e.printStackTrace();
-      return ResponseEntity.badRequest().build();
+      return ResponseEntity.badRequest().build(); //TODO: update
     }
   }
 }
