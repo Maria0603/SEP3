@@ -28,6 +28,14 @@ public class DateDto {
   public void setDay(int day) {
     this.day = day;
   }
+
+  @Override public boolean equals(Object obj)
+  {
+    if(!(obj instanceof DateDto other))
+      return false;
+
+    return this.year == other.year && this.month == other.month && this.day == other.day;
+  }
 }
 
 
