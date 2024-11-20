@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -26,8 +27,7 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
   private final DataServerStub dataServerStub;
-  @Value("${stripe.success-url}") private String successUrl;
-
+  @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
 
   @Autowired public OfferService(DataServerStub dataServerStub)
@@ -36,6 +36,12 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     System.out.println("OfferService created");
   }
 
+  /*
+  So the point of this: when this method is called (The business click the Create Offer button),
+  the request must already contain the imagePath. How? When the business browses for images and select the image for offer,
+  the image must be saved using the endpoint from ImageStorageController (POST /image, if nothing changes, hopefully). The
+  controller sends back to the client the imagePath, which should be included in the CreateOfferRequestDto
+   */
   public String saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
@@ -68,8 +74,8 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
       sessionParams.put("line_items", List.of(Map.of("price_data",
           Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
               //this is the amount in ore; it must be above 250, as established by Stripe
-              "unit_amount", 3400),
-          "quantity", 2))); //TODO: Fetch the data from data_server instead
+              "unit_amount", 3400), "quantity",
+          2))); //TODO: Fetch the data from data_server instead
 
       // Create session
       Session session = Session.create(sessionParams);

@@ -1,6 +1,5 @@
 package com.example.server.contollers;
 
-import com.example.server.contollers.OfferController;
 import com.example.server.dto.CreateOfferRequestDto;
 import com.example.server.dto.DateDto;
 import com.example.server.dto.TimeDto;
@@ -66,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     validRequest.setPickupTimeEnd(validTimeEnd);
     try
     {
-      validRequest.setImage(createImageByteArray());
+      validRequest.setImagePath(createImageByteArray());
     }
     catch (IOException e)
     {
@@ -124,7 +123,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     timeEnd.setHour(17);
     timeEnd.setMinute(0);
     validRequest.setPickupTimeEnd(timeEnd);
-    validRequest.setImage(null);
+    validRequest.setImagePath(null);
     performPostAndExpectError("Image must be provided");
   }
 
@@ -191,7 +190,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     try
     {
-      invalidRequest.setImage(createImageByteArray());
+      invalidRequest.setImagePath(createImageByteArray());
     }
     catch (IOException e)
     {

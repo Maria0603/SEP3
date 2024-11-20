@@ -23,28 +23,14 @@ import java.util.Optional;
     extends OfferServiceGrpc.OfferServiceImplBase
 {
   private OfferRepository offerRepository;
-  private final String uploadDirectory = "data_server/images/";
 
   @Autowired public OfferServiceImpl(OfferRepository offerRepository)
   {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
-    File file = new File("data_server/images");
-    if (!file.exists())
-    {
-      file.mkdirs();
-    }
+
   }
 
-  /*
-  message SaveOfferRequest {
-  string title = 1;  string description = 2;  int32 originalPrice = 3;  int32 offerPrice = 4;
-  int32 numberOfItems = 5;  Date pickupDate = 6;  Time pickupTimeStart = 7;
-  Time pickupTimeEnd = 8;  repeated string categories = 9;   bytes image = 10;
-
-  TODO for Matej: The data_server is expecting the image as an array of bytes
-}
-   */
   @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver)
   {
@@ -69,46 +55,24 @@ import java.util.Optional;
     offer.setCategories(categories);
     offer.setNumberOfItems(request.getNumberOfItems());
     offer.setStatus(Status.AVAILABLE.getStatus());
+    offer.setImagePath(request.getImagePath());
 
-    //We save the offer in the database to extract the id
-    OfferDao createdOffer = offerRepository.save(offer);
-
-    //The image will be in the file system as {id}.jpg
-    String offerId = createdOffer.getId();
-
-    //TODO: delete this part when working with the image, otherwise you will have a bunch of red images
-    //<------- for testing purposes
-    String imagePath = null;
-    try
-    {
-      imagePath = saveImage(createImageByteArray(), offerId);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-    }
-    // ----------------------->
-    //correct line:
-    //String imagePath = saveImage(request.getImage().toByteArray(), offerId);
-
-    //we update the previously null image
-    createdOffer.setImagePath(imagePath);
-    offerRepository.save(createdOffer);
+    offerRepository.save(offer);
 
     //We build the response with everything
     SaveOfferResponse response = SaveOfferResponse.newBuilder()
-        .setId(createdOffer.getId()).setTitle(createdOffer.getTitle())
-        .setDescription(createdOffer.getDescription())
-        .setOfferPrice(createdOffer.getOfferPrice())
-        .setOriginalPrice(createdOffer.getOriginalPrice())
-        .setNumberOfItems(createdOffer.getNumberOfItems()).setPickupDate(
+        .setId(offer.getId()).setTitle(offer.getTitle())
+        .setDescription(offer.getDescription())
+        .setOfferPrice(offer.getOfferPrice())
+        .setOriginalPrice(offer.getOriginalPrice())
+        .setNumberOfItems(offer.getNumberOfItems()).setPickupDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
-                createdOffer.getPickupDate())).setPickupTimeStart(
+                offer.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
-                createdOffer.getPickupTimeStart())).setPickupTimeEnd(
+                offer.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
-                createdOffer.getPickupTimeEnd())).setImage(request.getImage())
-        .addAllCategories(createdOffer.getCategories()).build();
+                offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
+        .addAllCategories(offer.getCategories()).build();
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
@@ -165,10 +129,10 @@ import java.util.Optional;
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeEnd()))
-        .setImage(ByteString.copyFrom(extractImage(offerDao.getImagePath())))
+        .setImagePath(offerDao.getImagePath())
         .addAllCategories(offerDao.getCategories()).build();
   }
-
+/*
   private String saveImage(byte[] imageBytes, String offerId)
   {
     String pathToImage = null;
@@ -183,9 +147,7 @@ import java.util.Optional;
     catch (IOException e)
     {
       e.printStackTrace();
-       /*responseStreamObserver.onError(
-          io.grpc.Status.INTERNAL.withDescription("Error processing image.")
-              .asRuntimeException());*/
+
     }
     return pathToImage;
   }
@@ -220,13 +182,11 @@ import java.util.Optional;
     catch (IOException e)
     {
       e.printStackTrace();
-       /*responseStreamObserver.onError(
-          io.grpc.Status.INTERNAL.withDescription("Error processing image.")
-              .asRuntimeException());*/
+
     }
     return null;
   }
-
+*/
 
 
 }
