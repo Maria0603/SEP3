@@ -29,6 +29,11 @@ import java.util.Optional;
   {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
+    File file = new File("data_server/images");
+    if (!file.exists())
+    {
+      file.mkdirs();
+    }
   }
 
   /*
