@@ -25,8 +25,7 @@ public class DtoGrpcConverter
         createOfferRequestDto.getNumberOfItems());
     saveOfferRequestBuilder.addAllCategories(
         createOfferRequestDto.getCategories());
-    saveOfferRequestBuilder.setImage(com.google.protobuf.ByteString.copyFrom(
-        createOfferRequestDto.getImage()));
+    saveOfferRequestBuilder.setImagePath(createOfferRequestDto.getImagePath());
 
     // Convert DateDto to Date
     Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
