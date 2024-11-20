@@ -1,6 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.OfferResponseDto;
 import com.example.server.dto.PlaceOrderRequestDto;
 import com.example.server.dto.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
@@ -40,10 +41,25 @@ import java.util.Map;
     }
   }
 
+  @GetMapping public ResponseEntity<List<OfferResponseDto>> getAvailableOffers()
+  {
+    try
+    {
+      List<OfferResponseDto> offers = offerService.getAvailableOffers();
+
+      return ResponseEntity.ok(offers);
+    }
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
+    }
+  }
+
   //@PostMapping("/{id}")
   @PostMapping("/order") //TODO: change
-  public ResponseEntity<PlaceOrderResponseDto> placeOrder(//@PathVariable String id,
-       @RequestBody PlaceOrderRequestDto orderRequest)
+  public ResponseEntity<PlaceOrderResponseDto> placeOrder(
+      //@PathVariable String id,
+      @RequestBody PlaceOrderRequestDto orderRequest)
   {
     System.out.println("Request for place order.");
     try

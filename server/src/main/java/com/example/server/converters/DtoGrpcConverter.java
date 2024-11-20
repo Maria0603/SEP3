@@ -1,9 +1,8 @@
 package com.example.server.converters;
 
-import com.example.sep3.grpc.Date;
-import com.example.sep3.grpc.SaveOfferRequest;
-import com.example.sep3.grpc.Time;
+import com.example.sep3.grpc.*;
 import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.OfferResponseDto;
 
 public class DtoGrpcConverter
 {
@@ -43,5 +42,27 @@ public class DtoGrpcConverter
 
     // Build and return the SaveOfferRequest object
     return saveOfferRequestBuilder.build();
+  }
+
+  public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
+      OfferResponse offerResponseGrpc)
+  {
+    OfferResponseDto dto = new OfferResponseDto();
+    dto.setId(offerResponseGrpc.getId());
+    dto.setTitle(offerResponseGrpc.getTitle());
+    dto.setDescription(offerResponseGrpc.getDescription());
+    dto.setOriginalPrice(offerResponseGrpc.getOriginalPrice());
+    dto.setOfferPrice(offerResponseGrpc.getOfferPrice());
+    dto.setNumberOfItems(offerResponseGrpc.getNumberOfItems());
+    dto.setCategories(offerResponseGrpc.getCategoriesList().stream().toList());
+    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
+        offerResponseGrpc.getPickupDate()));
+    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
+        offerResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
+        offerResponseGrpc.getPickupTimeEnd()));
+    dto.setStatus(offerResponseGrpc.getStatus());
+
+    return dto;
   }
 }
