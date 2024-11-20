@@ -7,10 +7,7 @@ import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Files;
 import java.util.UUID;
 
@@ -19,52 +16,44 @@ import java.util.UUID;
 
   private static final String BASE_DIRECTORY = "server/images/";
 
-
-  public String saveImage(byte[] imageData, Category category, String imageName)
+  public String saveImage(byte[] imageData, String category, String imageName)
       throws IOException
   {
     // Get the sanitized subdirectory name from the category enum
-    String subDirectory = category.getDirectoryName();
-
+    //String subDirectory = category.getDirectoryName();
+    String subDirectory = category.toLowerCase().replace(" ", "_");
     // Create the full directory path
     File categoryDir = new File(BASE_DIRECTORY + subDirectory);
     if (!categoryDir.exists() && !categoryDir.mkdirs())
-    {
       throw new IOException(
           "Failed to create directory: " + categoryDir.getAbsolutePath());
-    }
 
     // Generate a unique file name to avoid collisions
     String uniqueImageName = UUID.randomUUID() + "_" + imageName;
 
     // Define the full file path
-    String filePath =
-        categoryDir.getPath() + File.separator + uniqueImageName;
+    String filePath = categoryDir.getPath() + File.separator + uniqueImageName;
+
+    // Check if the file already exists before writing
+    File file = new File(filePath);
+    if (file.exists())
+      throw new IllegalArgumentException("File already exists: " + filePath);
 
     // Write the image data to the file
-    Files.write(new File(filePath).toPath(), imageData);
-/*
-    try
-    {
-      ByteArrayInputStream inStreamObj = new ByteArrayInputStream(imageData);
-      BufferedImage newImage = ImageIO.read(inStreamObj);
+    Files.write(file.toPath(), imageData);
 
-      ImageIO.write(newImage, "jpg", new File(filePath));
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-
-    }*/
-
-    return filePath; // Return the saved file path
+    return filePath.replace("\\", "/"); // Return the saved file path
   }
-
 
   public String getCategoryDirectory(Category category)
   {
     return BASE_DIRECTORY + category.getDirectoryName();
   }
+
+
+
+
+
   /*
   private String saveImage(byte[] imageBytes, String offerId)
   {

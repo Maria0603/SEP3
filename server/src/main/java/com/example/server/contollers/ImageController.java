@@ -19,38 +19,24 @@ import java.io.IOException;
   {
     this.imageStorageService = imageStorageService;
   }
-/*
-  @PostMapping public ResponseEntity<String> uploadImage(@RequestBody
-      UploadImageRequestDto imageRequestDto)
+
+  @PostMapping(consumes = "multipart/form-data") public ResponseEntity<String> uploadImage(
+      @RequestParam("file") MultipartFile file,
+      @RequestParam("category") String category)
   {
     try
     {
-      String filePath = imageStorageService.saveImage(imageRequestDto.getFile().getBytes(), imageRequestDto.getCategory(),
-          imageRequestDto.getFile().getOriginalFilename());
-      System.out.println("Image saved at: " + filePath);
-      return ResponseEntity.ok("Image saved at: " + filePath);
-    }
-    catch (IOException e)
-    {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error saving image: " + e.getMessage());
-    }
-  }*/
-  @PostMapping(consumes = "multipart/form-data")
-  public ResponseEntity<String> uploadImage(
-      @RequestParam("file") MultipartFile file,
-      @RequestParam("category") Category category) {
-    try {
       System.out.println("File Size: " + file.getSize());
 
       // Save the image using the service
-      String filePath = imageStorageService.saveImage(
-          file.getBytes(), category, file.getOriginalFilename());
+      String filePath = imageStorageService.saveImage(file.getBytes(), category,
+          file.getOriginalFilename());
       System.out.println("Image saved at: " + filePath);
-      return ResponseEntity.ok(filePath);
-    } catch (IOException e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-          .body("Error saving image: " + e.getMessage());
+      return ResponseEntity.ok(filePath.replace("\\", "\\\\"));
+    }
+    catch (IOException e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 }

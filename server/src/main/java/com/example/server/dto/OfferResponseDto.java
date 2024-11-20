@@ -1,6 +1,7 @@
 package com.example.server.dto;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class OfferResponseDto
 {
@@ -14,7 +15,7 @@ public class OfferResponseDto
   private DateDto pickupDate;
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
-  private ArrayList<String> categories;
+  private List<String> categories;
   private byte[] image;
   private String status;
 
@@ -67,13 +68,13 @@ public class OfferResponseDto
     this.description = description;
   }
 
-  public ArrayList<String> getCategories()
+  public List<String> getCategories()
   {
     return categories;
   }
 
 
-  public void setCategories(ArrayList<String> categories)
+  public void setCategories(List<String> categories)
   {
     this.categories = categories;
   }
