@@ -39,4 +39,20 @@ public class OfferService : IOfferService
         throw new Exception(
             $"Error: {response.StatusCode}, {response.ReasonPhrase}");
     }
+
+    public async Task<List<Offer>> GetOffersAsync()
+    {
+        var response = await client.GetAsync("offers");
+        var json = await response.Content.ReadAsStringAsync();
+        var offers = JsonSerializer.Deserialize<List<Offer>>(json);
+        return offers;
+    }
+    
+    public async Task<string> GetOffersJsonAsync()
+    {
+        var response = await client.GetAsync("offers");
+        var json = await response.Content.ReadAsStringAsync();
+        var offers = JsonSerializer.Deserialize<List<Offer>>(json);
+        return json;
+    }
 }

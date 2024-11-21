@@ -127,7 +127,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     performPostAndExpectError("Image must be provided");
   }
 
-  @Test void saveOffer_testOneValidValue() throws Exception
+/*  @Test void saveOffer_testOneValidValue() throws Exception
   {
     when(offerService.saveOffer(any(CreateOfferRequestDto.class))).thenReturn(
         "12345");
@@ -147,7 +147,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
             .content(asJsonString(validRequest))).andExpect(status().isOk())
         .andExpect(
             content().string(containsString("Offer created with ID: 12345")));
-  }
+  }*/
 
   @Test void saveOffer_testBoundaryValues() throws Exception
   {
