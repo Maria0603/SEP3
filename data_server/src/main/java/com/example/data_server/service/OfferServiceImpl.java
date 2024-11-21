@@ -18,13 +18,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@GrpcService
-
-public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase {
+@GrpcService public class OfferServiceImpl
+    extends OfferServiceGrpc.OfferServiceImplBase
+{
   private OfferRepository offerRepository;
 
-  @Autowired
-   public OfferServiceImpl(OfferRepository offerRepository) {
+  @Autowired public OfferServiceImpl(OfferRepository offerRepository)
+  {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
 
@@ -53,7 +53,7 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
         DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     offer.setCategories(categories);
     offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setStatus(Status.AVAILABLE.getStatus());
+    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
     offer.setImagePath(request.getImagePath());
 
     offerRepository.save(offer);
@@ -81,9 +81,9 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
       StreamObserver<OfferList> responseObserver)
   {
     System.out.println("Request for all offers");
-    List<Of
-  
-  erDao> availableOffers = offerRepository.findBy       OfferStatus.AVAILABLE.getStatus()); 
+    List<OfferDao> availableOffers = offerRepository.findByStatus(
+        OfferStatus.AVAILABLE.getStatus());
+
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
       offerListBuilder.addOffer(
@@ -91,7 +91,7 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
 
     OfferList offerListResponse = offerListBuilder.build();
     responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();  
+    responseObserver.onCompleted();
   }
 
   @Override public void getOfferById(OfferIdRequest request,
@@ -99,16 +99,18 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
   {
     System.out.println("Request for offer by id");
 
-  
-     Optional<OfferDao> offer = offerRepository.findBy   if (offer.isPresent())
+    Optional<OfferDao> offer = offerRepository.findById(request.getId());
+    if (offer.isPresent())
     {
       OfferDao offerDao = offer.get();
 
-      OfferResponse offerR 
+      OfferResponse offerResponse = buildOfferResponse(
+          offerDao); //method to build the response
+
       responseObserver.onNext(offerResponse);
       responseObserver.onCompleted();
-    } 
- 
+    }
+
     responseObserver.onError(
         new Exception("Error: No offer with ID " + request.getId()));
   }
@@ -116,20 +118,20 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
 
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
-
-
-            DateTimeConverter.convertDateDaoToGrpcDate(               offerDao.getPickupDate())).setPickupTimeStart(
+    return OfferResponse.newBuilder().setId(offerDao.getId())
+        .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
+        .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
+        .setOriginalPrice(offerDao.getOriginalPrice())
+        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
-                offerDao.getPickupTimeEnd(
-        )))
+                offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
-        .addAllCategories(offerDao.getCate
-        gorie
-        s()).build();
+        .addAllCategories(offerDao.getCategories()).build();
   }
-        
 
   private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
   {
@@ -148,36 +150,32 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
 /*
   private String saveImage(byte[] imageBytes, String offerId)
   {
-   
-   
-    
-   *  *  
-   *  
-   *  
-   *   
-   *  
-   * 
-   * 
-   * 
-   * .printStackTrace();
-   * 
-   *  
-   *   
-   *  
-   * ======
-   *    * 
-   * e-Management-Without-HTTP-Florina
-   * 
-   * 
-   
-        r
+    String pathToImage = null;
+    try
+    {
+      ByteArrayInputStream inStreamObj = new ByteArrayInputStream(imageBytes);
+      BufferedImage newImage = ImageIO.read(inStreamObj);
 
-    
+      pathToImage = uploadDirectory + offerId + ".jpg";
+      ImageIO.write(newImage, "jpg", new File(pathToImage));
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
 
-  vate byte[] create{  // Create a 200x200 BufferedImage with RGB color
-     BufferedImage bufferedImage = new BufferedImage(200, 200,
-         BufferedImage.TYPE_INT_RGB); 
-    // Fill the image with a solid color   for (int y = 0; y < 200; y++)
+    }
+    return pathToImage;
+  }
+
+  //Method to create a dummy red image, for testing purposes; do not delete
+  private byte[] createImageByteArray() throws IOException
+  {
+    // Create a 200x200 BufferedImage with RGB color
+    BufferedImage bufferedImage = new BufferedImage(200, 200,
+        BufferedImage.TYPE_INT_RGB);
+
+    // Fill the image with a solid color
+    for (int y = 0; y < 200; y++)
       for (int x = 0; x < 200; x++)
         bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
 
@@ -199,6 +197,7 @@ public class OfferServiceImpl     extends OfferServiceGrpc.OfferServiceImplBase 
     catch (IOException e)
     {
       e.printStackTrace();
+
     }
     return null;
   }
