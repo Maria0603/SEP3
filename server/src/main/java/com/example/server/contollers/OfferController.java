@@ -1,9 +1,6 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.OfferResponseDto;
-import com.example.server.dto.PlaceOrderRequestDto;
-import com.example.server.dto.PlaceOrderResponseDto;
+import com.example.server.dto.*;
 import com.example.server.services.OfferService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
@@ -46,11 +43,11 @@ import java.util.Map;
     }
   }
 
-  @GetMapping public ResponseEntity<List<OfferResponseDto>> getAvailableOffers()
+  @GetMapping public ResponseEntity<List<ShortOfferResponseDto>> getAvailableOffers()
   {
     try
     {
-      List<OfferResponseDto> offers = offerService.getAvailableOffers();
+      List<ShortOfferResponseDto> offers = offerService.getAvailableOffers();
 
       return ResponseEntity.ok(offers);
     }

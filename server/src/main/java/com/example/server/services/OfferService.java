@@ -40,7 +40,6 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     System.out.println("OfferService created");
   }
 
-
   @Transactional public String saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
@@ -70,33 +69,28 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     }
   }
 
-  public List<OfferResponseDto> getAvailableOffers()
+  public List<ShortOfferResponseDto> getAvailableOffers()
   {
-
     //Build the grpc request
     EmptyMessage request = EmptyMessage.newBuilder().build();
 
     //Send the request to the data server
     OfferList response = dataServerStub.getAvailableOffers(request);
 
-    ArrayList<OfferResponseDto> offers = new ArrayList<>();
+    ArrayList<ShortOfferResponseDto> offers = new ArrayList<>();
     for (int i = 0; i < response.getOfferCount(); i++)
     {
-      OfferResponseDto dto = DtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
+      ShortOfferResponseDto dto = DtoGrpcConverter.ShortOfferResponseGrpc_To_ShortOfferResponseDto(
           response.getOffer(i));
 
       //Attach the images
       String imagePath = response.getOffer(i).getImagePath();
-      try
-      {
-        dto.setImage(retrieveImage(imagePath));
-      }
-      catch (IOException e)
-      {
+      if (imageExists(imagePath))
+        dto.setImagePath(imagePath);
+      else
         throw new IllegalArgumentException(
             "Image not found for order ID: " + response.getOffer(i).getId()
                 + " with path " + imagePath);
-      }
       offers.add(dto);
     }
 
@@ -139,8 +133,8 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 
   public byte[] retrieveImage(String filePath) throws IOException
   {
-    String normalizedPath = filePath.replace("/", File.separator);
-    File imageFile = new File(normalizedPath);
+    //String normalizedPath = filePath.replace("/", File.separator);
+    File imageFile = new File("server/" + filePath);
 
     if (!imageFile.exists())
     {
@@ -168,14 +162,10 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     return pickupDateTime.isAfter(LocalDateTime.now());
   }
 
-  public boolean doesImageExist(String filePath)
+  public boolean imageExists(String filePath)
   {
-    String normalizedPath = filePath.replace("/", File.separator);
-    // Create a File object from the filePath
-    File imageFile = new File(normalizedPath);
-
-    // Check if the file exists and is a file (not a directory)
-    return imageFile.exists() && imageFile.isFile();
+    File imageFile = new File("server/" + filePath);
+    return imageFile.exists();
   }
 
 }

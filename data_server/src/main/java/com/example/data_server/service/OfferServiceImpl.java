@@ -88,7 +88,7 @@ import java.util.Optional;
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : availableOffers)
       offerListBuilder.addOffer(
-          buildOfferResponse(offerDao)); //method to build the response
+          buildShortOfferResponse(offerDao)); //method to build the response
 
     OfferList offerListResponse = offerListBuilder.build();
     responseObserver.onNext(offerListResponse);
@@ -116,6 +116,7 @@ import java.util.Optional;
         new Exception("Error: No offer with ID " + request.getId()));
   }
 
+
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
     return OfferResponse.newBuilder().setId(offerDao.getId())
@@ -131,6 +132,21 @@ import java.util.Optional;
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
         .addAllCategories(offerDao.getCategories()).build();
+  }
+
+  private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
+  {
+    return ShortOfferResponse.newBuilder().setId(offerDao.getId())
+        .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
+        .setOriginalPrice(offerDao.getOriginalPrice())
+        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                offerDao.getPickupDate())).setPickupTimeStart(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                offerDao.getPickupTimeEnd()))
+        .setImagePath(offerDao.getImagePath()).build();
   }
 /*
   private String saveImage(byte[] imageBytes, String offerId)

@@ -2,7 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.*;
 import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.OfferResponseDto;
+import com.example.server.dto.ShortOfferResponseDto;
 
 public class DtoGrpcConverter
 {
@@ -44,17 +44,15 @@ public class DtoGrpcConverter
     return saveOfferRequestBuilder.build();
   }
 
-  public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
-      OfferResponse offerResponseGrpc)
+  public static ShortOfferResponseDto ShortOfferResponseGrpc_To_ShortOfferResponseDto(
+      ShortOfferResponse offerResponseGrpc)
   {
-    OfferResponseDto dto = new OfferResponseDto();
+    ShortOfferResponseDto dto = new ShortOfferResponseDto();
     dto.setId(offerResponseGrpc.getId());
     dto.setTitle(offerResponseGrpc.getTitle());
-    dto.setDescription(offerResponseGrpc.getDescription());
     dto.setOriginalPrice(offerResponseGrpc.getOriginalPrice());
     dto.setOfferPrice(offerResponseGrpc.getOfferPrice());
     dto.setNumberOfItems(offerResponseGrpc.getNumberOfItems());
-    dto.setCategories(offerResponseGrpc.getCategoriesList().stream().toList());
     dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
         offerResponseGrpc.getPickupDate()));
     dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(

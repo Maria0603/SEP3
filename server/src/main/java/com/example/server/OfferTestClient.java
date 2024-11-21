@@ -41,8 +41,8 @@ public class OfferTestClient
 
     try
     {
-      dto.setTitle("Titleeeeeeee");
-      dto.setDescription("Desssssssssssssssssss");
+      dto.setTitle("bbbbbbbbb");
+      dto.setDescription("bbbbbbbbbbbbbbbbbbbbbb");
       dto.setOfferPrice(10);
       dto.setNumberOfItems(5);
       dto.setOriginalPrice(20);
@@ -61,8 +61,8 @@ public class OfferTestClient
       dto.setPickupTimeStart(start);
       dto.setPickupTimeEnd(end);
       ArrayList<String> categories=new ArrayList<>();
-      categories.add("Sushi");
-      categories.add("Drink");
+      categories.add("Groceries");
+      categories.add("Meal");
       categories.add("Other");
       dto.setCategories(categories);
     }
