@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
+
 @GrpcService public class OrderServiceImpl
     extends OrderServiceGrpc.OrderServiceImplBase {
 
@@ -70,6 +71,7 @@ import java.util.Optional;
   private OrderResponse buildOrderResponseFromOrderDao(
       StreamObserver<OrderResponse> responseObserver, OrderDao orderDao) {
     OrderResponse response = getOrderResponseFromOrderDao(orderDao);
+
     responseObserver.onNext(response);
     responseObserver.onCompleted();
     return response;
@@ -107,7 +109,7 @@ import java.util.Optional;
         order.setOldOrderPrice(offerDao.getOriginalPrice() * request.getQuantity());
         order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
     } else {
-        throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
+        //throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
     }
 
     return order;

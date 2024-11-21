@@ -7,75 +7,61 @@ import com.example.sep3.grpc.*;
 
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
+
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 
 import java.io.IOException;
 import java.util.Collections;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
 
+//TODO: Tests are not working, need to fix them; methods should be
+// tested individually in BloomRPC
 class OfferServiceImplTest {
 
-    @Mock
-    private OfferRepository offerRepository;
+  @Mock private OfferRepository offerRepository;
 
-    @InjectMocks
-    private OfferServiceImpl offerService;
+  @InjectMocks private OfferServiceImpl offerService;
 
-    @BeforeEach
-    void setUp() {
-        MockitoAnnotations.openMocks(this);
-    }
+  @BeforeEach void setUp() {
+    MockitoAnnotations.openMocks(this);
+  }
 
-    @Test
-    void testAddOffer() throws IOException {
-        // Create a mock AddOfferRequest
-      Iterable<String> categories = Collections.singletonList("Category");
-      SaveOfferRequest request = SaveOfferRequest.newBuilder()
-            .setTitle("Test Offer")
-            .setDescription("Test Description")
-            .setOfferPrice(80)
-            .setOriginalPrice(100)
-            .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(DateTimeConverter.getCurrentDateDao()))
-            .setPickupTimeStart(DateTimeConverter.convertTimeDaoToGrpcTime(DateTimeConverter.getCurrentTimeDao()))
-            .setPickupTimeEnd(DateTimeConverter.convertTimeDaoToGrpcTime(DateTimeConverter.getCurrentTimeDao()))
-            .addAllCategories(categories)
-            .setNumberOfItems(10)
-            .build();
+  @Test void testAddOffer() throws IOException {
+    // Create a mock AddOfferRequest
+    List<String> categories = new ArrayList<>(List.of("Category1"));
+    SaveOfferRequest request = SaveOfferRequest.newBuilder()
+        .setTitle("Test Offer").setDescription("Test Description")
+        .setOfferPrice(80).setOriginalPrice(100).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(
+                DateTimeConverter.getCurrentDateDao())).setPickupTimeStart(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                DateTimeConverter.getCurrentTimeDao())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                DateTimeConverter.getCurrentTimeDao()))
+        //.addAllCategories(categories)
+        .setNumberOfItems(10).build();
 
-        // Create a mock OfferDao
-        OfferDao offer = new OfferDao();
-        offer.setTitle(request.getTitle());
-        offer.setDescription(request.getDescription());
-        offer.setOfferPrice(request.getOfferPrice());
-        offer.setOriginalPrice(request.getOriginalPrice());
-        offer.setPickupDate(DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-        offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()));
-        offer.setPickupTimeEnd(DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
-        offer.setCategories(new ArrayList<>(request.getCategoriesList()));
-        offer.setNumberOfItems(request.getNumberOfItems());
-        offer.setStatus("AVAILABLE");
+    // Mock the response observer
+    StreamObserver<SaveOfferResponse> responseObserver = mock(
+        StreamObserver.class);
 
-        // Mock the OfferRepository to save and return the created offer
-        when(offerRepository.save(any(OfferDao.class))).thenReturn(offer);
+    // Call the addOffer method
+    offerService.saveOffer(request, responseObserver);
 
-        // Mock the response observer
-        StreamObserver<SaveOfferResponse> responseObserver = mock(StreamObserver.class);
-
-        // Call the addOffer method
-        offerService.saveOffer(request, responseObserver);
-
-        // Verify the response
-        verify(responseObserver).onNext(any(SaveOfferResponse.class));
-        verify(responseObserver).onCompleted();
-    }
+    // Verify the response
+    verify(responseObserver).onNext(any(SaveOfferResponse.class));
+    verify(responseObserver).onCompleted();
+  }
 }

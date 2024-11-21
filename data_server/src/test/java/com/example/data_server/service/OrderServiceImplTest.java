@@ -20,6 +20,9 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+
+//TODO: Tests are not working, need to fix them; methods should be
+// tested individually in BloomRPC
 class OrderServiceImplTest {
 
   @Mock private OrderRepository orderRepository;
