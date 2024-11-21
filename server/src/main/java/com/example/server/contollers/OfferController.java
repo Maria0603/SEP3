@@ -26,19 +26,17 @@ import java.util.Map;
   }
 
   //Look at OfferTestClient to see how the request should look like
-  @PostMapping(consumes = "multipart/form-data") public ResponseEntity<OfferResponseDto> saveOffer(
-      @Valid @RequestPart("offer") CreateOfferRequestDto offerRequestDto,
-      @RequestPart("file") MultipartFile file)
+  @PostMapping public ResponseEntity<OfferResponseDto> saveOffer(
+      @Valid @RequestBody CreateOfferRequestDto offerRequestDto)
   {
     try
     {
-      offerRequestDto.setImage(file.getBytes()); //sent separately
       OfferResponseDto offerDto = offerService.saveOffer(offerRequestDto);
-
       return ResponseEntity.ok(offerDto);
     }
     catch (Exception e)
     {
+      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
@@ -53,6 +51,7 @@ import java.util.Map;
     }
     catch (Exception e)
     {
+      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }

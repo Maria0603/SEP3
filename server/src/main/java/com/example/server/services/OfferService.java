@@ -41,19 +41,15 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     System.out.println("OfferService created");
   }
 
-  @Transactional public OfferResponseDto saveOffer(CreateOfferRequestDto offerRequestDto)
+  @Transactional public OfferResponseDto saveOffer(
+      CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
     validateOfferDetails(offerRequestDto);
-
+    String imagePath = null;
     try
     {
-      String imagePath = imageStorageService.saveImage(
-          offerRequestDto.getImage(),
-          // We take the first category, so the order is important
-          offerRequestDto.getCategories().getFirst(),
-          "abcdefg"); //Dummy business ID TODO: replace when implemented
-
+      imagePath = imageStorageService.saveImage(offerRequestDto.getImage());
       //Transform the dto to grpc message
       SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
           offerRequestDto, imagePath);
@@ -66,8 +62,12 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     }
     catch (IOException e)
     {
+      e.printStackTrace();
+      if (imagePath != null)
+        imageStorageService.deleteImage(imagePath); //rollback
       throw new IllegalArgumentException("Failed to save the image");
     }
+
   }
 
   public List<ShortOfferResponseDto> getAvailableOffers()

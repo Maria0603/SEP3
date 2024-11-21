@@ -7,35 +7,45 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
+import java.util.UUID;
 
 @Service public class ImageStorageService
 {
 
   private static final String BASE_DIRECTORY = "server/images/";
 
-  //When dealing with categories we will use the Category enum (in shared), but for now, we have strings
-  public String saveImage(byte[] imageData, String category, String businessId)
-      throws IOException
+  public ImageStorageService()
   {
-    // Get the sanitized subdirectory name from the category enum
-    String subDirectory = category.toLowerCase().replace(" ", "_");
-
-    // Construct the image name as BusinessId_Category.jpg
-    String imageName = businessId + "_" + subDirectory + ".jpg";
-
-    // Create the full directory path
-    File categoryDir = new File(BASE_DIRECTORY + subDirectory);
-    if (!categoryDir.exists() && !categoryDir.mkdirs())
-      throw new IOException(
-          "Failed to create directory: " + categoryDir.getAbsolutePath());
-
-    // Check if the file already exists before writing; if it does, use it
-    File file = new File(categoryDir, imageName);
+    File file = new File(BASE_DIRECTORY);
     if (!file.exists())
-      // Write the image data to the file
-      Files.write(file.toPath(), imageData);
+      file.mkdirs();
 
-    return "images/" + subDirectory + "/" + imageName;
+  }
+
+  public String saveImage(byte[] imageData) throws IOException
+  {
+
+    // Generates a random unique ID
+    String imageName = UUID.randomUUID() + ".jpg";
+
+    File file = new File(BASE_DIRECTORY, imageName);
+    Files.write(file.toPath(), imageData);
+
+    return "images/" + imageName;
+  }
+
+  public void deleteImage(String imagePath)
+  {
+    File file = new File(imagePath);
+    if (file.exists())
+    {
+      boolean deleted = file.delete();
+      if (!deleted)
+        throw new IllegalArgumentException(
+            "Failed to delete the image: " + imagePath);
+    }
+    else
+      throw new IllegalArgumentException("Image not found: " + imagePath);
   }
 
   //Good methods, do not delete

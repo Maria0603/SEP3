@@ -31,8 +31,8 @@ public class OfferTestClient
 
     try
     {
-      dto.setTitle("dddddddd");
-      dto.setDescription("dddddddddddddddddddddddddddddddd");
+      dto.setTitle("fffffffffffffff");
+      dto.setDescription("eeeeeeeeeeeeeeeeeeeeeeeee");
       dto.setOfferPrice(10);
       dto.setNumberOfItems(5);
       dto.setOriginalPrice(20);
@@ -51,7 +51,8 @@ public class OfferTestClient
       dto.setPickupTimeStart(start);
       dto.setPickupTimeEnd(end);
       ArrayList<String> categories=new ArrayList<>();
-      categories.add("Cat");
+      categories.add("Meal");
+      categories.add("Vegan");
       dto.setCategories(categories);
     }
     catch (IOException e)
@@ -59,36 +60,22 @@ public class OfferTestClient
       throw new RuntimeException(e);
     }
 
-    // Create the multipart body
-    MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-    body.add("offer", dto);
-    body.add("file", new ByteArrayResource(dto.getImage())
-    {
-      @Override public String getFilename()
-      {
-        return "test-image.jpg";
-      }
-    });
-
     // Create RestTemplate instance
     RestTemplate restTemplate = new RestTemplate();
 
     // Create headers for the request
     HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
+    headers.setContentType(MediaType.APPLICATION_JSON);
     // Wrap the body and headers in an HttpEntity
-    HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(
-        body, headers);
-
+    HttpEntity<CreateOfferRequestDto> requestEntity = new HttpEntity<>(dto, headers);
+    System.out.println(requestEntity.getBody().getDescription());
     // Make the POST request
-    ResponseEntity<OfferResponseDto> response = restTemplate.postForEntity(url,
+    OfferResponseDto response = restTemplate.postForObject(url,
         requestEntity, OfferResponseDto.class);
 
-    OfferResponseDto responseDto = response.getBody();
 
     // Print the response
-    System.out.println("Response status: " + response.getStatusCode());
-    System.out.println("Offer id: " + responseDto.getId());
+    System.out.println("Offer id: " + response.getId());
   }
   //Method to create a dummy red image, for testing purposes; do not delete
   public static byte[] createImageByteArray() throws IOException

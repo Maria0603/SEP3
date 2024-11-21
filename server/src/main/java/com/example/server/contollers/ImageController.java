@@ -30,8 +30,7 @@ import java.io.IOException;
       System.out.println("File Size: " + file.getSize());
 
       // Save the image using the service
-      String filePath = imageStorageService.saveImage(file.getBytes(), category,
-          file.getOriginalFilename());
+      String filePath = imageStorageService.saveImage(file.getBytes());
       System.out.println("Image saved at: " + filePath);
       return ResponseEntity.ok(filePath.replace("\\", "\\\\"));
     }

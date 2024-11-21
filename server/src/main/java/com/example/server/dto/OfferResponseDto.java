@@ -1,6 +1,5 @@
 package com.example.server.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class OfferResponseDto
@@ -16,7 +15,7 @@ public class OfferResponseDto
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
   private List<String> categories;
-  private String image;
+  private String imagePath;
   private String status;
 
   public String getId()
@@ -39,14 +38,14 @@ public class OfferResponseDto
     this.status = status;
   }
 
-  public String getImage()
+  public String getImagePath()
   {
-    return image;
+    return imagePath;
   }
 
-  public void setImage(String image)
+  public void setImagePath(String imagePath)
   {
-    this.image = image;
+    this.imagePath = imagePath;
   }
 
   public String getTitle()

@@ -61,7 +61,7 @@ public class DtoGrpcConverter
         saveOfferResponseGrpc.getPickupTimeEnd()));
     dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
     dto.setDescription(saveOfferResponseGrpc.getDescription());
-    dto.setImage(saveOfferResponseGrpc.getImagePath());
+    dto.setImagePath(saveOfferResponseGrpc.getImagePath());
     dto.setStatus("available");//maybe nor send it at all
   return dto;
   }
