@@ -24,5 +24,13 @@ public class TimeDto
   {
     this.minute = minute;
   }
+
+  @Override public boolean equals(Object obj)
+  {
+    if(!(obj instanceof TimeDto other))
+      return false;
+
+    return this.hour == other.hour && this.minute == other.minute;
+  }
 }
 

@@ -1,14 +1,14 @@
 package com.example.server.converters;
 
-import com.example.sep3.grpc.Date;
-import com.example.sep3.grpc.SaveOfferRequest;
-import com.example.sep3.grpc.Time;
+import com.example.sep3.grpc.*;
 import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.OfferResponseDto;
+import com.example.server.dto.ShortOfferResponseDto;
 
 public class DtoGrpcConverter
 {
   public static SaveOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
-      CreateOfferRequestDto createOfferRequestDto)
+      CreateOfferRequestDto createOfferRequestDto, String imagePath)
   {
     // Create SaveOfferRequest builder
     SaveOfferRequest.Builder saveOfferRequestBuilder = SaveOfferRequest.newBuilder();
@@ -25,8 +25,7 @@ public class DtoGrpcConverter
         createOfferRequestDto.getNumberOfItems());
     saveOfferRequestBuilder.addAllCategories(
         createOfferRequestDto.getCategories());
-    saveOfferRequestBuilder.setImage(com.google.protobuf.ByteString.copyFrom(
-        createOfferRequestDto.getImage()));
+    saveOfferRequestBuilder.setImagePath(imagePath);
 
     // Convert DateDto to Date
     Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
@@ -44,5 +43,46 @@ public class DtoGrpcConverter
 
     // Build and return the SaveOfferRequest object
     return saveOfferRequestBuilder.build();
+  }
+
+  public static OfferResponseDto SaveOfferResponseGrpc_To_OfferResponseDto(SaveOfferResponse saveOfferResponseGrpc)
+  {
+    OfferResponseDto dto = new OfferResponseDto();
+    dto.setId(saveOfferResponseGrpc.getId());
+    dto.setTitle(saveOfferResponseGrpc.getTitle());
+    dto.setOriginalPrice(saveOfferResponseGrpc.getOriginalPrice());
+    dto.setOfferPrice(saveOfferResponseGrpc.getOfferPrice());
+    dto.setNumberOfItems(saveOfferResponseGrpc.getNumberOfItems());
+    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
+        saveOfferResponseGrpc.getPickupDate()));
+    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
+        saveOfferResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
+        saveOfferResponseGrpc.getPickupTimeEnd()));
+    dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
+    dto.setDescription(saveOfferResponseGrpc.getDescription());
+    dto.setImage(saveOfferResponseGrpc.getImagePath());
+    dto.setStatus("available");//maybe nor send it at all
+  return dto;
+  }
+
+  public static ShortOfferResponseDto ShortOfferResponseGrpc_To_ShortOfferResponseDto(
+      ShortOfferResponse offerResponseGrpc)
+  {
+    ShortOfferResponseDto dto = new ShortOfferResponseDto();
+    dto.setId(offerResponseGrpc.getId());
+    dto.setTitle(offerResponseGrpc.getTitle());
+    dto.setOriginalPrice(offerResponseGrpc.getOriginalPrice());
+    dto.setOfferPrice(offerResponseGrpc.getOfferPrice());
+    dto.setNumberOfItems(offerResponseGrpc.getNumberOfItems());
+    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
+        offerResponseGrpc.getPickupDate()));
+    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
+        offerResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
+        offerResponseGrpc.getPickupTimeEnd()));
+    dto.setStatus(offerResponseGrpc.getStatus());
+
+    return dto;
   }
 }

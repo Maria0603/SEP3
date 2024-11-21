@@ -1,6 +1,7 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.Time;
+import com.example.server.dto.DateDto;
 import com.example.server.dto.TimeDto;
 import com.example.shared.dao.TimeDao;
 
@@ -15,7 +16,7 @@ public class TimeConverter
   }
 
   // Convert TimeDao to TimeDto
-  public static TimeDto toTimeDto(TimeDao timeDao)
+  public static TimeDto convertTimeDaoToTimeDto(TimeDao timeDao)
   {
     TimeDto timeDto = new TimeDto();
     timeDto.setHour(timeDao.getHour());
@@ -43,6 +44,14 @@ public class TimeConverter
     }
     return Time.newBuilder().setHour(timeDto.getHour())
         .setMinute(timeDto.getMinute()).build();
+  }
+
+  public static TimeDto convertGrpcTimeToTimeDto(Time time)
+  {
+    TimeDto timeDto = new TimeDto();
+    timeDto.setHour(time.getHour());
+    timeDto.setMinute(time.getMinute());
+    return timeDto;
   }
 
   //Convert TimeDto to LocalTime
