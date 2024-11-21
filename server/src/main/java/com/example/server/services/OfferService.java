@@ -9,6 +9,7 @@ import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -27,12 +28,15 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
   private final DataServerStub dataServerStub;
+  private final ImageStorageService imageStorageService;
   @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
 
-  @Autowired public OfferService(DataServerStub dataServerStub)
+  @Autowired public OfferService(DataServerStub dataServerStub,
+      ImageStorageService imageStorageService)
   {
     this.dataServerStub = dataServerStub;
+    this.imageStorageService = imageStorageService;
     System.out.println("OfferService created");
   }
 
@@ -42,28 +46,31 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
   the image must be saved using the endpoint from ImageStorageController (POST /image, if nothing changes, hopefully). The
   controller sends back to the client the imagePath, which should be included in the CreateOfferRequestDto
    */
-  public String saveOffer(CreateOfferRequestDto offerRequestDto)
+  @Transactional public String saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
-    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
-        offerRequestDto.getPickupTimeEnd()))
-      throw new IllegalArgumentException(
-          "Pickup date and time must be in the future");
+    validateOfferDetails(offerRequestDto);
 
-    //Make sure the image was saved and the path is valid
-    System.out.println(offerRequestDto.getImagePath());
-    if (!doesImageExist(offerRequestDto.getImagePath()))
-      throw new IllegalArgumentException("Image not found.");
+    try
+    {
+      String imagePath = imageStorageService.saveImage(
+          offerRequestDto.getImage(),
+          offerRequestDto.getCategories().getFirst(), "abcdefg");
 
-    //Transform the dto to grpc message
-    SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
-        offerRequestDto);
+      //Transform the dto to grpc message
+      SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
+          offerRequestDto, imagePath);
 
-    //Send the request to the data server
-    SaveOfferResponse response = dataServerStub.saveOffer(request);
+      //Send the request to the data server
+      SaveOfferResponse response = dataServerStub.saveOffer(request);
 
-    //Return the id; maybe more?
-    return response.getId();
+      //Return the id; maybe more?
+      return response.getId();
+    }
+    catch(IOException e)
+    {
+      throw new IllegalArgumentException("Failed to save the image");
+    }
   }
 
   public List<OfferResponseDto> getAvailableOffers()
@@ -98,6 +105,8 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 
     return offers;
   }
+
+
 
   public PlaceOrderResponseDto placeOrder(PlaceOrderRequestDto requestDto)
   {
@@ -147,6 +156,15 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     return Files.readAllBytes(imageFile.toPath());
   }
 
+  private void validateOfferDetails(CreateOfferRequestDto offerRequestDto)
+  {
+    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
+        offerRequestDto.getPickupTimeEnd()))
+      throw new IllegalArgumentException(
+          "Pickup date and time must be in the future");
+
+  }
+
   private boolean isPickupInFuture(DateDto date, TimeDto time)
   {
     LocalDateTime pickupDateTime = LocalDateTime.of(
@@ -157,7 +175,7 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 
   public boolean doesImageExist(String filePath)
   {
-    String normalizedPath=filePath.replace("/", File.separator);
+    String normalizedPath = filePath.replace("/", File.separator);
     // Create a File object from the filePath
     File imageFile = new File(normalizedPath);
 

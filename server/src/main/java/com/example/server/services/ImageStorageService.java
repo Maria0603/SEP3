@@ -1,48 +1,49 @@
 package com.example.server.services;
 
-import com.example.server.DataServerStub;
 import com.example.shared.model.Category;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.nio.file.Files;
-import java.util.UUID;
 
 @Service public class ImageStorageService
 {
 
   private static final String BASE_DIRECTORY = "server/images/";
 
-  public String saveImage(byte[] imageData, String category, String imageName)
+  public String saveImage(byte[] imageData, String category, String businessId)
       throws IOException
   {
     // Get the sanitized subdirectory name from the category enum
-    //String subDirectory = category.getDirectoryName();
     String subDirectory = category.toLowerCase().replace(" ", "_");
+
+    // Construct the image name as BusinessId_Category.jpg
+    String imageName = businessId + "_" + subDirectory + ".jpg";
+
     // Create the full directory path
     File categoryDir = new File(BASE_DIRECTORY + subDirectory);
     if (!categoryDir.exists() && !categoryDir.mkdirs())
       throw new IOException(
           "Failed to create directory: " + categoryDir.getAbsolutePath());
 
-    // Generate a unique file name to avoid collisions
-    String uniqueImageName = UUID.randomUUID() + "_" + imageName;
-
-    // Define the full file path
-    String filePath = categoryDir.getPath() + File.separator + uniqueImageName;
-
-    // Check if the file already exists before writing
-    File file = new File(filePath);
+    // Check if the file already exists before writing; if it does, replace it
+    File file = new File(categoryDir, imageName);
     if (file.exists())
-      throw new IllegalArgumentException("File already exists: " + filePath);
+      //throw new IllegalArgumentException("File already exists: " + imageName);
+      return "images/" + subDirectory + "/" + imageName;
 
     // Write the image data to the file
     Files.write(file.toPath(), imageData);
 
-    return filePath.replace("\\", "/"); // Return the saved file path
+    return "images/" + subDirectory + "/" + imageName;
+  }
+
+  public boolean doesImageExist(String imagePath)
+  {
+    File file = new File(BASE_DIRECTORY + imagePath.replace("images/", ""));
+    return file.exists() && file.isFile();
   }
 
   public String getCategoryDirectory(Category category)

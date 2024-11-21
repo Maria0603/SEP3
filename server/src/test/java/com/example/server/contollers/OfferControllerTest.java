@@ -65,7 +65,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     validRequest.setPickupTimeEnd(validTimeEnd);
     try
     {
-      validRequest.setImagePath(createImageByteArray());
+      validRequest.setImage(createImageByteArray());
     }
     catch (IOException e)
     {
@@ -123,7 +123,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     timeEnd.setHour(17);
     timeEnd.setMinute(0);
     validRequest.setPickupTimeEnd(timeEnd);
-    validRequest.setImagePath(null);
+    validRequest.setImage(null);
     performPostAndExpectError("Image must be provided");
   }
 
@@ -190,7 +190,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
     try
     {
-      invalidRequest.setImagePath(createImageByteArray());
+      invalidRequest.setImage(createImageByteArray());
     }
     catch (IOException e)
     {

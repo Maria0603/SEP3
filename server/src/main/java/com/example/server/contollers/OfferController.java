@@ -5,11 +5,13 @@ import com.example.server.dto.OfferResponseDto;
 import com.example.server.dto.PlaceOrderRequestDto;
 import com.example.server.dto.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashMap;
 import java.util.List;
@@ -25,11 +27,15 @@ import java.util.Map;
     this.offerService = offerService;
   }
 
-  @PostMapping public ResponseEntity<String> saveOffer(
-      @Valid @RequestBody CreateOfferRequestDto offerRequestDto)
+  @PostMapping(consumes = "multipart/form-data") public ResponseEntity<String> saveOffer(
+      @Valid
+      @RequestPart("offer")  CreateOfferRequestDto offerRequestDto,
+      @RequestPart("file") MultipartFile file)
   {
     try
     {
+
+      offerRequestDto.setImage(file.getBytes());
       //Maybe send the whole object to the client?
       String offerId = offerService.saveOffer(offerRequestDto);
 
@@ -37,7 +43,7 @@ import java.util.Map;
     }
     catch (Exception e)
     {
-      return ResponseEntity.badRequest().body(e.getMessage());
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 
