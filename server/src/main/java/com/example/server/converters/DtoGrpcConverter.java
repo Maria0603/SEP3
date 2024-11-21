@@ -4,6 +4,7 @@ import com.example.sep3.grpc.*;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.AddOrderRequestDto;
 
 public class DtoGrpcConverter
 {
@@ -84,5 +85,16 @@ public class DtoGrpcConverter
     dto.setStatus(offerResponseGrpc.getStatus());
 
     return dto;
+  }
+
+  public static AddOrderRequest AddOrderRequestDto_To_AddOrderRequest(
+      AddOrderRequestDto addOrderRequestDto)
+  {
+    AddOrderRequest request = AddOrderRequest.newBuilder()
+        .setOfferId(addOrderRequestDto.getOfferId())
+        .setQuantity(addOrderRequestDto.getQuantity())
+        .setUserId(addOrderRequestDto.getUserId())
+        .build();
+    return request;
   }
 }
