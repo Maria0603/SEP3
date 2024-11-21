@@ -1,9 +1,6 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.UploadImageRequestDto;
 import com.example.server.services.ImageStorageService;
-import com.example.shared.model.Category;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;

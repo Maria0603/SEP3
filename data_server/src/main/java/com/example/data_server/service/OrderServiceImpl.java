@@ -109,7 +109,7 @@ import java.util.Optional;
         order.setOldOrderPrice(offerDao.getOriginalPrice() * request.getQuantity());
         order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
     } else {
-        //throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
+        throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
     }
 
     return order;

@@ -3,7 +3,13 @@ package com.example.server.services;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
-import com.example.server.dto.*;
+import com.example.server.dto.date_time.DateDto;
+import com.example.server.dto.date_time.TimeDto;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.PlaceOrderRequestDto;
+import com.example.server.dto.order.PlaceOrderResponseDto;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +47,8 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     System.out.println("OfferService created");
   }
 
-  @Transactional public OfferResponseDto saveOffer(CreateOfferRequestDto offerRequestDto)
+  @Transactional public OfferResponseDto saveOffer(
+      CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
     validateOfferDetails(offerRequestDto);

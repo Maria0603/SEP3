@@ -1,22 +1,20 @@
-package com.example.server.dto;
+package com.example.server.dto.offer;
 
-import java.util.ArrayList;
-import java.util.List;
+import com.example.server.dto.date_time.DateDto;
+import com.example.server.dto.date_time.TimeDto;
 
-public class OfferResponseDto
+public class ShortOfferResponseDto
 {
 
   private String id;
   private String title;
-  private String description;
   private int originalPrice;
   private int offerPrice;
   private int numberOfItems;
   private DateDto pickupDate;
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
-  private List<String> categories;
-  private String image;
+  private String imagePath;
   private String status;
 
   public String getId()
@@ -39,14 +37,14 @@ public class OfferResponseDto
     this.status = status;
   }
 
-  public String getImage()
+  public String getImagePath()
   {
-    return image;
+    return imagePath;
   }
 
-  public void setImage(String image)
+  public void setImagePath(String imagePath)
   {
-    this.image = image;
+    this.imagePath = imagePath;
   }
 
   public String getTitle()
@@ -57,26 +55,6 @@ public class OfferResponseDto
   public void setTitle(String title)
   {
     this.title = title;
-  }
-  public String getDescription()
-  {
-    return description;
-  }
-
-  public void setDescription(String description)
-  {
-    this.description = description;
-  }
-
-  public List<String> getCategories()
-  {
-    return categories;
-  }
-
-
-  public void setCategories(List<String> categories)
-  {
-    this.categories = categories;
   }
 
   public int getOriginalPrice()
@@ -139,3 +117,4 @@ public class OfferResponseDto
     this.offerPrice = offerPrice;
   }
 }
+

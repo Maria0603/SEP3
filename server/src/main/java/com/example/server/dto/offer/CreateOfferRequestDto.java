@@ -1,6 +1,8 @@
-package com.example.server.dto;
+package com.example.server.dto.offer;
 
 import com.example.server.converters.TimeConverter;
+import com.example.server.dto.date_time.DateDto;
+import com.example.server.dto.date_time.TimeDto;
 import jakarta.validation.constraints.*;
 
 import java.util.List;

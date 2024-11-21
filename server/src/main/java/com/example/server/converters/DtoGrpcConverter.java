@@ -1,9 +1,9 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.*;
-import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.OfferResponseDto;
-import com.example.server.dto.ShortOfferResponseDto;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.offer.ShortOfferResponseDto;
 
 public class DtoGrpcConverter
 {

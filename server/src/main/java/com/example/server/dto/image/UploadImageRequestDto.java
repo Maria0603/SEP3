@@ -1,8 +1,7 @@
-package com.example.server.dto;
+package com.example.server.dto.image;
 
 import com.example.shared.model.Category;
 import jakarta.validation.constraints.NotNull;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
 public class UploadImageRequestDto

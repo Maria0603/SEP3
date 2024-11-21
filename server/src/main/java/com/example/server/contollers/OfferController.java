@@ -1,19 +1,17 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.*;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.PlaceOrderRequestDto;
+import com.example.server.dto.order.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.net.URI;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController @RequestMapping("/offers") public class OfferController
 {
