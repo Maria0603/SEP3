@@ -61,6 +61,7 @@ public class OfferTestClient
       dto.setPickupTimeStart(start);
       dto.setPickupTimeEnd(end);
       ArrayList<String> categories=new ArrayList<>();
+      categories.add("Sushi");
       categories.add("Drink");
       categories.add("Other");
       dto.setCategories(categories);

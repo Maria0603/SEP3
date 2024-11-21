@@ -13,6 +13,7 @@ import java.nio.file.Files;
 
   private static final String BASE_DIRECTORY = "server/images/";
 
+  //When dealing with categories we will use the Category enum (in shared), but for now, we have strings
   public String saveImage(byte[] imageData, String category, String businessId)
       throws IOException
   {
@@ -28,33 +29,16 @@ import java.nio.file.Files;
       throw new IOException(
           "Failed to create directory: " + categoryDir.getAbsolutePath());
 
-    // Check if the file already exists before writing; if it does, replace it
+    // Check if the file already exists before writing; if it does, use it
     File file = new File(categoryDir, imageName);
-    if (file.exists())
-      //throw new IllegalArgumentException("File already exists: " + imageName);
-      return "images/" + subDirectory + "/" + imageName;
-
-    // Write the image data to the file
-    Files.write(file.toPath(), imageData);
+    if (!file.exists())
+      // Write the image data to the file
+      Files.write(file.toPath(), imageData);
 
     return "images/" + subDirectory + "/" + imageName;
   }
 
-  public boolean doesImageExist(String imagePath)
-  {
-    File file = new File(BASE_DIRECTORY + imagePath.replace("images/", ""));
-    return file.exists() && file.isFile();
-  }
-
-  public String getCategoryDirectory(Category category)
-  {
-    return BASE_DIRECTORY + category.getDirectoryName();
-  }
-
-
-
-
-
+  //Good methods, do not delete
   /*
   private String saveImage(byte[] imageBytes, String offerId)
   {
@@ -73,7 +57,7 @@ import java.nio.file.Files;
 
     }
     return pathToImage;
-  }*/
+  }
 
   //Method to create a dummy red image, for testing purposes; do not delete
   private byte[] createImageByteArray() throws IOException
@@ -108,6 +92,6 @@ import java.nio.file.Files;
 
     }
     return null;
-  }
+  }*/
 
 }

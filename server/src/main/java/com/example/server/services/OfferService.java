@@ -40,12 +40,7 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     System.out.println("OfferService created");
   }
 
-  /*
-  So the point of this: when this method is called (The business click the Create Offer button),
-  the request must already contain the imagePath. How? When the business browses for images and select the image for offer,
-  the image must be saved using the endpoint from ImageStorageController (POST /image, if nothing changes, hopefully). The
-  controller sends back to the client the imagePath, which should be included in the CreateOfferRequestDto
-   */
+
   @Transactional public String saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
@@ -55,7 +50,9 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     {
       String imagePath = imageStorageService.saveImage(
           offerRequestDto.getImage(),
-          offerRequestDto.getCategories().getFirst(), "abcdefg");
+          // We take the first category, so the order is important
+          offerRequestDto.getCategories().getFirst(),
+          "abcdefg"); //Dummy business ID TODO: replace when implemented
 
       //Transform the dto to grpc message
       SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
@@ -67,7 +64,7 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
       //Return the id; maybe more?
       return response.getId();
     }
-    catch(IOException e)
+    catch (IOException e)
     {
       throw new IllegalArgumentException("Failed to save the image");
     }
@@ -105,8 +102,6 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
 
     return offers;
   }
-
-
 
   public PlaceOrderResponseDto placeOrder(PlaceOrderRequestDto requestDto)
   {

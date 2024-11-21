@@ -27,14 +27,13 @@ import java.util.Map;
     this.offerService = offerService;
   }
 
+  //Look at OfferTestClient to see how the request should look like
   @PostMapping(consumes = "multipart/form-data") public ResponseEntity<String> saveOffer(
-      @Valid
-      @RequestPart("offer")  CreateOfferRequestDto offerRequestDto,
+      @Valid @RequestPart("offer") CreateOfferRequestDto offerRequestDto,
       @RequestPart("file") MultipartFile file)
   {
     try
     {
-
       offerRequestDto.setImage(file.getBytes());
       //Maybe send the whole object to the client?
       String offerId = offerService.saveOffer(offerRequestDto);

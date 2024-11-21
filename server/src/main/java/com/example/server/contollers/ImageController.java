@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
+//Not used yet
 @RestController @RequestMapping("/images") public class ImageController
 {
 
