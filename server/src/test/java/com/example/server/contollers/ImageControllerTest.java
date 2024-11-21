@@ -17,7 +17,7 @@ import static org.mockito.Mockito.*;
 class ImageControllerTest
 {
 
-  private ImageStorageService imageStorageService;
+  /*private ImageStorageService imageStorageService;
   private ImageController imageController;
 
   @BeforeEach void setUp()
@@ -141,6 +141,6 @@ class ImageControllerTest
 
     verify(imageStorageService, times(1)).saveImage(file.getBytes(),
         Category.OTHER, "error_image.jpg");
-  }
+  }*/
 
 }

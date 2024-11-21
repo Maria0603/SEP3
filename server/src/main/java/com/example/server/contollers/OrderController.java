@@ -10,9 +10,10 @@ import com.example.server.services.OfferService;
 
 @RestController @RequestMapping("/orders") public class OrderController {
 
-  private final com.example.server.services.OrderService orderService;
+  private final OrderService orderService;
 
   @Autowired public OrderController(OrderService orderService) {
+    System.out.printf("order service created");
     this.orderService = orderService;
   }
 
@@ -26,5 +27,9 @@ import com.example.server.services.OfferService;
     catch (Exception e) {
       throw new IllegalArgumentException(e.getMessage());
     }
+  }
+
+  @GetMapping public ResponseEntity<String> getOrders() {
+    return ResponseEntity.ok("orders");
   }
 }

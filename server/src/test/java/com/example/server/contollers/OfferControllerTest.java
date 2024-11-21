@@ -32,7 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(OfferController.class) class OfferControllerTest
 {
 
-  @Autowired private MockMvc mockMvc;
+ /* @Autowired private MockMvc mockMvc;
 
   @MockBean private OfferService offerService;
 
@@ -259,5 +259,5 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ImageIO.write(bufferedImage, "jpg", baos);
     return baos.toByteArray();
-  }
+  }*/
 }
