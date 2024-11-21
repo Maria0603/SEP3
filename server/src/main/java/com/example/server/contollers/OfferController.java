@@ -5,7 +5,19 @@ import com.example.server.services.OfferService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
+import com.example.sep3.grpc.EmptyMessage;
+import com.example.sep3.grpc.OfferList;
+import com.example.sep3.grpc.OfferResponse;
+import com.example.sep3.grpc.SaveOfferResponse;
+import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.DateDto;
+import com.example.server.dto.OfferResponseDto;
+import com.example.server.dto.TimeDto;
+import com.example.server.services.OfferService;
+import io.grpc.stub.StreamObserver;
 import jakarta.validation.Valid;
+import org.apache.coyote.Response;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -15,7 +27,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@RestController @RequestMapping("/offers") public class OfferController
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.stream.Collectors;
+
+@RestController @RequestMapping("/api/offers") public class OfferController
 {
 
   private final OfferService offerService;
@@ -23,6 +41,12 @@ import java.util.Map;
   public OfferController(OfferService offerService)
   {
     this.offerService = offerService;
+
+  }
+
+  @GetMapping("/test")
+  public ResponseEntity<String> testEndpoint() {
+    return ResponseEntity.ok("Test passed");
   }
 
   //Look at OfferTestClient to see how the request should look like
@@ -39,6 +63,81 @@ import java.util.Map;
       e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
+  }
+  @GetMapping
+  public ResponseEntity<List<OfferResponseDto>> getOffers() {
+
+    EmptyMessage request = EmptyMessage.newBuilder().build();
+    List<OfferResponseDto> responseDtos = new ArrayList<>();
+
+    CountDownLatch latch = new CountDownLatch(1);
+
+    offerService.getAvailableOffers(request, new StreamObserver<OfferList>() {
+      @Override
+      public void onNext(OfferList offerList) {
+        // Collect all offers from the gRPC response
+        responseDtos.addAll(
+                offerList.getOfferList().stream()
+                        .map(offer -> mapToOfferResponseDto(offer)) // Optional: Transform if necessary
+                        .toList()
+        );
+      }
+
+      @Override
+      public void onError(Throwable throwable) {
+        latch.countDown();
+        throw new RuntimeException("Error retrieving offers: " + throwable.getMessage(), throwable);
+      }
+
+      @Override
+      public void onCompleted() {
+
+        latch.countDown();
+      }
+    });
+
+
+
+    try {
+      latch.await(); // Wait for the gRPC call to complete
+    } catch (InterruptedException e) {
+      throw new RuntimeException("Interrupted while waiting for gRPC response", e);
+    }
+    //  JUST A PRINTOUT
+    for (OfferResponseDto responseDto : responseDtos){
+      System.out.println(responseDto.getTitle());
+    }
+
+    return ResponseEntity.ok(responseDtos);
+  }
+
+  // TODO: business information, like on blazorclient
+  private OfferResponseDto mapToOfferResponseDto(OfferResponse offer) {
+    OfferResponseDto offerResponseDto = new OfferResponseDto();
+    offerResponseDto.setId(offer.getId());
+    offerResponseDto.setTitle(offer.getTitle());
+    offerResponseDto.setDescription(offer.getDescription());
+    offerResponseDto.setOriginalPrice(offer.getOriginalPrice());
+    offerResponseDto.setOfferPrice(offer.getOriginalPrice());
+    offerResponseDto.setNumberOfItems(offer.getNumberOfItems());
+    DateDto date = new DateDto();
+    date.setDay(offer.getPickupDate().getDay());
+    date.setMonth(offer.getPickupDate().getMonth());
+    date.setYear(offer.getPickupDate().getYear());
+    offerResponseDto.setPickupDate(date);
+    TimeDto timeStart = new TimeDto();
+    timeStart.setHour(offer.getPickupTimeStart().getHour());
+    timeStart.setMinute(offer.getPickupTimeStart().getMinute());
+    offerResponseDto.setPickupTimeStart(timeStart);
+    TimeDto timeEnd = new TimeDto();
+    timeStart.setHour(offer.getPickupTimeEnd().getHour());
+    timeStart.setMinute(offer.getPickupTimeEnd().getMinute());
+    offerResponseDto.setPickupTimeEnd(timeEnd);
+//    offerResponseDto.setCategories(offer.getCategories(0));
+//    offerResponseDto.setImage(offer.getImage());
+    offerResponseDto.setStatus(offer.getStatus());
+
+    return offerResponseDto;
   }
 
   @GetMapping public ResponseEntity<List<ShortOfferResponseDto>> getAvailableOffers()

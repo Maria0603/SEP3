@@ -1,0 +1,68 @@
+<div @attributes="AdditionalAttributes" class="offer">
+    <div class="offer__top">
+        <div class="offer__top--left">@OfferData.NumberOfItems Left</div>
+        <svg class="offer__top--favourite @(OfferData.IsFavourite ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M5 13.1371C5 18 9.01943 20.5914 11.9617 22.9109C13 23.7294 14 24.5 15 24.5C16 24.5 17 23.7294 18.0383 22.9109C20.9806 20.5914 25 18 25 13.1371C25 8.27416 19.4998 4.82546 15 9.50063C10.5002 4.82546 5 8.27416 5 13.1371Z" fill="currentColor"/>
+        </svg>
+
+        <div class="offer__top--business">
+            <div class="offer__top--business__icon">
+                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170627.png" alt="Business Icon">
+                @* <img src="@OfferData.BusinessDetails.Icon" alt="Business Icon"> *@
+            </div>
+            <h2 class="offer__top--business__name">@OfferData.Title</h2>
+            @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
+        </div>
+    </div>
+    <div class="offer__img">
+        <img src="https://via.placeholder.com/100" alt="Offer Image">
+    </div>
+
+    <div class="offer__bottom">
+        <h3 class="offer__bottom--name">@OfferData.Title</h3>
+        <div class="offer__bottom--pickup">Collect "DD:MM:YY"</div>
+        @* <div class="offer__bottom--pickup">Collect @GetPickupTime(@OfferData.PickupTime)</div> *@
+    
+        <div class="offer__bottom--stats">
+            <div class="offer__bottom--stats__rating">
+                <svg class="offer__bottom--stats__rating--svg" width="26" height="24" viewBox="0 0 26 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12.0489 0.927052C12.3483 0.00574109 13.6517 0.00573986 13.9511 0.92705L16.1432 7.67376C16.2771 8.08578 16.661 8.36475 17.0943 8.36475H24.1882C25.1569 8.36475 25.5597 9.60436 24.776 10.1738L19.0369 14.3435C18.6864 14.5981 18.5397 15.0495 18.6736 15.4615L20.8657 22.2082C21.1651 23.1295 20.1106 23.8956 19.3269 23.3262L13.5878 19.1565C13.2373 18.9019 12.7627 18.9019 12.4122 19.1565L6.67312 23.3262C5.88941 23.8956 4.83493 23.1295 5.13428 22.2082L7.32642 15.4615C7.46029 15.0495 7.31363 14.5981 6.96315 14.3435L1.22405 10.1738C0.440337 9.60436 0.843112 8.36475 1.81184 8.36475H8.90575C9.33897 8.36475 9.72293 8.08578 9.8568 7.67376L12.0489 0.927052Z" fill="white"/>
+                </svg>
+                <p class="offer__bottom--stats__rating--text">3.5</p>
+                @* <p class="offer__bottom--stats__rating--text">@OfferData.Rating</p> *@
+            </div>
+    
+            <div class="offer__bottom--stats__distance">10 km</div>
+            @* <div class="offer__bottom--stats__distance">@OfferData.Distance km</div> *@
+            <div class="offer__bottom--stats__price">@OfferData.Price.ToString("0.00") kr.</div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public Offer OfferData { get; set; }
+    [Parameter(CaptureUnmatchedValues = true)]
+    
+    public Dictionary<string, object> AdditionalAttributes { get; set; }
+    // This method will format the pickup time based on today's date or tomorrow's.
+    private string GetPickupTime(DateTime pickupDateTime)
+    {
+        // Get the current date and time (with offset)
+        var now = DateTime.Now;
+
+        // Check if it's today or tomorrow, otherwise use a custom date format
+        if (pickupDateTime.Date == now.Date)
+        {
+            return $"today {pickupDateTime:HH:mm}";
+        }
+        else if (pickupDateTime.Date == now.AddDays(1).Date)
+        {
+            return $"tomorrow {pickupDateTime:HH:mm}";
+        }
+        else
+        {
+            return pickupDateTime.ToString("dd. MM. HH:mm");
+        }
+    }
+
+}

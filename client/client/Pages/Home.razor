@@ -1,5 +1,76 @@
 @page "/"
-
+@inject client.Services.IOfferService OfferService
 <PageTitle>Home</PageTitle>
 
 <h2> The main page</h2>
+
+<div class="container">
+    @if (offers == null)
+    {
+        <p>Loading offers...</p>
+    }
+    else if (offers.Count == 0)
+    {
+        <p>No offers available at the moment.</p>
+    }
+    else
+    {
+        @foreach (var offer in offers)
+        {
+            <OfferComponent class="offer" OfferData="offer"></OfferComponent>
+        }
+    }
+</div>
+
+
+
+@code {
+    private List<Offer>? offers;
+    private string jsonOffers;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        // Call the service to get the offers
+        try
+        {
+            offers = await OfferService.GetOffersAsync();
+            jsonOffers = await OfferService.GetOffersJsonAsync(); // Delete this one
+            Console.WriteLine(jsonOffers);
+            if (offers != null)
+            {
+                foreach (var offer in offers)
+                {
+                    Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.Price}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Offers are empty");
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle errors (e.g., log or display an error message)
+            Console.WriteLine($"Error fetching offers: {ex.Message}");
+            offers = new List<Offer>(); // Ensure the UI does not break
+        }
+    }
+
+
+    // private Offer offerData = new Offer
+    // {
+    //     QuantityLeft = 5,
+    //     IsFavourite = true,
+    //     BusinessDetails = new Business
+    //     {
+    //         Name = "7 Eleven - Horsens",
+    //         Icon = "img/tempOfferIcon.jpg"
+    //     },
+    //     OfferImage = "img/tempOfferImg.jpg",
+    //     ProductName = "Pastry",
+    //     PickupTime = DateTimeOffset.Parse("2024-11-18T14:00:00+00:00"),
+    //     Rating = 3.5m,
+    //     Distance = 4.3,
+    //     Price = 39.00m
+    // };
+}
