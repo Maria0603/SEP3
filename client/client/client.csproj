@@ -10,31 +10,5 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10"/>
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all"/>
     </ItemGroup>
-
-    <ItemGroup>
-      <None Include="wwwroot\css\cards.css" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Layout\Pages\AddFoodBag.razor" />
-      <AdditionalFiles Include="Layout\Pages\FilterFoodBags.razor" />
-      <AdditionalFiles Include="Layout\Pages\FoodBagCard.razor" />
-      <AdditionalFiles Include="Layout\Pages\Home.razor" />
-      <AdditionalFiles Include="Layout\Pages\Reservation.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\AddFoodBag.razor" />
-      <_ContentIncludedByDefault Remove="Pages\FilterFoodBags.razor" />
-      <_ContentIncludedByDefault Remove="Pages\FoodBagCard.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Home.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Reservation.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Entities\" />
-      <Folder Include="Layout\Pages\Components\" />
-      <Folder Include="wwwroot\images\" />
-    </ItemGroup>
-
+    
 </Project>

@@ -37,12 +37,18 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "Watch": {
+    "httpsWatch": {
       "commandName": "Executable",
-      "workingDirectory": ".",
       "executablePath": "dotnet",
-      "commandLineArgs": "watch run debug --launch-profile https",
-      "cwd": "."
+      "workingDirectory": "$(ProjectDir)",
+      "hotReloadEnabled": true,
+      "hotReloadProfile": "aspnetcore",
+      "commandLineArgs": "watch run",
+      "launchBrowser": true,
+      "environmentVariables": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "applicationUrl": "https://localhost:3251;http://localhost:6362"
     }
   }
 }
