@@ -40,6 +40,7 @@ public class OfferService : IOfferService
             $"Error: {response.StatusCode}, {response.ReasonPhrase}");
     }
 
+    //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
     public async Task<List<Offer>> GetOffersAsync()
     {
         var response = await client.GetAsync("offers");

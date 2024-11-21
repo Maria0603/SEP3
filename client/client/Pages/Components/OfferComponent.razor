@@ -15,24 +15,30 @@
         </div>
     </div>
     <div class="offer__img">
-        <img src="https://via.placeholder.com/100" alt="Offer Image">
+        <img src="@OfferData.Image" alt="Offer Image">
+        @* <img src="/images/7aa8c421-3bf0-4d16-ad2b-c6400fdae530.jpg" alt="Offer Image"> *@
+        @* <img src="@OfferData.Image" alt="Offer Image"> *@
     </div>
 
     <div class="offer__bottom">
         <h3 class="offer__bottom--name">@OfferData.Title</h3>
-        <div class="offer__bottom--pickup">Collect "DD:MM:YY"</div>
-        @* <div class="offer__bottom--pickup">Collect @GetPickupTime(@OfferData.PickupTime)</div> *@
-    
+        @* <div class="offer__bottom--pickup">Collect "DD:MM:YY"</div> *@
+        <div class="offer__bottom--pickup">
+            Collect on <em>@OfferData.PickupDate.ToDateTime().ToString("dd.MM.yyyy")</em>, 
+            from <em>@OfferData.PickupTimeStart.Hour:@OfferData.PickupTimeStart.Minute</em> 
+            to <em>@OfferData.PickupTimeEnd.Hour:@OfferData.PickupTimeEnd.Minute</em> 
+        </div>
+
         <div class="offer__bottom--stats">
             <div class="offer__bottom--stats__rating">
                 <svg class="offer__bottom--stats__rating--svg" width="26" height="24" viewBox="0 0 26 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.0489 0.927052C12.3483 0.00574109 13.6517 0.00573986 13.9511 0.92705L16.1432 7.67376C16.2771 8.08578 16.661 8.36475 17.0943 8.36475H24.1882C25.1569 8.36475 25.5597 9.60436 24.776 10.1738L19.0369 14.3435C18.6864 14.5981 18.5397 15.0495 18.6736 15.4615L20.8657 22.2082C21.1651 23.1295 20.1106 23.8956 19.3269 23.3262L13.5878 19.1565C13.2373 18.9019 12.7627 18.9019 12.4122 19.1565L6.67312 23.3262C5.88941 23.8956 4.83493 23.1295 5.13428 22.2082L7.32642 15.4615C7.46029 15.0495 7.31363 14.5981 6.96315 14.3435L1.22405 10.1738C0.440337 9.60436 0.843112 8.36475 1.81184 8.36475H8.90575C9.33897 8.36475 9.72293 8.08578 9.8568 7.67376L12.0489 0.927052Z" fill="white"/>
                 </svg>
-                <p class="offer__bottom--stats__rating--text">3.5</p>
+                <p class="offer__bottom--stats__rating--text">¿3.5</p>
                 @* <p class="offer__bottom--stats__rating--text">@OfferData.Rating</p> *@
             </div>
     
-            <div class="offer__bottom--stats__distance">10 km</div>
+            <div class="offer__bottom--stats__distance">¿10 km</div>
             @* <div class="offer__bottom--stats__distance">@OfferData.Distance km</div> *@
             <div class="offer__bottom--stats__price">@OfferData.Price.ToString("0.00") kr.</div>
         </div>
@@ -44,25 +50,18 @@
     [Parameter(CaptureUnmatchedValues = true)]
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
-    // This method will format the pickup time based on today's date or tomorrow's.
-    private string GetPickupTime(DateTime pickupDateTime)
+    
+    
+    public class PickupDate
     {
-        // Get the current date and time (with offset)
-        var now = DateTime.Now;
-
-        // Check if it's today or tomorrow, otherwise use a custom date format
-        if (pickupDateTime.Date == now.Date)
-        {
-            return $"today {pickupDateTime:HH:mm}";
-        }
-        else if (pickupDateTime.Date == now.AddDays(1).Date)
-        {
-            return $"tomorrow {pickupDateTime:HH:mm}";
-        }
-        else
-        {
-            return pickupDateTime.ToString("dd. MM. HH:mm");
-        }
+        public int Year { get; set; }
+        public int Month { get; set; }
+        public int Day { get; set; }
     }
 
+    public class PickupTime
+    {
+        public int Hour { get; set; }
+        public int Minute { get; set; }
+    }
 }

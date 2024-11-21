@@ -1,93 +1,12 @@
-@page "/offers"
-<!--page "/offers/{OfferId}"-->
-
+@page "/createOffer"
+@using client.Services
 @inject NavigationManager NavigationManager
 @inject IOfferService OfferService
-@using client.Services
 
-<h3>Offer ID...................</h3>
+<h3>Create Offer</h3>
 
-<section>
-    <div>
-        <!--Display offer details here; not my job-->
-        <div>
-            <button @onclick="DecreaseQuantity">-</button>
-            <span>@Quantity</span>
-            <button @onclick="IncreaseQuantity">+</button>
-        </div>
-
-        <form method="post" @formname="checkout" @onsubmit="ProceedToOrder">
-            <button type="submit" class="btn btn-danger mt-4" @onclick="ProceedToOrder">Pay now</button>
-            <AntiforgeryToken/>
-        </form>
-
-    </div>
-</section>
-
-@if (OrderResponse is not null)
-{
-    <div>
-        <!-- Maybe display order id -->
-        <!--
-    <h4>Order Confirmation</h4>
-    <p>Product ID: @OrderResponse.ProductId</p>
-    <p>Total Amount: @OrderResponse.TotalAmount $</p>
-    <p>Order Date: @OrderResponse.Timestamp</p>
--->
-    </div>
-}
-@if (errorLabel is not null)
-{
-    <div class="alert alert-danger">@errorLabel</div>
-}
+<AddOfferComponent></AddOfferComponent>
 
 @code {
-    [Parameter] public string OfferId { get; set; }
-    private Offer DisplayedOffer; // the offer displayed on this page
-    private int Quantity = 1; // quantity selected by the user - default 1
-    private OrderResponseDto? OrderResponse { get; set; }
-    private string? errorLabel;
-
-    private void IncreaseQuantity()
-    {
-        //if (Quantity < DisplayedOffer.NumberOfAvailableItems())
-        Quantity++;
-    }
-
-    private void DecreaseQuantity()
-    {
-        if (Quantity > 1)
-            Quantity--;
-    }
-
-    private async Task ProceedToOrder()
-    {
-
-        errorLabel = null;
-        // Create the dto to send
-        var request = new OrderRequestDto
-        {
-            OfferId = OfferId,
-            NumberOfItems = Quantity,
-        };
-
-        // Send the request to the server to create a Stripe checkout session
-        try
-        {
-            var response = await OfferService.PlaceOrderAsync(OfferId, request);
-
-            // Get the session URL from the response
-            string sessionUrl = response.Url;
-            // Redirect the user to the Stripe checkout page
-            NavigationManager.NavigateTo(sessionUrl);
-        }
-        catch (Exception e)
-        {
-            errorLabel = e.Message;
-            
-        }
-        
-    }
-
-
+    
 }

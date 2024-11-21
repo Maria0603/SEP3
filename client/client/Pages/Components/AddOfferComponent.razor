@@ -1,0 +1,81 @@
+﻿<div class="create-offer-form">
+    <h3>New Offer</h3>
+    <form @onsubmit="HandleSubmit">
+        <!-- Title -->
+        <div class="form-group">
+            <label for="title">Title</label>
+            <input id="title" type="text" @bind="NewOffer.Title" placeholder="Enter..." />
+        </div>
+
+        <!-- Description -->
+        <div class="form-group">
+            <label for="description">Description (unused)</label>
+            @* <textarea id="description"  placeholder="Enter..."></textarea> *@
+        </div>
+
+        @*<!-- Image Upload -->
+        <div class="form-group image-upload">
+            <label for="image">Image</label>
+            <input id="image" type="file" @onchange="HandleImageUpload" />
+            <img src="@ImagePreview" alt="Preview" style="max-width: 100px; display: @(string.IsNullOrEmpty(ImagePreview) ? "none" : "block");" />
+        </div>*@
+
+        <!-- Available Items -->
+        <div class="form-group">
+            <label for="availableItems">Available items</label>
+            <input id="availableItems" type="number" @bind="NewOffer.NumberOfItems" placeholder="Enter..." />
+        </div>
+
+        <!-- Pickup Date -->
+        @* <div class="form-group"> *@
+        @*     <label for="pickupDate">Pick up date</label> *@
+        @*     <input id="pickupDate" type="date" @bind="NewOffer.PickupDateTime" /> *@
+        @* </div> *@
+
+        <!-- Pickup Time -->
+        <div class="form-group">
+            <label>Pick up time</label>
+            <div class="time-range">
+                @* <label> *@
+                @*     Start *@
+                @*     <input type="time" @bind="" /> *@
+                @* </label> *@
+                @* <label> *@
+                @*     End *@
+                @*     <input type="time" @bind="" /> *@
+                @* </label> *@
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" class="btn-submit">Create an offer</button>
+    </form>
+</div>
+
+@code {
+    [Parameter] public EventCallback<Offer> OnOfferCreated { get; set; }
+
+    private Offer NewOffer { get; set; } = new Offer();
+    private string? ImagePreview { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        if (OnOfferCreated.HasDelegate)
+        {
+            await OnOfferCreated.InvokeAsync(NewOffer);
+        }
+    }
+
+    /*private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        if (file != null)
+        {
+            // For now, just show a preview (use FileReader to load image data).
+            var buffer = new byte[file.Size];
+            await file.OpenReadStream().ReadAsync(buffer);
+            ImagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
+        }
+    }*/
+    
+}

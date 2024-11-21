@@ -79,33 +79,6 @@ import java.util.concurrent.CountDownLatch;
       return ResponseEntity.badRequest().build(); //TODO: update
     }
   }
-  // TODO: business information, like on blazorclient
-  private OfferResponseDto mapToOfferResponseDto(ShortOfferResponse offer) {
-    OfferResponseDto offerResponseDto = new OfferResponseDto();
-    offerResponseDto.setId(offer.getId());
-    offerResponseDto.setTitle(offer.getTitle());
-    offerResponseDto.setOriginalPrice(offer.getOriginalPrice());
-    offerResponseDto.setOfferPrice(offer.getOriginalPrice());
-    offerResponseDto.setNumberOfItems(offer.getNumberOfItems());
-    DateDto date = new DateDto();
-    date.setDay(offer.getPickupDate().getDay());
-    date.setMonth(offer.getPickupDate().getMonth());
-    date.setYear(offer.getPickupDate().getYear());
-    offerResponseDto.setPickupDate(date);
-    TimeDto timeStart = new TimeDto();
-    timeStart.setHour(offer.getPickupTimeStart().getHour());
-    timeStart.setMinute(offer.getPickupTimeStart().getMinute());
-    offerResponseDto.setPickupTimeStart(timeStart);
-    TimeDto timeEnd = new TimeDto();
-    timeStart.setHour(offer.getPickupTimeEnd().getHour());
-    timeStart.setMinute(offer.getPickupTimeEnd().getMinute());
-    offerResponseDto.setPickupTimeEnd(timeEnd);
-//    offerResponseDto.setCategories(offer.getCategories(0));
-//    offerResponseDto.setImage(offer.getImage());
-    offerResponseDto.setStatus(offer.getStatus());
-
-    return offerResponseDto;
-  }
 
 
 }
