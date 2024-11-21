@@ -2,6 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.*;
 import com.example.server.dto.CreateOfferRequestDto;
+import com.example.server.dto.OfferResponseDto;
 import com.example.server.dto.ShortOfferResponseDto;
 
 public class DtoGrpcConverter
@@ -42,6 +43,27 @@ public class DtoGrpcConverter
 
     // Build and return the SaveOfferRequest object
     return saveOfferRequestBuilder.build();
+  }
+
+  public static OfferResponseDto SaveOfferResponseGrpc_To_OfferResponseDto(SaveOfferResponse saveOfferResponseGrpc)
+  {
+    OfferResponseDto dto = new OfferResponseDto();
+    dto.setId(saveOfferResponseGrpc.getId());
+    dto.setTitle(saveOfferResponseGrpc.getTitle());
+    dto.setOriginalPrice(saveOfferResponseGrpc.getOriginalPrice());
+    dto.setOfferPrice(saveOfferResponseGrpc.getOfferPrice());
+    dto.setNumberOfItems(saveOfferResponseGrpc.getNumberOfItems());
+    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
+        saveOfferResponseGrpc.getPickupDate()));
+    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
+        saveOfferResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
+        saveOfferResponseGrpc.getPickupTimeEnd()));
+    dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
+    dto.setDescription(saveOfferResponseGrpc.getDescription());
+    dto.setImage(saveOfferResponseGrpc.getImagePath());
+    dto.setStatus("available");//maybe nor send it at all
+  return dto;
   }
 
   public static ShortOfferResponseDto ShortOfferResponseGrpc_To_ShortOfferResponseDto(

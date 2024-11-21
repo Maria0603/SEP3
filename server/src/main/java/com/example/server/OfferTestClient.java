@@ -2,6 +2,7 @@ package com.example.server;
 
 import com.example.server.dto.CreateOfferRequestDto;
 import com.example.server.dto.DateDto;
+import com.example.server.dto.OfferResponseDto;
 import com.example.server.dto.TimeDto;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.core.io.ByteArrayResource;
@@ -17,11 +18,7 @@ import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class OfferTestClient
 {
@@ -30,19 +27,12 @@ public class OfferTestClient
   {
     String url = "http://localhost:8082/offers";
 
-    // Create RestTemplate instance
-    RestTemplate restTemplate = new RestTemplate();
-
-    // Create headers for the request
-    HttpHeaders headers = new HttpHeaders();
-    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
-
     CreateOfferRequestDto dto=new CreateOfferRequestDto();
 
     try
     {
-      dto.setTitle("bbbbbbbbb");
-      dto.setDescription("bbbbbbbbbbbbbbbbbbbbbb");
+      dto.setTitle("dddddddd");
+      dto.setDescription("dddddddddddddddddddddddddddddddd");
       dto.setOfferPrice(10);
       dto.setNumberOfItems(5);
       dto.setOriginalPrice(20);
@@ -61,9 +51,7 @@ public class OfferTestClient
       dto.setPickupTimeStart(start);
       dto.setPickupTimeEnd(end);
       ArrayList<String> categories=new ArrayList<>();
-      categories.add("Groceries");
-      categories.add("Meal");
-      categories.add("Other");
+      categories.add("Cat");
       dto.setCategories(categories);
     }
     catch (IOException e)
@@ -82,17 +70,25 @@ public class OfferTestClient
       }
     });
 
+    // Create RestTemplate instance
+    RestTemplate restTemplate = new RestTemplate();
+
+    // Create headers for the request
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(MediaType.MULTIPART_FORM_DATA);
     // Wrap the body and headers in an HttpEntity
     HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(
         body, headers);
 
     // Make the POST request
-    ResponseEntity<String> response = restTemplate.postForEntity(url,
-        requestEntity, String.class);
+    ResponseEntity<OfferResponseDto> response = restTemplate.postForEntity(url,
+        requestEntity, OfferResponseDto.class);
+
+    OfferResponseDto responseDto = response.getBody();
 
     // Print the response
     System.out.println("Response status: " + response.getStatusCode());
-    System.out.println("Response body: " + response.getBody());
+    System.out.println("Offer id: " + responseDto.getId());
   }
   //Method to create a dummy red image, for testing purposes; do not delete
   public static byte[] createImageByteArray() throws IOException
@@ -111,5 +107,6 @@ public class OfferTestClient
     ImageIO.write(bufferedImage, "jpg", baos);
     return baos.toByteArray();
   }
+
 }
 

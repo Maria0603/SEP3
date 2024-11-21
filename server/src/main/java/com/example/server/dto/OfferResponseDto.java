@@ -16,7 +16,7 @@ public class OfferResponseDto
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
   private List<String> categories;
-  private byte[] image;
+  private String image;
   private String status;
 
   public String getId()
@@ -39,12 +39,12 @@ public class OfferResponseDto
     this.status = status;
   }
 
-  public byte[] getImage()
+  public String getImage()
   {
     return image;
   }
 
-  public void setImage(byte[] image)
+  public void setImage(String image)
   {
     this.image = image;
   }

@@ -10,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.net.URI;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,17 +26,16 @@ import java.util.Map;
   }
 
   //Look at OfferTestClient to see how the request should look like
-  @PostMapping(consumes = "multipart/form-data") public ResponseEntity<String> saveOffer(
+  @PostMapping(consumes = "multipart/form-data") public ResponseEntity<OfferResponseDto> saveOffer(
       @Valid @RequestPart("offer") CreateOfferRequestDto offerRequestDto,
       @RequestPart("file") MultipartFile file)
   {
     try
     {
-      offerRequestDto.setImage(file.getBytes());
-      //Maybe send the whole object to the client?
-      String offerId = offerService.saveOffer(offerRequestDto);
+      offerRequestDto.setImage(file.getBytes()); //sent separately
+      OfferResponseDto offerDto = offerService.saveOffer(offerRequestDto);
 
-      return ResponseEntity.ok("Offer created with ID: " + offerId);
+      return ResponseEntity.ok(offerDto);
     }
     catch (Exception e)
     {

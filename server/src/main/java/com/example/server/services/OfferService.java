@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestDto_To_SaveOfferRequest;
+import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGrpc_To_OfferResponseDto;
 
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
@@ -40,7 +41,7 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
     System.out.println("OfferService created");
   }
 
-  @Transactional public String saveOffer(CreateOfferRequestDto offerRequestDto)
+  @Transactional public OfferResponseDto saveOffer(CreateOfferRequestDto offerRequestDto)
   {
     //First check what we couldn't check in the Dto class
     validateOfferDetails(offerRequestDto);
@@ -60,8 +61,8 @@ import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestD
       //Send the request to the data server
       SaveOfferResponse response = dataServerStub.saveOffer(request);
 
-      //Return the id; maybe more?
-      return response.getId();
+      //Return the offer as dto
+      return SaveOfferResponseGrpc_To_OfferResponseDto(response);
     }
     catch (IOException e)
     {
