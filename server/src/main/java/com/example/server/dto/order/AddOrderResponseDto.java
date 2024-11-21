@@ -1,4 +1,4 @@
-﻿package com.example.server.dto.order;
+package com.example.server.dto.order;
 
 import com.example.server.dto.date_time.DateDto;
 import jakarta.validation.constraints.NotNull;

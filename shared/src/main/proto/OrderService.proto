@@ -25,12 +25,13 @@ message AddOrderRequest {
 message OrderResponse {
   string id = 1;
   string userId = 2;
-  int32 quantity = 3;
-  Date orderDate = 4;
-  Time orderTime = 5;
-  string status = 6;
-  int32 newOrderPrice = 7;
-  int32 oldOrderPrice = 8;
+  string offerId = 3;
+  int32 quantity = 4;
+  Date orderDate = 5;
+  Time orderTime = 6;
+  string status = 7;
+  int32 newOrderPrice = 8;
+  int32 oldOrderPrice = 9;
 }
 
 message OrderIdRequest {

@@ -81,6 +81,7 @@ import java.util.Optional;
     OrderResponse response = OrderResponse.newBuilder()
         .setId(orderDao.getId())
         .setUserId(orderDao.getUserId())
+        .setOfferId(orderDao.getOffer().getId())
         .setQuantity(orderDao.getQuantity())
         .setOrderDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
@@ -108,6 +109,7 @@ import java.util.Optional;
         OfferDao offerDao = offer.get();
         order.setOldOrderPrice(offerDao.getOriginalPrice() * request.getQuantity());
         order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
+        order.setOffer(offerDao);
     } else {
         throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
     }

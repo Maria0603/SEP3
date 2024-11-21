@@ -1,4 +1,4 @@
-﻿// AddOrderRequestDto.java
+// AddOrderRequestDto.java
 package com.example.server.dto.order;
 
 import jakarta.validation.constraints.NotNull;

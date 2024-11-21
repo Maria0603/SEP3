@@ -5,6 +5,7 @@ import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
+import com.example.server.dto.order.AddOrderResponseDto;
 
 public class DtoGrpcConverter
 {
@@ -97,4 +98,15 @@ public class DtoGrpcConverter
         .build();
     return request;
   }
+
+  public static AddOrderResponseDto AddOrderResponseGrpc_To_AddOrderResponseDto(
+    OrderResponse response) {
+  AddOrderResponseDto dto = new AddOrderResponseDto();
+  dto.setOrderId(response.getId());
+  dto.setOfferId(response.getOfferId());
+  dto.setQuantity(response.getQuantity());
+  dto.setUserId(response.getUserId());
+  dto.setStatus(response.getStatus());
+  return dto;
+}
 }

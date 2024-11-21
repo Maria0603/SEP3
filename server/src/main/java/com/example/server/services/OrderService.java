@@ -1,7 +1,8 @@
-﻿package com.example.server.services;
+package com.example.server.services;
 
 import com.example.sep3.grpc.AddOrderRequest;
 import com.example.sep3.grpc.OfferServiceGrpc;
+import com.example.sep3.grpc.OrderResponse;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
 import com.example.server.dto.order.AddOrderRequestDto;
@@ -19,14 +20,8 @@ import org.springframework.transaction.annotation.Transactional;
   }
 
   @Transactional public AddOrderResponseDto addOrder(AddOrderRequestDto orderRequestDto) {
-    // Transform the DTO to a gRPC message
     AddOrderRequest request = DtoGrpcConverter.AddOrderRequestDto_To_AddOrderRequest(orderRequestDto);
-
-
-    // Send the request to the data server
-    AddOrderResponseDto response = dataServerStub.saveOffer(request);
-
-    // Transform the gRPC response to a DTO
+    OrderResponse response = dataServerStub.addOrder(request);
     return DtoGrpcConverter.AddOrderResponseGrpc_To_AddOrderResponseDto(response);
 }
 }
