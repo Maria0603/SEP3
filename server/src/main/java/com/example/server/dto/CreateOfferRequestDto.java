@@ -50,16 +50,16 @@ public class CreateOfferRequestDto
   }
 
   @NotNull(message = "Image must be provided")
-  private String imagePath;
+  private byte[] image;
 
-  public String getImagePath()
+  public byte[] getImage()
   {
-    return imagePath;
+    return image;
   }
 
-  public void setImagePath(String imagePath)
+  public void setImage(byte[] image)
   {
-    this.imagePath = imagePath;
+    this.image = image;
   }
 
   public String getTitle()

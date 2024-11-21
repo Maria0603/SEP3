@@ -7,7 +7,7 @@ import com.example.server.dto.OfferResponseDto;
 public class DtoGrpcConverter
 {
   public static SaveOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
-      CreateOfferRequestDto createOfferRequestDto)
+      CreateOfferRequestDto createOfferRequestDto, String imagePath)
   {
     // Create SaveOfferRequest builder
     SaveOfferRequest.Builder saveOfferRequestBuilder = SaveOfferRequest.newBuilder();
@@ -24,7 +24,7 @@ public class DtoGrpcConverter
         createOfferRequestDto.getNumberOfItems());
     saveOfferRequestBuilder.addAllCategories(
         createOfferRequestDto.getCategories());
-    saveOfferRequestBuilder.setImagePath(createOfferRequestDto.getImagePath());
+    saveOfferRequestBuilder.setImagePath(imagePath);
 
     // Convert DateDto to Date
     Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
