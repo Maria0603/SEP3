@@ -1,4 +1,4 @@
-﻿<div class="create-offer-form">
+﻿<div class="create-offer">
     <h3>New Offer</h3>
     <form @onsubmit="HandleSubmit">
         <!-- Title -->
@@ -13,13 +13,6 @@
             @* <textarea id="description"  placeholder="Enter..."></textarea> *@
         </div>
 
-        @*<!-- Image Upload -->
-        <div class="form-group image-upload">
-            <label for="image">Image</label>
-            <input id="image" type="file" @onchange="HandleImageUpload" />
-            <img src="@ImagePreview" alt="Preview" style="max-width: 100px; display: @(string.IsNullOrEmpty(ImagePreview) ? "none" : "block");" />
-        </div>*@
-
         <!-- Available Items -->
         <div class="form-group">
             <label for="availableItems">Available items</label>
@@ -27,23 +20,28 @@
         </div>
 
         <!-- Pickup Date -->
-        @* <div class="form-group"> *@
-        @*     <label for="pickupDate">Pick up date</label> *@
-        @*     <input id="pickupDate" type="date" @bind="NewOffer.PickupDateTime" /> *@
-        @* </div> *@
+        <div class="form-group">
+            <label>Pick up date</label>
+            Day: <input type="number" @bind="NewOffer.PickupDate.Day" /> 
+            Month: <input type="number" @bind="NewOffer.PickupDate.Month" /> 
+            Year: <input type="number" @bind="NewOffer.PickupDate.Year" /> 
+        </div>
 
         <!-- Pickup Time -->
         <div class="form-group">
             <label>Pick up time</label>
             <div class="time-range">
-                @* <label> *@
-                @*     Start *@
-                @*     <input type="time" @bind="" /> *@
-                @* </label> *@
-                @* <label> *@
-                @*     End *@
-                @*     <input type="time" @bind="" /> *@
-                @* </label> *@
+                <label>
+                    Start:  
+                    Hour: <input type="number" @bind="NewOffer.PickupTimeStart.Hour" />
+                    Minute: <input type="number" @bind="NewOffer.PickupTimeStart.Minute" />
+                </label>
+                <label>
+                    End:
+                    Start:
+                    Hour: <input type="number" @bind="NewOffer.PickupTimeEnd.Hour" />
+                    Minute: <input type="number" @bind="NewOffer.PickupTimeEnd.Minute" />
+                </label>
             </div>
         </div>
 
@@ -54,28 +52,20 @@
 
 @code {
     [Parameter] public EventCallback<Offer> OnOfferCreated { get; set; }
-
-    private Offer NewOffer { get; set; } = new Offer();
-    private string? ImagePreview { get; set; }
-
+    [Parameter] public Offer NewOffer { get; set; } = new Offer();
+    
     private async Task HandleSubmit()
     {
-        if (OnOfferCreated.HasDelegate)
+        if (NewOffer != null)
         {
             await OnOfferCreated.InvokeAsync(NewOffer);
         }
+        else
+        {
+            Console.WriteLine("NewOffer is null.");
+        }
     }
 
-    /*private async Task HandleImageUpload(InputFileChangeEventArgs e)
-    {
-        var file = e.File;
-        if (file != null)
-        {
-            // For now, just show a preview (use FileReader to load image data).
-            var buffer = new byte[file.Size];
-            await file.OpenReadStream().ReadAsync(buffer);
-            ImagePreview = $"data:{file.ContentType};base64,{Convert.ToBase64String(buffer)}";
-        }
-    }*/
+
     
 }

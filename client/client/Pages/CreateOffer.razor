@@ -5,8 +5,22 @@
 
 <h3>Create Offer</h3>
 
-<AddOfferComponent></AddOfferComponent>
+<AddOfferComponent NewOffer="offer" OnOfferCreated="HandleOfferCreated"></AddOfferComponent>
 
 @code {
+    private Offer offer = new Offer();
     
+    // Handle the submitted offer data
+    private async Task HandleOfferCreated(Offer submittedOffer)
+    {
+        // You now have the submitted offer
+        Console.WriteLine("Offer submitted:");
+        Console.WriteLine(submittedOffer.ToString());
+
+        // Optionally, you can call a service to save the offer, or navigate away
+        // await OfferService.CreateOffer(submittedOffer);
+
+        // For example, redirect after saving
+        NavigationManager.NavigateTo("/offers"); // Navigate to another page
+    }
 }
