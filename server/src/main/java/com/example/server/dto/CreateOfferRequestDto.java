@@ -23,7 +23,7 @@ public class CreateOfferRequestDto
   private boolean isOfferPriceValid()
   {
     return offerPrice != null && originalPrice != null
-        && offerPrice < originalPrice;
+        && offerPrice <= originalPrice;
   }
 
   @NotNull(message = "Number of items must be a positive integer") @Positive(message = "Number of items must be a positive integer")
@@ -48,8 +48,9 @@ public class CreateOfferRequestDto
         && (TimeConverter.convertTimeDtoToLocalTime(pickupTimeEnd)
         .isAfter(TimeConverter.convertTimeDtoToLocalTime(pickupTimeStart)));
   }
-
-  @NotNull(message = "Image must be provided")
+//  TODO: Look image client - server transmission
+/*  Getting error: Bad Request because am not sending bytes yet*/
+//  @NotNull(message = "Image must be provided")
   private byte[] image;
 
   public byte[] getImage()

@@ -10,10 +10,10 @@ public class Offer
 
     [JsonPropertyName("imagePath")] public string Image { get; set; } // Image source URL for the offer
     [JsonPropertyName("title")] public string Title { get; set; } // Product name (Pastry)
-    [JsonPropertyName("originalPrice")] public decimal Price { get; set; } // Price of the offer (e.g., 39,00 kr.)
+    [JsonPropertyName("originalPrice")] public int Price { get; set; } // Price of the offer (e.g., 39,00 kr.)
     [JsonPropertyName("pickupDate")] public PickupDate PickupDate { get; set; } = new PickupDate(); // Default to non-null
-    [JsonPropertyName("pickupTimeStart")] public Time PickupTimeStart { get; set; } = new Time(0, 0); // Initialize to 00:00
-    [JsonPropertyName("pickupTimeEnd")] public Time PickupTimeEnd { get; set; } = new Time(0, 0); // Initialize to 00:00
+    [JsonPropertyName("pickupTimeStart")] public PickupTime PickupTimeStart { get; set; } = new PickupTime(0, 0); // Initialize to 00:00
+    [JsonPropertyName("pickupTimeEnd")] public PickupTime PickupTimeEnd { get; set; } = new PickupTime(0, 0); // Initialize to 00:00
     
     /*                  UNUSED STUFF                     */
     /* <===============================================> */
@@ -33,9 +33,9 @@ public class Offer
     }
 }
 
-public class Time
+public class PickupTime
 {
-    public Time(int hour, int minute)
+    public PickupTime(int hour, int minute)
     {
         Hour = hour;
         Minute = minute;

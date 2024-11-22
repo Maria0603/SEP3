@@ -1,4 +1,5 @@
 @page "/createOffer"
+@using client.DTO
 @using client.Services
 @inject NavigationManager NavigationManager
 @inject IOfferService OfferService
@@ -6,21 +7,65 @@
 <h3>Create Offer</h3>
 
 <AddOfferComponent NewOffer="offer" OnOfferCreated="HandleOfferCreated"></AddOfferComponent>
-
+@if (errorLabel is not null)
+{
+<div class="alert alert-danger">@errorLabel</div>
+}
 @code {
     private Offer offer = new Offer();
-    
-    // Handle the submitted offer data
-    private async Task HandleOfferCreated(Offer submittedOffer)
+    private string? errorLabel;
+
+    private async Task HandleOfferCreated(Offer? submittedOffer)
     {
-        // You now have the submitted offer
-        Console.WriteLine("Offer submitted:");
-        Console.WriteLine(submittedOffer.ToString());
+        
+        
+        errorLabel = "";
+        if (submittedOffer == null)
+        {
+            errorLabel = "Offer data is null.";
+            return;
+        }
+        Console.WriteLine("TITLE: "+submittedOffer.Title);
+        Console.WriteLine("PRICE: "+submittedOffer.Price);
+        Console.WriteLine("numbOfItems: "+submittedOffer.NumberOfItems);
+        Console.WriteLine("DATE: "+submittedOffer.PickupDate.ToDateTime());
+        Console.WriteLine("sTIME: "+submittedOffer.PickupTimeStart.ToTimeSpan());
+        Console.WriteLine("eTIME: "+submittedOffer.PickupTimeEnd.ToTimeSpan());
+        Console.WriteLine("IMAGE_PATH: "+submittedOffer.Image);
+        
+        
+        CreateOfferRequestDto request = new CreateOfferRequestDto()
+        {
+            Title = submittedOffer.Title,
+            Description = "(Cannot123456789123456789123456789 add, is unused)",
+            OriginalPrice = submittedOffer.Price,
+            OfferPrice = submittedOffer.Price-1,
+            NumberOfItems = submittedOffer.NumberOfItems,
+            PickupDate = new PickupDate()
+            {
+                Day = submittedOffer.PickupDate.Day,
+                Month = submittedOffer.PickupDate.Month,
+                Year = submittedOffer.PickupDate.Year
+            },
+            PickupTimeStart = new PickupTime(submittedOffer.PickupTimeStart.Hour,
+                                            submittedOffer.PickupTimeStart.Minute),
+            PickupTimeEnd = new PickupTime(submittedOffer.PickupTimeEnd.Hour,
+                                            submittedOffer.PickupTimeEnd.Minute),
+            Categories = new List<string> {"Bakery"},
+            
+            
+            Image = null
+        };
 
-        // Optionally, you can call a service to save the offer, or navigate away
-        // await OfferService.CreateOffer(submittedOffer);
-
-        // For example, redirect after saving
-        NavigationManager.NavigateTo("/offers"); // Navigate to another page
+        try
+        {
+            await OfferService.SaveOfferAsync(request);
+        }
+        catch (Exception e)
+        {
+            errorLabel = e.Message;
+        }
+        
+        // NavigationManager.NavigateTo("/offers"); // Navigate to another page
     }
 }

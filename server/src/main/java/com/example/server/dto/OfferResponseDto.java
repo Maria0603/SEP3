@@ -37,7 +37,7 @@ public class OfferResponseDto
   {
     this.status = status;
   }
-
+//  TODO: same thing as in CreateOfferRequestDto
   public String getImagePath()
   {
     return imagePath;
