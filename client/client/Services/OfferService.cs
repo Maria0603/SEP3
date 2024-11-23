@@ -61,8 +61,7 @@ public class OfferService : IOfferService
             return offerResponse;
         }
 
-        throw new Exception(
-            $"Error: {response.StatusCode}, {response.ReasonPhrase}");
+        throw new Exception(responseContent);
     }
 
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
