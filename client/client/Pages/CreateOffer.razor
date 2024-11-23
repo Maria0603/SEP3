@@ -1,71 +1,157 @@
-@page "/createOffer"
+﻿@page "/createOffer"
+@using System.Net
 @using client.DTO
 @using client.Services
-@inject NavigationManager NavigationManager
-@inject IOfferService OfferService
+@inject IOfferService OfferService;
 
-<h3>Create Offer</h3>
+<EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
 
-<AddOfferComponent NewOffer="offer" OnOfferCreated="HandleOfferCreated"></AddOfferComponent>
-@if (errorLabel is not null)
-{
-<div class="alert alert-danger">@errorLabel</div>
-}
-@code {
-    private Offer offer = new Offer();
-    private string? errorLabel;
+    <div class="mb-3">
+        <label for="title">Title</label>
+        <InputText id="title" @bind-Value="offerDto.Title" class="form-control"/>
+    </div>
 
-    private async Task HandleOfferCreated(Offer? submittedOffer)
+    <div class="mb-3">
+        <label for="description">Description</label>
+        <InputTextArea id="description" @bind-Value="offerDto.Description" class="form-control"/>
+    </div>
+
+    <div class="row">
+        <div class="mb-3 col-sm-2">
+            <label for="originalPrice">Original Price (kr)</label>
+            <InputNumber id="originalPrice" @bind-Value="offerDto.OriginalPrice" class="form-control"/>
+        </div>
+
+        <div class="mb-3 col-sm-2">
+            <label for="offerPrice">Offer Price (kr)</label>
+            <InputNumber id="offerPrice" @bind-Value="offerDto.OfferPrice" class="form-control"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-3 col-sm-2">
+            <label for="numberOfItems">Number of Items</label>
+            <InputNumber id="numberOfItems" @bind-Value="offerDto.NumberOfItems" class="form-control"/>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="mb-3 col-sm-2">
+            <label for="pickupDate">Pickup Date</label>
+            <InputDate id="pickupDate" @bind-Value="dateValue" class="form-control"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="mb-3 col-sm-2">
+            <label for="pickupTimeStart">Pickup Start Time</label>
+            <input type="time" id="pickupTimeStart" @bind="timeStart" class="form-control"/>
+        </div>
+
+
+        <div class="mb-3 col-sm-2">
+            <label for="pickupTimeEnd">Pickup End Time</label>
+            <input type="time" id="pickupTimeEnd" @bind="timeEnd" class="form-control"/>
+        </div>
+    </div>
+
+    <div class="mb-3">
+        <label for="categories">Categories</label>
+        <InputText id="categories" @bind-Value="categoriesInput" class="form-control"/>
+        <small class="form-text text-muted">Comma-separated values (e.g., Bread,Vegan)</small>
+    </div>
+
+    <div class="mb-3">
+        <label for="image">Image</label>
+        <InputFile id="image" OnChange="HandleImageUpload" class="form-control"/>
+    </div>
+
+    @if (!string.IsNullOrEmpty(errorLabel))
     {
-        
-        
+        <div class="alert-danger">@errorLabel</div>
+    }
+    @if (!string.IsNullOrEmpty(successLabel))
+    {
+        <div class="alert-success">@successLabel</div>
+    }
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</EditForm>
+
+@code {
+
+    private CreateOfferRequestDto offerDto = new()
+    {
+        Categories = new List<string>(),
+        PickupDate = new DateDto(),
+        PickupTimeStart = new TimeDto(),
+        PickupTimeEnd = new TimeDto(),
+        NumberOfItems = 1 //Default
+    };
+
+    private TimeOnly? timeStart;
+    private TimeOnly? timeEnd;
+    private DateTime? dateValue;
+    private string categoriesInput = string.Empty;
+    private string errorLabel = "";
+    private string successLabel = "";
+
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e)
+    {
         errorLabel = "";
-        if (submittedOffer == null)
+        successLabel = "";
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        offerDto.Image = memoryStream.ToArray();
+    }
+
+    private async Task SubmitOffer()
+    {
+        errorLabel = "";
+        successLabel = "";
+
+        offerDto.Categories = categoriesInput.Split(',').Select(c => c.Trim()).ToList();
+
+        if (dateValue is not null)
         {
-            errorLabel = "Offer data is null.";
-            return;
+            offerDto.PickupDate.Day = dateValue.Value.Day;
+            offerDto.PickupDate.Month = dateValue.Value.Month;
+            offerDto.PickupDate.Year = dateValue.Value.Year;
         }
-        Console.WriteLine("TITLE: "+submittedOffer.Title);
-        Console.WriteLine("PRICE: "+submittedOffer.Price);
-        Console.WriteLine("numbOfItems: "+submittedOffer.NumberOfItems);
-        Console.WriteLine("DATE: "+submittedOffer.PickupDate.ToDateTime());
-        Console.WriteLine("sTIME: "+submittedOffer.PickupTimeStart.ToTimeSpan());
-        Console.WriteLine("eTIME: "+submittedOffer.PickupTimeEnd.ToTimeSpan());
-        Console.WriteLine("IMAGE_PATH: "+submittedOffer.Image);
-        
-        
-        CreateOfferRequestDto request = new CreateOfferRequestDto()
+        else errorLabel = "Please provide pickup date.";
+
+        if (timeStart is not null)
         {
-            Title = submittedOffer.Title,
-            Description = "(Cannot123456789123456789123456789 add, is unused)",
-            OriginalPrice = submittedOffer.Price,
-            OfferPrice = submittedOffer.Price-1,
-            NumberOfItems = submittedOffer.NumberOfItems,
-            PickupDate = new PickupDate()
-            {
-                Day = submittedOffer.PickupDate.Day,
-                Month = submittedOffer.PickupDate.Month,
-                Year = submittedOffer.PickupDate.Year
-            },
-            PickupTimeStart = new PickupTime(submittedOffer.PickupTimeStart.Hour,
-                                            submittedOffer.PickupTimeStart.Minute),
-            PickupTimeEnd = new PickupTime(submittedOffer.PickupTimeEnd.Hour,
-                                            submittedOffer.PickupTimeEnd.Minute),
-            Categories = new List<string> {"Bakery"},
-            
-            
-            Image = null
-        };
+            offerDto.PickupTimeStart.Hour = timeStart.Value.Hour;
+            offerDto.PickupTimeStart.Minute = timeStart.Value.Minute;
+        }
+        else errorLabel = "Please provide pickup start time.";
+
+        if (timeEnd is not null)
+        {
+            offerDto.PickupTimeEnd.Hour = timeEnd.Value.Hour;
+            offerDto.PickupTimeEnd.Minute = timeEnd.Value.Minute;
+        }
+        else errorLabel = "Please provide pickup date.";
 
         try
         {
-            await OfferService.SaveOfferAsync(request);
+            OfferResponseDto? response = await OfferService.SaveOfferAsync(offerDto);
+
+            if (response is not null)
+            {
+                Console.WriteLine("Offer created successfully!");
+                successLabel = $"Offer created successfully: {response.Id}";
+            }
         }
         catch (Exception e)
         {
+            Console.WriteLine($"Error");
             errorLabel = e.Message;
         }
-        
-        // NavigationManager.NavigateTo("/offers"); // Navigate to another page
     }
+
 }
