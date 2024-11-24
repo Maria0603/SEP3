@@ -15,51 +15,60 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-
 @GrpcService public class OrderServiceImpl
-    extends OrderServiceGrpc.OrderServiceImplBase {
+    extends OrderServiceGrpc.OrderServiceImplBase
+{
 
   private final OrderRepository orderRepository;
   private final OfferRepository offerRepository;
 
-  @Autowired public OrderServiceImpl(OrderRepository orderRepository, OfferRepository offerRepository) {
+  @Autowired public OrderServiceImpl(OrderRepository orderRepository,
+      OfferRepository offerRepository)
+  {
     this.orderRepository = orderRepository;
     this.offerRepository = offerRepository;
   }
 
   @Override public void addOrder(AddOrderRequest request,
-      StreamObserver<OrderResponse> responseObserver) {
+      StreamObserver<OrderResponse> responseObserver)
+  {
     System.out.println("Request to add Order");
 
-    OrderDao Order = generateOrderDaoFromAddOrderRequest(request, offerRepository);
+    OrderDao Order = generateOrderDaoFromAddOrderRequest(request);
     OrderDao createdOrder = orderRepository.save(Order);
+
     buildOrderResponseFromOrderDao(responseObserver, createdOrder);
   }
 
   @Override public void getOrderById(OrderIdRequest request,
-      StreamObserver<OrderResponse> responseObserver) {
+      StreamObserver<OrderResponse> responseObserver)
+  {
     System.out.println("Request for Order by id");
 
     Optional<OrderDao> Order = orderRepository.findById(request.getId());
-    if (Order.isPresent()) {
+    if (Order.isPresent())
+    {
       OrderDao orderDao = Order.get();
       buildOrderResponseFromOrderDao(responseObserver, orderDao);
     }
-    else {
+    else
+    {
       responseObserver.onError(
           new Exception("Error: No Order with ID " + request.getId()));
     }
   }
 
   @Override public void getAllOrders(Empty request,
-      StreamObserver<OrderList> responseObserver) {
+      StreamObserver<OrderList> responseObserver)
+  {
     System.out.println("Request for all Orders");
 
     List<OrderDao> Orders = orderRepository.findAll();
 
     OrderList.Builder OrderListBuilder = OrderList.newBuilder();
-    for (OrderDao orderDao : Orders) {
-      OrderResponse response = getOrderResponseFromOrderDao(orderDao);
+    for (OrderDao orderDao : Orders)
+    {
+      OrderResponse response = generateOrderResponseFromOrderDao(orderDao);
       OrderListBuilder.addOrders(response);
     }
 
@@ -68,35 +77,31 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  private OrderResponse buildOrderResponseFromOrderDao(
-      StreamObserver<OrderResponse> responseObserver, OrderDao orderDao) {
-    OrderResponse response = getOrderResponseFromOrderDao(orderDao);
+  private void buildOrderResponseFromOrderDao(
+      StreamObserver<OrderResponse> responseObserver, OrderDao orderDao)
+  {
+    OrderResponse response = generateOrderResponseFromOrderDao(orderDao);
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
-    return response;
   }
 
-  private static OrderResponse getOrderResponseFromOrderDao(OrderDao orderDao) {
-    OrderResponse response = OrderResponse.newBuilder()
-        .setId(orderDao.getId())
-        .setUserId(orderDao.getUserId())
-        .setOfferId(orderDao.getOffer().getId())
-        .setQuantity(orderDao.getQuantity())
-        .setOrderDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                orderDao.getOrderDate()))
+  private OrderResponse generateOrderResponseFromOrderDao(OrderDao orderDao)
+  {
+    return OrderResponse.newBuilder().setId(orderDao.getId())
+        .setUserId(orderDao.getUserId()).setOfferId(orderDao.getOffer().getId())
+        .setQuantity(orderDao.getQuantity()).setOrderDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
         .setOrderTime(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
-                orderDao.getOrderTime()))
+            DateTimeConverter.convertTimeDaoToGrpcTime(orderDao.getOrderTime()))
         .setStatus(orderDao.getStatus())
         .setNewOrderPrice(orderDao.getNewOrderPrice())
-        .setOldOrderPrice(orderDao.getOldOrderPrice())
-        .build();
-    return response;
+        .setOldOrderPrice(orderDao.getOldOrderPrice()).build();
   }
 
- private static OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request, OfferRepository offerRepository) {
+  private OrderDao generateOrderDaoFromAddOrderRequest(
+      AddOrderRequest request)
+  {
     OrderDao order = new OrderDao();
     order.setUserId(request.getUserId());
     order.setQuantity(request.getQuantity());
@@ -105,16 +110,21 @@ import java.util.Optional;
     order.setStatus(OrderStatus.RESERVED.getStatus());
 
     Optional<OfferDao> offer = offerRepository.findById(request.getOfferId());
-    if (offer.isPresent()) {
-        OfferDao offerDao = offer.get();
-        order.setOldOrderPrice(offerDao.getOriginalPrice() * request.getQuantity());
-        order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
-        order.setOffer(offerDao);
-    } else {
-        throw new IllegalArgumentException("Error: No offer with ID " + request.getOfferId());
+    if (offer.isPresent())
+    {
+      OfferDao offerDao = offer.get();
+      order.setOldOrderPrice(
+          offerDao.getOriginalPrice() * request.getQuantity());
+      order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
+      order.setOffer(offerDao);
+    }
+    else
+    {
+      throw new IllegalArgumentException(
+          "Error: No offer with ID " + request.getOfferId());
     }
 
     return order;
-}
+  }
 
 }
