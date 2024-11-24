@@ -13,6 +13,7 @@ import java.util.UUID;
 {
 
   private static final String BASE_DIRECTORY = "server/images/";
+  private static final String IMAGE_EXTENSION = ".jpg";
 
   public ImageStorageService()
   {
@@ -22,16 +23,17 @@ import java.util.UUID;
 
   }
 
+
   public String saveImage(byte[] imageData) throws IOException
   {
 
     // Generates a random unique ID
-    String imageName = UUID.randomUUID() + ".jpg";
+    String imageName = UUID.randomUUID() + IMAGE_EXTENSION;
 
     File file = new File(BASE_DIRECTORY, imageName);
     Files.write(file.toPath(), imageData);
 
-    return "images/" + imageName;
+    return imageName;
   }
 
   public void deleteImage(String imagePath)
@@ -46,6 +48,11 @@ import java.util.UUID;
     }
     else
       throw new IllegalArgumentException("Image not found: " + imagePath);
+  }
+
+  public String getBaseDirectory()
+  {
+    return BASE_DIRECTORY;
   }
 
   //Good methods, do not delete
