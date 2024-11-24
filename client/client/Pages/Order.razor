@@ -2,7 +2,8 @@
 <!--page "/offers/{OfferId}"-->
 
 @inject NavigationManager NavigationManager
-@inject IOfferService OfferService
+@inject IOrderService OrderService
+@using client.DTO
 @using client.Services
 
 <h3>Offer ID...................</h3>
@@ -42,7 +43,7 @@
 }
 
 @code {
-    [Parameter] public string OfferId { get; set; }
+    [Parameter] public string OfferId { get; set; } = "67436228caa7a06b27c8d6b7";
     private Offer DisplayedOffer; // the offer displayed on this page
     private int Quantity = 1; // quantity selected by the user - default 1
     private OrderResponseDto? OrderResponse { get; set; }
@@ -74,7 +75,7 @@
         // Send the request to the server to create a Stripe checkout session
         try
         {
-            var response = await OfferService.PlaceOrderAsync(OfferId, request);
+            var response = await OrderService.PlaceOrderAsync(OfferId, request);
 
             // Get the session URL from the response
             string sessionUrl = response.Url;
