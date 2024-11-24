@@ -49,7 +49,8 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     String imagePath = null;
     try
     {
-      imagePath = imageStorageService.saveImage(offerRequestDto.getImage());
+      imagePath = imageStorageService.getBaseDirectory()
+          + imageStorageService.saveImage(offerRequestDto.getImage());
       //Transform the dto to grpc message
       SaveOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
           offerRequestDto, imagePath);
@@ -132,20 +133,6 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     }
   }
 
-  public byte[] retrieveImage(String filePath) throws IOException
-  {
-    //String normalizedPath = filePath.replace("/", File.separator);
-    File imageFile = new File("server/" + filePath);
-
-    if (!imageFile.exists())
-    {
-      throw new FileNotFoundException("Image not found at path: " + filePath);
-    }
-
-    // Read the image into a byte array
-    return Files.readAllBytes(imageFile.toPath());
-  }
-
   private void validateOfferDetails(CreateOfferRequestDto offerRequestDto)
   {
     if (!isPickupInFuture(offerRequestDto.getPickupDate(),
@@ -165,7 +152,7 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
 
   public boolean imageExists(String filePath)
   {
-    File imageFile = new File("server/" + filePath);
+    File imageFile = new File(filePath);
     return imageFile.exists();
   }
 
