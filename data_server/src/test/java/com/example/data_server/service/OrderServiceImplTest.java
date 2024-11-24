@@ -117,7 +117,7 @@ void testAddOrder() {
     when(orderRepository.findAll()).thenReturn(List.of(Order1, Order2));
 
     StreamObserver<OrderList> responseObserver = mock(StreamObserver.class);
-    orderService.getAllOrders(Empty.newBuilder().build(), responseObserver);
+    orderService.getAllOrders(EmptyMessage.newBuilder().build(), responseObserver);
 
     verify(responseObserver).onNext(any(OrderList.class));
     verify(responseObserver).onCompleted();

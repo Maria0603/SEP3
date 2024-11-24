@@ -58,7 +58,7 @@ import java.util.Optional;
     }
   }
 
-  @Override public void getAllOrders(Empty request,
+  @Override public void getAllOrders(EmptyMessage request,
       StreamObserver<OrderList> responseObserver)
   {
     System.out.println("Request for all Orders");
@@ -75,6 +75,20 @@ import java.util.Optional;
     OrderList OrderListResponse = OrderListBuilder.build();
     responseObserver.onNext(OrderListResponse);
     responseObserver.onCompleted();
+  }
+
+  @Override public void updateOrderStatus(OrderStatusRequest orderStatusRequest,
+      StreamObserver<OrderResponse> responseObserver)
+  {
+    System.out.println("Request to update order status.");
+
+    OrderDao orderDao = orderRepository.findById(orderStatusRequest.getId())
+        .orElseThrow(() -> new IllegalArgumentException("Order not found"));
+
+    orderDao.setStatus(orderStatusRequest.getStatus());
+    orderRepository.save(orderDao);
+
+    buildOrderResponseFromOrderDao(responseObserver, orderDao);
   }
 
   private void buildOrderResponseFromOrderDao(
@@ -94,20 +108,18 @@ import java.util.Optional;
             DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
         .setOrderTime(
             DateTimeConverter.convertTimeDaoToGrpcTime(orderDao.getOrderTime()))
-        .setStatus(orderDao.getStatus())
-        .setNewOrderPrice(orderDao.getNewOrderPrice())
-        .setOldOrderPrice(orderDao.getOldOrderPrice()).build();
+        .setStatus(orderDao.getStatus()).setPrice(orderDao.getNewOrderPrice())
+        .build();
   }
 
-  private OrderDao generateOrderDaoFromAddOrderRequest(
-      AddOrderRequest request)
+  private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
   {
     OrderDao order = new OrderDao();
     order.setUserId(request.getUserId());
     order.setQuantity(request.getQuantity());
     order.setOrderDate(DateTimeConverter.getCurrentDateDao());
     order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
-    order.setStatus(OrderStatus.RESERVED.getStatus());
+    order.setStatus(OrderStatus.PENDING.getStatus());
 
     Optional<OfferDao> offer = offerRepository.findById(request.getOfferId());
     if (offer.isPresent())
