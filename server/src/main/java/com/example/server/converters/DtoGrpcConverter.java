@@ -1,9 +1,11 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.*;
-import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.OfferResponseDto;
-import com.example.server.dto.ShortOfferResponseDto;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.AddOrderRequestDto;
+import com.example.server.dto.order.AddOrderResponseDto;
 
 public class DtoGrpcConverter
 {
@@ -85,4 +87,26 @@ public class DtoGrpcConverter
 
     return dto;
   }
+
+  public static AddOrderRequest AddOrderRequestDto_To_AddOrderRequest(
+      AddOrderRequestDto addOrderRequestDto)
+  {
+    AddOrderRequest request = AddOrderRequest.newBuilder()
+        .setOfferId(addOrderRequestDto.getOfferId())
+        .setQuantity(addOrderRequestDto.getQuantity())
+        .setUserId(addOrderRequestDto.getUserId())
+        .build();
+    return request;
+  }
+
+  public static AddOrderResponseDto AddOrderResponseGrpc_To_AddOrderResponseDto(
+    OrderResponse response) {
+  AddOrderResponseDto dto = new AddOrderResponseDto();
+  dto.setOrderId(response.getId());
+  dto.setOfferId(response.getOfferId());
+  dto.setQuantity(response.getQuantity());
+  dto.setUserId(response.getUserId());
+  dto.setStatus(response.getStatus());
+  return dto;
+}
 }

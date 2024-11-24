@@ -1,0 +1,43 @@
+﻿syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "OrderServiceProto";
+
+package proto;
+
+import "OfferService.proto";
+import "google/protobuf/empty.proto";
+
+
+service OrderService {
+  rpc AddOrder(AddOrderRequest) returns (OrderResponse);
+  rpc GetOrderById(OrderIdRequest) returns (OrderResponse);
+  rpc GetAllOrders(google.protobuf.Empty) returns (OrderList);
+}
+
+message AddOrderRequest {
+  string offerId = 1;
+  string userId = 2;
+  int32 quantity = 3;
+}
+
+message OrderResponse {
+  string id = 1;
+  string userId = 2;
+  string offerId = 3;
+  int32 quantity = 4;
+  Date orderDate = 5;
+  Time orderTime = 6;
+  string status = 7;
+  int32 newOrderPrice = 8;
+  int32 oldOrderPrice = 9;
+}
+
+message OrderIdRequest {
+  string id = 1;
+}
+
+message OrderList {
+  repeated OrderResponse Orders = 1;
+}

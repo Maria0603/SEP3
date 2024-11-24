@@ -1,8 +1,7 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.Time;
-import com.example.server.dto.DateDto;
-import com.example.server.dto.TimeDto;
+import com.example.server.dto.date_time.TimeDto;
 import com.example.shared.dao.TimeDao;
 
 import java.time.LocalTime;

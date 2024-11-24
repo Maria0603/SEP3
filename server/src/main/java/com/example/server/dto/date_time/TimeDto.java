@@ -1,4 +1,4 @@
-package com.example.server.dto;
+package com.example.server.dto.date_time;
 
 public class TimeDto
 {

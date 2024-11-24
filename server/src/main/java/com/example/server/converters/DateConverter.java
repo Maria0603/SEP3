@@ -1,7 +1,7 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.Date;
-import com.example.server.dto.DateDto;
+import com.example.server.dto.date_time.DateDto;
 import com.example.shared.dao.DateDao;
 
 public class DateConverter

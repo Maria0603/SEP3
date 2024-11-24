@@ -1,10 +1,9 @@
 package com.example.server;
 
-import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.DateDto;
-import com.example.server.dto.OfferResponseDto;
-import com.example.server.dto.TimeDto;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.date_time.DateDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.date_time.TimeDto;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
