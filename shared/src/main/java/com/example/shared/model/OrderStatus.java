@@ -1,7 +1,7 @@
 package com.example.shared.model;
 
 public enum OrderStatus {
-  RESERVED("reserved"), PICKED("picked"), NOT_PICKED("not_picked");
+  PENDING("pending"), RESERVED("reserved"), COMPLETED("completed");
   private final String status;
 
   OrderStatus(String status) {

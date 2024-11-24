@@ -38,8 +38,12 @@ public class DataServerStub {
     return orderBlockingStub.getOrderById(request);
   }
 
-  public OrderList getAllOrders(Empty request) {
+  public OrderList getAllOrders(EmptyMessage request) {
     return orderBlockingStub.getAllOrders(request);
+  }
+  public OrderResponse updateOrderStatus(OrderStatusRequest request)
+  {
+    return orderBlockingStub.updateOrderStatus(request);
   }
 
   public void shutdown() {
