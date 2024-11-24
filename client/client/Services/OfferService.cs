@@ -17,29 +17,7 @@ public class OfferService : IOfferService
         this.client = client;
     }
 
-    public async Task<OrderResponseDto> PlaceOrderAsync(string offerId,
-        OrderRequestDto orderRequestDto)
-    {
-        // Send the request to the server to create a Stripe checkout session
-        HttpResponseMessage response =
-            await client.PostAsJsonAsync($"offers/order",
-                orderRequestDto); //TODO: replace with the right endpoint
-        String responseContent = await response.Content.ReadAsStringAsync();
-
-        if (response.IsSuccessStatusCode)
-        {
-            OrderResponseDto orderResponse =
-                JsonSerializer.Deserialize<OrderResponseDto>(responseContent,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    })!;
-            return orderResponse;
-        }
-
-        throw new Exception(
-            $"Error: {response.StatusCode}, {response.ReasonPhrase}");
-    }
+   
 
     public async Task<OfferResponseDto> SaveOfferAsync(CreateOfferRequestDto createOfferRequestDto)
     {

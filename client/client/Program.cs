@@ -12,6 +12,8 @@ builder.RootComponents.Add<HeadOutlet>("head::after");
 builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
+builder.Services.AddScoped<IOrderService, OrderService>();
+
 
 StripeConfiguration.ApiKey =
     "sk_test_51QLXFcEJybmJ8DbtUW95vPtVV4vCIHtWi7MgOuqlhLngWoki5Bo0iMF8s2Nfxhzpub5gnIAD3d0CUpZBcSAJanmp004vLU11xd";
