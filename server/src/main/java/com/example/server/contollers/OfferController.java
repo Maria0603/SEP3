@@ -1,12 +1,14 @@
 package com.example.server.contollers;
 
 import com.example.sep3.grpc.*;
-import com.example.server.dto.*;
+import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.PlaceOrderRequestDto;
+import com.example.server.dto.order.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
-import com.example.server.dto.CreateOfferRequestDto;
-import com.example.server.dto.DateDto;
-import com.example.server.dto.OfferResponseDto;
-import com.example.server.dto.TimeDto;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.date_time.DateDto;
+import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.date_time.TimeDto;
 import io.grpc.stub.StreamObserver;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -27,8 +29,6 @@ import java.util.concurrent.CountDownLatch;
     this.offerService = offerService;
 
   }
-
-
 
   //Look at OfferTestClient to see how the request should look like
   @PostMapping public ResponseEntity<OfferResponseDto> saveOffer(
@@ -58,25 +58,6 @@ import java.util.concurrent.CountDownLatch;
     {
       e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
-    }
-  }
-
-  //@PostMapping("/{id}")
-  @PostMapping("/order") //TODO: change
-  public ResponseEntity<PlaceOrderResponseDto> placeOrder(
-          //@PathVariable String id,
-          @RequestBody PlaceOrderRequestDto orderRequest)
-  {
-    System.out.println("Request for place order.");
-    try
-    {
-      PlaceOrderResponseDto response = offerService.placeOrder(orderRequest);
-      return ResponseEntity.ok(response);
-    }
-    catch (IllegalArgumentException e)
-    {
-      e.printStackTrace();
-      return ResponseEntity.badRequest().build(); //TODO: update
     }
   }
 

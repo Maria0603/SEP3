@@ -35,43 +35,14 @@ import java.util.Optional;
   {
     System.out.println("Request for save offer");
 
-    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    // Prepare to save the offer in database
+    OfferDao offer = generateOfferDaoFromSaveOfferRequest(request);
 
-    //The offer has no id or image for now
-    OfferDao offer = new OfferDao();
-
-    offer.setTitle(request.getTitle());
-    offer.setDescription(request.getDescription());
-    offer.setOfferPrice(request.getOfferPrice());
-    offer.setOriginalPrice(request.getOriginalPrice());
-
-    offer.setPickupDate(
-        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
-        request.getPickupTimeStart()));
-    offer.setPickupTimeEnd(
-        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
-    offer.setCategories(categories);
-    offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
-    offer.setImagePath(request.getImagePath());
-
+    // Save the offer
     offerRepository.save(offer);
 
-    //We build the response with everything
-    SaveOfferResponse response = SaveOfferResponse.newBuilder()
-        .setId(offer.getId()).setTitle(offer.getTitle())
-        .setDescription(offer.getDescription())
-        .setOfferPrice(offer.getOfferPrice())
-        .setOriginalPrice(offer.getOriginalPrice())
-        .setNumberOfItems(offer.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                offer.getPickupDate())).setPickupTimeStart(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
-                offer.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
-                offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
-        .addAllCategories(offer.getCategories()).build();
+    // Build the response with everything
+    SaveOfferResponse response = buildSaveOfferResponse(offer);
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
@@ -115,6 +86,47 @@ import java.util.Optional;
         new Exception("Error: No offer with ID " + request.getId()));
   }
 
+  private OfferDao generateOfferDaoFromSaveOfferRequest(
+      SaveOfferRequest request)
+  {
+    OfferDao offer = new OfferDao();
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+
+    offer.setPickupDate(
+        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
+    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
+        request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    offer.setCategories(categories);
+
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
+    offer.setImagePath(request.getImagePath());
+
+    return offer;
+  }
+
+  private SaveOfferResponse buildSaveOfferResponse(OfferDao offer)
+  {
+    return SaveOfferResponse.newBuilder().setId(offer.getId())
+        .setTitle(offer.getTitle()).setDescription(offer.getDescription())
+        .setOfferPrice(offer.getOfferPrice())
+        .setOriginalPrice(offer.getOriginalPrice())
+        .setNumberOfItems(offer.getNumberOfItems()).setPickupDate(
+            DateTimeConverter.convertDateDaoToGrpcDate(offer.getPickupDate()))
+        .setPickupTimeStart(DateTimeConverter.convertTimeDaoToGrpcTime(
+            offer.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertTimeDaoToGrpcTime(
+                offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
+        .addAllCategories(offer.getCategories()).build();
+
+  }
 
   private OfferResponse buildOfferResponse(OfferDao offerDao)
   {
@@ -136,7 +148,8 @@ import java.util.Optional;
   private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
   {
     return ShortOfferResponse.newBuilder().setId(offerDao.getId())
-        .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
+        .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus())
+        .setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
         .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
             DateTimeConverter.convertDateDaoToGrpcDate(
@@ -147,62 +160,6 @@ import java.util.Optional;
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath()).build();
   }
-/*
-  private String saveImage(byte[] imageBytes, String offerId)
-  {
-    String pathToImage = null;
-    try
-    {
-      ByteArrayInputStream inStreamObj = new ByteArrayInputStream(imageBytes);
-      BufferedImage newImage = ImageIO.read(inStreamObj);
-
-      pathToImage = uploadDirectory + offerId + ".jpg";
-      ImageIO.write(newImage, "jpg", new File(pathToImage));
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-
-    }
-    return pathToImage;
-  }
-
-  //Method to create a dummy red image, for testing purposes; do not delete
-  private byte[] createImageByteArray() throws IOException
-  {
-    // Create a 200x200 BufferedImage with RGB color
-    BufferedImage bufferedImage = new BufferedImage(200, 200,
-        BufferedImage.TYPE_INT_RGB);
-
-    // Fill the image with a solid color
-    for (int y = 0; y < 200; y++)
-      for (int x = 0; x < 200; x++)
-        bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
-
-    // Convert BufferedImage to byte array in JPEG format
-    ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    ImageIO.write(bufferedImage, "jpg", baos);
-    return baos.toByteArray();
-  }
-
-  private byte[] extractImage(String imagePath)
-  {
-    try
-    {
-      BufferedImage image = ImageIO.read(new File(imagePath));
-      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
-      ImageIO.write(image, "jpg", outStreamObj);
-      return outStreamObj.toByteArray();
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-
-    }
-    return null;
-  }
-*/
-
 
 }
 

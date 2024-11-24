@@ -36,8 +36,7 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
 {
   private final DataServerStub dataServerStub;
   private final ImageStorageService imageStorageService;
-  @Value("${stripe.success-url}") private String successUrl; // from application.properties
-  @Value("${stripe.cancel-url}") private String cancelUrl;
+
 
   @Autowired public OfferService(DataServerStub dataServerStub,
       ImageStorageService imageStorageService)
@@ -103,40 +102,6 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     }
 
     return offers;
-  }
-
-  public PlaceOrderResponseDto placeOrder(PlaceOrderRequestDto requestDto)
-  {
-    try
-    {
-      // Session parameters
-      Map<String, Object> sessionParams = new HashMap<>();
-      sessionParams.put("payment_method_types", List.of("card"));
-      sessionParams.put("mode", "payment");
-      sessionParams.put("success_url", successUrl);
-      sessionParams.put("cancel_url", cancelUrl);
-      sessionParams.put("line_items", List.of(Map.of("price_data",
-          Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
-              //this is the amount in ore; it must be above 250, as established by Stripe
-              "unit_amount", 3400), "quantity",
-          2))); //TODO: Fetch the data from data_server instead
-
-      // Create session
-      Session session = Session.create(sessionParams);
-
-      //Save empty order first
-
-      // Return session URL
-      PlaceOrderResponseDto response = new PlaceOrderResponseDto();
-      response.setUrl(session.getUrl());
-      response.setSessionId(session.getId());
-      return response;
-    }
-    catch (StripeException e)
-    {
-      e.printStackTrace();
-      throw new IllegalArgumentException(e.getMessage());
-    }
   }
 
   private void validateOfferDetails(CreateOfferRequestDto offerRequestDto)
