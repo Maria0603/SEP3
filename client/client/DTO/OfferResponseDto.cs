@@ -1,6 +1,6 @@
 ﻿using client.DTO;
 
-namespace client.Pages;
+namespace client.DTO;
 
 public class OfferResponseDto
 {

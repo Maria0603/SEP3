@@ -1,4 +1,4 @@
-﻿namespace client.Pages;
+﻿namespace client.DTO;
 
 public class OrderResponseDto
 {
