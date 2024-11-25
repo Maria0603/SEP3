@@ -4,8 +4,7 @@ import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.date_time.TimeDto;
 import jakarta.validation.constraints.NotNull;
 
-public class AddOrderResponseDto {
-
+public class OrderResponseDto {
   @NotNull(message = "Order ID is required.") private String orderId;
 
   @NotNull(message = "User ID is required.") private String userId;
@@ -20,9 +19,9 @@ public class AddOrderResponseDto {
 
   @NotNull(message = "Order time is required.") private TimeDto orderTime;
 
-  @NotNull(message = "Price per item is required.") private int pricePerItem;
+  @NotNull(message = "New order price is required.") private int newOrderPrice;
 
-  @NotNull(message = "Total order price is required.") private int totalPrice;
+  @NotNull(message = "Old order price is required.") private int oldOrderPrice;
 
   @NotNull(message = "Message is required.") private String message;
 
@@ -83,20 +82,20 @@ public class AddOrderResponseDto {
     this.orderTime = orderTime;
   }
 
-  public int getPricePerItem() {
-    return pricePerItem;
+  public int getNewOrderPrice() {
+    return newOrderPrice;
   }
 
-  public void setPricePerItem(int pricePerItem) {
-    this.pricePerItem = pricePerItem;
+  public void setNewOrderPrice(int newOrderPrice) {
+    this.newOrderPrice = newOrderPrice;
   }
 
-  public int getTotalPrice() {
-    return totalPrice;
+  public int getOldOrderPrice() {
+    return oldOrderPrice;
   }
 
-  public void setTotalPrice(int totalPrice) {
-    this.totalPrice = totalPrice;
+  public void setOldOrderPrice(int oldOrderPrice) {
+    this.oldOrderPrice = oldOrderPrice;
   }
 
   public String getMessage() {

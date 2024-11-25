@@ -16,6 +16,7 @@ public class DataServerStub {
 
     blockingStub = OfferServiceGrpc.newBlockingStub(channel);
     orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
+    System.out.println("DataServerStub created");
   }
 
   public OfferList getAvailableOffers(EmptyMessage request) {
@@ -31,7 +32,10 @@ public class DataServerStub {
   }
 
   public OrderResponse addOrder(AddOrderRequest request) {
-    return orderBlockingStub.addOrder(request);
+    System.out.println("addOrder called with request: " + request);
+    OrderResponse response = orderBlockingStub.addOrder(request);
+    System.out.println("Received response: " + response);
+    return response;
   }
 
   public OrderResponse getOrderById(OrderIdRequest request) {
