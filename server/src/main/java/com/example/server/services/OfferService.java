@@ -89,9 +89,10 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
       if (imageExists(imagePath))
         dto.setImagePath(imagePath);
       else
-        throw new IllegalArgumentException(
-            "Image not found for order ID: " + response.getOffer(i).getId()
-                + " with path " + imagePath);
+        dto.setImagePath(null);
+//        throw new IllegalArgumentException(
+//            "Image not found for order ID: " + response.getOffer(i).getId()
+//                + " with path " + imagePath);
       offers.add(dto);
     }
 
