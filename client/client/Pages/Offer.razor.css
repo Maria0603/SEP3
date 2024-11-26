@@ -65,11 +65,6 @@
     text-align: right; 
 }
 
-.row {
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-}
 
 .amount-reserve-container {
     display: flex;
@@ -81,6 +76,23 @@
     text-decoration: line-through;
     text-decoration-color: black;
 }
+img.icon1 {
+    width: 25px; /* Set consistent width */
+    height: auto; /* Maintain aspect ratio */
+    display: inline-block; /* Ensure image is rendered */
+}
+.row {
+    display: flex; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.icon2 {
+    width: 25px;
+    height: auto;
+}
+
+
 
 /* Amount and Reservation button  */
 .amount-input {

@@ -67,14 +67,19 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
         <!-- Left -->
         <div class="float-child">
             <div class="row">
+                <img src="images/icons/bag.png" alt="Bag icon" class="icon1" />
                 <p>Pastry</p>
             </div>
             <div class="row">
+                <img src="images/icons/star.png" alt="Star icon" class="icon1" />
                 <p>Amount Of Stars</p>
             </div>
             <div class="row">
-                <p>When + Time</p>
+                <img src="images/icons/clock.png" alt="Clock icon" class="icon1" />
+                <p>Today, from 12:00 to 15:00</p>
             </div>
+
+
         </div>
 
         <!-- Right -->
@@ -126,10 +131,11 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
         @foreach (var review in Reviews)
         {
             <div class="review"> 
-            <div class="review-header">
-                <p class="review-name">@review.Name</p>
-                <img src="@GetStarImage(review.Rating)" alt="@review.Rating star(s)" class="star-rating" />
-            </div>
+                <div class="review-header">
+                    <img src="images/icons/star.png" alt="Star icon" class="icon2" />
+                    <p class="review-name">@review.Name</p>
+                    <img src="@GetStarImage(review.Rating)" alt="@review.Rating star(s)" class="star-rating"/>
+                </div>
             <p>@review.Comment</p>
         </div>
         }
