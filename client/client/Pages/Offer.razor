@@ -1,65 +1,63 @@
-@page "/offer"
+@page "/offers"
 @inject HttpClient Http
+@using client.DTO
+@using client.Models
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
 @code {
-private FoodBag foodBag = new FoodBag
-{
-Id = 1,
-OldPrice = 99,
-NewPrice = 39,
-};
 
-private Reservation reservation = new Reservation
-{
-ItemId = 1,
-Quantity = 5
-};
-
-private int quantity = 5;
-private int amount = 1;
-
-private decimal TotalCost => amount * foodBag.NewPrice;
-
-private List<Review> Reviews = new List<Review>
-{
-new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
-new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
-new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
-};
+    private Models.Offer _offer = new Models.Offer {
+        Id = "1",
+        Title = "Special Pastry Offer",
+        //Description = "A variety of fresh pastries at a discounted price.",
+        Price = 50,
+        NumberOfItems = 10,
+        PickupDate = new PickupDate { Year = 2023, Month = 12, Day = 25 },
+        PickupTimeStart = new PickupTime(12, 0),
+        PickupTimeEnd = new PickupTime(15, 0),
+        //Categories = new List<string> { "Bakery", "Pastry" },
+        Image = "images/bread2.webp",
+        Status = "Available"
+    };
 
 
-private async Task SubmitPurchase()
-{
-var purchase = new Reservation
-{
-ItemId = foodBag.Id,
-Quantity = amount,
-Price = foodBag.NewPrice,
-Total = TotalCost
-};
+    private List<Review> Reviews = new List<Review> {
+        new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
+        new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
+        new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
+    };
 
-await Http.PostAsJsonAsync("api/purchase", purchase);
-}
 
-public class Review
-{
-public string Name { get; set; }
-public int Rating { get; set; }
-public string Comment { get; set; }
-}
+    private async Task SubmitPurchase() {
+        var order = new OrderRequestDto() {
+            OfferId = "6745a7763c6736635b67bded",
+            UserId = "1",
+            NumberOfItems = 4
+           
+        };
+
+
+        await Http.PostAsJsonAsync("/orders", order);
+    }
+
+    public class Review {
+        public string Name { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+    }
 
 }
+
 @code {
-private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
+    private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
 
 }
 
 
 <div class="container">
     <div>
-        <img src="images/bread2.webp" alt="Offer Image" class="offer-image" />
-        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image" />
+        <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>
+        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
         <header class="BusinessName">7 Eleven - Horsens</header>
     </div>
 
@@ -67,15 +65,15 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
         <!-- Left -->
         <div class="float-child">
             <div class="row">
-                <img src="images/icons/bag.png" alt="Bag icon" class="icon1" />
+                <img src="images/icons/bag.png" alt="Bag icon" class="icon1"/>
                 <p>Pastry</p>
             </div>
             <div class="row">
-                <img src="images/icons/star.png" alt="Star icon" class="icon1" />
+                <img src="images/icons/star.png" alt="Star icon" class="icon1"/>
                 <p>Amount Of Stars</p>
             </div>
             <div class="row">
-                <img src="images/icons/clock.png" alt="Clock icon" class="icon1" />
+                <img src="images/icons/clock.png" alt="Clock icon" class="icon1"/>
                 <p>Today, from 12:00 to 15:00</p>
             </div>
 
@@ -85,15 +83,17 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
         <!-- Right -->
         <div class="float-child2">
             <div class="crossed-row">
-                <p><strong>Old Price:</strong> @foodBag.OldPrice dkk</p>
+                <p><strong>Old Price:</strong> @_offer.Price dkk</p>
             </div>
             <div class="row">
-                <p><strong>New Price:</strong> @foodBag.NewPrice dkk</p>
+                <p><strong>New Price:</strong> @_offer.Price dkk</p>
             </div>
             <div class="row">
                 <div class="amount-reserve-container">
-                    <label for="amount"><strong>Amount:</strong></label>
-                    <input type="number" id="amount" min="1" max="@reservation.Quantity" @bind="amount" class="amount-input" />
+                    <label for="amount">
+                        <strong>Amount:</strong>
+                    </label>
+                    <input type="number" id="amount" min="1" max="@_order.Quantity" @bind="amount" class="amount-input"/>
                     <p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>
                     <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
                 </div>
@@ -104,7 +104,7 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
     <div class="location">
         <div class="location-content">
             <div class="location-row">
-                <img src="images/icons/location.png" alt="location-icon" class="location-icon" />
+                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
                 <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
             </div>
         </div>
@@ -114,31 +114,35 @@ private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTim
     <div class="description-allergens-content">
         <div class="description">
             <h5>Description</h5>
-            <p>"Pastry" refers to a type of dough used in baking, typically made from flour, water, and fat.
+            <p>
+                "Pastry" refers to a type of dough used in baking, typically made from flour, water, and fat.
                 It is a key component in a variety of baked goods, both sweet and savory. The term "pastry"
-                can also refer to the finished baked products made from this dough.</p>
+                can also refer to the finished baked products made from this dough.
+            </p>
         </div>
         <div class="allergens">
             <h5>Allergens</h5>
-            <p>Allergens are substances that can cause an allergic reaction in some people. Allergic
+            <p>
+                Allergens are substances that can cause an allergic reaction in some people. Allergic
                 reactions occur when the immune system mistakenly identifies a typically harmless substance
-                as a threat and overreacts, leading to symptoms that can range from mild to severe.</p>
+                as a threat and overreacts, leading to symptoms that can range from mild to severe.
+            </p>
         </div>
-        <div> <h4>Recent Reviews</h4></div>
+        <div>
+            <h4>Recent Reviews</h4>
+        </div>
     </div>
 
     <div class="reviews">
-        @foreach (var review in Reviews)
-        {
-            <div class="review"> 
+        @foreach (var review in Reviews) {
+            <div class="review">
                 <div class="review-header">
-                    <img src="images/icons/star.png" alt="Star icon" class="icon2" />
+                    <img src="images/icons/star.png" alt="Star icon" class="icon2"/>
                     <p class="review-name">@review.Name</p>
                     <img src="@GetStarImage(review.Rating)" alt="@review.Rating star(s)" class="star-rating"/>
                 </div>
-            <p>@review.Comment</p>
-        </div>
+                <p>@review.Comment</p>
+            </div>
         }
     </div>
 </div>
-

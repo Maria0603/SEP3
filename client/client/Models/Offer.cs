@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Serialization;
 
-namespace client.Pages;
+namespace client.Models;
 
 public class Offer
 {
@@ -19,7 +19,7 @@ public class Offer
     /* <===============================================> */
     [JsonPropertyName("status")] public string Status { get; set; }
     [JsonIgnore] public bool IsFavourite { get; set; } // For the heart icon to indicate if the offer is a favorite
-    [JsonIgnore] public Business BusinessDetails { get; set; } // Business details (name, icon)
+    //[JsonIgnore] public Business BusinessDetails { get; set; } // Business details (name, icon)
     [JsonIgnore] public decimal Rating { get; set; } // Rating value (e.g., 3.5)
     [JsonIgnore] public double Distance { get; set; } // Distance (e.g., 4.3 km)
     public override string ToString()

@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using client.DTO;
 using client.Pages;
-using Newtonsoft.Json;
+
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace client.Services;
@@ -16,9 +16,7 @@ public class OfferService : IOfferService
     {
         this.client = client;
     }
-
-   
-
+    
     public async Task<OfferResponseDto> SaveOfferAsync(CreateOfferRequestDto createOfferRequestDto)
     {
         string jsonRequest = JsonSerializer.Serialize(createOfferRequestDto);
@@ -43,11 +41,11 @@ public class OfferService : IOfferService
     }
 
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
-    public async Task<List<Offer>> GetOffersAsync()
+    public async Task<List<Models.Offer>> GetOffersAsync()
     {
         var response = await client.GetAsync("offers");
         var json = await response.Content.ReadAsStringAsync();
-        var offers = JsonSerializer.Deserialize<List<Offer>>(json);
+        var offers = JsonSerializer.Deserialize<List<Models.Offer>>(json);
         return offers;
     }
     
