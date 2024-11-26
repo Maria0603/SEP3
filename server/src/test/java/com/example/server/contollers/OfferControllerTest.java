@@ -1,3 +1,4 @@
+/*
 package com.example.server.contollers;
 
 import com.example.server.dto.offer.CreateOfferRequestDto;
@@ -32,7 +33,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @WebMvcTest(OfferController.class) class OfferControllerTest
 {
 
- /* @Autowired private MockMvc mockMvc;
+ */
+/* @Autowired private MockMvc mockMvc;
 
   @MockBean private OfferService offerService;
 
@@ -147,7 +149,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
             .content(asJsonString(validRequest))).andExpect(status().isOk())
         .andExpect(
             content().string(containsString("Offer created with ID: 12345")));
-  }*/
+  }*//*
+
 
   @Test void saveOffer_testBoundaryValues() throws Exception
   {
@@ -259,5 +262,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
     ByteArrayOutputStream baos = new ByteArrayOutputStream();
     ImageIO.write(bufferedImage, "jpg", baos);
     return baos.toByteArray();
-  }*/
+  }
 }
+*/

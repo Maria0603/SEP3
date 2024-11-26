@@ -139,7 +139,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
 
   public List<OrderResponseDto> getAllOrders() {
     System.out.println("getAllOrders method called");
-    Empty request = Empty.newBuilder().build();
+    EmptyMessage request = EmptyMessage.newBuilder().build();
     OrderList response = dataServerStub.getAllOrders(request);
     System.out.println("Received response from dataServerStub: " + response);
     return response.getOrdersList().stream()
