@@ -6,7 +6,7 @@ import com.example.server.converters.DtoGrpcConverter;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.AddOrderResponseDto;
 import com.example.server.dto.order.PlaceOrderRequestDto;
-import com.example.server.dto.order.PlaceOrderResponseDto;
+import com.example.server.dto.order.PlaceOrderSessionResponseDto;
 import com.example.shared.model.OrderStatus;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -15,8 +15,6 @@ import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,7 +27,7 @@ import java.util.Map;
   private final DataServerStub dataServerStub;
   @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
-  @Value("${stripe.secret.key}") private String stripeSecretKey;
+  @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
   @Autowired public OrderService(DataServerStub dataServerStub)
   {
@@ -47,7 +45,7 @@ import java.util.Map;
         response);
   }
 
-  public PlaceOrderResponseDto placeOrder(PlaceOrderRequestDto requestDto)
+  public PlaceOrderSessionResponseDto placeOrder(PlaceOrderRequestDto requestDto)
   {
     //Save order with status "Reserved" first
     AddOrderRequest orderRequest = AddOrderRequest.newBuilder()
@@ -59,6 +57,11 @@ import java.util.Map;
     System.out.println("Request for database built");
 
     OrderResponse databaseResponse = dataServerStub.addOrder(orderRequest);
+    if(databaseResponse.getId() == null || databaseResponse.getId().isEmpty())
+      throw new IllegalArgumentException("Invalid order ID.");
+
+    System.out.println("price per item: " + databaseResponse.getPricePerItem());
+
 
     System.out.println("Order initially saved in database");
     try
@@ -72,8 +75,8 @@ import java.util.Map;
       sessionParams.put("line_items", List.of(Map.of("price_data",
           Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
               //this is the amount in ore; it must be above 250, as established by Stripe
-              "unit_amount", 3400), "quantity",
-          2))); //TODO: Fetch the data from data_server instead
+              "unit_amount", databaseResponse.getPricePerItem() * 100), "quantity",
+          requestDto.getNumberOfItems()))); //TODO: Fetch the data from data_server instead
 
       Map<String, Object> metadata = new HashMap<>();
       metadata.put("orderId", databaseResponse.getId());
@@ -83,7 +86,7 @@ import java.util.Map;
       Session session = Session.create(sessionParams);
 
       // Return session URL
-      PlaceOrderResponseDto response = new PlaceOrderResponseDto();
+      PlaceOrderSessionResponseDto response = new PlaceOrderSessionResponseDto();
       response.setUrl(session.getUrl());
       response.setSessionId(session.getId());
       return response;
@@ -97,10 +100,13 @@ import java.util.Map;
 
   public void refineOrder(String payload, String sigHeader)
   {
+    System.out.println("payload: " + payload);
+    System.out.println("sigHeader: " + sigHeader);
+
     Event event;
     try
     {
-      event = Webhook.constructEvent(payload, sigHeader, stripeSecretKey);
+      event = Webhook.constructEvent(payload, sigHeader, stripeSigningSecret);
     }
     catch (SignatureVerificationException e)
     {

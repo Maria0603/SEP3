@@ -19,9 +19,9 @@ public class AddOrderResponseDto {
 
   @NotNull(message = "Order time is required.") private DateDto orderTime;
 
-  @NotNull(message = "New order price is required.") private int newOrderPrice;
+  @NotNull(message = "Price per item is required.") private int pricePerItem;
 
-  @NotNull(message = "Old order price is required.") private int oldOrderPrice;
+  @NotNull(message = "Total order price is required.") private int totalPrice;
 
   @NotNull(message = "Message is required.") private String message;
 
@@ -82,20 +82,20 @@ public class AddOrderResponseDto {
     this.orderTime = orderTime;
   }
 
-  public int getNewOrderPrice() {
-    return newOrderPrice;
+  public int getPricePerItem() {
+    return pricePerItem;
   }
 
-  public void setNewOrderPrice(int newOrderPrice) {
-    this.newOrderPrice = newOrderPrice;
+  public void setPricePerItem(int pricePerItem) {
+    this.pricePerItem = pricePerItem;
   }
 
-  public int getOldOrderPrice() {
-    return oldOrderPrice;
+  public int getTotalPrice() {
+    return totalPrice;
   }
 
-  public void setOldOrderPrice(int oldOrderPrice) {
-    this.oldOrderPrice = oldOrderPrice;
+  public void setTotalPrice(int totalPrice) {
+    this.totalPrice = totalPrice;
   }
 
   public String getMessage() {

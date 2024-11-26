@@ -108,8 +108,9 @@ import java.util.Optional;
             DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
         .setOrderTime(
             DateTimeConverter.convertTimeDaoToGrpcTime(orderDao.getOrderTime()))
-        .setStatus(orderDao.getStatus()).setPrice(orderDao.getNewOrderPrice())
-        .build();
+        .setStatus(orderDao.getStatus())
+        .setPricePerItem(orderDao.getPricePerItem())
+        .setTotalPrice(orderDao.getTotalPrice()).build();
   }
 
   private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
@@ -125,9 +126,8 @@ import java.util.Optional;
     if (offer.isPresent())
     {
       OfferDao offerDao = offer.get();
-      order.setOldOrderPrice(
-          offerDao.getOriginalPrice() * request.getQuantity());
-      order.setNewOrderPrice(offerDao.getOfferPrice() * request.getQuantity());
+      order.setTotalPrice(offerDao.getOfferPrice() * request.getQuantity());
+      order.setPricePerItem(offerDao.getOfferPrice());
       order.setOffer(offerDao);
     }
     else

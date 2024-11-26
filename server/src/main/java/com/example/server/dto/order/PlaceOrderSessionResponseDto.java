@@ -1,6 +1,6 @@
 package com.example.server.dto.order;
 
-public class PlaceOrderResponseDto
+public class PlaceOrderSessionResponseDto
 {
   private String sessionId;
   private String Url;
