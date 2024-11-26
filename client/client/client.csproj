@@ -18,10 +18,4 @@
       <AdditionalFiles Include="Pages\Shared\NavMenu.razor" />
     </ItemGroup>
 
-    <ItemGroup>
-      <_ContentIncludedByDefault Remove="Pages\Old\AddFoodBag.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Old\FilterFoodBags.razor" />
-      <_ContentIncludedByDefault Remove="Pages\Old\FoodBagCard.razor" />
-    </ItemGroup>
-
 </Project>
