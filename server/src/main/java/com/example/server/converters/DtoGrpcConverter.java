@@ -64,7 +64,7 @@ public class DtoGrpcConverter
     dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
     dto.setDescription(saveOfferResponseGrpc.getDescription());
     dto.setImagePath(saveOfferResponseGrpc.getImagePath());
-    dto.setStatus("available");//maybe nor send it at all
+    dto.setStatus("available");//maybe not send it at all
   return dto;
   }
 
@@ -91,12 +91,11 @@ public class DtoGrpcConverter
   public static AddOrderRequest AddOrderRequestDto_To_AddOrderRequest(
       AddOrderRequestDto addOrderRequestDto)
   {
-    AddOrderRequest request = AddOrderRequest.newBuilder()
+    return AddOrderRequest.newBuilder()
         .setOfferId(addOrderRequestDto.getOfferId())
         .setQuantity(addOrderRequestDto.getQuantity())
         .setUserId(addOrderRequestDto.getUserId())
         .build();
-    return request;
   }
 
   public static AddOrderResponseDto AddOrderResponseGrpc_To_AddOrderResponseDto(
@@ -107,6 +106,9 @@ public class DtoGrpcConverter
   dto.setQuantity(response.getQuantity());
   dto.setUserId(response.getUserId());
   dto.setStatus(response.getStatus());
+  dto.setTotalPrice(response.getTotalPrice());
+  dto.setPricePerItem(response.getPricePerItem());
+
   return dto;
 }
 }

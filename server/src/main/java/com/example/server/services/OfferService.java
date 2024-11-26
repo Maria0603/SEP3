@@ -8,26 +8,17 @@ import com.example.server.dto.date_time.TimeDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
-import com.example.server.dto.order.PlaceOrderRequestDto;
-import com.example.server.dto.order.PlaceOrderResponseDto;
-import com.stripe.exception.StripeException;
-import com.stripe.model.checkout.Session;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestDto_To_SaveOfferRequest;
 import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGrpc_To_OfferResponseDto;

@@ -1,23 +1,14 @@
 package com.example.server.contollers;
 
-import com.example.sep3.grpc.*;
 import com.example.server.dto.offer.ShortOfferResponseDto;
-import com.example.server.dto.order.PlaceOrderRequestDto;
-import com.example.server.dto.order.PlaceOrderResponseDto;
 import com.example.server.services.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.offer.OfferResponseDto;
-import com.example.server.dto.date_time.TimeDto;
-import io.grpc.stub.StreamObserver;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
-import java.util.ArrayList;
-import java.util.concurrent.CountDownLatch;
 
 @RestController @RequestMapping("/offers") public class OfferController
 {

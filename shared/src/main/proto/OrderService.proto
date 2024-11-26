@@ -30,7 +30,8 @@ message OrderResponse {
   Date orderDate = 5;
   Time orderTime = 6;
   string status = 7;
-  int32 price = 8;
+  int32 pricePerItem = 8;
+  int32 totalPrice = 9;
 }
 
 message OrderIdRequest {
