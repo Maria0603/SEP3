@@ -27,7 +27,6 @@
 @code {
     private List<Offer>? offers;
     private string jsonOffers;
-    @*
     protected override async Task OnInitializedAsync()
     {
         // Call the service to get the offers
@@ -54,6 +53,6 @@
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<Offer>(); // Ensure the UI does not break
         }
-    }*@
+    }
     
 }
