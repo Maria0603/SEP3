@@ -5,7 +5,6 @@ import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
-import com.example.server.dto.order.AddOrderResponseDto;
 import com.example.server.dto.order.OrderResponseDto;
 
 public class DtoGrpcConverter {
@@ -94,25 +93,7 @@ public class DtoGrpcConverter {
                 .setUserId(addOrderRequestDto.getUserId())
                 .build();
     }
-
-    public static AddOrderResponseDto AddOrderResponseGrpc_To_AddOrderResponseDto(
-            OrderResponse response) {
-        AddOrderResponseDto dto = new AddOrderResponseDto();
-        dto.setOrderId(response.getId());
-        dto.setOfferId(response.getOfferId());
-        dto.setQuantity(response.getQuantity());
-        dto.setUserId(response.getUserId());
-        dto.setStatus(response.getStatus());
-        dto.setTotalPrice(response.getTotalPrice());
-        dto.setPricePerItem(response.getPricePerItem());
-        dto.setOrderDate(
-                DateConverter.convertGrpcDateToDateDto(response.getOrderDate()));
-        dto.setOrderTime(
-                TimeConverter.convertGrpcTimeToTimeDto(response.getOrderTime()));
-
-        return dto;
-    }
-
+    
     public static OrderResponseDto OrderResponseGrpc_To_OrderResponseDto(
             OrderResponse orderResponse) {
         OrderResponseDto dto = new OrderResponseDto();
@@ -125,8 +106,8 @@ public class DtoGrpcConverter {
                 DateConverter.convertGrpcDateToDateDto(orderResponse.getOrderDate()));
         dto.setOrderTime(
                 TimeConverter.convertGrpcTimeToTimeDto(orderResponse.getOrderTime()));
-        dto.setNewOrderPrice(orderResponse.getNewOrderPrice());
-        dto.setOldOrderPrice(orderResponse.getOldOrderPrice());
+        dto.setTotalPrice(orderResponse.getTotalPrice());
+        dto.setPricePerItem(orderResponse.getPricePerItem());
         return dto;
     }
 }

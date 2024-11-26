@@ -4,7 +4,7 @@ import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
 import com.example.server.dto.order.AddOrderRequestDto;
-import com.example.server.dto.order.AddOrderResponseDto;
+import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.dto.order.PlaceOrderRequestDto;
 import com.example.server.dto.order.PlaceOrderSessionResponseDto;
 import com.example.shared.model.OrderStatus;
@@ -13,7 +13,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.example.server.dto.order.OrderResponseDto;
 import com.google.protobuf.Empty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,7 +41,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
   }
 
   @Transactional
-  public AddOrderResponseDto addOrder(
+  public OrderResponseDto addOrder(
       AddOrderRequestDto orderRequestDto) {
     System.out.println(
         "addOrder method called with request: " + orderRequestDto);
@@ -52,7 +51,7 @@ public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
         "Converted AddOrderRequestDto to AddOrderRequest: " + request);
     OrderResponse response = dataServerStub.addOrder(request);
     System.out.println("Received response from dataServerStub: " + response);
-    return DtoGrpcConverter.AddOrderResponseGrpc_To_AddOrderResponseDto(
+    return DtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(
         response);
   }
 
