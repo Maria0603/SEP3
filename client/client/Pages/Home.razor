@@ -1,31 +1,33 @@
 @page "/"
+@using client.Models
 @inject client.Services.IOfferService OfferService
 <PageTitle>Home</PageTitle>
 
 <h2> The main page</h2>
 
 <div class="container">
-    @if (offers == null)
+    @*@if (offers == null)*@
     {
         <p>Loading offers...</p>
     }
-    else if (offers.Count == 0)
+    @*else if (offers.Count == 0)
     {
         <p>No offers available at the moment.</p>
     }
     else
     {
-        @foreach (var offer in offers)
+        @foreach (Models.Offer offer in offers)
         {
             <OfferComponent class="offer" OfferData="offer"></OfferComponent>
         }
-    }
+    }*@
 </div>
 
 
 
+@*
 @code {
-    private List<Offer>? offers;
+    private List<Models.Offer>? offers;
     private string jsonOffers;
     protected override async Task OnInitializedAsync()
     {
@@ -51,8 +53,9 @@
         {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
-            offers = new List<Offer>(); // Ensure the UI does not break
+            offers = new List<Models.Offer>(); // Ensure the UI does not break
         }
     }
     
 }
+*@

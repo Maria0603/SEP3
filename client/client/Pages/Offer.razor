@@ -4,54 +4,6 @@
 @using client.Models
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 
-@code {
-
-    private Models.Offer _offer = new Models.Offer {
-        Id = "1",
-        Title = "Special Pastry Offer",
-        //Description = "A variety of fresh pastries at a discounted price.",
-        Price = 50,
-        NumberOfItems = 10,
-        PickupDate = new PickupDate { Year = 2023, Month = 12, Day = 25 },
-        PickupTimeStart = new PickupTime(12, 0),
-        PickupTimeEnd = new PickupTime(15, 0),
-        //Categories = new List<string> { "Bakery", "Pastry" },
-        Image = "images/bread2.webp",
-        Status = "Available"
-    };
-
-
-    private List<Review> Reviews = new List<Review> {
-        new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
-        new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
-        new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
-    };
-
-
-    private async Task SubmitPurchase() {
-        var order = new OrderRequestDto() {
-            OfferId = "6745a7763c6736635b67bded",
-            UserId = "1",
-            NumberOfItems = 4
-           
-        };
-
-
-        await Http.PostAsJsonAsync("/orders", order);
-    }
-
-    public class Review {
-        public string Name { get; set; }
-        public int Rating { get; set; }
-        public string Comment { get; set; }
-    }
-
-}
-
-@code {
-    private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
-
-}
 
 
 <div class="container">
@@ -93,8 +45,8 @@
                     <label for="amount">
                         <strong>Amount:</strong>
                     </label>
-                    <input type="number" id="amount" min="1" max="@_order.Quantity" @bind="amount" class="amount-input"/>
-                    <p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>
+                    <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
+                    <!--<p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>-->
                     <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
                 </div>
             </div>
@@ -146,3 +98,56 @@
         }
     </div>
 </div>
+
+@code {
+
+    private int amount=1;
+    private Models.Offer _offer = new Models.Offer {
+        Id = "1",
+        Title = "Special Pastry Offer",
+        //Description = "A variety of fresh pastries at a discounted price.",
+        Price = 50,
+        NumberOfItems = 10,
+        PickupDate = new PickupDate { Year = 2023, Month = 12, Day = 25 },
+        PickupTimeStart = new PickupTime(12, 0),
+        PickupTimeEnd = new PickupTime(15, 0),
+        //Categories = new List<string> { "Bakery", "Pastry" },
+        Image = "images/bread2.webp",
+        Status = "Available"
+    };
+
+    private OrderRequestDto _order = new OrderRequestDto();
+
+
+    private List<Review> Reviews = new List<Review> {
+        new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
+        new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
+        new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
+    };
+
+
+    private async Task SubmitPurchase() {
+        var order = new OrderRequestDto() {
+            OfferId = "6745a7763c6736635b67bded",
+            UserId = "1",
+            NumberOfItems = amount
+           
+        };
+
+
+        await Http.PostAsJsonAsync("/orders", order);
+    }
+
+    public class Review {
+        public string Name { get; set; }
+        public int Rating { get; set; }
+        public string Comment { get; set; }
+    }
+
+}
+
+@code {
+    private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
+
+}
+

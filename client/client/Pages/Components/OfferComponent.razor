@@ -1,3 +1,4 @@
+@using client.Models
 <div @attributes="AdditionalAttributes" class="offer">
     <div class="offer__top">
         <div class="offer__top--left">@OfferData.NumberOfItems Left</div>
@@ -46,7 +47,7 @@
 </div>
 
 @code {
-    [Parameter] public Offer OfferData { get; set; }
+    [Parameter] public Models.Offer OfferData { get; set; }
     [Parameter(CaptureUnmatchedValues = true)]
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
