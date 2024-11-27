@@ -14,8 +14,7 @@ public class OrderService : IOrderService
         this.client = client;
     }
 
-    public async Task<OrderResponseDto> PlaceOrderAsync(string offerId,
-        OrderRequestDto orderRequestDto)
+    public async Task<OrderResponseDto> PlaceOrderAsync(OrderRequestDto orderRequestDto)
     {
         // Send the request to the server to create a Stripe checkout session
         HttpResponseMessage response =

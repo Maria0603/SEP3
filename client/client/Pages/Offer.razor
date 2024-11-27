@@ -2,7 +2,10 @@
 @inject HttpClient Http
 @using client.DTO
 @using client.Models
+@using client.Services
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
+@inject IOrderService OrderService;
+@inject NavigationManager NavigationManager
 
 
 
@@ -101,7 +104,7 @@
 
 @code {
 
-    private int amount=1;
+    private int amount;
     private Models.Offer _offer = new Models.Offer {
         Id = "1",
         Title = "Special Pastry Offer",
@@ -137,6 +140,34 @@
 
         await Http.PostAsJsonAsync("/orders", order);
     }
+    private async Task ProceedToOrder()
+    {
+        // Create the dto to send
+        var request = new OrderRequestDto
+        {
+            OfferId = "6745a7763c6736635b67bded",
+            NumberOfItems = amount,
+            UserId = "123abc"
+        };
+
+        // Send the request to the server to create a Stripe checkout session
+        try
+        {
+            var response = await OrderService.PlaceOrderAsync(request);
+
+            // Get the session URL from the response
+            string sessionUrl = response.Url;
+            // Redirect the user to the Stripe checkout page
+            NavigationManager.NavigateTo(sessionUrl);
+        }
+        catch (Exception e)
+        {
+            //errorLabel = e.Message;
+            
+        }
+        
+    }
+
 
     public class Review {
         public string Name { get; set; }

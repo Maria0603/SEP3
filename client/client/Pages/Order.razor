@@ -76,7 +76,7 @@
         // Send the request to the server to create a Stripe checkout session
         try
         {
-            var response = await OrderService.PlaceOrderAsync(OfferId, request);
+            var response = await OrderService.PlaceOrderAsync(request);
 
             // Get the session URL from the response
             string sessionUrl = response.Url;
