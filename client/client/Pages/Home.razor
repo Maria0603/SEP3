@@ -1,4 +1,5 @@
 @page "/"
+@using client.DTO
 @using client.Models
 @inject client.Services.IOfferService OfferService
 <PageTitle>Home</PageTitle>
@@ -6,28 +7,27 @@
 <h2> The main page</h2>
 
 <div class="container">
-    @*@if (offers == null)*@
+    @if (offers == null)
     {
         <p>Loading offers...</p>
     }
-    @*else if (offers.Count == 0)
+    else if (offers.Count == 0)
     {
         <p>No offers available at the moment.</p>
     }
     else
     {
-        @foreach (Models.Offer offer in offers)
+        @foreach (ShortOfferResponseDto offer in offers)
         {
             <OfferComponent class="offer" OfferData="offer"></OfferComponent>
         }
-    }*@
+    }
 </div>
 
 
 
-@*
 @code {
-    private List<Models.Offer>? offers;
+    private List<ShortOfferResponseDto>? offers;
     private string jsonOffers;
     protected override async Task OnInitializedAsync()
     {
@@ -41,7 +41,7 @@
             {
                 foreach (var offer in offers)
                 {
-                    Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.Price}: [{offer.Image}]");
+                    Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
             }
             else
@@ -53,9 +53,8 @@
         {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
-            offers = new List<Models.Offer>(); // Ensure the UI does not break
+            offers = new List<ShortOfferResponseDto>(); // Ensure the UI does not break
         }
     }
     
 }
-*@
