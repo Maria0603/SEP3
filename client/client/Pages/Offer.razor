@@ -1,16 +1,25 @@
+@page "/offers"
+@*
 @page "/offers/{id}"
+*@
+
+
 @using client.DTO
 @using client.Models
 @using client.Services
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 @inject IOrderService OrderService;
-@inject NavigationManager NavigationManager
+@inject IOfferService OfferService;
 
+@inject NavigationManager NavigationManager
+@inject HttpClient HttpClient;
 
 
 <div class="container">
     <div>
-        <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>
+        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image" />
+
+        <!-- <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>-->
         <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
         <header class="BusinessName">7 Eleven - Horsens</header>
     </div>
@@ -37,17 +46,17 @@
         <!-- Right -->
         <div class="float-child2">
             <div class="crossed-row">
-                <p><strong>Old Price:</strong> @_offer.Price dkk</p>
+                <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
             </div>
             <div class="row">
-                <p><strong>New Price:</strong> @_offer.Price dkk</p>
+                <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
             </div>
             <div class="row">
                 <div class="amount-reserve-container">
                     <label for="amount">
                         <strong>Amount:</strong>
                     </label>
-                   <!-- <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
+                    <!-- <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
 -->
                     <div>
                         <button @onclick="DecreaseQuantity">-</button>
@@ -93,7 +102,8 @@
     </div>
 
     <div class="reviews">
-        @foreach (var review in Reviews) {
+        @foreach (var review in Reviews)
+        {
             <div class="review">
                 <div class="review-header">
                     <img src="images/icons/star.png" alt="Star icon" class="icon2"/>
@@ -108,26 +118,24 @@
 
 @code {
 
-    [Parameter] public string id { get; set; }
+    //[Parameter] public string id { get; set; }
+    public string id = "6745a7763c6736635b67bded";
     private int amount;
-    private Models.Offer _offer = new Models.Offer {
-        Id = "1",
-        Title = "Special Pastry Offer",
-        //Description = "A variety of fresh pastries at a discounted price.",
-        Price = 50,
-        NumberOfItems = 10,
-        PickupDate = new PickupDate { Year = 2023, Month = 12, Day = 25 },
-        PickupTimeStart = new PickupTime(12, 0),
-        PickupTimeEnd = new PickupTime(15, 0),
-        //Categories = new List<string> { "Bakery", "Pastry" },
-        Image = "images/bread2.webp",
-        Status = "Available"
-    };
+
+    private OfferResponseDto? _offer;
+
+    protected override async Task OnInitializedAsync()
+    {
+        id = "6745a7763c6736635b67bded";
+        _offer = await OfferService.GetOfferByIdAsync(id);
+    }
+    
 
     private OrderRequestDto _order = new OrderRequestDto();
 
 
-    private List<Review> Reviews = new List<Review> {
+    private List<Review> Reviews = new List<Review>
+    {
         new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
         new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
         new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
@@ -144,7 +152,7 @@
         if (amount > 1)
             amount--;
     }
-    
+
     private async Task SubmitPurchase()
     {
         // Create the dto to send
@@ -168,13 +176,12 @@
         catch (Exception e)
         {
             //errorLabel = e.Message;
-            
         }
-        
     }
 
 
-    public class Review {
+    public class Review
+    {
         public string Name { get; set; }
         public int Rating { get; set; }
         public string Comment { get; set; }
@@ -186,4 +193,3 @@
     private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
 
 }
-

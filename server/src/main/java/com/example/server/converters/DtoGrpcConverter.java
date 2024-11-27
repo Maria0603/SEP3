@@ -2,6 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.*;
 import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferIdRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
@@ -108,6 +109,30 @@ public class DtoGrpcConverter {
                 TimeConverter.convertGrpcTimeToTimeDto(orderResponse.getOrderTime()));
         dto.setTotalPrice(orderResponse.getTotalPrice());
         dto.setPricePerItem(orderResponse.getPricePerItem());
+        return dto;
+    }
+
+    public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
+        OfferResponse response)
+    {
+        OfferResponseDto dto = new OfferResponseDto();
+
+        dto.setId(response.getId());
+        dto.setTitle(response.getTitle());
+        dto.setOriginalPrice(response.getOriginalPrice());
+        dto.setOfferPrice(response.getOfferPrice());
+        dto.setNumberOfItems(response.getNumberOfItems());
+        dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
+            response.getPickupDate()));
+        dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
+            response.getPickupTimeStart()));
+        dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
+            response.getPickupTimeEnd()));
+        dto.setCategories(response.getCategoriesList());
+        dto.setDescription(response.getDescription());
+        dto.setImagePath(response.getImagePath());
+        dto.setStatus(response.getStatus());
+
         return dto;
     }
 }

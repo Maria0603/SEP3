@@ -1,10 +1,12 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.services.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -52,5 +54,18 @@ import java.util.List;
     }
   }
 
+  @GetMapping("/{id}") public ResponseEntity<OfferResponseDto> getOfferById(
+      @PathVariable String id)
+  {
+    try
+    {
+      OfferResponseDto offer = offerService.getOfferById(id);
+      return ResponseEntity.ok(offer);
+    }
+    catch (Exception e)
+    {
+      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    }
+  }
 
 }

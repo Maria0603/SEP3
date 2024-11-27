@@ -3,7 +3,7 @@ using System.Text;
 using System.Text.Json;
 using client.DTO;
 using client.Pages;
-
+using Microsoft.AspNetCore.Components.Sections;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
 namespace client.Services;
@@ -40,6 +40,26 @@ public class OfferService : IOfferService
         throw new Exception(responseContent);
     }
 
+    public async Task<OfferResponseDto> GetOfferByIdAsync(string id)
+    {
+        HttpResponseMessage response =
+            await client.GetAsync($"offers/{id}");
+        String responseContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseContent);
+        if (response.IsSuccessStatusCode)
+        {
+            OfferResponseDto offerResponse =
+                JsonSerializer.Deserialize<OfferResponseDto>(responseContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })!;
+            return offerResponse;
+        }
+        Console.WriteLine(responseContent);
+        throw new Exception(responseContent);
+    }
+
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
     public async Task<List<Models.Offer>> GetOffersAsync()
     {
@@ -55,4 +75,6 @@ public class OfferService : IOfferService
         var json = await response.Content.ReadAsStringAsync();
         return json;
     }
+    
+    
 }

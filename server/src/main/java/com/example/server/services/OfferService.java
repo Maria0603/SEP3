@@ -6,6 +6,7 @@ import com.example.server.converters.DtoGrpcConverter;
 import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.date_time.TimeDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferIdRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,6 +66,18 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
       throw new IllegalArgumentException("Failed to save the image");
     }
 
+  }
+
+  public OfferResponseDto getOfferById(String id)
+  {
+    System.out.println("getOfferById method called with id: " + id);
+    OfferIdRequest request = OfferIdRequest.newBuilder().setId(id).build();
+    OfferResponse response = dataServerStub.getOfferById(request);
+
+
+    System.out.println("Received response from dataServerStub: " + response);
+
+    return DtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(response);
   }
 
   public List<ShortOfferResponseDto> getAvailableOffers()
