@@ -77,10 +77,4 @@ public class OfferService : IOfferService
         return offers;
     }
 
-    public async Task<string> GetOffersJsonAsync()
-    {
-        var response = await client.GetAsync("offers");
-        var json = await response.Content.ReadAsStringAsync();
-        return json;
-    }
 }
