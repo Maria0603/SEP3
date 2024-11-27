@@ -82,8 +82,6 @@ import java.util.Optional;
       responseObserver.onCompleted();
     }
 
-    responseObserver.onError(
-        new Exception("Error: No offer with ID " + request.getId()));
   }
 
   private OfferDao generateOfferDaoFromSaveOfferRequest(
