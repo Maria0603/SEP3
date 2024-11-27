@@ -1,7 +1,4 @@
-@page "/offers"
-@*
 @page "/offers/{id}"
-*@
 
 
 @using client.DTO
@@ -14,119 +11,123 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient;
 
-
-<div class="container">
-    <div>
-        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image" />
-
-        <!-- <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>-->
-        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
-        <header class="BusinessName">7 Eleven - Horsens</header>
-    </div>
-
-    <div class="float-container">
-        <!-- Left -->
-        <div class="float-child">
-            <div class="row">
-                <img src="images/icons/bag.png" alt="Bag icon" class="icon1"/>
-                <p>Pastry</p>
-            </div>
-            <div class="row">
-                <img src="images/icons/star.png" alt="Star icon" class="icon1"/>
-                <p>Amount Of Stars</p>
-            </div>
-            <div class="row">
-                <img src="images/icons/clock.png" alt="Clock icon" class="icon1"/>
-                <p>Today, from 12:00 to 15:00</p>
-            </div>
-
-
-        </div>
-
-        <!-- Right -->
-        <div class="float-child2">
-            <div class="crossed-row">
-                <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
-            </div>
-            <div class="row">
-                <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
-            </div>
-            <div class="row">
-                <div class="amount-reserve-container">
-                    <label for="amount">
-                        <strong>Amount:</strong>
-                    </label>
-                    <!-- <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
--->
-                    <div>
-                        <button @onclick="DecreaseQuantity">-</button>
-                        <span min="1" max="@_order.NumberOfItems">@amount</span>
-                        <button @onclick="IncreaseQuantity">+</button>
-                    </div><!--<p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>-->
-                    <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div class="location">
-        <div class="location-content">
-            <div class="location-row">
-                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
-                <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
-            </div>
-        </div>
-    </div>
-
-
-    <div class="description-allergens-content">
-        <div class="description">
-            <h5>Description</h5>
-            <p>
-                "Pastry" refers to a type of dough used in baking, typically made from flour, water, and fat.
-                It is a key component in a variety of baked goods, both sweet and savory. The term "pastry"
-                can also refer to the finished baked products made from this dough.
-            </p>
-        </div>
-        <div class="allergens">
-            <h5>Allergens</h5>
-            <p>
-                Allergens are substances that can cause an allergic reaction in some people. Allergic
-                reactions occur when the immune system mistakenly identifies a typically harmless substance
-                as a threat and overreacts, leading to symptoms that can range from mild to severe.
-            </p>
-        </div>
+@if (_offer is not null)
+{
+    <div class="container">
         <div>
-            <h4>Recent Reviews</h4>
+            <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
+
+            <!-- <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>-->
+            <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
+            <header class="BusinessName">7 Eleven - Horsens</header>
+        </div>
+
+        <div class="float-container">
+            <!-- Left -->
+            <div class="float-child">
+                <div class="row">
+                    <img src="images/icons/bag.png" alt="Bag icon" class="icon1"/>
+                    <p>Pastry</p>
+                </div>
+                <div class="row">
+                    <img src="images/icons/star.png" alt="Star icon" class="icon1"/>
+                    <p>Amount Of Stars</p>
+                </div>
+                <div class="row">
+                    <img src="images/icons/clock.png" alt="Clock icon" class="icon1"/>
+                    <p>Today, from 12:00 to 15:00</p>
+                </div>
+
+
+            </div>
+
+            <!-- Right -->
+            <div class="float-child2">
+                <div class="crossed-row">
+                    <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
+                </div>
+                <div class="row">
+                    <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
+                </div>
+                <div class="row">
+                    <div class="amount-reserve-container">
+                        <label for="amount">
+                            <strong>Amount:</strong>
+                        </label>
+                        <!-- <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
+-->
+                        <div>
+                            <button @onclick="DecreaseQuantity">-</button>
+                            <span min="1" max="@_order.NumberOfItems">@amount</span>
+                            <button @onclick="IncreaseQuantity">+</button>
+                        </div><!--<p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>-->
+                        <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="location">
+            <div class="location-content">
+                <div class="location-row">
+                    <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                    <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="description-allergens-content">
+            <div class="description">
+                <h5>Description</h5>
+                <p>
+                    "Pastry" refers to a type of dough used in baking, typically made from flour, water, and fat.
+                    It is a key component in a variety of baked goods, both sweet and savory. The term "pastry"
+                    can also refer to the finished baked products made from this dough.
+                </p>
+            </div>
+            <div class="allergens">
+                <h5>Allergens</h5>
+                <p>
+                    Allergens are substances that can cause an allergic reaction in some people. Allergic
+                    reactions occur when the immune system mistakenly identifies a typically harmless substance
+                    as a threat and overreacts, leading to symptoms that can range from mild to severe.
+                </p>
+            </div>
+            <div>
+                <h4>Recent Reviews</h4>
+            </div>
+        </div>
+
+        <div class="reviews">
+            @foreach (var review in Reviews)
+            {
+                <div class="review">
+                    <div class="review-header">
+                        <img src="images/icons/star.png" alt="Star icon" class="icon2"/>
+                        <p class="review-name">@review.Name</p>
+                        <img src="@GetStarImage(review.Rating)" alt="@review.Rating star(s)" class="star-rating"/>
+                    </div>
+                    <p>@review.Comment</p>
+                </div>
+            }
         </div>
     </div>
-
-    <div class="reviews">
-        @foreach (var review in Reviews)
-        {
-            <div class="review">
-                <div class="review-header">
-                    <img src="images/icons/star.png" alt="Star icon" class="icon2"/>
-                    <p class="review-name">@review.Name</p>
-                    <img src="@GetStarImage(review.Rating)" alt="@review.Rating star(s)" class="star-rating"/>
-                </div>
-                <p>@review.Comment</p>
-            </div>
-        }
-    </div>
-</div>
+}
+else 
+{
+    <p>Loading offer...</p>
+}
 
 @code {
 
-    //[Parameter] public string id { get; set; }
-    public string id = "6745a7763c6736635b67bded";
+    [Parameter] public string id { get; set; }
     private int amount;
 
     private OfferResponseDto? _offer;
 
     protected override async Task OnInitializedAsync()
     {
-        id = "6745a7763c6736635b67bded";
         _offer = await OfferService.GetOfferByIdAsync(id);
     }
     

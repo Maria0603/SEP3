@@ -1,6 +1,9 @@
 @using client.DTO
 @inject HttpClient HttpClient
-<div @attributes="AdditionalAttributes" class="offer">
+@inherits ComponentBase
+@inject NavigationManager NavigationManager
+
+<div @attributes="AdditionalAttributes" class="offer" @onclick="()=>ShowOfferDetails(OfferData.Id)">
     <div class="offer__top">
         <div class="offer__top--left">@OfferData.NumberOfItems Left</div>
         <svg class="offer__top--favourite @(false ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -52,18 +55,10 @@
     [Parameter(CaptureUnmatchedValues = true)]
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
-    
-    
-    public class PickupDate
+    private void ShowOfferDetails(string offerId)
     {
-        public int Year { get; set; }
-        public int Month { get; set; }
-        public int Day { get; set; }
+        NavigationManager.NavigateTo($"offers/{OfferData.Id}");
     }
 
-    public class PickupTime
-    {
-        public int Hour { get; set; }
-        public int Minute { get; set; }
-    }
+
 }
