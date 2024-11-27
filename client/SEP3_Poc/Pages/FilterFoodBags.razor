@@ -1,0 +1,84 @@
+﻿@page "/foodbags/all"
+@using System.Text.Json
+@using SEP3_Poc.Pages
+@inject HttpClient Http
+
+<PageTitle>Food Bags</PageTitle>
+
+<h3>Food Bags</h3>
+
+<div>
+    <label for="price1">Price 1: </label>
+    <input type="number" id="price1" @bind="price1"/>
+
+    <label for="price2">Price 2: </label>
+    <input type="number" id="price2" @bind="price2"/>
+
+    <button @onclick="FilterByPriceRangeAsync">Filter</button>
+</div>
+
+@if (filteredFoodBags == null)
+{
+    <p>
+        <em>Loading...</em>
+    </p>
+}
+else if (filteredFoodBags.Count == 0)
+{
+    <p>No food bags found in this price range.</p>
+}
+else
+{
+    <div class="container">
+        <div class="row">
+            @foreach (var foodBag in filteredFoodBags)
+            {
+                <div class="col-md-4 col-lg-3 mb-4">
+                    <FoodBagCard FoodBag="foodBag" />
+                </div>
+
+            }
+        </div>
+    </div>
+}
+
+@code {
+    private List<FoodBag>? filteredFoodBags = new();
+    private short price1;
+    private short price2;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadFoodBagsAsync();
+    }
+
+    private async Task LoadFoodBagsAsync()
+    {
+        // Call the API to get all food bags on initialization
+        var response = await Http.GetAsync("http://localhost:8080/api/foodbags/all");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            filteredFoodBags = JsonSerializer.Deserialize<List<FoodBag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+        }
+    }
+
+    private async Task FilterByPriceRangeAsync()
+    {
+        var response = await Http.GetAsync($"http://localhost:8080/api/foodbags/price-range?price1={price1}&price2={price2}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            var responseContent = await response.Content.ReadAsStringAsync();
+            filteredFoodBags = JsonSerializer.Deserialize<List<FoodBag>>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            Console.WriteLine($"Filtered Food Bags Count: {filteredFoodBags.Count}"); // Log the count
+        }
+        else
+        {
+            Console.WriteLine($"Error: {response.StatusCode}");
+            filteredFoodBags.Clear(); // Clear the list on error
+        }
+    }
+
+}
