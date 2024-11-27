@@ -28,7 +28,7 @@
             <div class="float-child">
                 <div class="row">
                     <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
-                    <p>@_offer.Description</p>
+                    <p>@_offer.Categories</p>
                 </div>
                 <div class="row">
                     <img src="images/icons/star.png" alt="Star icon" class="icon"/>
@@ -74,19 +74,10 @@
                 </div>
             </div>
         </div>
-
-
-        <div class="description-allergens-content">
-            <div class="description">
-                <h5>Description</h5>
-                <p>@_offer.Description</p>
-            </div>
-            <div class="allergens">
-                <h5>Allergens</h5>
-                <p>
-                   ALLERGENS HERE
-                </p>
-            </div>
+        
+        <div class="description">
+            <h5>Description</h5>
+            <p>@_offer.Description</p>
         </div>
     </div>
 }
@@ -154,14 +145,6 @@ else
         {
             //errorLabel = e.Message;
         }
-    }
-
-
-    public class Review
-    {
-        public string Name { get; set; }
-        public int Rating { get; set; }
-        public string Comment { get; set; }
     }
 
 }
