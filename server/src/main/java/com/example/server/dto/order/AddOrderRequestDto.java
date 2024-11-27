@@ -12,7 +12,7 @@ public class AddOrderRequestDto {
     private String offerId;
 
     @NotNull(message = "Quantity is required.")
-    private int quantity;
+    private int numberOfItems;
 
     // Getters and setters
     public String getUserId() {
@@ -31,11 +31,11 @@ public class AddOrderRequestDto {
         this.offerId = offerId;
     }
 
-    public int getQuantity() {
-        return quantity;
+    public int getNumberOfItems() {
+        return numberOfItems;
     }
 
-    public void setQuantity(int quantity) {
-        this.quantity = quantity;
+    public void setNumberOfItems(int numberOfItems) {
+        this.numberOfItems = numberOfItems;
     }
 }

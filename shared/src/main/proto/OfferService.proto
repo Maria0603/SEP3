@@ -23,6 +23,7 @@ message SaveOfferRequest {
   Time pickupTimeEnd = 8;
   repeated string categories = 9;
   string imagePath = 10;
+  int32 numberOfAvailableItems = 11;
 }
 
 message OfferIdRequest {
@@ -42,6 +43,7 @@ message OfferResponse {
   repeated string categories = 10;
   string imagePath = 11;
   string status = 12;
+  int32 numberOfAvailableItems = 13;
 }
 
 message SaveOfferResponse {
@@ -64,7 +66,7 @@ message ShortOfferResponse
   string title = 2;
   int32 originalPrice = 3;
   int32 offerPrice = 4;
-  int32 numberOfItems = 5;
+  int32 numberOfAvailableItems = 5;
   Date pickupDate = 6;
   Time pickupTimeStart = 7;
   Time pickupTimeEnd = 8;

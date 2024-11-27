@@ -7,7 +7,6 @@ import com.example.shared.dao.OfferDao;
 import com.example.shared.dao.OrderDao;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.shared.model.OrderStatus;
-import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,20 +103,19 @@ import java.util.Optional;
   {
     return OrderResponse.newBuilder().setId(orderDao.getId())
         .setUserId(orderDao.getUserId()).setOfferId(orderDao.getOffer().getId())
-        .setQuantity(orderDao.getQuantity()).setOrderDate(
+        .setNumberOfItems(orderDao.getNumberOfItems()).setOrderDate(
             DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
         .setOrderTime(
             DateTimeConverter.convertTimeDaoToGrpcTime(orderDao.getOrderTime()))
         .setStatus(orderDao.getStatus())
-        .setPricePerItem(orderDao.getPricePerItem())
-        .setTotalPrice(orderDao.getTotalPrice()).build();
+        .setPricePerItem(orderDao.getPricePerItem()).build();
   }
 
   private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
   {
     OrderDao order = new OrderDao();
     order.setUserId(request.getUserId());
-    order.setQuantity(request.getQuantity());
+    order.setNumberOfItems(request.getNumberOfItems());
     order.setOrderDate(DateTimeConverter.getCurrentDateDao());
     order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
     order.setStatus(OrderStatus.PENDING.getStatus());
@@ -126,7 +124,6 @@ import java.util.Optional;
     if (offer.isPresent())
     {
       OfferDao offerDao = offer.get();
-      order.setTotalPrice(offerDao.getOfferPrice() * request.getQuantity());
       order.setPricePerItem(offerDao.getOfferPrice());
       order.setOffer(offerDao);
     }

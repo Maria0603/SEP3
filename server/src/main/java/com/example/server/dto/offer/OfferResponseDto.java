@@ -14,12 +14,24 @@ public class OfferResponseDto
   private int originalPrice;
   private int offerPrice;
   private int numberOfItems;
+  private int numberOfAvailableItems;
   private DateDto pickupDate;
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
   private List<String> categories;
   private String imagePath;
   private String status;
+
+  public int getNumberOfAvailableItems()
+  {
+    return numberOfAvailableItems;
+  }
+
+  public void setNumberOfAvailableItems(int numberOfAvailableItems)
+  {
+    this.numberOfAvailableItems = numberOfAvailableItems;
+  }
+
 
   public String getId()
   {

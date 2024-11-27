@@ -54,13 +54,12 @@
                         <label for="amount">
                             <strong>Amount:</strong>
                         </label>
-                        <!-- <input type="number" id="amount" min="1" max="@_order.NumberOfItems" @bind="amount" class="amount-input"/>
--->
-                        <div>
+                        
+                        <div id="amount">
                             <button @onclick="DecreaseQuantity">-</button>
-                            <span min="1" max="@_order.NumberOfItems">@amount</span>
+                            <span>@amount</span>
                             <button @onclick="IncreaseQuantity">+</button>
-                        </div><!--<p class="total-cost"><strong>Total:</strong> @TotalCost dkk</p>-->
+                        </div>
                         <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
                     </div>
                 </div>
@@ -123,6 +122,8 @@ else
 
     [Parameter] public string id { get; set; }
     private int amount=1;
+    
+
 
     private OfferResponseDto? _offer;
 
@@ -131,9 +132,7 @@ else
         _offer = await OfferService.GetOfferByIdAsync(id);
     }
     
-
-    private OrderRequestDto _order = new OrderRequestDto();
-
+    
 
     private List<Review> Reviews = new List<Review>
     {
@@ -144,7 +143,7 @@ else
 
     private void IncreaseQuantity()
     {
-        if (amount < _offer.NumberOfItems)
+        if (amount < _offer.NumberOfAvailableItems)
             amount++;
     }
 
@@ -187,10 +186,8 @@ else
         public int Rating { get; set; }
         public string Comment { get; set; }
     }
-
-}
-
-@code {
+    
     private string GetStarImage(int rating) => $"images/rating/{rating}.png?{DateTime.Now.Ticks}";
+
 
 }

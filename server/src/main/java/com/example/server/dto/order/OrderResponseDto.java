@@ -12,7 +12,7 @@ public class OrderResponseDto {
 
   @NotNull(message = "Offer ID is required.") private String offerId;
 
-  @NotNull(message = "Quantity is required.") private int quantity;
+  @NotNull(message = "Quantity is required.") private int numberOfItems;
 
   @NotNull(message = "Status is required.") private String status;
 
@@ -21,10 +21,6 @@ public class OrderResponseDto {
   @NotNull(message = "Order time is required.") private TimeDto orderTime;
 
   @NotNull(message = "Price per item is required.") private int pricePerItem;
-
-  @NotNull(message = "Total order price is required.") private int totalPrice;
-
-  @NotNull(message = "Message is required.") private String message;
 
   // Getters and setters
   public String getOrderId() {
@@ -51,12 +47,12 @@ public class OrderResponseDto {
     this.offerId = offerId;
   }
 
-  public int getQuantity() {
-    return quantity;
+  public int getNumberOfItems() {
+    return numberOfItems;
   }
 
-  public void setQuantity(int quantity) {
-    this.quantity = quantity;
+  public void setNumberOfItems(int numberOfItems) {
+    this.numberOfItems = numberOfItems;
   }
 
   public String getStatus() {
@@ -91,19 +87,4 @@ public class OrderResponseDto {
     this.pricePerItem = pricePerItem;
   }
 
-  public int getTotalPrice() {
-    return totalPrice;
-  }
-
-  public void setTotalPrice(int totalPrice) {
-    this.totalPrice = totalPrice;
-  }
-
-  public String getMessage() {
-    return message;
-  }
-
-  public void setMessage(String message) {
-    this.message = message;
-  }
 }

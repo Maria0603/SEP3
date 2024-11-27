@@ -10,25 +10,23 @@ import org.springframework.data.mongodb.core.mapping.Field;
   @Id private String id;
   @DBRef @Field("offer_id") private OfferDao offer;
   @Field("user_id") private String userId;
-  @Field("quantity") private int quantity;
+  @Field("number_of_items") private int numberOfItems;
   @Field("order_date") private DateDao orderDate;
   @Field("order_time") private TimeDao orderTime;
   @Field("status") private String status;
   @Field("price_per_item") private int pricePerItem;
-  @Field("total_price") private int totalPrice;
 
-  public OrderDao(String id, OfferDao offer, String userId, int quantity,
+  public OrderDao(String id, OfferDao offer, String userId, int numberOfItems,
       DateDao orderDate, TimeDao orderTime, String status, int pricePerItem)
   {
     this.id = id;
     this.offer = offer;
     this.userId = userId;
-    this.quantity = quantity;
+    this.numberOfItems = numberOfItems;
     this.orderDate = orderDate;
     this.orderTime = orderTime;
     this.status = status;
     this.pricePerItem = pricePerItem;
-    this.totalPrice = pricePerItem * quantity;
   }
 
   public int getPricePerItem()
@@ -39,16 +37,6 @@ import org.springframework.data.mongodb.core.mapping.Field;
   public void setPricePerItem(int pricePerItem)
   {
     this.pricePerItem = pricePerItem;
-  }
-
-  public int getTotalPrice()
-  {
-    return totalPrice;
-  }
-
-  public void setTotalPrice(int totalPrice)
-  {
-    this.totalPrice = totalPrice;
   }
 
   public TimeDao getOrderTime()
@@ -105,14 +93,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
     this.userId = userId;
   }
 
-  public int getQuantity()
+  public int getNumberOfItems()
   {
-    return quantity;
+    return numberOfItems;
   }
 
-  public void setQuantity(int quantity)
+  public void setNumberOfItems(int numberOfItems)
   {
-    this.quantity = quantity;
+    this.numberOfItems = numberOfItems;
   }
 
   public DateDao getOrderDate()

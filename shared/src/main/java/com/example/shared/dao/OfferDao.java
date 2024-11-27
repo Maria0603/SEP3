@@ -19,10 +19,21 @@ import java.util.List;
   @Field("original_price") private int originalPrice;
   @Field("offer_price") private int offerPrice;
   @Field("number_of_items") private int numberOfItems;
+  @Field("number_of_available_items") private int numberOfAvailableItems;
   @Field("pickup_date") private DateDao pickupDate;
   @Field("pickup_time_start") private TimeDao pickupTimeStart;
   @Field("pickup_time_end") private TimeDao pickupTimeEnd;
   @Field("image_path") private String imagePath;
+
+  public int getNumberOfAvailableItems()
+  {
+    return numberOfAvailableItems;
+  }
+
+  public void setNumberOfAvailableItems(int numberOfAvailableItems)
+  {
+    this.numberOfAvailableItems = numberOfAvailableItems;
+  }
 
   public int getOfferPrice()
   {

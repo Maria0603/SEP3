@@ -4,9 +4,7 @@ import com.example.data_server.repository.OfferRepository;
 import com.example.data_server.repository.OrderRepository;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.OfferDao;
 import com.example.shared.dao.OrderDao;
-import com.google.protobuf.Empty;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -54,7 +52,7 @@ void testAddOrder() {
     // Create the AddOrderRequest
     AddOrderRequest request = AddOrderRequest.newBuilder()
         .setUserId("user123")
-        .setQuantity(2)
+        .setNumberOfItems(2)
         .setOfferId("673704d2df30482589885cf5")
         .build();
 
@@ -73,7 +71,7 @@ void testAddOrder() {
     OrderDao Order = new OrderDao();
     Order.setId("Order123");
     Order.setUserId("user123");
-    Order.setQuantity(2);
+    Order.setNumberOfItems(2);
     Order.setOrderDate(DateTimeConverter.getCurrentDateDao());
 
     // Add the Order to the repository
@@ -89,7 +87,7 @@ void testAddOrder() {
 
     verify(responseObserver).onNext(argThat(
         response -> response.getId().equals("Order123") && response.getUserId()
-            .equals("user123") && response.getQuantity() == 2
+            .equals("user123") && response.getNumberOfItems() == 2
             && response.getOrderDate().getYear()
             == DateTimeConverter.convertDateDaoToGoogleDate(
             Order.getOrderDate()).getYear()
@@ -105,13 +103,13 @@ void testAddOrder() {
     OrderDao Order1 = new OrderDao();
     Order1.setId("Order123");
     Order1.setUserId("user123");
-    Order1.setQuantity(2);
+    Order1.setNumberOfItems(2);
     Order1.setOrderDate(DateTimeConverter.getCurrentDateDao());
 
     OrderDao Order2 = new OrderDao();
     Order2.setId("Order456");
     Order2.setUserId("user456");
-    Order2.setQuantity(3);
+    Order2.setNumberOfItems(3);
     Order2.setOrderDate(DateTimeConverter.getCurrentDateDao());
 
     when(orderRepository.findAll()).thenReturn(List.of(Order1, Order2));

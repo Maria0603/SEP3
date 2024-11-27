@@ -57,7 +57,7 @@ import java.util.stream.Collectors;
     // Save order with status "Pending" first
     AddOrderRequest orderRequest = AddOrderRequest.newBuilder()
         .setOfferId(requestDto.getOfferId())
-        .setQuantity(requestDto.getNumberOfItems())
+        .setNumberOfItems(requestDto.getNumberOfItems())
         .setUserId("TestUser123") // not there yet
         .build();
 

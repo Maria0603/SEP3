@@ -92,6 +92,7 @@ import java.util.Optional;
     offer.setDescription(request.getDescription());
     offer.setOfferPrice(request.getOfferPrice());
     offer.setOriginalPrice(request.getOriginalPrice());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
 
     offer.setPickupDate(
         DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
@@ -132,15 +133,18 @@ import java.util.Optional;
         .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
         .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
-        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                offerDao.getPickupDate())).setPickupTimeStart(
+        .setNumberOfItems(offerDao.getNumberOfItems())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
+            offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
-        .addAllCategories(offerDao.getCategories()).build();
+        .addAllCategories(offerDao.getCategories())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .build();
   }
 
   private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
@@ -149,9 +153,9 @@ import java.util.Optional;
         .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus())
         .setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
-        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                offerDao.getPickupDate())).setPickupTimeStart(
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
+            offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
