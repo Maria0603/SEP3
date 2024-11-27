@@ -22,7 +22,7 @@ message SaveOfferRequest {
   Time pickupTimeStart = 7;
   Time pickupTimeEnd = 8;
   repeated string categories = 9;
-  bytes image = 10;
+  string imagePath = 10;
 }
 
 message OfferIdRequest {
@@ -40,7 +40,7 @@ message OfferResponse {
   Time pickupTimeStart = 8;
   Time pickupTimeEnd = 9;
   repeated string categories = 10;
-  bytes image = 11;
+  string imagePath = 11;
   string status = 12;
 }
 
@@ -49,17 +49,30 @@ message SaveOfferResponse {
   string title = 2;
   string description = 3;
   int32 originalPrice = 4;
-  int32 offerPrice=5;
+  int32 offerPrice = 5;
   int32 numberOfItems = 6;
   Date pickupDate = 7;
   Time pickupTimeStart = 8;
   Time pickupTimeEnd = 9;
   repeated string categories = 10;
-  bytes image = 11;
+  string imagePath = 11;
 }
 
+message ShortOfferResponse
+{
+  string id = 1;
+  string title = 2;
+  int32 originalPrice = 3;
+  int32 offerPrice = 4;
+  int32 numberOfItems = 5;
+  Date pickupDate = 6;
+  Time pickupTimeStart = 7;
+  Time pickupTimeEnd = 8;
+  string imagePath = 9;
+  string status = 10;
+}
 message OfferList {
-  repeated OfferResponse offer = 1;
+  repeated ShortOfferResponse offer = 1;
 }
 
 message Time {

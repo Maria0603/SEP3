@@ -21,6 +21,7 @@ import java.nio.file.Files;
   {
     ApplicationContext context = SpringApplication.run(ServerApplication.class,
         args);
+
     System.out.println("Server running...");
 
   }
