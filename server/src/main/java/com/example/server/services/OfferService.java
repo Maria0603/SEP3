@@ -6,9 +6,9 @@ import com.example.server.converters.DtoGrpcConverter;
 import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.date_time.TimeDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.offer.OfferIdRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.offer.UpdateOfferRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,8 +21,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.server.converters.DtoGrpcConverter.CreateOfferRequestDto_To_SaveOfferRequest;
-import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGrpc_To_OfferResponseDto;
+import static com.example.server.converters.DtoGrpcConverter.*;
 
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
@@ -41,8 +40,12 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
   @Transactional public OfferResponseDto saveOffer(
       CreateOfferRequestDto offerRequestDto)
   {
-    //First check what we couldn't check in the Dto class
-    validateOfferDetails(offerRequestDto);
+
+    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
+        offerRequestDto.getPickupTimeEnd()))
+      throw new IllegalArgumentException(
+          "Pickup date and time must be in the future");
+
     String imagePath = null;
     try
     {
@@ -109,12 +112,36 @@ import static com.example.server.converters.DtoGrpcConverter.SaveOfferResponseGr
     return offers;
   }
 
-  private void validateOfferDetails(CreateOfferRequestDto offerRequestDto)
+  public OfferResponseDto updateOffer(
+      UpdateOfferRequestDto updateOfferRequestDto)
   {
-    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
-        offerRequestDto.getPickupTimeEnd()))
+    //First check what we couldn't check in the Dto class
+    if (!isPickupInFuture(updateOfferRequestDto.getPickupDate(),
+        updateOfferRequestDto.getPickupTimeEnd()))
       throw new IllegalArgumentException(
           "Pickup date and time must be in the future");
+
+    String imagePath = null;
+    try
+    {
+      imagePath = imageStorageService.getBaseDirectory()
+          + imageStorageService.saveImage(updateOfferRequestDto.getImage());
+      //Transform the dto to grpc message
+      OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(updateOfferRequestDto, imagePath);
+
+      //Send the request to the data server
+      OfferResponse response = dataServerStub.updateOffer(request);
+
+      //Return the offer as dto
+      return OfferResponseGrpc_To_OfferResponseDto(response);
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+      if (imagePath != null)
+        imageStorageService.deleteImage(imagePath); //rollback
+      throw new IllegalArgumentException("Failed to save the image");
+    }
 
   }
 
