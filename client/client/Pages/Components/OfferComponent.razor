@@ -51,8 +51,8 @@
 </div>
 
 @code {
-    [Parameter] public ShortOfferResponseDto OfferData { get; set; }
-    [Parameter(CaptureUnmatchedValues = true)]
+    [Parameter] 
+    public ShortOfferResponseDto OfferData { get; set; }
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
     private void ShowOfferDetails(string offerId)
