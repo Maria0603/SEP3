@@ -10,6 +10,7 @@ service OfferService {
   rpc SaveOffer(SaveOfferRequest) returns (SaveOfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
   rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
+  rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
 }
 
 message SaveOfferRequest {
