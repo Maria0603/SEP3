@@ -84,6 +84,25 @@ import java.util.Optional;
 
   }
 
+  @Override public void updateOffer(OfferResponse request,
+      StreamObserver<OfferResponse> responseObserver)
+  {
+    System.out.println("Request for update offer.");
+    if (!offerRepository.existsById(request.getId()))
+      throw new IllegalArgumentException(
+          "Offer with ID " + request.getId() + " not found.");
+
+    // Save the updated document (will replace the existing one)
+    OfferDao updatedOffer = offerRepository.save(
+        generateOfferDaoFromOfferResponse(request));
+    OfferResponse offerResponse = buildOfferResponse(
+        updatedOffer); //method to build the response
+
+    responseObserver.onNext(offerResponse);
+    responseObserver.onCompleted();
+
+  }
+
   private OfferDao generateOfferDaoFromSaveOfferRequest(
       SaveOfferRequest request)
   {
@@ -106,6 +125,35 @@ import java.util.Optional;
 
     offer.setNumberOfItems(request.getNumberOfItems());
     offer.setStatus(OfferStatus.AVAILABLE.getStatus());
+    offer.setImagePath(request.getImagePath());
+
+    return offer;
+  }
+
+  private OfferDao generateOfferDaoFromOfferResponse(
+      OfferResponse request)
+  {
+    OfferDao offer = new OfferDao();
+    offer.setId(request.getId());
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+
+    offer.setPickupDate(
+        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
+    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
+        request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    offer.setCategories(categories);
+
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
+    System.out.println("**********************Available: " + request.getNumberOfAvailableItems());
+    offer.setStatus(request.getStatus());
     offer.setImagePath(request.getImagePath());
 
     return offer;
