@@ -39,6 +39,17 @@
     z-index: 3;
 }
 
+.offer__top--left {
+    position: absolute;
+    left: 1.4rem; 
+    top: 0.7rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 0.3rem;
+    color: #d11049;
+    font-size: 1rem; 
+}
+
 /*SECOND SECTION*/
 /* Float Container */
 .float-container {
@@ -48,23 +59,15 @@
     margin-top: 15px;
 }
 
-.float-child,
-.float-child2 {
-    width: 50%; 
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-}
-
 .float-child2 {
     width: 50%;
     display: flex;
     flex-direction: column;
     gap: 10px;
     align-items: flex-end; 
-    text-align: right; 
+    text-align: right;
+    
 }
-
 
 .amount-reserve-container {
     display: flex;
@@ -76,21 +79,30 @@
     text-decoration: line-through;
     text-decoration-color: black;
 }
-img.icon1 {
-    width: 25px; /* Set consistent width */
-    height: auto; /* Maintain aspect ratio */
-    display: inline-block; /* Ensure image is rendered */
-}
-.row {
-    display: flex; 
-    align-items: center; 
-    gap: 10px; 
+
+.float-child,.float-child2{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
-.icon2 {
-    width: 25px;
-    height: auto;
+.row {
+    display: flex;
+    align-items: center; 
+    gap: 3px;
+    flex-wrap: nowrap;
 }
+
+.icon {
+    width: 50px;
+}
+
+p {
+    margin: 0;
+    font-size: 15px;
+    color: #333; 
+}
+
 
 
 
@@ -157,39 +169,12 @@ img.icon1 {
 }
 
 /* FOURTH PART  */
-/*Description, allergens, and Reviews*/
+/*Description, allergens*/
 
 .description{
     margin-top:20px;
+    margin-bottom: 10px;
 }
-h5,.review-header{
-    margin-left: 20px;
-}
-
-h4{
-    margin-top: 10px;
-    margin-bottom: 20px;
-}
-
-
-.review-header {
-    display: flex;
-    align-items: center; 
-    gap: 15px; 
-    margin-bottom: 5px;
-}
-
-.review-name {
-    font-weight: bold;
-    font-size: 16px; 
-    margin: 0; 
-}
-
-.star-rating {
-    width: 10%; 
-    height: auto;
-}
-
 
 /* RESPONSIVE DESIGN */
 @media (max-width: 768px) {
@@ -220,8 +205,5 @@ h4{
     .allergens p {
         font-size: 0.9rem; 
     }
-
-    .star-rating {
-        width: 75px; /* Smaller size for smaller screens */
-    }
+    
 }
