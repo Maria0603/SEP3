@@ -82,14 +82,59 @@ import java.util.Optional;
       responseObserver.onCompleted();
     }
 
-    responseObserver.onError(
-        new Exception("Error: No offer with ID " + request.getId()));
+  }
+
+  @Override public void updateOffer(OfferResponse request,
+      StreamObserver<OfferResponse> responseObserver)
+  {
+    System.out.println("Request for update offer.");
+    if (!offerRepository.existsById(request.getId()))
+      throw new IllegalArgumentException(
+          "Offer with ID " + request.getId() + " not found.");
+
+    // Save the updated document (will replace the existing one)
+    OfferDao updatedOffer = offerRepository.save(
+        generateOfferDaoFromOfferResponse(request));
+    OfferResponse offerResponse = buildOfferResponse(
+        updatedOffer); //method to build the response
+
+    responseObserver.onNext(offerResponse);
+    responseObserver.onCompleted();
+
   }
 
   private OfferDao generateOfferDaoFromSaveOfferRequest(
       SaveOfferRequest request)
   {
     OfferDao offer = new OfferDao();
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
+
+    offer.setPickupDate(
+        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
+    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
+        request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    offer.setCategories(categories);
+
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
+    offer.setImagePath(request.getImagePath());
+
+    return offer;
+  }
+
+  private OfferDao generateOfferDaoFromOfferResponse(
+      OfferResponse request)
+  {
+    OfferDao offer = new OfferDao();
+    offer.setId(request.getId());
     offer.setTitle(request.getTitle());
     offer.setDescription(request.getDescription());
     offer.setOfferPrice(request.getOfferPrice());
@@ -106,7 +151,9 @@ import java.util.Optional;
     offer.setCategories(categories);
 
     offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
+    System.out.println("**********************Available: " + request.getNumberOfAvailableItems());
+    offer.setStatus(request.getStatus());
     offer.setImagePath(request.getImagePath());
 
     return offer;
@@ -134,15 +181,18 @@ import java.util.Optional;
         .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
         .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
-        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                offerDao.getPickupDate())).setPickupTimeStart(
+        .setNumberOfItems(offerDao.getNumberOfItems())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
+            offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
-        .addAllCategories(offerDao.getCategories()).build();
+        .addAllCategories(offerDao.getCategories())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .build();
   }
 
   private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
@@ -151,9 +201,9 @@ import java.util.Optional;
         .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus())
         .setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
-        .setNumberOfItems(offerDao.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(
-                offerDao.getPickupDate())).setPickupTimeStart(
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
+            offerDao.getPickupDate())).setPickupTimeStart(
             DateTimeConverter.convertTimeDaoToGrpcTime(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertTimeDaoToGrpcTime(

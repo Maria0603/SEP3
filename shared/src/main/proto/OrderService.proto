@@ -19,19 +19,18 @@ service OrderService {
 message AddOrderRequest {
     string offerId = 1;
     string userId = 2;
-    int32 quantity = 3;
+    int32 numberOfItems = 3;
 }
 
 message OrderResponse {
     string id = 1;
     string userId = 2;
     string offerId = 3;
-    int32 quantity = 4;
+    int32 numberOfItems = 4;
     Date orderDate = 5;
     Time orderTime = 6;
     string status = 7;
     int32 pricePerItem = 8;
-    int32 totalPrice = 9;
 }
 
 message OrderIdRequest {

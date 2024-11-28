@@ -1,6 +1,7 @@
 @page "/"
 @using client.DTO
 @using client.Models
+@using client.Pages.Components
 @inject client.Services.IOfferService OfferService
 <PageTitle>Home</PageTitle>
 
@@ -28,15 +29,12 @@
 
 @code {
     private List<ShortOfferResponseDto>? offers;
-    private string jsonOffers;
     protected override async Task OnInitializedAsync()
     {
         // Call the service to get the offers
         try
         {
             offers = await OfferService.GetOffersAsync();
-            jsonOffers = await OfferService.GetOffersJsonAsync(); // Delete this one
-            Console.WriteLine(jsonOffers);
             if (offers != null)
             {
                 foreach (var offer in offers)

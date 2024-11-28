@@ -10,7 +10,7 @@ public class ShortOfferResponseDto
   private String title;
   private int originalPrice;
   private int offerPrice;
-  private int numberOfItems;
+  private int numberOfAvailableItems;
   private DateDto pickupDate;
   private TimeDto pickupTimeStart;
   private TimeDto pickupTimeEnd;
@@ -67,14 +67,14 @@ public class ShortOfferResponseDto
     this.originalPrice = originalPrice;
   }
 
-  public int getNumberOfItems()
+  public int getNumberOfAvailableItems()
   {
-    return numberOfItems;
+    return numberOfAvailableItems;
   }
 
-  public void setNumberOfItems(int numberOfItems)
+  public void setNumberOfAvailableItems(int numberOfAvailableItems)
   {
-    this.numberOfItems = numberOfItems;
+    this.numberOfAvailableItems = numberOfAvailableItems;
   }
 
   public TimeDto getPickupTimeEnd()
