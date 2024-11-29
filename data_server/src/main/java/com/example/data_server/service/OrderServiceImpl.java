@@ -3,8 +3,8 @@ package com.example.data_server.service;
 import com.example.data_server.repository.OfferRepository;
 import com.example.sep3.grpc.*;
 import com.example.data_server.repository.OrderRepository;
-import com.example.shared.dao.OfferDao;
-import com.example.shared.dao.OrderDao;
+import com.example.shared.dao.domainDao.OfferDao;
+import com.example.shared.dao.domainDao.OrderDao;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.shared.model.OrderStatus;
 import io.grpc.stub.StreamObserver;
@@ -114,7 +114,7 @@ import java.util.Optional;
   private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
   {
     OrderDao order = new OrderDao();
-    order.setUserId(request.getUserId());
+    //order.setUserId(request.getUserId());
     order.setNumberOfItems(request.getNumberOfItems());
     order.setOrderDate(DateTimeConverter.getCurrentDateDao());
     order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
