@@ -2,8 +2,8 @@ package com.example.data_server.utility;
 
 import com.example.sep3.grpc.Date;
 import com.example.sep3.grpc.Time;
-import com.example.shared.dao.DateDao;
-import com.example.shared.dao.TimeDao;
+import com.example.shared.dao.auxDao.DateDao;
+import com.example.shared.dao.auxDao.TimeDao;
 
 public class DateTimeConverter {
   // Convert DateDao to Date gRPC message

@@ -5,11 +5,8 @@ import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
-import com.example.server.dto.order.AddOrderRequestDto;
-import com.example.server.dto.order.OrderResponseDto;
-import com.example.shared.model.OfferStatus;
 
-public class DtoGrpcConverter
+public class OfferDtoGrpcConverter
 {
   public static SaveOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
       CreateOfferRequestDto createOfferRequestDto, String imagePath)
@@ -133,31 +130,6 @@ public class DtoGrpcConverter
     return dto;
   }
 
-  public static AddOrderRequest AddOrderRequestDto_To_AddOrderRequest(
-      AddOrderRequestDto addOrderRequestDto)
-  {
-    return AddOrderRequest.newBuilder()
-        .setOfferId(addOrderRequestDto.getOfferId())
-        .setNumberOfItems(addOrderRequestDto.getNumberOfItems())
-        .setUserId(addOrderRequestDto.getUserId()).build();
-  }
-
-  public static OrderResponseDto OrderResponseGrpc_To_OrderResponseDto(
-      OrderResponse orderResponse)
-  {
-    OrderResponseDto dto = new OrderResponseDto();
-    dto.setOrderId(orderResponse.getId());
-    dto.setUserId(orderResponse.getUserId());
-    dto.setOfferId(orderResponse.getOfferId());
-    dto.setNumberOfItems(orderResponse.getNumberOfItems());
-    dto.setStatus(orderResponse.getStatus());
-    dto.setOrderDate(
-        DateConverter.convertGrpcDateToDateDto(orderResponse.getOrderDate()));
-    dto.setOrderTime(
-        TimeConverter.convertGrpcTimeToTimeDto(orderResponse.getOrderTime()));
-    dto.setPricePerItem(orderResponse.getPricePerItem());
-    return dto;
-  }
 
   public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
       OfferResponse response)

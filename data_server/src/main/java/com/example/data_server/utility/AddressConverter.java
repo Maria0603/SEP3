@@ -1,7 +1,7 @@
 package com.example.data_server.utility;
 
 import com.example.sep3.grpc.Address;
-import com.example.shared.dao.AddressDao;
+import com.example.shared.dao.auxDao.AddressDao;
 
 public class AddressConverter
 {
