@@ -1,11 +1,13 @@
-package com.example.shared.dao;
+package com.example.shared.dao.domainDao;
 
+import com.example.shared.dao.auxDao.DateDao;
+import com.example.shared.dao.auxDao.TimeDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "order") public class OrderDao
+@Document(collection = "orders") public class OrderDao
 {
   @Id private String id;
   @DBRef @Field("offer_id") private OfferDao offer;
