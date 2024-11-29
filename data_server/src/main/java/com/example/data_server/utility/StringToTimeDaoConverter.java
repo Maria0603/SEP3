@@ -1,6 +1,6 @@
 package com.example.data_server.utility;
 
-import com.example.shared.dao.TimeDao;
+import com.example.shared.dao.auxDao.TimeDao;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.LocalTime;

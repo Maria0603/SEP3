@@ -2,7 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.Date;
 import com.example.server.dto.date_time.DateDto;
-import com.example.shared.dao.DateDao;
+import com.example.shared.dao.auxDao.DateDao;
 
 public class DateConverter
 {

@@ -1,6 +1,6 @@
 package com.example.data_server.utility;
 
-import com.example.shared.dao.DateDao;
+import com.example.shared.dao.auxDao.DateDao;
 import org.springframework.core.convert.converter.Converter;
 
 import java.time.LocalDate;

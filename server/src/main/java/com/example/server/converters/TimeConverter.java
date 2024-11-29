@@ -2,7 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.Time;
 import com.example.server.dto.date_time.TimeDto;
-import com.example.shared.dao.TimeDao;
+import com.example.shared.dao.auxDao.TimeDao;
 
 import java.time.LocalTime;
 
