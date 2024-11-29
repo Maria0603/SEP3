@@ -20,6 +20,7 @@ public class OrderService : IOrderService
         HttpResponseMessage response =
             await client.PostAsJsonAsync($"orders",
                 orderRequestDto); //TODO: replace with the right endpoint
+        
         String responseContent = await response.Content.ReadAsStringAsync();
 
         if (response.IsSuccessStatusCode)
