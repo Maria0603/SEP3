@@ -1,18 +1,24 @@
+using Blazored.LocalStorage;
 using client;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
+using Microsoft.AspNetCore.Components.Authorization;
 using Stripe;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
+builder.Services.AddBlazoredLocalStorage();
 
 // Configure HttpClient for API calls
 builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<AuthenticationStateProvider, AuthService>();
+
+builder.Services.AddAuthorizationCore();
 
 
 StripeConfiguration.ApiKey =
