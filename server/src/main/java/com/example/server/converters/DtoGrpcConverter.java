@@ -4,8 +4,10 @@ import com.example.sep3.grpc.*;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
+import com.example.server.dto.offer.UpdateOfferRequestDto;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
+import com.example.shared.model.OfferStatus;
 
 public class DtoGrpcConverter
 {
@@ -47,6 +49,45 @@ public class DtoGrpcConverter
 
     // Build and return the SaveOfferRequest object
     return saveOfferRequestBuilder.build();
+  }
+
+  public static OfferResponse UpdateOfferRequestDto_To_OfferResponse(
+      UpdateOfferRequestDto updateOfferRequestDto, String imagePath)
+  {
+    OfferResponse.Builder offerResponseBuilder = OfferResponse.newBuilder();
+
+    // Mapping simple fields
+    offerResponseBuilder.setId(updateOfferRequestDto.getId());
+    offerResponseBuilder.setTitle(updateOfferRequestDto.getTitle());
+    offerResponseBuilder.setDescription(updateOfferRequestDto.getDescription());
+    offerResponseBuilder.setOriginalPrice(
+        updateOfferRequestDto.getOriginalPrice());
+    offerResponseBuilder.setOfferPrice(updateOfferRequestDto.getOfferPrice());
+    offerResponseBuilder.setNumberOfItems(
+        updateOfferRequestDto.getNumberOfItems());
+    offerResponseBuilder.setNumberOfAvailableItems(
+        updateOfferRequestDto.getNumberOfAvailableItems());
+    offerResponseBuilder.addAllCategories(
+        updateOfferRequestDto.getCategories());
+    offerResponseBuilder.setImagePath(imagePath);
+    offerResponseBuilder.setStatus(updateOfferRequestDto.getStatus());
+
+    // Convert DateDto to Date
+    Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
+        updateOfferRequestDto.getPickupDate());
+    offerResponseBuilder.setPickupDate(pickupDate);
+
+    // Convert TimeDto to Time for start and end time
+    Time pickupTimeStart = TimeConverter.convertTimeDtoToGrpcTime(
+        updateOfferRequestDto.getPickupTimeStart());
+    offerResponseBuilder.setPickupTimeStart(pickupTimeStart);
+
+    Time pickupTimeEnd = TimeConverter.convertTimeDtoToGrpcTime(
+        updateOfferRequestDto.getPickupTimeEnd());
+    offerResponseBuilder.setPickupTimeEnd(pickupTimeEnd);
+
+    // Build and return the SaveOfferRequest object
+    return offerResponseBuilder.build();
   }
 
   public static OfferResponseDto SaveOfferResponseGrpc_To_OfferResponseDto(
@@ -139,6 +180,27 @@ public class DtoGrpcConverter
     dto.setDescription(response.getDescription());
     dto.setImagePath(response.getImagePath());
     dto.setStatus(response.getStatus());
+
+    return dto;
+  }
+
+  public static UpdateOfferRequestDto OfferResponseDto_To_UpdateOfferRequestDto(OfferResponseDto offerResponseDto, byte[] image)
+  {
+    UpdateOfferRequestDto dto = new UpdateOfferRequestDto();
+
+    dto.setId(offerResponseDto.getId());
+    dto.setTitle(offerResponseDto.getTitle());
+    dto.setOriginalPrice(offerResponseDto.getOriginalPrice());
+    dto.setOfferPrice(offerResponseDto.getOfferPrice());
+    dto.setNumberOfItems(offerResponseDto.getNumberOfItems());
+    dto.setNumberOfAvailableItems(offerResponseDto.getNumberOfAvailableItems());
+    dto.setPickupDate(offerResponseDto.getPickupDate());
+    dto.setPickupTimeStart(offerResponseDto.getPickupTimeStart());
+    dto.setPickupTimeEnd(offerResponseDto.getPickupTimeEnd());
+    dto.setCategories(offerResponseDto.getCategories());
+    dto.setDescription(offerResponseDto.getDescription());
+    dto.setImage(image);
+    dto.setStatus(offerResponseDto.getStatus());
 
     return dto;
   }

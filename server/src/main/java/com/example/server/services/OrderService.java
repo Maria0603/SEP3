@@ -3,6 +3,8 @@ package com.example.server.services;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
+import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.dto.order.PlaceOrderRequestDto;
@@ -27,14 +29,20 @@ import java.util.stream.Collectors;
 @Service public class OrderService extends OrderServiceGrpc.OrderServiceImplBase
 {
   private final DataServerStub dataServerStub;
+  private final OfferService offerService;
+  private final ImageStorageService imageStorageService;
+
   @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
   @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
-  @Autowired public OrderService(DataServerStub dataServerStub)
+  @Autowired public OrderService(DataServerStub dataServerStub,
+      OfferService offerService, ImageStorageService imageStorageService)
   {
-    System.out.println("OrderService created");
     this.dataServerStub = dataServerStub;
+    this.offerService = offerService;
+    this.imageStorageService = imageStorageService;
+    System.out.println("OrderService created");
   }
 
   @Transactional public OrderResponseDto addOrder(
@@ -70,6 +78,9 @@ import java.util.stream.Collectors;
     System.out.println("price per item: " + databaseResponse.getPricePerItem());
 
     System.out.println("Order initially saved in database");
+
+    updateNumberOfAvailableItems(requestDto.getOfferId(),
+        requestDto.getNumberOfItems());
     try
     {
       // Session parameters
@@ -162,6 +173,19 @@ import java.util.stream.Collectors;
     OrderResponse response = dataServerStub.getOrderById(request);
     System.out.println("Received response from dataServerStub: " + response);
     return DtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
+  }
+
+  private void updateNumberOfAvailableItems(String offerId,
+      int numberOfItemsToSubtract)
+  {
+    OfferResponseDto offer = offerService.getOfferById(offerId);
+    int oldNumberOfAvailableItems = offer.getNumberOfAvailableItems();
+    int newNumberOfAvailableItems =
+        oldNumberOfAvailableItems - numberOfItemsToSubtract;
+    offer.setNumberOfAvailableItems(newNumberOfAvailableItems);
+    offerService.updateOffer(
+        DtoGrpcConverter.OfferResponseDto_To_UpdateOfferRequestDto(offer,
+            imageStorageService.extractImage(offer.getImagePath())));
   }
 
 }

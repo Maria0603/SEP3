@@ -15,7 +15,7 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/1170/1170627.png" alt="Business Icon">
                 @* <img src="@OfferData.BusinessDetails.Icon" alt="Business Icon"> *@
             </div>
-            <h2 class="offer__top--business__name">Business name: @OfferData.Title</h2>
+            <h3 class="offer__top--business__name">Business name: @OfferData.Title</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
         </div>
     </div>
@@ -51,8 +51,8 @@
 </div>
 
 @code {
-    [Parameter] public ShortOfferResponseDto OfferData { get; set; }
-    [Parameter(CaptureUnmatchedValues = true)]
+    [Parameter] 
+    public ShortOfferResponseDto OfferData { get; set; }
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
     private void ShowOfferDetails(string offerId)

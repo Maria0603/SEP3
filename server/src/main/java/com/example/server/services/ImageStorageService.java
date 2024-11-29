@@ -55,6 +55,23 @@ import java.util.UUID;
     return BASE_DIRECTORY;
   }
 
+  public byte[] extractImage(String imagePath)
+  {
+    try
+    {
+      BufferedImage image = ImageIO.read(new File(imagePath));
+      ByteArrayOutputStream outStreamObj = new ByteArrayOutputStream();
+      ImageIO.write(image, "jpg", outStreamObj);
+      return outStreamObj.toByteArray();
+    }
+    catch (IOException e)
+    {
+      e.printStackTrace();
+
+    }
+    return null;
+  }
+
   //Good methods, do not delete
   /*
   private String saveImage(byte[] imageBytes, String offerId)
