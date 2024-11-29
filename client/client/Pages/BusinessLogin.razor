@@ -1,0 +1,54 @@
+@page "/auth/login/business"
+@using client.DTO
+@using client.Services
+@inject AuthenticationStateProvider AuthProvider
+@inject NavigationManager NavigationManager
+
+
+<h3 class="text-center mb-4">Business Login</h3>
+<AuthorizeView>
+    <NotAuthorized Context="notAuthorizedContext">
+        <div class="container d-flex align-items-center justify-content-center">
+            <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+                <EditForm Model="@loginRequest" OnValidSubmit="HandleLogin">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <InputText id="email" placeholder="Enter your email" required class="form-control" @bind-Value="loginRequest.Email" />
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Password</label>
+                        <InputText id="password" class="form-control" @bind-Value="loginRequest.Password" placeholder="Enter your password" required />
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-danger">Login</button>
+                    </div>
+                    <div class="mt-3 text-center">
+                        <small>Don't have an account? <a href="/Register">Sign up here</a></small>
+                    </div>
+                </EditForm>
+            </div>
+        </div>
+    </NotAuthorized>
+    <Authorized Context="authorizedContext">
+        <h2>Hello, @authorizedContext.User.Identity.Name</h2>
+    </Authorized>
+</AuthorizeView>
+
+@code {
+    private LoginBusinessRequestDto loginRequest = new LoginBusinessRequestDto();
+    
+    private async Task HandleLogin()
+    {
+        Console.WriteLine(loginRequest.Email + " " + loginRequest.Password);
+        var response = await ((AuthService)AuthProvider).LoginBusiness(loginRequest);
+        NavigationManager.NavigateTo("/");
+        // if (response != null)
+        // {
+        //     NavigationManager.NavigateTo("/"); // Redirect to a protected page on successful login
+        // }
+        // else
+        // {
+        //     // Handle failed login (e.g., show an error message)
+        // }
+    }
+}

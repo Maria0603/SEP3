@@ -1,9 +1,9 @@
 @page "/offers/{id}"
 
-
 @using client.DTO
 @using client.Models
 @using client.Services
+@using Microsoft.AspNetCore.Authorization
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 @inject IOrderService OrderService;
 @inject IOfferService OfferService;
@@ -11,6 +11,7 @@
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient;
 
+@attribute [Authorize]
 @if (_offer is not null)
 {
     <div class="container">

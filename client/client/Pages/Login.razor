@@ -1,0 +1,27 @@
+@page "/auth/login"
+
+<div class="container d-flex flex-column align-items-center justify-content-center vh-100">
+    <div class="card shadow p-4 text-center" style="max-width: 400px; width: 100%;">
+        <h3 class="mb-4">Login</h3>
+        <p class="mb-4">Select an option to continue:</p>
+        <div class="d-grid gap-3">
+            <button class="btn btn-primary btn-lg" @onclick="NavigateToBusinessLogin">Login as Business</button>
+            <button class="btn btn-secondary btn-lg" @onclick="NavigateToCustomerLogin">Login as Customer</button>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Inject]
+    private NavigationManager Navigation { get; set; } = default!;
+
+    private void NavigateToBusinessLogin()
+    {
+        Navigation.NavigateTo("/auth/login/business");
+    }
+
+    private void NavigateToCustomerLogin()
+    {
+        Navigation.NavigateTo("/auth/login/customer");
+    }
+}
