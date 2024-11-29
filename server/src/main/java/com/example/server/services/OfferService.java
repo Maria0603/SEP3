@@ -2,7 +2,7 @@ package com.example.server.services;
 
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
-import com.example.server.converters.DtoGrpcConverter;
+import com.example.server.converters.OfferDtoGrpcConverter;
 import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.date_time.TimeDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
@@ -21,7 +21,7 @@ import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.example.server.converters.DtoGrpcConverter.*;
+import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
 @Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
 {
@@ -80,7 +80,7 @@ import static com.example.server.converters.DtoGrpcConverter.*;
 
     System.out.println("Received response from dataServerStub: " + response);
 
-    return DtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(response);
+    return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(response);
   }
 
   public List<ShortOfferResponseDto> getAvailableOffers()
@@ -94,7 +94,7 @@ import static com.example.server.converters.DtoGrpcConverter.*;
     ArrayList<ShortOfferResponseDto> offers = new ArrayList<>();
     for (int i = 0; i < response.getOfferCount(); i++)
     {
-      ShortOfferResponseDto dto = DtoGrpcConverter.ShortOfferResponseGrpc_To_ShortOfferResponseDto(
+      ShortOfferResponseDto dto = OfferDtoGrpcConverter.ShortOfferResponseGrpc_To_ShortOfferResponseDto(
           response.getOffer(i));
 
       //Attach the images

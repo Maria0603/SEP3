@@ -2,7 +2,7 @@ package com.example.data_server.service;
 
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.OfferDao;
+import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.model.OfferStatus;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
@@ -39,10 +39,10 @@ import java.util.Optional;
     OfferDao offer = generateOfferDaoFromSaveOfferRequest(request);
 
     // Save the offer
-    offerRepository.save(offer);
+    OfferDao createdOffer = offerRepository.save(offer);
 
     // Build the response with everything
-    SaveOfferResponse response = buildSaveOfferResponse(offer);
+    SaveOfferResponse response = buildSaveOfferResponse(createdOffer);
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();

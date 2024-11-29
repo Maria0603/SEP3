@@ -1,6 +1,6 @@
 package com.example.data_server.config;
 
-import com.example.shared.dao.OfferDao;
+import com.example.shared.dao.domainDao.OfferDao;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
