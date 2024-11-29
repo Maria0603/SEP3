@@ -1,0 +1,251 @@
+@page "/offer"
+@using System.Net
+@using client.DTO
+@using client.Services
+@inject IOfferService OfferService;
+@inject HttpClient HttpClient;
+
+@if (createdOffer is null) {
+    <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
+        <DataAnnotationsValidator/>
+        <ValidationSummary/>
+
+        <div class="mb-3">
+            <label for="title">Title</label>
+            <InputText id="title" @bind-Value="offerDto.Title" class="form-control"/>
+        </div>
+
+        <div class="mb-3">
+            <label for="description">Description</label>
+            <InputTextArea id="description" @bind-Value="offerDto.Description" class="form-control"/>
+        </div>
+
+        <div class="row">
+            <div class="mb-3 col-sm-2">
+                <label for="originalPrice">Original Price (kr)</label>
+                <InputNumber id="originalPrice" @bind-Value="offerDto.OriginalPrice" class="form-control"/>
+            </div>
+
+            <div class="mb-3 col-sm-2">
+                <label for="offerPrice">Offer Price (kr)</label>
+                <InputNumber id="offerPrice" @bind-Value="offerDto.OfferPrice" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="mb-3 col-sm-2">
+                <label for="numberOfItems">Number of Items</label>
+                <InputNumber id="numberOfItems" @bind-Value="offerDto.NumberOfItems" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="mb-3 col-sm-2">
+                <label for="pickupDate">Pickup Date</label>
+                <InputDate id="pickupDate" @bind-Value="dateValue" class="form-control"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="mb-3 col-sm-2">
+                <label for="pickupTimeStart">Pickup Start Time</label>
+                <input type="time" id="pickupTimeStart" @bind="timeStart" class="form-control"/>
+            </div>
+
+
+            <div class="mb-3 col-sm-2">
+                <label for="pickupTimeEnd">Pickup End Time</label>
+                <input type="time" id="pickupTimeEnd" @bind="timeEnd" class="form-control"/>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="categories">Categories</label>
+            <div class="d-flex align-items-center">
+                <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
+                    @foreach (var category in availableCategories) {
+                        <option value="@category.Name">@category.Name</option>
+                    }
+                </select>
+                <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
+            </div>
+            <div class="selected-categories mt-2">
+                @foreach (var category in offerDto.Categories) {
+                    <div class="category-box">
+                        <span class="category-text">@category</span>
+                        <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="image">Image</label>
+            <InputFile id="image" OnChange="HandleImageUpload" class="form-control"/>
+        </div>
+
+        @if (!string.IsNullOrEmpty(errorLabel)) {
+            <div class="alert alert-danger mt-3">@errorLabel</div>
+        }
+        @if (!string.IsNullOrEmpty(successLabel)) {
+            <div class="alert alert-success mt-3">@successLabel</div>
+        }
+
+        <button type="submit" class="btn btn-danger mt-3">Submit</button>
+    </EditForm>
+}
+else {
+    <div class="mt-4">
+        <h3>Offer ID #@createdOffer.Id</h3>
+        <p>
+
+            <strong>Title:</strong> @createdOffer.Title
+        </p>
+        <p>
+            <strong>Description:</strong> @createdOffer.Description
+        </p>
+        <p><strong>Original Price:</strong> @createdOffer.OriginalPrice kr</p>
+        <p><strong>Offer Price:</strong> @createdOffer.OfferPrice kr</p>
+        <p>
+            <strong>Number of Items:</strong> @createdOffer.NumberOfItems
+        </p>
+        <p><strong>Pickup Date:</strong> @createdOffer.PickupDate.Day/@createdOffer.PickupDate.Month/@createdOffer.PickupDate.Year</p>
+        <p>
+            <strong>Pickup Time:</strong> @createdOffer.PickupTimeStart.Hour:@createdOffer.PickupTimeStart.Minute -
+            @createdOffer.PickupTimeEnd.Hour:@createdOffer.PickupTimeEnd.Minute
+        </p>
+        <p>
+            <strong>Categories:</strong> @string.Join(", ", createdOffer.Categories)
+        </p>
+        <p>
+            <strong>Status:</strong> @createdOffer.Status
+        </p>
+        <div>
+            <img src="@(HttpClient.BaseAddress + createdOffer.ImagePath)" alt="Offer Image" class="img-fluid" style="max-width: 300px;"/>
+        </div>
+        <button class="btn btn-danger mt-3" @onclick="ResetForm">Create Another Offer</button>
+
+    </div>
+}
+
+@code {
+
+    private CreateOfferRequestDto offerDto = new() {
+        Categories = new List<string>(),
+        PickupDate = new DateDto(),
+        PickupTimeStart = new TimeDto(),
+        PickupTimeEnd = new TimeDto(),
+        NumberOfItems = 1 //Default
+    };
+
+    private List<Category> availableCategories = new List<Category> {
+        new Category { Name = "Bread" },
+        new Category { Name = "Vegan" },
+        new Category { Name = "Pastry" },
+        new Category { Name = "Dairy" }
+    };
+
+    private string selectedCategory;
+
+    private TimeOnly? timeStart;
+    private TimeOnly? timeEnd;
+    private DateTime? dateValue;
+    private string categoriesInput = string.Empty;
+    private string errorLabel = "";
+    private string successLabel = "";
+
+    private OfferResponseDto? createdOffer = null;
+    
+    protected override void OnInitialized() {
+        if (availableCategories.Any()) {
+            selectedCategory = availableCategories.First().Name;
+        }
+    }
+
+    private void AddCategory() {
+        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
+            offerDto.Categories.Add(selectedCategory);
+        }
+    }
+
+    private void RemoveCategory(string category) {
+        offerDto.Categories.Remove(category);
+    }
+
+    private async Task HandleImageUpload(InputFileChangeEventArgs e) {
+        errorLabel = "";
+        successLabel = "";
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        offerDto.Image = memoryStream.ToArray();
+    }
+
+    private async Task SubmitOffer() {
+        errorLabel = "";
+        successLabel = "";
+
+        if (dateValue is not null) {
+            offerDto.PickupDate.Day = dateValue.Value.Day;
+            offerDto.PickupDate.Month = dateValue.Value.Month;
+            offerDto.PickupDate.Year = dateValue.Value.Year;
+        }
+        else {
+            errorLabel = "Please provide pickup date.";
+            return;
+        }
+
+        if (timeStart is not null) {
+            offerDto.PickupTimeStart.Hour = timeStart.Value.Hour;
+            offerDto.PickupTimeStart.Minute = timeStart.Value.Minute;
+        }
+        else {
+            errorLabel = "Please provide pickup time start.";
+            return;
+        }
+
+        if (timeEnd is not null) {
+            offerDto.PickupTimeEnd.Hour = timeEnd.Value.Hour;
+            offerDto.PickupTimeEnd.Minute = timeEnd.Value.Minute;
+        }
+        else {
+            errorLabel = "Please provide pickup time end.";
+            return;
+        }
+
+        try {
+            createdOffer = await OfferService.SaveOfferAsync(offerDto);
+
+            if (createdOffer is not null) {
+                Console.WriteLine("Offer created successfully!");
+                successLabel = $"Offer created successfully: {createdOffer.Id}";
+            }
+        }
+        catch (Exception e) {
+            Console.WriteLine($"Error: {e.Message}");
+            errorLabel = e.Message;
+        }
+    }
+
+    private void ResetForm() {
+        createdOffer = null;
+        offerDto = new CreateOfferRequestDto {
+            Categories = new List<string>(),
+            PickupDate = new DateDto(),
+            PickupTimeStart = new TimeDto(),
+            PickupTimeEnd = new TimeDto(),
+            NumberOfItems = 1
+        };
+        categoriesInput = string.Empty;
+        timeStart = null;
+        timeEnd = null;
+        dateValue = null;
+        errorLabel = "";
+        successLabel = "";
+    }
+
+    public class Category {
+        public string Name { get; set; }
+        public bool IsSelected { get; set; }
+    }
+
+}
