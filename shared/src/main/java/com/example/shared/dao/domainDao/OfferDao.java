@@ -1,15 +1,14 @@
-package com.example.shared.dao;
+package com.example.shared.dao.domainDao;
 
-import com.example.sep3.grpc.Date;
-import com.example.sep3.grpc.Time;
+import com.example.shared.dao.auxDao.DateDao;
+import com.example.shared.dao.auxDao.TimeDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
-import java.util.List;
 
-@Document(collection = "offer") public class OfferDao
+@Document(collection = "offers") public class OfferDao
 {
   @Id private String id;
   @Field("title") private String title;

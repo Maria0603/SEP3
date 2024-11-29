@@ -1,10 +1,10 @@
-package com.example.shared.dao;
+package com.example.shared.dao.auxDao;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
-@Document(collection = "address") public class AddressDao
+@Document(collection = "addresses") public class AddressDao
 {
   @Id private String id;
   @Field("street") private String street;

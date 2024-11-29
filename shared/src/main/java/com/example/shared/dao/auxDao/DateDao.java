@@ -1,4 +1,4 @@
-package com.example.shared.dao;
+package com.example.shared.dao.auxDao;
 
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
