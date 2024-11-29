@@ -8,7 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 {
   @Id private String id;
   @Field("street") private String street;
-  @Field("house_number") private String houseNumber;
+  @Field("number") private String number;
   @Field("city") private String city;
   @Field("postal_code") private String postalCode;
   @Field("state") private String state;
@@ -66,14 +66,14 @@ import org.springframework.data.mongodb.core.mapping.Field;
     this.city = city;
   }
 
-  public String getHouseNumber()
+  public String getNumber()
   {
-    return houseNumber;
+    return number;
   }
 
-  public void setHouseNumber(String houseNumber)
+  public void setNumber(String number)
   {
-    this.houseNumber = houseNumber;
+    this.number = number;
   }
 
   public String getStreet()
