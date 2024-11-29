@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "AuthServiceProto";
+
+package proto;
+
+service AuthService {
+  rpc RegisterBusiness(RegisterBusinessRequest) returns (RegisterBusinessResponse);
+}
+
+message RegisterBusinessRequest {
+  string businessName = 1;
+  string email = 2;
+  string phoneNumber = 3;
+  string cvr = 4;
+  string logoPath = 5;
+  string hashedPassword = 6;
+  Address address = 7;
+}
+
+message RegisterBusinessResponse {
+  string businessId = 1;
+  string email = 2;
+}
+
+message Address{
+  string street = 1;
+  string number = 2;
+  string city = 3;
+  string county = 4;
+  string state = 5;
+  string country = 6;
+  string postalCode = 7;
+}
+
+
+
+
+
