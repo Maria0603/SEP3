@@ -3,13 +3,13 @@ package com.example.data_server.service;
 import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.utility.AddressConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.BusinessDao;
+import com.example.shared.dao.usersDao.BusinessDao;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 @GrpcService public class BusinessServiceImpl
-    extends AuthServiceGrpc.AuthServiceImplBase
+    extends BusinessServiceGrpc.BusinessServiceImplBase
 {
   private final BusinessRepository businessRepository;
 

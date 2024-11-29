@@ -2,11 +2,11 @@ syntax = "proto3";
 
 option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
-option java_outer_classname = "AuthServiceProto";
+option java_outer_classname = "BusinessServiceProto";
 
 package proto;
 
-service AuthService {
+service BusinessService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (RegisterBusinessResponse);
 }
 
@@ -18,11 +18,13 @@ message RegisterBusinessRequest {
   string logoPath = 5;
   string hashedPassword = 6;
   Address address = 7;
+  string role = 8;
 }
 
 message RegisterBusinessResponse {
   string businessId = 1;
   string email = 2;
+  string role = 3;
 }
 
 message Address{
