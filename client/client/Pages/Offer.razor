@@ -1,148 +1,133 @@
 @page "/offers/{id}"
 
-
 @using client.DTO
 @using client.Models
 @using client.Services
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
-@inject IOrderService OrderService;
-@inject IOfferService OfferService;
-
+@inject IOrderService OrderService
+@inject IOfferService OfferService
 @inject NavigationManager NavigationManager
-@inject HttpClient HttpClient;
+@inject HttpClient HttpClient
 
 @if (_offer is not null)
 {
-    <div class="container">
-        <div>
-            <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
-
-            <!-- <img src="images/bread2.webp" alt="Offer Image" class="offer-image"/>-->
-            <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
-            <header class="BusinessName">@_offer.Title</header>
-            <div class="offer__top--left">@_offer.NumberOfItems Left</div>
-        </div>
-
-        <div class="float-container">
-            <!-- Left -->
-            <div class="float-child">
-                <div class="row">
-                    <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
-                    <p>@_offer.Categories</p>
-                </div>
-                <div class="row">
-                    <img src="images/icons/star.png" alt="Star icon" class="icon"/>
-                    <p>STARS HERE</p>
-                </div>
-                <div class="row">
-                    <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
-                    <p>Collect @_offer.PickupDate.Day/@_offer.PickupDate.Month/@_offer.PickupDate.Year from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
-                </div>
-            </div>
-
-            <!-- Right -->
-            <div class="float-child2">
-                <div class="crossed-row">
-                    <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
-                </div>
-                <div class="row">
-                    <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
-                </div>
-                <div class="row">
-                    <div class="amount-reserve-container">
-                        <label for="amount">
-                            <strong>Amount:</strong>
-                        </label>
-                        
-                        <div id="amount">
-                            <button @onclick="DecreaseQuantity">-</button>
-                            <span>@amount</span>
-                            <button @onclick="IncreaseQuantity">+</button>
-                        </div>
-                        <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="location">
-            <div class="location-content">
-                <div class="location-row">
-                    <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
-                    <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
-                </div>
-            </div>
-        </div>
-        
-        <div class="description">
-            <h5>Description</h5>
-            <p>@_offer.Description</p>
+<div class="container">
+    <div>
+        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
+        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
+        <header class="BusinessName">@_offer.Title</header>
+        <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
+            @( _offer.NumberOfAvailableItems > 0
+            ? $"{_offer.NumberOfAvailableItems} Left"
+            : "Sold Out" )
         </div>
     </div>
+
+    <div class="float-container">
+        <!-- Left -->
+        <div class="float-child">
+            <div class="row">
+                <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
+                <p>@_offer.Categories</p>
+            </div>
+            <div class="row">
+                <img src="images/icons/star.png" alt="Star icon" class="icon"/>
+                <p>STARS HERE</p>
+            </div>
+            <div class="row">
+                <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
+                <p>Collect @_offer.PickupDate.Day/@_offer.PickupDate.Month/@_offer.PickupDate.Year
+                    from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute
+                    to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
+            </div>
+        </div>
+
+        <!-- Right -->
+        <div class="float-child2">
+            <div class="crossed-row">
+                <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
+            </div>
+            <div class="row">
+                <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
+            </div>
+            <div class="row">
+                <div class="amount-reserve-container">
+                    <label for="amount">
+                        <strong>Amount:</strong>
+                    </label>
+
+                    <div id="amount">
+                        <button @onclick="DecreaseQuantity">-</button>
+                        <span>@amount</span>
+                        <button @onclick="IncreaseQuantity">+</button>
+                    </div>
+                    <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="location">
+        <div class="location-content">
+            <div class="location-row">
+                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="description">
+        <h5>Description</h5>
+        <p>@_offer.Description</p>
+    </div>
+</div>
 }
-else 
+else
 {
-    <p>Loading offer...</p>
+<p>Loading offer...</p>
 }
 
 @code {
+[Parameter] public string id { get; set; }
+private int amount = 1;
 
-    [Parameter] public string id { get; set; }
-    private int amount=1;
-    
+private OfferResponseDto? _offer;
 
+protected override async Task OnInitializedAsync()
+{
+_offer = await OfferService.GetOfferByIdAsync(id);
+}
 
-    private OfferResponseDto? _offer;
+private void IncreaseQuantity()
+{
+if (amount < _offer.NumberOfAvailableItems)
+amount++;
+}
 
-    protected override async Task OnInitializedAsync()
-    {
-        _offer = await OfferService.GetOfferByIdAsync(id);
-    }
-    
-    
+private void DecreaseQuantity()
+{
+if (amount > 1)
+amount--;
+}
 
-    // private List<Review> Reviews = new List<Review>
-    // {
-    //     new Review { Name = "Sasha", Rating = 5, Comment = "Very nice, I got a lot of good, soft bread." },
-    //     new Review { Name = "Mariia", Rating = 1, Comment = "Very bad, I got potato instead..." },
-    //     new Review { Name = "Matej", Rating = 2, Comment = "Ok." }
-    // };
+private async Task SubmitPurchase()
+{
+var request = new OrderRequestDto
+{
+OfferId = id,
+NumberOfItems = amount,
+UserId = "123abc"
+};
 
-    private void IncreaseQuantity()
-    {
-        if (amount < _offer.NumberOfAvailableItems)
-            amount++;
-    }
-
-    private void DecreaseQuantity()
-    {
-        if (amount > 1)
-            amount--;
-    }
-
-    private async Task SubmitPurchase()
-    {
-        // Create the dto to send
-        var request = new OrderRequestDto
-        {
-            OfferId = id,
-            NumberOfItems = amount,
-            UserId = "123abc"
-        };
-
-        // Send the request to the server to create a Stripe checkout session
-        try
-        {
-            var response = await OrderService.PlaceOrderAsync(request);
-
-            // Get the session URL from the response
-            string sessionUrl = response.Url;
-            // Redirect the user to the Stripe checkout page
-            NavigationManager.NavigateTo(sessionUrl);
-        }
-        catch (Exception e)
-        {
-            //errorLabel = e.Message;
-        }
-    }
+try
+{
+var response = await OrderService.PlaceOrderAsync(request);
+string sessionUrl = response.Url;
+NavigationManager.NavigateTo(sessionUrl);
+}
+catch (Exception e)
+{
+// Handle errors (e.g., display a message to the user)
+}
+}
 }

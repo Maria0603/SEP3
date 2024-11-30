@@ -3,7 +3,6 @@ package com.example.server.services;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
-import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
@@ -15,7 +14,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
-import com.google.protobuf.Empty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -59,10 +57,8 @@ import java.util.stream.Collectors;
     return DtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
   }
 
-  public PlaceOrderSessionResponseDto placeOrder(
-      PlaceOrderRequestDto requestDto)
-  {
-    // Save order with status "Pending" first
+  public PlaceOrderSessionResponseDto placeOrder(PlaceOrderRequestDto requestDto) {
+
     AddOrderRequest orderRequest = AddOrderRequest.newBuilder()
         .setOfferId(requestDto.getOfferId())
         .setNumberOfItems(requestDto.getNumberOfItems())
@@ -72,80 +68,73 @@ import java.util.stream.Collectors;
     System.out.println("Request for database built");
 
     OrderResponse databaseResponse = dataServerStub.addOrder(orderRequest);
-    if (databaseResponse == null || databaseResponse.getId().isEmpty())
+    if (databaseResponse == null || databaseResponse.getId().isEmpty()) {
       throw new IllegalArgumentException("Invalid order ID.");
-
-    System.out.println("price per item: " + databaseResponse.getPricePerItem());
+    }
 
     System.out.println("Order initially saved in database");
 
-    updateNumberOfAvailableItems(requestDto.getOfferId(),
-        requestDto.getNumberOfItems());
-    try
-    {
-      // Session parameters
+    try {
+
       Map<String, Object> sessionParams = new HashMap<>();
       sessionParams.put("payment_method_types", List.of("card"));
       sessionParams.put("mode", "payment");
       sessionParams.put("success_url", successUrl);
       sessionParams.put("cancel_url", cancelUrl);
-      sessionParams.put("line_items", List.of(Map.of("price_data",
-          Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
-              // this is the amount in ore; it must be above 250, as established by Stripe
-              "unit_amount", databaseResponse.getPricePerItem() * 100),
-          "quantity", requestDto.getNumberOfItems())));
+      sessionParams.put("line_items", List.of(Map.of(
+          "price_data", Map.of(
+              "currency", "dkk",
+              "product_data", Map.of("name", "Offer"),
+              "unit_amount", databaseResponse.getPricePerItem() * 100 // Stripe requires amounts in the smallest currency unit
+          ),
+          "quantity", requestDto.getNumberOfItems()
+      )));
 
       Map<String, Object> metadata = new HashMap<>();
       metadata.put("orderId", databaseResponse.getId());
 
       sessionParams.put("metadata", metadata);
-      // Create session
-      Session session = Session.create(sessionParams);
 
-      // Return session URL
+      Session session = Session.create(sessionParams);
+      
       PlaceOrderSessionResponseDto response = new PlaceOrderSessionResponseDto();
       response.setUrl(session.getUrl());
       response.setSessionId(session.getId());
       return response;
-    }
-    catch (StripeException e)
-    {
-      e.printStackTrace(); // We need a logger guys
+
+    } catch (StripeException e) {
+      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
 
-  public void refineOrder(String payload, String sigHeader)
-  {
+  public void refineOrder(String payload, String sigHeader) {
     System.out.println("payload: " + payload);
     System.out.println("sigHeader: " + sigHeader);
 
     Event event;
-    try
-    {
+    try {
       event = Webhook.constructEvent(payload, sigHeader, stripeSigningSecret);
-    }
-    catch (SignatureVerificationException e)
-    {
+    } catch (SignatureVerificationException e) {
       e.printStackTrace();
       throw new IllegalArgumentException("Invalid Signature");
     }
 
-    // Handle the event
-    if ("checkout.session.completed".equals(event.getType()))
-    {
+    if ("checkout.session.completed".equals(event.getType())) {
       Session session = (Session) event.getDataObjectDeserializer().getObject()
           .orElse(null);
 
-      if (session != null)
-      {
+      if (session != null) {
         String orderId = session.getMetadata().get("orderId");
 
-        // Update order status in the database
         updateOrderStatus(orderId, OrderStatus.RESERVED.getStatus());
+
+        OrderResponseDto order = getOrderById(orderId);
+        updateNumberOfAvailableItems(order.getOfferId(), order.getNumberOfItems());
       }
     }
   }
+
 
   public void updateOrderStatus(String orderId, String status)
   {
