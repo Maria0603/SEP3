@@ -15,7 +15,7 @@
     <div>
         <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
         <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
-        <header class="BusinessName">@_offer.Title</header>
+        <header class="BusinessName">BUSINESS NAME HERE</header>
         <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
             @( _offer.NumberOfAvailableItems > 0
             ? $"{_offer.NumberOfAvailableItems} Left"
@@ -25,20 +25,22 @@
 
     <div class="float-container">
         <!-- Left -->
-        <div class="float-child">
-            <div class="row">
-                <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
-                <p>@_offer.Categories</p>
-            </div>
-            <div class="row">
-                <img src="images/icons/star.png" alt="Star icon" class="icon"/>
-                <p>STARS HERE</p>
-            </div>
-            <div class="row">
-                <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
-                <p>Collect @_offer.PickupDate.Day/@_offer.PickupDate.Month/@_offer.PickupDate.Year
-                    from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute
-                    to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
+        <div><h2>@_offer.Title</h2>
+            <div class="float-child">
+                <div class="row">
+                    <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
+                    <p>@string.Join(", ", _offer.Categories)</p>
+                </div>
+                <div class="row">
+                    <img src="images/icons/star.png" alt="Star icon" class="icon"/>
+                    <p>STARS HERE</p>
+                </div>
+                <div class="row">
+                    <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
+                    <p>Collect @_offer.PickupDate.Day/@_offer.PickupDate.Month/@_offer.PickupDate.Year
+                        from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute
+                        to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
+                </div>
             </div>
         </div>
 
@@ -88,46 +90,48 @@ else
 }
 
 @code {
-[Parameter] public string id { get; set; }
-private int amount = 1;
+    [Parameter] public string id { get; set; }
+    private int amount = 1;
 
-private OfferResponseDto? _offer;
+    private OfferResponseDto? _offer;
 
-protected override async Task OnInitializedAsync()
-{
-_offer = await OfferService.GetOfferByIdAsync(id);
-}
+    protected override async Task OnInitializedAsync()
+    {
+        _offer = await OfferService.GetOfferByIdAsync(id);
+    }
 
-private void IncreaseQuantity()
-{
-if (amount < _offer.NumberOfAvailableItems)
-amount++;
-}
+    private void IncreaseQuantity()
+    {
+        if (amount < _offer.NumberOfAvailableItems)
+            amount++;
+    }
 
-private void DecreaseQuantity()
-{
-if (amount > 1)
-amount--;
-}
+    private void DecreaseQuantity()
+    {
+        if (amount > 1)
+            amount--;
+    }
 
-private async Task SubmitPurchase()
-{
-var request = new OrderRequestDto
-{
-OfferId = id,
-NumberOfItems = amount,
-UserId = "123abc"
-};
+    private async Task SubmitPurchase()
+    {
+        var request = new OrderRequestDto
+        {
+            OfferId = id,
+            NumberOfItems = amount,
+            UserId = "123abc"
+        };
 
-try
-{
-var response = await OrderService.PlaceOrderAsync(request);
-string sessionUrl = response.Url;
-NavigationManager.NavigateTo(sessionUrl);
-}
-catch (Exception e)
-{
+        try
+        {
+            var response = await OrderService.PlaceOrderAsync(request);
+            string sessionUrl = response.Url;
+            NavigationManager.NavigateTo(sessionUrl);
+        }
+        catch (Exception e)
+        {
 // Handle errors (e.g., display a message to the user)
+        }
+    }
+
 }
-}
-}
+
