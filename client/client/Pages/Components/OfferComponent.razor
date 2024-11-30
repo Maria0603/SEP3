@@ -13,17 +13,28 @@
 
         <div class="offer__top--business">
             <div class="offer__top--business__icon">
-                <img src="https://cdn-icons-png.flaticon.com/512/1170/1170627.png" alt="Business Icon">
-                @* <img src="@OfferData.BusinessDetails.Icon" alt="Business Icon"> *@
+                @if (!string.IsNullOrEmpty(OfferData.ImagePath))
+                {
+                <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+                }
+                else
+                {
+                <img src="images/icons/cart.jpeg" alt="Default Logo">
+                }
             </div>
             <h3 class="offer__top--business__name"> Business name</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
         </div>
     </div>
     <div class="offer__img">
+        @if (!string.IsNullOrEmpty(OfferData.ImagePath))
+        {
         <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
-        @* <img src="/images/7aa8c421-3bf0-4d16-ad2b-c6400fdae530.jpg" alt="Offer Image"> *@
-        @* <img src="@OfferData.Image" alt="Offer Image"> *@
+        }
+        else
+        {
+        <img src="images/icons/noimage.png" alt="Default Logo">
+        }
     </div>
 
     <div class="offer__bottom">
