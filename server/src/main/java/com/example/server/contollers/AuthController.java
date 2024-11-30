@@ -2,6 +2,7 @@ package com.example.server.contollers;
 
 import com.example.sep3.grpc.LoginBusinessRequest;
 import com.example.sep3.grpc.LoginBusinessResponse;
+import com.example.server.dto.auth.CredentialsResponseDto;
 import com.example.server.dto.auth.LoginBusinessRequestDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
@@ -27,10 +28,10 @@ import java.util.List;
     }
 
     @PostMapping("login/business")
-    public ResponseEntity<LoginBusinessResponse> loginBusiness(LoginBusinessRequest loginBusinessRequest) {
+    public ResponseEntity<CredentialsResponseDto> loginBusiness(@RequestBody LoginBusinessRequestDto loginBusinessRequestDto) {
 
         try{
-            LoginBusinessResponse response = authService.loginBusiness(loginBusinessRequest);
+            LoginBusinessResponse response = authService.loginBusiness(loginBusinessRequestDto);
             return ResponseEntity.ok(response);
         } catch (IllegalArgumentException e) {
             e.printStackTrace();

@@ -1,9 +1,10 @@
 package com.example.server.services;
 
-import com.example.sep3.grpc.AuthServiceGrpc;
+import com.example.sep3.grpc.BusinessServiceGrpc;
 import com.example.sep3.grpc.LoginBusinessRequest;
 import com.example.sep3.grpc.LoginBusinessResponse;
 import com.example.server.DataServerStub;
+import com.example.server.dto.auth.LoginBusinessRequestDto;
 import io.grpc.stub.StreamObserver;
 import org.springframework.stereotype.Service;
 import com.example.sep3.grpc.RegisterBusinessResponse;
@@ -19,7 +20,7 @@ import java.io.IOException;
 
 import static com.example.server.converters.OfferDtoGrpcConverter.SaveOfferResponseGrpc_To_OfferResponseDto;
 
-@Service public class AuthService
+@Service public class AuthService extends BusinessServiceGrpc.BusinessServiceImplBase
 {
   private final DataServerStub dataServerStub;
   private final ImageStorageService imageStorageService;
@@ -61,8 +62,8 @@ import static com.example.server.converters.OfferDtoGrpcConverter.SaveOfferRespo
     }
   }
 
-  @Override
-    public void loginBusiness(LoginBusinessRequest request, StreamObserver<LoginBusinessResponse> responseObserver) {
+
+    public void loginBusiness(LoginBusinessRequestDto request) {
         try {
             // Validate the request (basic example)
             if (request.getEmail().isEmpty() || request.getPassword().isEmpty()) {
@@ -71,16 +72,24 @@ import static com.example.server.converters.OfferDtoGrpcConverter.SaveOfferRespo
             }
 
             // Example of interacting with the stub to retrieve data (replace with your actual logic)
-            String businessId = dataServerStub.findBusinessIdByEmailAndPassword(request.getEmail(), request.getPassword());
-            if (businessId == null) {
+            LoginBusinessResponse businessResponse = dataServerStub.findBusinessByEmail(request.getEmail());
+            if (businessResponse.getBusinessId() == null) {
                 responseObserver.onError(new IllegalArgumentException("Invalid email or password."));
                 return;
             }
 
-            // Create a response
+            if (!PasswordHandler.matches(request.getPassword(), businessResponse.getHashedPassword())) {
+                responseObserver.onError(new IllegalArgumentException("Invalid password."));
+                return;
+            }
+
+            // Generate JWT token (replace with actual implementation)
+            String jwtToken = generateJwtToken(businessResponse.getBusinessId());
+
             LoginBusinessResponse response = LoginBusinessResponse.newBuilder()
-                    .setBusinessId(businessId)
-                    .setHashedPassword("hashedPasswordPlaceholder") // Replace with actual hashed password logic
+                    .setBusinessId(businessResponse.getBusinessId())
+                    .setJwtToken(jwtToken)
+                    .setMessage("Login successful.")
                     .build();
 
             // Send the response
@@ -91,4 +100,5 @@ import static com.example.server.converters.OfferDtoGrpcConverter.SaveOfferRespo
             responseObserver.onError(e);
         }
     }
+
 }

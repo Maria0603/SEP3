@@ -20,6 +20,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
   }
 
+//  @Override public void getBusinessByEmail(){
+//
+//  }
+
   @Override public void registerBusiness(RegisterBusinessRequest request,
       StreamObserver<RegisterBusinessResponse> responseObserver)
   {

@@ -8,7 +8,7 @@ package proto;
 
 service BusinessService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (RegisterBusinessResponse);
-  rpc LoginBusiness(LoginBusinessRequest) returns (LoginBusinessResponse);
+  rpc GetBusinessByEmail(LoginBusinessRequest) returns (BusinessResponse);
 }
 
 message LoginBusinessRequest {
@@ -16,9 +16,16 @@ message LoginBusinessRequest {
   string password = 2;
 }
 
-message LoginBusinessResponse {
+message BusinessResponse {
   string businessId = 1;
-  string hashedPassword = 2;
+  string businessName = 2;
+  string email = 3;
+  string phoneNumber = 4;
+  string cvr = 5;
+  string logoPath = 6;
+  string hashedPassword = 7;
+  Address address = 8;
+  string role = 9;
 }
 
 message RegisterBusinessRequest {

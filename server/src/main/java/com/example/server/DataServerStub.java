@@ -74,6 +74,10 @@ public class DataServerStub
     return businessBlockingStub.registerBusiness(request);
   }
 
+  public LoginBusinessResponse findBusinessById(BusinessIdRequest request){
+    return businessBlockingStub.loginBusiness(request);
+  }
+
   public void shutdown()
   {
     channel.shutdown();
