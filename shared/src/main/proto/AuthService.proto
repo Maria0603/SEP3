@@ -8,6 +8,17 @@ package proto;
 
 service AuthService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (RegisterBusinessResponse);
+  rpc LoginBusiness(LoginBusinessRequest) returns (LoginBusinessResponse);
+}
+
+message LoginBusinessRequest {
+  string email = 1;
+  string password = 2;
+}
+
+message LoginBusinessResponse {
+  string businessId = 1;
+  string hashedPassword = 2;
 }
 
 message RegisterBusinessRequest {
