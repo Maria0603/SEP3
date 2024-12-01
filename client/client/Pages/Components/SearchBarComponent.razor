@@ -1,0 +1,40 @@
+﻿@code {
+private bool showFilters = false;
+private int price = 50; // Default price value
+private int time = 12;  // Default time value
+
+private void ToggleFilters()
+{
+showFilters = !showFilters;
+}
+}
+
+<div class="search-bar-container">
+    <div class="map-icon">
+        <i class="bi bi-geo-alt"></i>
+    </div>
+    <div class="search-bar">
+        <input class="search-input" placeholder="Search..." />
+        <div class="filter-icon" @onclick="ToggleFilters">
+            <i class="bi bi-funnel"></i>
+        </div>
+    </div>
+</div>
+
+@if (showFilters)
+{
+<div class="filters">
+    <div class="filter-category">
+        <label for="category">Category</label>
+        <input type="text" id="category" placeholder="Category" />
+    </div>
+    <div class="filter-price">
+        <label for="price">Price: @price</label>
+        <input type="range" id="price" min="0" max="100" @bind="price" />
+    </div>
+    <div class="filter-time">
+        <label for="time">Time: @time hours</label>
+        <input type="range" id="time" min="0" max="24" @bind="time" />
+    </div>
+</div>
+}

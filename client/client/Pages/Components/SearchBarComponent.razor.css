@@ -1,0 +1,80 @@
+﻿/* Container for the entire search bar */
+.search-bar-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+  width: 100%; /* Ensure the container takes the full width */
+  max-width: 800px; /* Set a maximum width for the container */
+  /* Center the container horizontally */
+}
+
+/* Styling for the map icon bubble */
+.map-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Search bar styling */
+.search-bar {
+  display: flex;
+  align-items: center;
+  flex-grow: 1;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+  padding: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 100%;
+}
+
+.search-input {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  padding: 5px;
+  border-radius: 5px;
+  background-color: #fff;
+  width: 100%;
+}
+
+
+
+/* Filter icon styling */
+.filter-icon {
+  cursor: pointer;
+}
+
+/* Filters styling */
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  background-color: #f5f5f5;
+  padding: 10px;
+  border-radius: 10px;
+  margin-top: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.filter-category,
+.filter-price,
+.filter-time {
+  display: flex;
+  flex-direction: column;
+}
+
+label {
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+input[type="range"] {
+  cursor: pointer;
+}
