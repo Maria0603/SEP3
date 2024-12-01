@@ -4,6 +4,8 @@
 @using client.Services
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+
 
 @if (createdOffer is null) {
     <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
@@ -93,39 +95,8 @@
         <button type="submit" class="btn btn-danger mt-3">Submit</button>
     </EditForm>
 }
-else {
-    <div class="mt-4">
-        <h3>Offer ID #@createdOffer.Id</h3>
-        <p>
 
-            <strong>Title:</strong> @createdOffer.Title
-        </p>
-        <p>
-            <strong>Description:</strong> @createdOffer.Description
-        </p>
-        <p><strong>Original Price:</strong> @createdOffer.OriginalPrice kr</p>
-        <p><strong>Offer Price:</strong> @createdOffer.OfferPrice kr</p>
-        <p>
-            <strong>Number of Items:</strong> @createdOffer.NumberOfItems
-        </p>
-        <p><strong>Pickup Date:</strong> @createdOffer.PickupDate.Day/@createdOffer.PickupDate.Month/@createdOffer.PickupDate.Year</p>
-        <p>
-            <strong>Pickup Time:</strong> @createdOffer.PickupTimeStart.Hour:@createdOffer.PickupTimeStart.Minute -
-            @createdOffer.PickupTimeEnd.Hour:@createdOffer.PickupTimeEnd.Minute
-        </p>
-        <p>
-            <strong>Categories:</strong> @string.Join(", ", createdOffer.Categories)
-        </p>
-        <p>
-            <strong>Status:</strong> @createdOffer.Status
-        </p>
-        <div>
-            <img src="@(HttpClient.BaseAddress + createdOffer.ImagePath)" alt="Offer Image" class="img-fluid" style="max-width: 300px;"/>
-        </div>
-        <button class="btn btn-danger mt-3" @onclick="ResetForm">Create Another Offer</button>
-
-    </div>
-}
+else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
 @code {
 
