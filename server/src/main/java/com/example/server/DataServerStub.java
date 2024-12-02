@@ -19,6 +19,7 @@ public class DataServerStub
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
     orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
     businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
+
     System.out.println("DataServerStub created");
   }
 
@@ -74,9 +75,11 @@ public class DataServerStub
     return businessBlockingStub.registerBusiness(request);
   }
 
-  public LoginBusinessResponse findBusinessById(BusinessIdRequest request){
-    return businessBlockingStub.loginBusiness(request);
+  public BusinessResponse getBusinessByEmail(EmailRequest request)
+  {
+    return businessBlockingStub.getBusinessByEmail(request);
   }
+
 
   public void shutdown()
   {
