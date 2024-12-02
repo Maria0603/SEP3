@@ -1,6 +1,8 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.auth.CredentialsResponseDto;
+import com.example.server.dto.auth.LoginBusinessRequest;
+import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.services.security.AuthService;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
   {
     return ResponseEntity.ok(authService.registerBusiness(registerRequest));
   }
-/*
+
   @PostMapping("/login") public ResponseEntity<CredentialsResponseDto> logInBusiness(
       @RequestBody LoginBusinessRequest logInRequest)
   {
@@ -30,5 +32,5 @@ import org.springframework.web.bind.annotation.RestController;
       @RequestBody RefreshTokenRequest refreshTokenRequest)
   {
     return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
-  }*/
+  }
 }
