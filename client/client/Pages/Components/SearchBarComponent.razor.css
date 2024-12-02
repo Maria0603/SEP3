@@ -1,4 +1,6 @@
-﻿/* Container for the entire search bar */
+﻿/* Styling Section */
+
+/* Container for the entire search bar */
 .search-bar-container {
   display: flex;
   align-items: center;

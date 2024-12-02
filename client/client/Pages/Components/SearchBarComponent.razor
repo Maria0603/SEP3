@@ -18,12 +18,14 @@
 
     private void ApplyFilters() {
         showFilterPopup = false;
+        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
         // Add logic to apply filters
     }
 
     private void ClearFilters() {
         priceRange = new int[] { 0, 100 };
         timeRange = new int[] { 0, 24 };
+        Console.WriteLine("Filters Cleared");
     }
 }
 
@@ -63,7 +65,6 @@
                     </SfSlider>
                     <p>From: @priceRange[0] To: @priceRange[1]</p>
                 </div>
-
             </div>
             <div class="popup-footer">
                 <button class="clear-button" @onclick="ClearFilters">Clear filters</button>
