@@ -8,6 +8,8 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Optional;
+
 @GrpcService public class BusinessServiceImpl
     extends BusinessServiceGrpc.BusinessServiceImplBase
 {
@@ -38,6 +40,34 @@ import org.springframework.beans.factory.annotation.Autowired;
     responseObserver.onCompleted();
   }
 
+  @Override public void getBusinessByEmail(EmailRequest request,
+      StreamObserver<BusinessResponse> responseObserver)
+  {
+    Optional<BusinessDao> business = businessRepository.findByEmail(
+        request.getEmail());
+    if (business.isPresent())
+    {
+      BusinessResponse response = buildBusinessResponse(business.get());
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+      return;
+    }
+
+    throw new IllegalArgumentException("Business not found");
+  }
+
+  private BusinessResponse buildBusinessResponse(BusinessDao business)
+  {
+    return BusinessResponse.newBuilder()
+        .setBusinessName(business.getBusinessName()).setAddress(
+            AddressConverter.convertAddressDaoToGrpcAddress(
+                business.getAddress())).setEmail(business.getEmail())
+        .setCvr(business.getCvr()).setHashedPassword(business.getPassword())
+        .setId(business.getId()).setLogoPath(business.getLogoPath())
+        .setPhoneNumber(business.getPhoneNumber()).setRole(business.getRole())
+        .build();
+  }
+
   private BusinessDao generateBusinessDaoFromRegisterBusinessRequest(
       RegisterBusinessRequest request)
   {
@@ -45,9 +75,10 @@ import org.springframework.beans.factory.annotation.Autowired;
     business.setBusinessName(request.getBusinessName());
     business.setCvr(request.getCvr());
     business.setEmail(request.getEmail());
-    business.setHashedPassword(request.getHashedPassword());
+    business.setPassword(request.getHashedPassword());
     business.setPhoneNumber(request.getPhoneNumber());
     business.setLogoPath(request.getLogoPath());
+    business.setRole(request.getRole());
     business.setAddress(
         AddressConverter.convertGrpcAddressToAddressDao(request.getAddress()));
     return business;
@@ -57,6 +88,6 @@ import org.springframework.beans.factory.annotation.Autowired;
       BusinessDao business)
   {
     return RegisterBusinessResponse.newBuilder().setBusinessId(business.getId())
-        .setEmail(business.getEmail()).build();
+        .setEmail(business.getEmail()).setRole(business.getRole()).build();
   }
 }
