@@ -8,6 +8,7 @@ import com.example.server.dto.offer.OfferResponseDto;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -24,7 +25,10 @@ import java.util.List;
   }
 
   //Look at OfferTestClient to see how the request should look like
-  @PostMapping public ResponseEntity<OfferResponseDto> saveOffer(
+  // Only accessible by BUSINESS and ADMIN
+  @PostMapping
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'ADMIN')")
+  public ResponseEntity<OfferResponseDto> saveOffer(
       @Valid @RequestBody CreateOfferRequestDto offerRequestDto)
   {
     try
