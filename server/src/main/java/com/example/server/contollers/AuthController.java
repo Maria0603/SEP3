@@ -1,41 +1,34 @@
 package com.example.server.contollers;
 
-import com.example.sep3.grpc.LoginBusinessRequest;
-import com.example.sep3.grpc.LoginBusinessResponse;
 import com.example.server.dto.auth.CredentialsResponseDto;
-import com.example.server.dto.auth.LoginBusinessRequestDto;
-import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.offer.OfferResponseDto;
-import com.example.server.dto.offer.ShortOfferResponseDto;
-import com.example.server.services.AuthService;
-import com.example.server.services.OfferService;
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
+import com.example.server.dto.business.RegisterBusinessRequestDto;
+import com.example.server.services.security.AuthService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
+@RestController @RequestMapping("/auth") @RequiredArgsConstructor public class AuthController
+{
+  private final AuthService authService;
 
-@RestController
-@RequestMapping("/auth") public class AuthController {
+  @PostMapping("/registration/business") public ResponseEntity<CredentialsResponseDto> registerBusiness(
+      @RequestBody RegisterBusinessRequestDto registerRequest)
+  {
+    return ResponseEntity.ok(authService.registerBusiness(registerRequest));
+  }
+/*
+  @PostMapping("/login") public ResponseEntity<CredentialsResponseDto> logInBusiness(
+      @RequestBody LoginBusinessRequest logInRequest)
+  {
+    return ResponseEntity.ok(authService.logIn(logInRequest));
+  }
 
-    private final AuthService authService;
-
-
-
-    public AuthController(AuthService authService) {
-        this.authService = authService;
-    }
-
-    @PostMapping("login/business")
-    public ResponseEntity<CredentialsResponseDto> loginBusiness(@RequestBody LoginBusinessRequestDto loginBusinessRequestDto) {
-
-        try{
-            LoginBusinessResponse response = authService.loginBusiness(loginBusinessRequestDto);
-            return ResponseEntity.ok(response);
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException(e.getMessage()); // TODO: update
-        }
-    }
+  @PostMapping("/refresh") public ResponseEntity<CredentialsResponseDto> refreshToken(
+      @RequestBody RefreshTokenRequest refreshTokenRequest)
+  {
+    return ResponseEntity.ok(authService.refreshToken(refreshTokenRequest));
+  }*/
 }
