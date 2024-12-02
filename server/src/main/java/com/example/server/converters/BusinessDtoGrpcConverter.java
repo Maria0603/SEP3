@@ -1,8 +1,6 @@
 package com.example.server.converters;
 
 import com.example.sep3.grpc.RegisterBusinessRequest;
-import com.example.sep3.grpc.RegisterBusinessResponse;
-import com.example.server.dto.auth.CredentialsResponseDto;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.shared.model.UserRole;
 
@@ -20,17 +18,5 @@ public class BusinessDtoGrpcConverter
         .setRole(UserRole.BUSINESS.getRoleName()).build();
   }
 
-  public static CredentialsResponseDto RegisterBusinessResponse_To_CredentialsResponseDto(
-      RegisterBusinessResponse response, String jwt, String refreshToken, java.util.Date expiresAt)
-  {
-    CredentialsResponseDto dto = new CredentialsResponseDto();
-    dto.setId(response.getBusinessId());
-    dto.setRole(response.getRole());
-    dto.setToken(jwt);
-    dto.setRefreshToken(refreshToken);
-    dto.setExpiresAt(expiresAt);
-
-    return dto;
-  }
 
 }
