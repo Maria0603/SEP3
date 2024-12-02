@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
 using Stripe;
+using Syncfusion.Blazor;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -13,6 +14,7 @@ builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddSyncfusionBlazor();
 
 
 StripeConfiguration.ApiKey =

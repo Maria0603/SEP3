@@ -1,18 +1,30 @@
 ﻿@using client.DTO
+@inject IJSRuntime JSRuntime
+@using Syncfusion.Blazor.Inputs
+@using Syncfusion.Blazor
 
 @code {
-    private bool showFilters = false;
-    private int price = 50; // Default price value
-    private int time = 12; // Default time value
+    private bool showFilterPopup = false;
+    private int[] priceRange = { 10, 100 };
+    private int[] timeRange = { 6, 16 };
 
     private CreateOfferRequestDto offerDto = new CreateOfferRequestDto {
         Categories = new List<string>()
     };
 
     private void ToggleFilters() {
-        showFilters = !showFilters;
+        showFilterPopup = !showFilterPopup;
     }
 
+    private void ApplyFilters() {
+        showFilterPopup = false;
+        // Add logic to apply filters
+    }
+
+    private void ClearFilters() {
+        priceRange = new int[] { 0, 100 };
+        timeRange = new int[] { 0, 24 };
+    }
 }
 
 <div class="search-bar-container">
@@ -25,23 +37,38 @@
             <i class="bi bi-search"></i>
         </div>
     </div>
-    <div class="filter-icon" @onclick="ToggleFilters">
-        <i class="bi bi-funnel"></i>
+    <div class="filter-icon-bubble" @onclick="ToggleFilters">
+        <i class="bi bi-sliders"></i>
     </div>
+</div>
 
-    @if (showFilters) {
-        <div class="filters-bubble">
-            <div class="filters">
+@if (showFilterPopup) {
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header">
+                <h3>Filters</h3>
+                <button class="close-button" @onclick="ToggleFilters">&times;</button>
+            </div>
+            <div class="popup-body">
                 <CategoryPickerComponent offerDto="offerDto"/>
-                <div class="filter-price">
-                    <label for="price">Price: @price</label>
-                    <input type="range" id="price" min="0" max="100" @bind="price"/>
+                <div class="filter-section">
+                    <label>Collection Time</label>
+                    <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1">
+                    </SfSlider>
+                    <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p>
                 </div>
-                <div class="filter-time">
-                    <label for="time">Time: @time hours</label>
-                    <input type="range" id="time" min="0" max="24" @bind="time"/>
+                <div class="filter-section">
+                    <label>Price Range</label>
+                    <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="100" Step="1">
+                    </SfSlider>
+                    <p>From: @priceRange[0] To: @priceRange[1]</p>
                 </div>
+
+            </div>
+            <div class="popup-footer">
+                <button class="clear-button" @onclick="ClearFilters">Clear filters</button>
+                <button class="apply-button" @onclick="ApplyFilters">Apply</button>
             </div>
         </div>
-    }
-</div>
+    </div>
+}

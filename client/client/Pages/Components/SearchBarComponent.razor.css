@@ -6,12 +6,10 @@
   width: 100%;
   max-width: 800px;
   margin: 0 auto;
-  position: relative; /* Positioning context for filters */
 }
 
 /* Styling for the map icon bubble */
-.map-icon,
-.filter-icon{
+.map-icon {
   width: 40px;
   height: 40px;
   display: flex;
@@ -32,7 +30,6 @@
   border-radius: 10px;
   padding: 10px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  width: 100%;
 }
 
 .search-input {
@@ -44,42 +41,106 @@
   background-color: #fff;
 }
 
-.search-icon{
+/* Search icon inside the search bar */
+.search-icon {
   margin-left: 10px;
+  cursor: pointer;
 }
 
-/* Filters bubble styling */
-.filters-bubble {
-  position: absolute;
-  top: calc(100% + 10px); /* Position the bubble right below the search bar with spacing */
+/* Styling for the filter icon bubble */
+.filter-icon-bubble {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Popup overlay */
+.popup-overlay {
+  position: fixed;
+  top: 0;
   left: 0;
   width: 100%;
-  background-color: #f5f5f5;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+/* Popup window */
+.popup-window {
+  background-color: #fff;
   border-radius: 10px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 10;
-  padding: 10px;
+  width: 90%;
+  max-width: 500px;
+  padding: 20px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+  position: relative;
 }
 
-/* Filters styling */
-.filters {
+/* Popup header */
+.popup-header {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 20px;
 }
 
-.filter-category,
-.filter-price,
-.filter-time {
-  display: flex;
-  flex-direction: column;
+.popup-header h3 {
+  margin: 0;
 }
 
-label {
-  margin-bottom: 5px;
-  font-weight: bold;
-}
-
-input[type="range"] {
+.close-button {
+  background: none;
+  border: none;
+  font-size: 24px;
   cursor: pointer;
+}
+
+/* Popup body */
+.popup-body {
+  margin-bottom: 20px;
+}
+
+.filter-section {
+  margin-bottom: 15px;
+}
+
+.filter-section label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: block;
+}
+
+/* Popup footer */
+.popup-footer {
+  display: flex;
+  justify-content: space-between;
+}
+
+.clear-button,
+.apply-button {
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.clear-button {
+  background-color: #f5f5f5;
+  color: #333;
+}
+
+.apply-button {
+  background-color: #6200ee;
+  color: #fff;
 }
