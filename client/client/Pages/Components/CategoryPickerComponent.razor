@@ -1,0 +1,55 @@
+﻿@using client.DTO
+<div class="mb-3">
+    <label for="categories">Categories</label>
+    <div class="d-flex align-items-center">
+        <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
+            @foreach (var category in availableCategories) {
+                <option value="@category.Name">@category.Name</option>
+            }
+        </select>
+        <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
+    </div>
+    <div class="selected-categories mt-2">
+        @foreach (var category in offerDto.Categories) {
+            <div class="category-box">
+                <span class="category-text">@category</span>
+                <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+    [Parameter] public CreateOfferRequestDto offerDto { get; set; }
+    private string selectedCategory;
+    private string categoriesInput = string.Empty;
+
+    private List<Category> availableCategories = [
+        new Category { Name = "Bread" },
+        new Category { Name = "Vegan" },
+        new Category { Name = "Pastry" },
+        new Category { Name = "Dairy" }
+    ];
+
+    protected override void OnInitialized() {
+        if (availableCategories.Any()) {
+            selectedCategory = availableCategories.First().Name;
+        }
+    }
+
+    private void AddCategory() {
+        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
+            offerDto.Categories.Add(selectedCategory);
+        }
+    }
+
+    private void RemoveCategory(string category) {
+        offerDto.Categories.Remove(category);
+    }
+
+    public class Category {
+        public string Name { get; set; }
+        public bool IsSelected { get; set; }
+    }
+
+}

@@ -1,0 +1,33 @@
+﻿.selected-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.category-box {
+  background-color: #f0f0f0;
+  border-radius: 10px;
+  padding: 5px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 200px; /* Same fixed width for consistency */
+}
+
+.category-text {
+  flex: 1;
+  text-align: left; /* Align text to the left */
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflow */
+  text-overflow: ellipsis; /* Add ellipsis for overflow */
+}
+
+.category-box button {
+  margin-left: 10px;
+  align-self: flex-end; /* Align button to the bottom */
+}
+
+.category-dropdown {
+  width: fit-content;
+  min-width: 150px;
+}
