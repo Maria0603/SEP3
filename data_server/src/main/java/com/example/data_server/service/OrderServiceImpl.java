@@ -102,7 +102,8 @@ import java.util.Optional;
   private OrderResponse generateOrderResponseFromOrderDao(OrderDao orderDao)
   {
     return OrderResponse.newBuilder().setId(orderDao.getId())
-        .setUserId(orderDao.getUserId()).setOfferId(orderDao.getOffer().getId())
+        .setUserId(orderDao.getUserId())
+        .setOfferId(orderDao.getOffer().getId())
         .setNumberOfItems(orderDao.getNumberOfItems()).setOrderDate(
             DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
         .setOrderTime(
@@ -114,7 +115,7 @@ import java.util.Optional;
   private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
   {
     OrderDao order = new OrderDao();
-    //order.setUserId(request.getUserId());
+    order.setUserId(request.getUserId());
     order.setNumberOfItems(request.getNumberOfItems());
     order.setOrderDate(DateTimeConverter.getCurrentDateDao());
     order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
