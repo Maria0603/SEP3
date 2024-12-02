@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Components.Sections;
 using Microsoft.JSInterop;
 
 namespace client.Security;
-/*
+
 public class AuthStateProvider : AuthenticationStateProvider
 {
     private readonly HttpClient httpClient;
@@ -106,4 +106,4 @@ public class AuthStateProvider : AuthenticationStateProvider
         ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(identity);
         return new AuthenticationState(claimsPrincipal);
     }
-}*/
+}
