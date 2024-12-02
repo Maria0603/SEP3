@@ -19,22 +19,23 @@ showFilters = !showFilters;
             <i class="bi bi-funnel"></i>
         </div>
     </div>
+    @if (showFilters)
+    {
+    <div class="filters-bubble">
+        <div class="filters">
+            <div class="filter-category">
+                <label for="category">Category</label>
+                <input type="text" id="category" placeholder="Category" />
+            </div>
+            <div class="filter-price">
+                <label for="price">Price: @price</label>
+                <input type="range" id="price" min="0" max="100" @bind="price" />
+            </div>
+            <div class="filter-time">
+                <label for="time">Time: @time hours</label>
+                <input type="range" id="time" min="0" max="24" @bind="time" />
+            </div>
+        </div>
+    </div>
+    }
 </div>
-
-@if (showFilters)
-{
-<div class="filters">
-    <div class="filter-category">
-        <label for="category">Category</label>
-        <input type="text" id="category" placeholder="Category" />
-    </div>
-    <div class="filter-price">
-        <label for="price">Price: @price</label>
-        <input type="range" id="price" min="0" max="100" @bind="price" />
-    </div>
-    <div class="filter-time">
-        <label for="time">Time: @time hours</label>
-        <input type="range" id="time" min="0" max="24" @bind="time" />
-    </div>
-</div>
-}
