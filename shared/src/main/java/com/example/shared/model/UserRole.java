@@ -2,7 +2,7 @@ package com.example.shared.model;
 
 public enum UserRole
 {
-  BUSINESS("business"), CUSTOMER("customer");
+  BUSINESS("BUSINESS"), CUSTOMER("CUSTOMER");
   private final String roleName;
 
   UserRole(String roleName)
