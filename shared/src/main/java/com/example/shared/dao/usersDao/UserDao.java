@@ -4,15 +4,27 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 
-@Document(collection = "users") public abstract class UserDao
+import java.util.Collection;
+import java.util.List;
+/*
+@Document(collection = "users") public class UserDao implements
+    UserDetails
 {
   @Id private String id;
   @Field("email") @Indexed(unique = true) private String email;
   @Field("phone_number") private String phoneNumber;
   @Field("hashed_password") private String hashedPassword;
-  @Field("role") private String role; // "CUSTOMER" or "BUSINESS"
+  @Field("role")
+  private String role; // "CUSTOMER" or "BUSINESS"
 
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(new SimpleGrantedAuthority(role));
+  }
   public String getPhoneNumber()
   {
     return phoneNumber;
@@ -65,3 +77,4 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 }
 
+*/
