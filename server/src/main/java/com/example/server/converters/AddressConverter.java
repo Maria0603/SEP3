@@ -15,6 +15,20 @@ public class AddressConverter
 
   }
 
+  public static AddressDao convertGrpcAddressToAddressDao(Address address)
+  {
+    AddressDao addressDao = new AddressDao();
+    addressDao.setCity(address.getCity());
+    addressDao.setCountry(address.getCountry());
+    addressDao.setNumber(address.getNumber());
+    addressDao.setPostalCode(address.getPostalCode());
+    addressDao.setState(address.getState());
+    addressDao.setCounty(address.getCounty());
+    addressDao.setStreet(address.getStreet());
+
+    return addressDao;
+  }
+
   public static AddressDto convertGrpcAddressToAddressDto(Address address)
   {
     AddressDto addressDto = new AddressDto();
