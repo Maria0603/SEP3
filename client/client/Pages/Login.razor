@@ -1,4 +1,4 @@
-@page "/auth/login"
+<!-- @page "/auth/login"
 
 <div class="container d-flex flex-column align-items-center justify-content-center vh-100">
     <div class="card shadow p-4 text-center" style="max-width: 400px; width: 100%;">
@@ -23,5 +23,45 @@
     private void NavigateToCustomerLogin()
     {
         Navigation.NavigateTo("/auth/login/customer");
+    } -->
+@page "/auth/login"
+
+@using client.DTO.Auth
+@inject IAuthService AuthService
+@inject NavigationManager NavigationManager
+
+<h3>Login</h3>
+<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="loginModel.Email"/>
+    </div>
+    <div>
+        <label>Password:</label>
+        <InputText @bind-Value="loginModel.Password" Type="password"/>
+    </div>
+    <button type="submit">Login</button>
+</EditForm>
+
+@if (errorMessage != null)
+{
+    <p style="color: red;">@errorMessage</p>
+}
+
+@code {
+    private LoginRequestDto loginModel = new();
+    private string? errorMessage;
+
+    private async Task HandleLogin()
+    {
+        bool success = await AuthService.LoginAsync(new LoginRequestDto { Email = loginModel.Email, Password = loginModel.Password });
+        if (success)
+            NavigationManager.NavigateTo("/offers");
+        else
+            errorMessage = "Invalid credentials. Please try again.";
     }
+
 }
