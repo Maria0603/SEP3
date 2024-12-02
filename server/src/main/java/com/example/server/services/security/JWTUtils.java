@@ -2,6 +2,7 @@ package com.example.server.services.security;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -11,13 +12,15 @@ import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Component public class JWTUtils
 {
 
   private SecretKey Key;
-  private static final long EXPIRATION_TIME = 86400000; //24hours or 86400000 milisecs
+  private static final long EXPIRATION_TIME = 86400000; //24hours or 86400000 milliseconds
 
   public JWTUtils()
   {
@@ -34,10 +37,14 @@ import java.util.function.Function;
 
   public String generateToken(UserDetails userDetails)
   {
+    Map<String, Object> claims = new HashMap<>();
+    claims.put("role", userDetails.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .collect(Collectors.toList())); // Add roles as claims
     return Jwts.builder().subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
-        .signWith(Key).compact();
+        .signWith(Key).claims(claims).compact();
   }
 
   public String generateRefreshToken(HashMap<String, Object> claims,
