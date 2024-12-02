@@ -5,20 +5,20 @@ import com.example.server.DataServerStub;
 import com.example.server.converters.AddressConverter;
 import com.example.server.converters.BusinessDtoGrpcConverter;
 import com.example.server.dto.auth.CredentialsResponseDto;
+import com.example.server.dto.auth.LoginBusinessRequest;
+import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.services.ImageStorageService;
-import com.example.shared.dao.usersDao.BusinessDao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
 
-import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBusinessResponse_To_CredentialsResponseDto;
+import java.util.HashMap;
 
 @Service public class AuthService
 {
@@ -29,11 +29,13 @@ import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBus
   private final JWTUtils jwtUtils;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
+  private final UserDetailsService userDetailsService;
 
   @Autowired AuthService(DataServerStub dataServerStub,
       ImageStorageService imageService, JWTUtils jwtUtils,
       PasswordEncoder passwordEncoder,
-      AuthenticationManager authenticationManager)
+      AuthenticationManager authenticationManager,
+      UserDetailsService userDetailsService)
   {
     this.dataServerStub = dataServerStub;
     this.imageStorageService = imageService;
@@ -41,6 +43,7 @@ import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBus
     this.jwtUtils = jwtUtils;
     this.passwordEncoder = passwordEncoder;
     this.authenticationManager = authenticationManager;
+    this.userDetailsService = userDetailsService;
 
     System.out.println("AuthService created");
   }
@@ -62,10 +65,12 @@ import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBus
           passwordEncoder.encode(registrationRequestDto.getPassword()));
 
       //Send the request to the data server
-      RegisterBusinessResponse response = dataServerStub.registerBusiness(
-          registerBusinessRequest);
+      dataServerStub.registerBusiness(registerBusinessRequest);
 
-      authenticationManager.authenticate(
+      UserDetails userDetails = userDetailsService.loadUserByUsername(
+          registrationRequestDto.getEmail());
+
+      /*authenticationManager.authenticate(
           new UsernamePasswordAuthenticationToken(
               registrationRequestDto.getEmail(),
               registrationRequestDto.getPassword()));
@@ -77,19 +82,17 @@ import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBus
 
       //Convert to dao, because dao implements UserDetails interface
       BusinessDao business = generateBusinessDaoFromBusinessResponse(
-          businessResponse);
-      System.out.println("USER IS: " + business);
+          businessResponse);*/
+      System.out.println("USER IS: " + userDetails.getUsername());
 
       //Generate the token
-      String jwt = jwtUtils.generateToken(business);
+      String jwt = jwtUtils.generateToken(userDetails);
       String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
-          business);
+          userDetails);
 
       System.out.println("Token successfully generated");
       //Return the credentials
-      return RegisterBusinessResponse_To_CredentialsResponseDto(
-          response, jwt, refreshToken,
-          new Date(System.currentTimeMillis() + JWTUtils.getExpirationTime()));
+      return buildCredentialsResponseDto(jwt, refreshToken);
     }
     catch (IOException e)
     {
@@ -101,67 +104,56 @@ import static com.example.server.converters.BusinessDtoGrpcConverter.RegisterBus
 
   }
 
-  private BusinessDao generateBusinessDaoFromBusinessResponse(
-      BusinessResponse response)
-  {
-    BusinessDao dao = new BusinessDao();
-    dao.setId(response.getId());
-    dao.setCvr(response.getCvr());
-    dao.setEmail(response.getEmail());
-    dao.setAddress(
-        AddressConverter.convertGrpcAddressToAddressDao(response.getAddress()));
-    dao.setBusinessName(response.getBusinessName());
-    dao.setPhoneNumber(response.getPhoneNumber());
-    dao.setRole(response.getRole());
-    dao.setLogoPath(response.getLogoPath());
-    //TODO: not sure if i have to pass the raw password or the encoded one; I'll test
-    dao.setPassword(response.getHashedPassword());
-    return dao;
-  }
-/*
   public CredentialsResponseDto logIn(LoginBusinessRequest loginRequest)
   {
-    ReqRes response = new ReqRes();
-
     try
     {
       authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(signinRequest.getEmail(),
-              signinRequest.getPassword()));
-      var user = ourUserRepo.findByEmail(signinRequest.getEmail())
-          .orElseThrow();
-      System.out.println("USER IS: " + user);
-      var jwt = jwtUtils.generateToken(user);
-      var refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), user);
-      response.setStatusCode(200);
-      response.setToken(jwt);
-      response.setRefreshToken(refreshToken);
-      response.setExpirationTime("24Hr");
-      response.setMessage("Successfully Signed In");
+          new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+              loginRequest.getPassword()));
+
+      UserDetails userDetails = userDetailsService.loadUserByUsername(
+          loginRequest.getEmail());
+
+      /*BusinessResponse user = dataServerStub.getBusinessByEmail(
+          BusinessByEmailRequest.newBuilder().setEmail(loginRequest.getEmail())
+              .build());*/
+      System.out.println("USER IS: " + userDetails.getUsername());
+      String jwt = jwtUtils.generateToken(userDetails);
+      String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
+          userDetails);
+
+      return buildCredentialsResponseDto(jwt, refreshToken);
     }
     catch (Exception e)
     {
-      response.setStatusCode(500);
-      response.setError(e.getMessage());
+      throw new IllegalArgumentException(e.getMessage());
     }
-    return response;
   }
 
-  public ReqRes refreshToken(ReqRes refreshTokenReqiest)
+  public CredentialsResponseDto refreshToken(
+      RefreshTokenRequest refreshTokenRequest)
   {
-    ReqRes response = new ReqRes();
-    String ourEmail = jwtUtils.extractUsername(refreshTokenReqiest.getToken());
-    OurUsers users = ourUserRepo.findByEmail(ourEmail).orElseThrow();
-    if (jwtUtils.isTokenValid(refreshTokenReqiest.getToken(), users))
+    String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
+
+    UserDetails business = userDetailsService.loadUserByUsername(
+        email); //Remember, the username is the email
+
+    if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(), business))
     {
-      var jwt = jwtUtils.generateToken(users);
-      response.setStatusCode(200);
-      response.setToken(jwt);
-      response.setRefreshToken(refreshTokenReqiest.getToken());
-      response.setExpirationTime("24Hr");
-      response.setMessage("Successfully Refreshed Token");
+      var jwt = jwtUtils.generateToken(business);
+      return buildCredentialsResponseDto(jwt, refreshTokenRequest.getToken());
     }
-    response.setStatusCode(500);
-    return response;
-  }*/
+    throw new IllegalArgumentException("Invalid refresh token");
+  }
+
+  private CredentialsResponseDto buildCredentialsResponseDto(String token,
+      String refreshToken)
+  {
+    CredentialsResponseDto dto = new CredentialsResponseDto();
+    dto.setToken(token);
+    dto.setRefreshToken(refreshToken);
+    return dto;
+  }
+
 }

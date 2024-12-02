@@ -70,12 +70,12 @@ public class DataServerStub
 
   // ********************************* BUSINESS *********************************
 
-  public RegisterBusinessResponse registerBusiness(RegisterBusinessRequest request)
+  public void registerBusiness(RegisterBusinessRequest request)
   {
-    return businessBlockingStub.registerBusiness(request);
+    businessBlockingStub.registerBusiness(request);
   }
 
-  public BusinessResponse getBusinessByEmail(EmailRequest request)
+  public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
   {
     return businessBlockingStub.getBusinessByEmail(request);
   }
