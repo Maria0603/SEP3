@@ -1,16 +1,18 @@
 ﻿@using client.DTO
-@code {
-private bool showFilters = false;
-private int price = 50; // Default price value
-private int time = 12;  // Default time value
-private CreateOfferRequestDto offerDto = new CreateOfferRequestDto {
-    Categories = new List<string>()
-};
 
-private void ToggleFilters()
-{
-showFilters = !showFilters;
-}
+@code {
+    private bool showFilters = false;
+    private int price = 50; // Default price value
+    private int time = 12; // Default time value
+
+    private CreateOfferRequestDto offerDto = new CreateOfferRequestDto {
+        Categories = new List<string>()
+    };
+
+    private void ToggleFilters() {
+        showFilters = !showFilters;
+    }
+
 }
 
 <div class="search-bar-container">
@@ -18,7 +20,7 @@ showFilters = !showFilters;
         <i class="bi bi-geo-alt"></i>
     </div>
     <div class="search-bar">
-        <input class="search-input" placeholder="Search..." />
+        <input class="search-input" placeholder="Search..."/>
         <div class="search-icon">
             <i class="bi bi-search"></i>
         </div>
@@ -26,21 +28,20 @@ showFilters = !showFilters;
     <div class="filter-icon" @onclick="ToggleFilters">
         <i class="bi bi-funnel"></i>
     </div>
-    
-    @if (showFilters)
-    {
-    <div class="filters-bubble">
-        <div class="filters">
-            <CategoryPickerComponent offerDto="offerDto" />
-            <div class="filter-price">
-                <label for="price">Price: @price</label>
-                <input type="range" id="price" min="0" max="100" @bind="price" />
-            </div>
-            <div class="filter-time">
-                <label for="time">Time: @time hours</label>
-                <input type="range" id="time" min="0" max="24" @bind="time" />
+
+    @if (showFilters) {
+        <div class="filters-bubble">
+            <div class="filters">
+                <CategoryPickerComponent offerDto="offerDto"/>
+                <div class="filter-price">
+                    <label for="price">Price: @price</label>
+                    <input type="range" id="price" min="0" max="100" @bind="price"/>
+                </div>
+                <div class="filter-time">
+                    <label for="time">Time: @time hours</label>
+                    <input type="range" id="time" min="0" max="24" @bind="time"/>
+                </div>
             </div>
         </div>
-    </div>
     }
 </div>
