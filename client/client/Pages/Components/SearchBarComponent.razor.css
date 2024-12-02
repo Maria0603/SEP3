@@ -10,7 +10,8 @@
 }
 
 /* Styling for the map icon bubble */
-.map-icon {
+.map-icon,
+.filter-icon{
   width: 40px;
   height: 40px;
   display: flex;
@@ -43,9 +44,8 @@
   background-color: #fff;
 }
 
-/* Filter icon styling */
-.filter-icon {
-  cursor: pointer;
+.search-icon{
+  margin-left: 10px;
 }
 
 /* Filters bubble styling */

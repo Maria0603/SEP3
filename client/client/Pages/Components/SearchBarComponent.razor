@@ -15,10 +15,14 @@ showFilters = !showFilters;
     </div>
     <div class="search-bar">
         <input class="search-input" placeholder="Search..." />
-        <div class="filter-icon" @onclick="ToggleFilters">
-            <i class="bi bi-funnel"></i>
+        <div class="search-icon">
+            <i class="bi bi-search"></i>
         </div>
     </div>
+    <div class="filter-icon" @onclick="ToggleFilters">
+        <i class="bi bi-funnel"></i>
+    </div>
+    
     @if (showFilters)
     {
     <div class="filters-bubble">
