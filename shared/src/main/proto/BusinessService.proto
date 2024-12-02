@@ -4,13 +4,16 @@ option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "BusinessServiceProto";
 
+import "OfferService.proto";
+
+
 package proto;
 
 service BusinessService {
-  rpc RegisterBusiness(RegisterBusinessRequest) returns (RegisterBusinessResponse);
-  rpc GetBusinessByEmail(EmailRequest) returns (BusinessResponse);
+  rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
+  rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
 }
-message EmailRequest{
+message BusinessByEmailRequest {
   string email = 1;
 }
 
@@ -37,11 +40,6 @@ message RegisterBusinessRequest {
   string role = 8;
 }
 
-message RegisterBusinessResponse {
-  string businessId = 1;
-  string email = 2;
-  string role = 3;
-}
 
 message Address {
   string street = 1;

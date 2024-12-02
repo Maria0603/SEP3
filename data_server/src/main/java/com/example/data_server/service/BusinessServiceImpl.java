@@ -23,7 +23,7 @@ import java.util.Optional;
   }
 
   @Override public void registerBusiness(RegisterBusinessRequest request,
-      StreamObserver<RegisterBusinessResponse> responseObserver)
+      StreamObserver<EmptyMessage> responseObserver)
   {
     System.out.println("Request for register business.");
 
@@ -31,16 +31,15 @@ import java.util.Optional;
     BusinessDao business = generateBusinessDaoFromRegisterBusinessRequest(
         request);
 
-    BusinessDao createdBusiness = businessRepository.save(business);
+    businessRepository.save(business);
 
-    RegisterBusinessResponse response = buildRegisterBusinessResponse(
-        createdBusiness);
+    EmptyMessage response = EmptyMessage.newBuilder().build();
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
-  @Override public void getBusinessByEmail(EmailRequest request,
+  @Override public void getBusinessByEmail(BusinessByEmailRequest request,
       StreamObserver<BusinessResponse> responseObserver)
   {
     Optional<BusinessDao> business = businessRepository.findByEmail(
@@ -84,10 +83,4 @@ import java.util.Optional;
     return business;
   }
 
-  private RegisterBusinessResponse buildRegisterBusinessResponse(
-      BusinessDao business)
-  {
-    return RegisterBusinessResponse.newBuilder().setBusinessId(business.getId())
-        .setEmail(business.getEmail()).setRole(business.getRole()).build();
-  }
 }
