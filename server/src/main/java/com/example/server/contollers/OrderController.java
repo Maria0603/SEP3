@@ -5,6 +5,7 @@ import com.example.server.services.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,6 +23,7 @@ public class OrderController {
   }
 
   @PostMapping
+  @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
   public ResponseEntity<PlaceOrderSessionResponseDto> placeOrder(
       @RequestBody PlaceOrderRequestDto orderRequest) {
     System.out.println("Request for place order in controller.");
