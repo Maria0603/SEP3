@@ -5,15 +5,11 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CredentialsResponseDto
+public class RefreshTokenRequest
 {
     private String token;
-    private String refreshToken;
-
 }
