@@ -34,26 +34,26 @@
         }
         else
         {
-            // // Check user's role and redirect accordingly
-            // var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
-            // if (roleClaim != null)
-            // {
-            //     var role = roleClaim.Value;
-            //     if (role == "Admin")
-            //     {
-            //         Navigation.NavigateTo("/admin/dashboard");
-            //     }
-            //     else if (role == "Customer")
-            //     {
-            //         Navigation.NavigateTo("/customer/home");
-            //     }
-            //     else
-            //     {
-            //         // Default fallback route for other roles
-            //         Navigation.NavigateTo("/unauthorized");
-            //     }
-            // }
-            // else
+            // Check user's role and redirect accordingly
+            var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
+            if (roleClaim != null)
+            {
+                var role = roleClaim.Value;
+                if (role == "BUSINESS")
+                {
+                    Navigation.NavigateTo("/offers");
+                }
+                else if (role == "CUSTOMER")
+                {
+                    Navigation.NavigateTo("/offers");
+                }
+                else
+                {
+                    // Default fallback route for other roles
+                    Navigation.NavigateTo("/unauthorized");
+                }
+            }
+            else
             {
                 // Redirect to unauthorized if no role is found
                 Navigation.NavigateTo("/unauthorized");
