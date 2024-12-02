@@ -2,9 +2,11 @@ using Blazored.LocalStorage;
 using System.Net.Security;
 using client;
 using client.Security;
+// using client.Security;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Components.Authorization;
 using Stripe;
 
@@ -20,6 +22,17 @@ builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 
 builder.Services.AddScoped<IAuthService, AuthService>();
+
+// builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme).AddCookie(options =>
+// {
+//     options.LoginPath = "/auth/login";
+//     options.Cookie.Name = "auth_token";
+//     options.Cookie.MaxAge = TimeSpan.FromDays(365);
+//     options.AccessDeniedPath = "/auth/denied";
+//
+// });
+// builder.Services.AddAuthentication();
+// builder.Services.AddCascadingAuthenticationState();
 
 builder.Services.AddAuthorizationCore();
 builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();

@@ -11,28 +11,35 @@ namespace client.Security;
 
 public class AuthStateProvider : AuthenticationStateProvider
 {
-    private readonly AuthService _authService;
+    // private readonly AuthService _authService;
+    //
+    // public AuthStateProvider(AuthService authService)
+    // {
+    //     _authService = authService;
+    // }
 
-    public AuthStateProvider(AuthService authService)
+    public override async Task<AuthenticationState> GetAuthenticationStateAsync()
     {
-        _authService = authService;
-    }
-
-    public override Task<AuthenticationState> GetAuthenticationStateAsync()
-    {
-        // Check if the user is authenticated based on the presence of a token
-        if (string.IsNullOrEmpty(_authService.Token))
-        {
-            // User is not authenticated
-            var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
-            return Task.FromResult(new AuthenticationState(anonymous));
-        }
-
-        // Parse claims from the token (assuming JWT, implement parsing logic here)
-        var identity = new ClaimsIdentity(ParseClaimsFromJwt(_authService.Token), "Bearer");
+        string token = "";
+        var identity = new ClaimsIdentity();
         var user = new ClaimsPrincipal(identity);
-
-        return Task.FromResult(new AuthenticationState(user));
+        var state = new AuthenticationState(user);
+        
+        NotifyAuthenticationStateChanged(Task.FromResult(state));
+        return state;
+        // // Check if the user is authenticated based on the presence of a token
+        // if (string.IsNullOrEmpty(_authService.Token))
+        // {
+        //     // User is not authenticated
+        //     var anonymous = new ClaimsPrincipal(new ClaimsIdentity());
+        //     return Task.FromResult(new AuthenticationState(anonymous));
+        // }
+        //
+        // // Parse claims from the token (assuming JWT, implement parsing logic here)
+        // var identity = new ClaimsIdentity(ParseClaimsFromJwt(_authService.Token), "Bearer");
+        // var user = new ClaimsPrincipal(identity);
+        //
+        // return Task.FromResult(new AuthenticationState(user));
     }
 
     public void NotifyUserAuthentication(string token)
@@ -93,104 +100,3 @@ public class AuthStateProvider : AuthenticationStateProvider
 }
 
 
-/*
->>>>>>> Stashed changes
-public class AuthStateProvider : AuthenticationStateProvider
-{
-    private readonly HttpClient httpClient;
-    private readonly IJSRuntime jsRuntime;
-    private string? cachedUserJson;
-
-    public AuthStateProvider(HttpClient httpClient, IJSRuntime jsRuntime)
-    {
-        this.httpClient = httpClient;
-        this.jsRuntime = jsRuntime;
-        cachedUserJson = null;
-    }
-
-    public async Task Login(string username, string password)
-    {
-        Console.WriteLine("Username: " + username + " Password: " + password);
-        HttpResponseMessage response = await httpClient.PostAsJsonAsync(
-            "auth/login",
-            new LoginRequest { Username = username, Password = password });
-
-        string content = await response.Content.ReadAsStringAsync();
-
-        if (!response.IsSuccessStatusCode)
-        {
-            throw new Exception(content);
-        }
-
-        AddUserResponseDto userDto =
-            JsonSerializer.Deserialize<AddUserResponseDto>(content,
-                new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                })!;
-
-        string serialisedData = JsonSerializer.Serialize(userDto);
-        await jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser",
-            serialisedData);
-
-        List<Claim> claims = new List<Claim>()
-        {
-            new Claim(ClaimTypes.Name, userDto.Username),
-            new Claim("Id", userDto.UserId.ToString())
-            //new Claim("DateOfBirth", userDto.DateOfBirth.ToString("yyyy-MM-dd"));
-            // new Claim("IsAdmin", userDto.IsAdmin.ToString())
-            // new Claim("IsModerator", userDto.IsModerator.ToString())
-            // new Claim("Email", userDto.Email)
-        };
-
-        ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
-        ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(identity);
-
-        NotifyAuthenticationStateChanged(
-            Task.FromResult(new AuthenticationState(claimsPrincipal)));
-    }
-
-    public async void Logout()
-    {
-        await jsRuntime.InvokeVoidAsync("sessionStorage.setItem", "currentUser",
-            "");
-        cachedUserJson = null;
-        NotifyAuthenticationStateChanged(
-            Task.FromResult(new AuthenticationState(new())));
-    }
-
-    public override async Task<AuthenticationState>
-        GetAuthenticationStateAsync()
-    {
-        if (string.IsNullOrEmpty(cachedUserJson))
-        {
-            try
-            {
-                cachedUserJson =
-                    await jsRuntime.InvokeAsync<string>(
-                        "sessionStorage.getItem",
-                        "currentUser");
-            }
-            catch (Exception e)
-            {
-                return new AuthenticationState(new());
-            }
-        }
-
-        if (string.IsNullOrEmpty(cachedUserJson))
-            return new AuthenticationState(new());
-
-        AddUserResponseDto userDto =
-            JsonSerializer.Deserialize<AddUserResponseDto>(cachedUserJson)!;
-
-        List<Claim> claims = new List<Claim>()
-        {
-            new Claim(ClaimTypes.Name, userDto.Username),
-            new Claim(ClaimTypes.NameIdentifier, userDto.UserId.ToString())
-        };
-
-        ClaimsIdentity identity = new ClaimsIdentity(claims, "apiauth");
-        ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(identity);
-        return new AuthenticationState(claimsPrincipal);
-    }
-}
