@@ -1,7 +1,11 @@
-﻿@code {
+﻿@using client.DTO
+@code {
 private bool showFilters = false;
 private int price = 50; // Default price value
 private int time = 12;  // Default time value
+private CreateOfferRequestDto offerDto = new CreateOfferRequestDto {
+    Categories = new List<string>()
+};
 
 private void ToggleFilters()
 {
@@ -27,10 +31,7 @@ showFilters = !showFilters;
     {
     <div class="filters-bubble">
         <div class="filters">
-            <div class="filter-category">
-                <label for="category">Category</label>
-                <input type="text" id="category" placeholder="Category" />
-            </div>
+            <CategoryPickerComponent offerDto="offerDto" />
             <div class="filter-price">
                 <label for="price">Price: @price</label>
                 <input type="range" id="price" min="0" max="100" @bind="price" />
