@@ -1,18 +1,14 @@
 package com.example.data_server.service;
 
+import com.example.data_server.repository.OfferRepository;
 import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.OfferDao;
+import com.example.shared.dao.TimeDao;
 import com.example.shared.model.OfferStatus;
-import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import com.example.data_server.repository.OfferRepository;
-
-import javax.imageio.ImageIO;
-import java.awt.image.BufferedImage;
-import java.io.*;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +60,69 @@ import java.util.Optional;
     responseObserver.onNext(offerListResponse);
     responseObserver.onCompleted();
   }
+
+  @Override
+  public void getOffers(FilterRequest request, StreamObserver<OfferList> responseObserver) {
+    System.out.println("Request for filtered offers");
+
+    List<OfferDao> filteredOffers = new ArrayList<>();
+
+    if (request.getCategoriesList() != null && !request.getCategoriesList().isEmpty()) {
+      System.out.println("Filtering by categories: " + request.getCategoriesList());
+      filteredOffers = offerRepository.findByCategories(request.getCategoriesList());
+    } else {
+      filteredOffers = offerRepository.findByStatus("AVAILABLE");
+    }
+
+    if (request.hasMinOfferPrice() || request.hasMaxOfferPrice()) {
+      int minPrice = request.hasMinOfferPrice() ? request.getMinOfferPrice() : Integer.MIN_VALUE;
+      int maxPrice = request.hasMaxOfferPrice() ? request.getMaxOfferPrice() : Integer.MAX_VALUE;
+      System.out.println("Filtering by price range: " + minPrice + " to " + maxPrice);
+      filteredOffers = filterOffersByPrice(filteredOffers, minPrice, maxPrice);
+    }
+
+    if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
+      System.out.println("Filtering by pickup time range");
+      filteredOffers = filterOffersByTime(filteredOffers, request.getPickupTimeStart(), request.getPickupTimeEnd());
+    }
+
+    OfferList.Builder offerListBuilder = OfferList.newBuilder();
+    for (OfferDao offerDao : filteredOffers) {
+      offerListBuilder.addOffer(buildShortOfferResponse(offerDao));
+    }
+
+    OfferList response = offerListBuilder.build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+
+  private List<OfferDao> filterOffersByPrice(List<OfferDao> offers, int minPrice, int maxPrice) {
+    List<OfferDao> filtered = new ArrayList<>();
+    for (OfferDao offer : offers) {
+      if (offer.getOfferPrice() >= minPrice && offer.getOfferPrice() <= maxPrice) {
+        filtered.add(offer);
+      }
+    }
+    return filtered;
+  }
+
+  private List<OfferDao> filterOffersByTime(List<OfferDao> offers, TimeDao startTime, TimeDao endTime) {
+    List<OfferDao> filtered = new ArrayList<>();
+    for (OfferDao offer : offers) {
+      TimeDao pickupStart = offer.getPickupTimeStart();
+      TimeDao pickupEnd = offer.getPickupTimeEnd();
+
+      if ((pickupStart.getHour() > startTime.getHour() ||
+          (pickupStart.getHour() == startTime.getHour() && pickupStart.getMinute() >= startTime.getMinute())) &&
+          (pickupEnd.getHour() < endTime.getHour() ||
+              (pickupEnd.getHour() == endTime.getHour() && pickupEnd.getMinute() <= endTime.getMinute()))) {
+        filtered.add(offer);
+      }
+    }
+    return filtered;
+  }
+
 
   @Override public void getOfferById(OfferIdRequest request,
       StreamObserver<OfferResponse> responseObserver)
