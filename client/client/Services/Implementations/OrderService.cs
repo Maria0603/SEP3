@@ -3,7 +3,7 @@ using System.Text.Json;
 using client.DTO;
 using client.Pages;
 
-namespace client.Services;
+namespace client.Services.Implementations;
 
 public class OrderService : IOrderService
 {

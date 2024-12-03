@@ -2,7 +2,9 @@
 @using client.DTO
 @using client.Models
 @using client.Pages.Components
+@using Microsoft.AspNetCore.Authorization
 @inject client.Services.IOfferService OfferService
+@attribute [Authorize]
 <PageTitle>Home</PageTitle>
 
 <h2> The main page</h2>

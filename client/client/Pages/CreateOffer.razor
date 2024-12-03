@@ -2,8 +2,10 @@
 @using System.Net
 @using client.DTO
 @using client.Services
+@using Microsoft.AspNetCore.Authorization
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
+@attribute [Authorize]
 
 @if (createdOffer is null) {
     <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">

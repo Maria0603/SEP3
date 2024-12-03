@@ -1,15 +1,16 @@
 using System.Net.Security;
+using Blazored.LocalStorage;
 using client;
 using client.Security;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
+using client.Services.Implementations;
 using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
-//builder.Services.AddBlazoredLocalStorage();
 
 // Configure HttpClient for API calls
 builder.Services.AddScoped(sp => new HttpClient
@@ -18,7 +19,11 @@ builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
-builder.Services.AddAuthorizationCore();
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<AuthStateProvider>(); 
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthStateProvider>());
+
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
 
 await builder.Build().RunAsync();

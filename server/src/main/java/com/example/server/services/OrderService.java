@@ -71,6 +71,10 @@ import java.util.stream.Collectors;
     System.out.println("Request for database built");
 
     OrderResponse databaseResponse = dataServerStub.addOrder(orderRequest);
+
+    /////////////////////////////////////Temporary////////////////////////////////
+    updateOrderStatus(databaseResponse.getId(), OrderStatus.RESERVED.getStatus());
+    //////////////////////////////////////////////////////////////////////////////
     if (databaseResponse == null || databaseResponse.getId().isEmpty())
       throw new IllegalArgumentException("Invalid order ID.");
 

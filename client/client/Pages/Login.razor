@@ -1,8 +1,9 @@
 ﻿@page "/auth/login"
 
 @using client.DTO.Auth
-@inject IAuthService AuthService
+@using client.Security
 @inject NavigationManager NavigationManager
+@inject AuthStateProvider AuthStateProvider
 
 <h3>Login</h3>
 <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
@@ -26,16 +27,28 @@
 }
 
 @code {
-    private LoginRequestDto loginModel = new();
+
+    private LoginRequestDto loginModel = new()
+    {
+        Email = string.Empty,
+        Password = string.Empty
+    };
     private string? errorMessage;
 
     private async Task HandleLogin()
     {
-        bool success = await AuthService.LoginAsync(new LoginRequestDto { Email = loginModel.Email, Password = loginModel.Password });
-        if (success)
+        try
+        {
+            errorMessage = "";
+            await AuthStateProvider.LoginAsync(loginModel);
             NavigationManager.NavigateTo("/offers");
-        else
+
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
             errorMessage = "Invalid credentials. Please try again.";
+        }
     }
 
 }

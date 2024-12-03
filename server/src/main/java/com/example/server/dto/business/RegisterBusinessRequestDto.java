@@ -1,65 +1,42 @@
 package com.example.server.dto.business;
 
 import com.example.server.dto.address.AddressDto;
+import jakarta.validation.constraints.*;
+import jakarta.validation.Valid;
 
 public class RegisterBusinessRequestDto
 {
-  private String businessName;
-  private String cvr;
-  private String email;
-  private String password;
-  private String phoneNumber;
+
+  @NotBlank(message = "Business name cannot be empty.") @Size(min = 2, max = 50, message = "Business name must be between 2 and 50 characters.") private String businessName;
+
+  @NotBlank(message = "CVR cannot be empty.") @Pattern(regexp = "^[0-9]{8}$", message = "CVR must be exactly 8 digits.") private String cvr;
+
+  @NotBlank(message = "Email cannot be empty.") @Email(message = "Email must be a valid email address.") private String email;
+
+  @NotBlank(message = "Password cannot be empty.") @Size(min = 8, message = "Password must be at least 8 characters long.") private String password;
+
+  @NotBlank(message = "Phone number cannot be empty.") @Size(min = 6, max = 20, message = "Phone number must be between 6 and 20 characters.") private String phoneNumber;
+
+  @Valid
+  // Validates the AddressDto inside this field if it has its own validation
   private AddressDto address;
-  private byte[] logo;
 
-  public byte[] getLogo()
+  @NotNull(message = "Logo is required.") private byte[] logo;
+
+  public RegisterBusinessRequestDto()
   {
-    return logo;
   }
 
-  public void setLogo(byte[] logo)
+  // Getters and setters
+
+  public String getBusinessName()
   {
-    this.logo = logo;
+    return businessName;
   }
 
-  public AddressDto getAddress()
+  public void setBusinessName(String businessName)
   {
-    return address;
-  }
-
-  public void setAddress(AddressDto address)
-  {
-    this.address = address;
-  }
-
-  public String getPhoneNumber()
-  {
-    return phoneNumber;
-  }
-
-  public void setPhoneNumber(String phoneNumber)
-  {
-    this.phoneNumber = phoneNumber;
-  }
-
-  public String getPassword()
-  {
-    return password;
-  }
-
-  public void setPassword(String password)
-  {
-    this.password = password;
-  }
-
-  public String getEmail()
-  {
-    return email;
-  }
-
-  public void setEmail(String email)
-  {
-    this.email = email;
+    this.businessName = businessName;
   }
 
   public String getCvr()
@@ -72,14 +49,53 @@ public class RegisterBusinessRequestDto
     this.cvr = cvr;
   }
 
-  public String getBusinessName()
+  public String getEmail()
   {
-    return businessName;
+    return email;
   }
 
-  public void setBusinessName(String businessName)
+  public void setEmail(String email)
   {
-    this.businessName = businessName;
+    this.email = email;
   }
 
+  public String getPassword()
+  {
+    return password;
+  }
+
+  public void setPassword(String password)
+  {
+    this.password = password;
+  }
+
+  public String getPhoneNumber()
+  {
+    return phoneNumber;
+  }
+
+  public void setPhoneNumber(String phoneNumber)
+  {
+    this.phoneNumber = phoneNumber;
+  }
+
+  public AddressDto getAddress()
+  {
+    return address;
+  }
+
+  public void setAddress(AddressDto address)
+  {
+    this.address = address;
+  }
+
+  public byte[] getLogo()
+  {
+    return logo;
+  }
+
+  public void setLogo(byte[] logo)
+  {
+    this.logo = logo;
+  }
 }

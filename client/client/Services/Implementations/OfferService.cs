@@ -6,7 +6,7 @@ using client.Pages;
 using Microsoft.AspNetCore.Components.Sections;
 using JsonSerializer = System.Text.Json.JsonSerializer;
 
-namespace client.Services;
+namespace client.Services.Implementations;
 
 public class OfferService : IOfferService
 {

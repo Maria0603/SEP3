@@ -1,9 +1,11 @@
 ﻿@page "/auth/registration/business"
 @using client.DTO
 @using client.DTO.Auth
+@using client.Security
 <h3>RegisterBusiness</h3>
 @inject NavigationManager NavigationManager
-@inject IAuthService AuthService
+@inject AuthStateProvider AuthStateProvider
+
 
 <h3>Register Business</h3>
 <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
@@ -94,26 +96,31 @@
     {
         try
         {
-            bool success = await AuthService.RegisterBusinessAsync(registerModel);
+            errorMessage = "";
+            Console.WriteLine("Logooo2222o : " + registerModel.Logo);
 
-            if (success)
-            {
-                successMessage = "Business registered successfully!";
-                errorMessage = null;
-                NavigationManager.NavigateTo("/offers");
-            }
-            else
-            {
-                errorMessage = "Registration failed. Please check the details and try again.";
-                successMessage = null;
-            }
+            await AuthStateProvider.RegisterBusinessAsync(registerModel);
+            
+            successMessage = "Business registered successfully!";
+            NavigationManager.NavigateTo("/offers");
         }
-        catch (Exception ex)
+        catch (Exception e)
         {
-            errorMessage = $"An error occurred: {ex.Message}";
+            errorMessage = "Registration failed. Please check the details and try again.";
+            successMessage = "";
         }
     }
+    
+    private async Task HandleLogoUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        registerModel.Logo = memoryStream.ToArray();
+        Console.WriteLine("Logoooo : " + registerModel.Logo);
+    }
 
+/*
     private async Task HandleLogoUpload(InputFileChangeEventArgs e)
     {
         var file = e.File;
@@ -121,5 +128,6 @@
         await file.OpenReadStream().ReadAsync(buffer);
         registerModel.Logo = buffer;
     }
+    */
 
 }

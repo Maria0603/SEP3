@@ -1,4 +1,6 @@
 ﻿@page "/orders/success"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
 <h3>Payment successful! </h3> <!-- TODO Display some order details here-->
 <p>Thank you for your payment</p>
 @code {

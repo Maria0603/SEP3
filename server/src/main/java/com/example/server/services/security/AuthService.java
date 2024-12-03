@@ -2,10 +2,9 @@ package com.example.server.services.security;
 
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
-import com.example.server.converters.AddressConverter;
 import com.example.server.converters.BusinessDtoGrpcConverter;
 import com.example.server.dto.auth.CredentialsResponseDto;
-import com.example.server.dto.auth.LoginBusinessRequest;
+import com.example.server.dto.auth.LoginRequestDto;
 import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.services.ImageStorageService;
@@ -53,11 +52,13 @@ import java.util.HashMap;
       RegisterBusinessRequestDto registrationRequestDto)
   {
 
+    System.out.println("Request for register business in service");
     String logoPath = null;
     try
     {
       logoPath = imageStorageService.getBaseDirectory()
           + imageStorageService.saveImage(registrationRequestDto.getLogo());
+
 
       //Transform the dto to grpc message
       RegisterBusinessRequest registerBusinessRequest = BusinessDtoGrpcConverter.RegisterBusinessRequestDto_To_RegisterBusinessRequest(
@@ -70,19 +71,6 @@ import java.util.HashMap;
       UserDetails userDetails = userDetailsService.loadUserByUsername(
           registrationRequestDto.getEmail());
 
-      /*authenticationManager.authenticate(
-          new UsernamePasswordAuthenticationToken(
-              registrationRequestDto.getEmail(),
-              registrationRequestDto.getPassword()));
-
-      //Extract the business from database
-      BusinessResponse businessResponse = dataServerStub.getBusinessByEmail(
-          EmailRequest.newBuilder().setEmail(registrationRequestDto.getEmail())
-              .build());
-
-      //Convert to dao, because dao implements UserDetails interface
-      BusinessDao business = generateBusinessDaoFromBusinessResponse(
-          businessResponse);*/
       System.out.println("USER IS: " + userDetails.getUsername());
 
       //Generate the token
@@ -104,7 +92,7 @@ import java.util.HashMap;
 
   }
 
-  public CredentialsResponseDto logIn(LoginBusinessRequest loginRequest)
+  public CredentialsResponseDto logIn(LoginRequestDto loginRequest)
   {
     try
     {

@@ -4,7 +4,8 @@ namespace client.Services;
 
 public interface IAuthService
 {
-    public Task<bool> LoginAsync(LoginRequestDto request);
-    public Task<bool> RegisterBusinessAsync (RegisterBusinessRequestDto request);
+    public Task<CredentialsResponseDto> LoginAsync(LoginRequestDto request);
+    public Task<CredentialsResponseDto> RegisterBusinessAsync (RegisterBusinessRequestDto request);
+    public void SetAuthorizationHeader(string token);
 
 }

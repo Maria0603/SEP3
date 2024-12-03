@@ -7,6 +7,7 @@
         <Found Context="routeData">
             <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
                 <NotAuthorized>
+                    <h3>Access denied</h3>
                     @RedirectIfNotAuthorized()
                 </NotAuthorized>
             </AuthorizeRouteView>
@@ -23,43 +24,61 @@
 
 @code {
 
-    private RenderFragment RedirectIfNotAuthorized() => builder =>
+    private async Task<RenderFragment> RedirectIfNotAuthorized()
     {
-        var authState = AuthProvider.GetAuthenticationStateAsync().Result;
-        var user = authState.User;
+        return builder =>
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var authState = await AuthProvider.GetAuthenticationStateAsync();
+                    var user = authState.User;
 
-        // Check if the user is authenticated
-        if (!user.Identity.IsAuthenticated)
-        {
-            Navigation.NavigateTo("/auth/login");
-        }
-        else
-        {
-            // Check user's role and redirect accordingly
-            var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
-            if (roleClaim != null)
-            {
-                var role = roleClaim.Value;
-                if (role == "BUSINESS")
-                {
-                    Navigation.NavigateTo("/offers");
+                    // Check if the user is authenticated
+                    if (!user.Identity?.IsAuthenticated ?? true)
+                    {
+                        Console.WriteLine("User not authenticated");
+                        Navigation.NavigateTo("/auth/login", forceLoad: true);
+                    }
+                    else
+                    {
+                        Console.WriteLine("User authenticated");
+
+                        // Check user's role and redirect accordingly
+                        var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
+                        if (roleClaim != null)
+                        {
+                            var role = roleClaim.Value;
+                            if (role == "BUSINESS")
+                            {
+                                Navigation.NavigateTo("/offers");
+                            }
+                            else if (role == "CUSTOMER")
+                            {
+                                Navigation.NavigateTo("/offers");
+                            }
+                            else
+                            {
+                                // Default fallback route for other roles
+                                Navigation.NavigateTo("/unauthorized");
+                            }
+                        }
+                        else
+                        {
+                            // Redirect to unauthorized if no role is found
+                            Navigation.NavigateTo("/unauthorized");
+                        }
+                    }
                 }
-                else if (role == "CUSTOMER")
+                catch (Exception e)
                 {
-                    Navigation.NavigateTo("/offers");
+                    Console.WriteLine(e);
                 }
-                else
-                {
-                    // Default fallback route for other roles
-                    Navigation.NavigateTo("/unauthorized");
-                }
-            }
-            else
-            {
-                // Redirect to unauthorized if no role is found
-                Navigation.NavigateTo("/unauthorized");
-            }
-        }
-    };
+            });
+        };
+
+    }
 
 }
+
