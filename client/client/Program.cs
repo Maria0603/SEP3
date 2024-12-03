@@ -1,20 +1,16 @@
-using System.Net.Security;
 using Blazored.LocalStorage;
 using client;
 using client.Security;
-using Microsoft.AspNetCore.Components.Web;
-using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
 using client.Services.Implementations;
 using Microsoft.AspNetCore.Components.Authorization;
 
-var builder = WebAssemblyHostBuilder.CreateDefault(args);
-builder.RootComponents.Add<App>("#app");
-builder.RootComponents.Add<HeadOutlet>("head::after");
+var builder = WebApplication.CreateBuilder(args);
 
-// Configure HttpClient for API calls
-builder.Services.AddScoped(sp => new HttpClient
-    { BaseAddress = new Uri("http://localhost:8082/") });
+// Add services to the container.
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents();
+builder.Services.AddHttpClient();
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -25,5 +21,30 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
+builder.Services.AddAuthentication("Cookies")
+    .AddCookie("Cookies", options =>
+    {
+        options.LoginPath = "/auth/login"; // Update the path based on your application
+        options.AccessDeniedPath = "/unauthorized"; // Update if you have a custom access-denied page
+    });
 
-await builder.Build().RunAsync();
+
+var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+if (!app.Environment.IsDevelopment())
+{
+    app.UseExceptionHandler("/Error", createScopeForErrors: true);
+    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
+    app.UseHsts();
+}
+
+app.UseHttpsRedirection();
+
+app.UseStaticFiles();
+app.UseAntiforgery();
+
+app.MapRazorComponents<App>()
+    .AddInteractiveServerRenderMode();
+
+app.Run();

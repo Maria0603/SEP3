@@ -1,0 +1,41 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/obj/Debug/net8.0/scopedcss/projectbundle/client.bundle.scp.css",
+      "PackagePath": "staticwebassets/client.bundle.scp.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/app.css",
+      "PackagePath": "staticwebassets/app.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/bootstrap/bootstrap.min.css",
+      "PackagePath": "staticwebassets/bootstrap/bootstrap.min.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/bootstrap/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/bootstrap/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/favicon.png",
+      "PackagePath": "staticwebassets/favicon.png"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.client.props",
+      "PackagePath": "build\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.client.props",
+      "PackagePath": "buildMultiTargeting\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.client.props",
+      "PackagePath": "buildTransitive\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

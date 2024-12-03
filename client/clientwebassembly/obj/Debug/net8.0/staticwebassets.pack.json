@@ -1,0 +1,149 @@
+{
+  "Files": [
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/bin/Debug/net8.0/wwwroot/_framework/blazor.webassembly.js",
+      "PackagePath": "staticwebassets/_framework/blazor.webassembly.js"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/obj/Debug/net8.0/compressed/znglj1vgaj.gz",
+      "PackagePath": "staticwebassets/_framework/blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/obj/Debug/net8.0/scopedcss/bundle/client.styles.css",
+      "PackagePath": "staticwebassets/client.styles.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/css/app.css",
+      "PackagePath": "staticwebassets/css/app.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/css/bootstrap/bootstrap.min.css",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/css/bootstrap/bootstrap.min.css.map",
+      "PackagePath": "staticwebassets/css/bootstrap/bootstrap.min.css.map"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/favicon.png",
+      "PackagePath": "staticwebassets/favicon.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/icon-192.png",
+      "PackagePath": "staticwebassets/icon-192.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/75fe31a9-cc1d-4487-8177-fd711d5166f6.jpg",
+      "PackagePath": "staticwebassets/images/75fe31a9-cc1d-4487-8177-fd711d5166f6.jpg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/7aa8c421-3bf0-4d16-ad2b-c6400fdae530.jpg",
+      "PackagePath": "staticwebassets/images/7aa8c421-3bf0-4d16-ad2b-c6400fdae530.jpg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/brand_logo.jpeg",
+      "PackagePath": "staticwebassets/images/brand_logo.jpeg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/bread.jpg.webp",
+      "PackagePath": "staticwebassets/images/bread.jpg.webp"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/bread2.webp",
+      "PackagePath": "staticwebassets/images/bread2.webp"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/grey-background.png",
+      "PackagePath": "staticwebassets/images/grey-background.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/icons/bag.png",
+      "PackagePath": "staticwebassets/images/icons/bag.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/icons/clock.png",
+      "PackagePath": "staticwebassets/images/icons/clock.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/icons/location.png",
+      "PackagePath": "staticwebassets/images/icons/location.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/icons/star.png",
+      "PackagePath": "staticwebassets/images/icons/star.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/rating/1.png",
+      "PackagePath": "staticwebassets/images/rating/1.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/rating/2.png",
+      "PackagePath": "staticwebassets/images/rating/2.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/rating/3.png",
+      "PackagePath": "staticwebassets/images/rating/3.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/rating/4.png",
+      "PackagePath": "staticwebassets/images/rating/4.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/rating/5.png",
+      "PackagePath": "staticwebassets/images/rating/5.png"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/tempImage.jpg",
+      "PackagePath": "staticwebassets/images/tempImage.jpg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/images/tempOfferIcon.jpg",
+      "PackagePath": "staticwebassets/images/tempOfferIcon.jpg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/index.html",
+      "PackagePath": "staticwebassets/index.html"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/sample-data/weather.json",
+      "PackagePath": "staticwebassets/sample-data/weather.json"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/svg/Favourite.svg",
+      "PackagePath": "staticwebassets/svg/Favourite.svg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/svg/Notifications.svg",
+      "PackagePath": "staticwebassets/svg/Notifications.svg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/svg/Orders.svg",
+      "PackagePath": "staticwebassets/svg/Orders.svg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/svg/Profile.svg",
+      "PackagePath": "staticwebassets/svg/Profile.svg"
+    },
+    {
+      "Id": "/Users/jankalina/Documents/SEP3/client/client/wwwroot/svg/Star.svg",
+      "PackagePath": "staticwebassets/svg/Star.svg"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.build.client.props",
+      "PackagePath": "build\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildMultiTargeting.client.props",
+      "PackagePath": "buildMultiTargeting\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.buildTransitive.client.props",
+      "PackagePath": "buildTransitive\\client.props"
+    },
+    {
+      "Id": "obj/Debug/net8.0/staticwebassets/msbuild.client.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
