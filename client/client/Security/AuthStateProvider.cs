@@ -91,6 +91,7 @@ public class AuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(
             new AuthenticationState(
                 new ClaimsPrincipal(new ClaimsIdentity()))));
+        
     }
 
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)

@@ -2,73 +2,109 @@
 @using client.DTO
 @using client.DTO.Auth
 @using client.Security
-<h3>RegisterBusiness</h3>
 @inject NavigationManager NavigationManager
 @inject AuthStateProvider AuthStateProvider
 
-<h3>Register Business</h3>
-<EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Register Business</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
+                        <DataAnnotationsValidator />
+                        <ValidationSummary class="text-danger" />
 
-    <div>
-        <label>Business Name:</label>
-        <InputText @bind-Value="registerModel.BusinessName"/>
-    </div>
-    <div>
-        <label>CVR:</label>
-        <InputText @bind-Value="registerModel.Cvr"/>
-    </div>
-    <div>
-        <label>Email:</label>
-        <InputText @bind-Value="registerModel.Email"/>
-    </div>
-    <div>
-        <label>Password:</label>
-        <InputText @bind-Value="registerModel.Password" Type="password"/>
-    </div>
-    <div>
-        <label>Phone Number:</label>
-        <InputText @bind-Value="registerModel.PhoneNumber"/>
-    </div>
+                        <div class="mb-3">
+                            <label for="businessName" class="form-label">Business Name:</label>
+                            <InputText id="businessName" @bind-Value="registerModel.BusinessName" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="cvr" class="form-label">CVR:</label>
+                            <InputText id="cvr" @bind-Value="registerModel.Cvr" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <InputText id="email" @bind-Value="registerModel.Email" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <InputText id="password" @bind-Value="registerModel.Password" Type="password" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number:</label>
+                            <InputText id="phoneNumber" @bind-Value="registerModel.PhoneNumber" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="logo" class="form-label">Logo:</label>
+                            <InputFile id="logo" OnChange="HandleLogoUpload" class="form-control" />
+                        </div>
 
-    <h4>Address</h4>
-    <div>
-        <label>Street:</label>
-        <InputText @bind-Value="registerModel.Address.Street"/>
-    </div>
-    <div>
-        <label>Number:</label>
-        <InputText @bind-Value="registerModel.Address.Number"/>
-    </div>
-    <div>
-        <label>City:</label>
-        <InputText @bind-Value="registerModel.Address.City"/>
-    </div>
-    <div>
-        <label>County:</label>
-        <InputText @bind-Value="registerModel.Address.County"/>
-    </div>
-    <div>
-        <label>State:</label>
-        <InputText @bind-Value="registerModel.Address.State"/>
-    </div>
-    <div>
-        <label>Country:</label>
-        <InputText @bind-Value="registerModel.Address.Country"/>
-    </div>
-    <div>
-        <label>Postal Code:</label>
-        <InputText @bind-Value="registerModel.Address.PostalCode"/>
-    </div>
+                        <h4 class="mt-4">Address</h4>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="street" class="form-label">Street:</label>
+                                <InputText id="street" @bind-Value="registerModel.Address.Street" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="number" class="form-label">Number:</label>
+                                <InputText id="number" @bind-Value="registerModel.Address.Number" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="city" class="form-label">City:</label>
+                                <InputText id="city" @bind-Value="registerModel.Address.City" class="form-control" />
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="postalCode" class="form-label">Postal Code:</label>
+                                <InputText id="postalCode" @bind-Value="registerModel.Address.PostalCode" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country:</label>
+                                <InputText id="country" @bind-Value="registerModel.Address.Country" class="form-control" />
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="county" class="form-label">County:</label>
+                            <InputText id="county" @bind-Value="registerModel.Address.County" class="form-control" />
+                        </div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State:</label>
+                            <InputText id="state" @bind-Value="registerModel.Address.State" class="form-control" />
+                        </div>
 
-    <div>
-        <label>Logo:</label>
-        <InputFile OnChange="HandleLogoUpload"/>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger">Register</button>
+                        </div>
+                    </EditForm>
+                </div>
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                <div class="card-footer text-success text-center">
+                    <p>@successMessage</p>
+                </div>
+                }
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                <div class="card-footer text-danger text-center">
+                    <p>@errorMessage</p>
+                </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <p>
+                    Already registered?
+                    <a href="/auth/login" class="text-decoration-none">Click here to login</a>.
+                </p>
+            </div>
+        </div>
     </div>
-
-    <button type="submit">Register</button>
-</EditForm>
+</div>
 
 @if (!string.IsNullOrEmpty(successMessage))
 {

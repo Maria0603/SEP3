@@ -5,26 +5,47 @@
 @inject NavigationManager NavigationManager
 @inject AuthStateProvider AuthStateProvider
 
-<h3>Login</h3>
-<EditForm  Model="@loginModel" OnValidSubmit="HandleLogin">
-    <DataAnnotationsValidator/>
-    <ValidationSummary/>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Login</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary class="text-danger"/>
 
-    <div>
-        <label>Email:</label>
-        <InputText @bind-Value="loginModel.Email"/>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <InputText id="email" @bind-Value="loginModel.Email" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <InputText id="password" @bind-Value="loginModel.Password" Type="password" class="form-control"/>
+                        </div>
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger">Login</button>
+                        </div>
+                    </EditForm>
+                </div>
+                @if (errorMessage != null)
+                {
+                    <div class="card-footer text-danger text-center">
+                        <p>@errorMessage</p>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <p>
+                    Not registered?
+                    <a href="/auth/registration/business" class="text-decoration-none">Click here to register</a>.
+                </p>
+            </div>
+        </div>
     </div>
-    <div>
-        <label>Password:</label>
-        <InputText @bind-Value="loginModel.Password" Type="password"/>
-    </div>
-    <button type="submit">Login</button>
-</EditForm>
-
-@if (errorMessage != null)
-{
-    <p style="color: red;">@errorMessage</p>
-}
+</div>
 
 @code {
 
@@ -33,6 +54,7 @@
         Email = string.Empty,
         Password = string.Empty
     };
+
     private string? errorMessage;
 
     private async Task HandleLogin()
@@ -42,7 +64,6 @@
             errorMessage = "";
             await AuthStateProvider.LoginAsync(loginModel);
             NavigationManager.NavigateTo("/offers");
-
         }
         catch (Exception e)
         {
