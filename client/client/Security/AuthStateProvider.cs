@@ -31,7 +31,8 @@ public class AuthStateProvider : AuthenticationStateProvider
         GetAuthenticationStateAsync()
     {
         // Retrieve token from local storage
-        var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
+        // var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
+        var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1wbGVAYnVzaW5lc3MuY29tIiwiaWF0IjoxNzMzMjM0NDE5LCJleHAiOjE3MzMzMjA4MTksInJvbGUiOlsiQlVTSU5FU1MiXX0.EcJMmonaVRFZW4PkQB6P0F1fY1VOwOMBfqAGpMozbTE";
         if (string.IsNullOrEmpty(token))
         {
             var uri = _navigationManager.Uri;

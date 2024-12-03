@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RestController;
   @PostMapping("/login") public ResponseEntity<CredentialsResponseDto> logInBusiness(
       @RequestBody LoginRequestDto logInRequest)
   {
+    System.out.println(logInRequest.getEmail());
+    System.out.println(logInRequest.getPassword());
     return ResponseEntity.ok(authService.logIn(logInRequest));
   }
 
