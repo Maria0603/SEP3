@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+<Project Sdk="Microsoft.NET.Sdk.Web">
 
     <PropertyGroup>
         <TargetFramework>net8.0</TargetFramework>
@@ -7,23 +7,40 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
-        <PackageReference Include="DartSassBuilder" Version="1.1.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authentication.Cookies" Version="2.2.0" />
-        <PackageReference Include="Microsoft.AspNetCore.Authorization" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Components" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.10"/>
-        <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all"/>
-        <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
-        <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.10" />
-        <PackageReference Include="Stripe.net" Version="47.0.0" />
-        <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
+      <_ContentIncludedByDefault Remove="Components\Layout\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\NavMenu.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Counter.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Weather.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\BusinessLogin.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Components\OfferComponent.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\CreateOffer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Favourites.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Login.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Offer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\PaymentFailed.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\PaymentSuccess.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Profile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\RegisterBusiness.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Shared\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Shared\NavMenu.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Unauthorized.razor" />
     </ItemGroup>
 
     <ItemGroup>
-      <AdditionalFiles Include="Pages\Shared\MainLayout.razor" />
-      <AdditionalFiles Include="Pages\Shared\NavMenu.razor" />
+      <AdditionalFiles Include="Pages\BusinessLogin.razor" />
+      <AdditionalFiles Include="Pages\Components\OfferComponent.razor" />
+      <AdditionalFiles Include="Pages\CreateOffer.razor" />
+      <AdditionalFiles Include="Pages\Favourites.razor" />
+      <AdditionalFiles Include="Pages\Home.razor" />
+      <AdditionalFiles Include="Pages\Login.razor" />
+      <AdditionalFiles Include="Pages\Offer.razor" />
+      <AdditionalFiles Include="Pages\PaymentFailed.razor" />
+      <AdditionalFiles Include="Pages\PaymentSuccess.razor" />
+      <AdditionalFiles Include="Pages\Profile.razor" />
+      <AdditionalFiles Include="Pages\RegisterBusiness.razor" />
+      <AdditionalFiles Include="Pages\Unauthorized.razor" />
     </ItemGroup>
 
 </Project>

@@ -1,76 +1,20 @@
-﻿@using System.Security.Claims
-@using client.Pages.Shared
-@using client.Security
-@* @inject NavigationManager Navigation *@
-@* @inject AuthenticationStateProvider AuthProvider *@
+﻿<!DOCTYPE html>
+<html lang="en">
 
-<CascadingAuthenticationState>
-    <Router AppAssembly="@typeof(App).Assembly">
-        <Found Context="routeData">
-            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
-                <NotAuthorized>
-                    Sorry, but you're not allowed to see this.
-                    @* @if (!isAuthenticated) *@
-                    @* { *@
-                    @*     RedirectToLogin(); *@
-                    @* } *@
-                    @* else *@
-                    @* { *@
-                    @*     RedirectBasedOnRole(); *@
-                    @* } *@
-                </NotAuthorized>
-            </AuthorizeRouteView>
-        </Found>
-        <NotFound>
-            <PageTitle>Not found</PageTitle>
-            <LayoutView Layout="@typeof(MainLayout)">
-                <p role="alert">Sorry, there's nothing at this address.</p>
-            </LayoutView>
-        </NotFound>
-    </Router>
-</CascadingAuthenticationState>
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <base href="/"/>
+    <link rel="stylesheet" href="bootstrap/bootstrap.min.css"/>
+    <link rel="stylesheet" href="app.css"/>
+    <link rel="stylesheet" href="client.styles.css"/>
+    <link rel="icon" type="image/png" href="favicon.png"/>
+    <HeadOutlet/>
+</head>
 
-@code {
-    // private bool isAuthenticated;
-    // private string? userRole;
-    //
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     var authState = await AuthProvider.GetAuthenticationStateAsync();
-    //     var user = authState.User;
-    //
-    //     isAuthenticated = user.Identity?.IsAuthenticated ?? false;
-    //
-    //     if (isAuthenticated)
-    //     {
-    //         var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
-    //         userRole = roleClaim?.Value;
-    //     }
-    // }
+<body>
+<Routes/>
+<script src="_framework/blazor.web.js"></script>
+</body>
 
-}
-
-@code {
-
-    // private void RedirectToLogin()
-    // {
-    //     Navigation.NavigateTo("/auth/login");
-    // }
-    //
-    // private void RedirectBasedOnRole()
-    // {
-    //     if (userRole == "BUSINESS")
-    //     {
-    //         Navigation.NavigateTo("/offers");
-    //     }
-    //     else if (userRole == "CUSTOMER")
-    //     {
-    //         Navigation.NavigateTo("/offers");
-    //     }
-    //     else
-    //     {
-    //         Navigation.NavigateTo("/unauthorized");
-    //     }
-    // }
-
-}
+</html>
