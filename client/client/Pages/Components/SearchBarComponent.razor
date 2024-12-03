@@ -8,9 +8,9 @@
     private int[] priceRange = { 10, 100 };
     private int[] timeRange = { 6, 16 };
 
-    private CreateOfferRequestDto offerDto = new CreateOfferRequestDto {
-        Categories = new List<string>()
-    };
+    private FilterRequestDto filterRequestDto;
+    private List<CategoryPickerComponent.Category> selectedCategories = new List<CategoryPickerComponent.Category>();
+    
 
     private void ToggleFilters() {
         showFilterPopup = !showFilterPopup;
@@ -27,6 +27,7 @@
         timeRange = new int[] { 0, 24 };
         Console.WriteLine("Filters Cleared");
     }
+    
 }
 
 <div class="search-bar-container">
@@ -52,7 +53,7 @@
                 <button class="close-button" @onclick="ToggleFilters">&times;</button>
             </div>
             <div class="popup-body">
-                <CategoryPickerComponent offerDto="offerDto"/>
+                <CategoryPickerComponent selectedCategories="selectedCategories"/>
                 <div class="filter-section">
                     <label>Collection Time</label>
                     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1">
@@ -61,7 +62,7 @@
                 </div>
                 <div class="filter-section">
                     <label>Price Range</label>
-                    <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="100" Step="1">
+                    <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">
                     </SfSlider>
                     <p>From: @priceRange[0] To: @priceRange[1]</p>
                 </div>

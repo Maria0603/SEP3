@@ -10,9 +10,9 @@
         <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
     </div>
     <div class="selected-categories mt-2">
-        @foreach (var category in offerDto.Categories) {
+        @foreach (var category in selectedCategories) {
             <div class="category-box">
-                <span class="category-text">@category</span>
+                <span class="category-text">@category.Name</span>
                 <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
             </div>
         }
@@ -20,7 +20,7 @@
 </div>
 
 @code {
-    [Parameter] public CreateOfferRequestDto offerDto { get; set; }
+    [Parameter] public List<Category> selectedCategories { get; set; }
     private string selectedCategory;
     private string categoriesInput = string.Empty;
 
@@ -38,18 +38,17 @@
     }
 
     private void AddCategory() {
-        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
-            offerDto.Categories.Add(selectedCategory);
+        if (!string.IsNullOrEmpty(selectedCategory) && !selectedCategories.Any(c => c.Name == selectedCategory)) {
+            selectedCategories.Add(new Category { Name = selectedCategory });
         }
     }
 
-    private void RemoveCategory(string category) {
-        offerDto.Categories.Remove(category);
+    private void RemoveCategory(Category category) {
+        selectedCategories.Remove(category);
     }
 
     public class Category {
         public string Name { get; set; }
         public bool IsSelected { get; set; }
     }
-
 }
