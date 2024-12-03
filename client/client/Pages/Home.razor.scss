@@ -3,7 +3,9 @@
   flex-wrap: wrap;
   gap: 16px; /* Adjust the gap between items as needed */
 }
-
+.search-bar-container {
+  margin-bottom: 20px; /* Adjust the value as needed */
+}
 .container > .offer {
   flex: 1 1 calc(33.33% - 16px); /* Default to 3 items per row with space for gap */
   box-sizing: border-box;

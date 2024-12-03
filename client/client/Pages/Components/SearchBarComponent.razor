@@ -8,9 +8,9 @@
     private int[] priceRange = { 10, 100 };
     private int[] timeRange = { 6, 16 };
 
-    private FilterRequestDto filterRequestDto;
-    private List<CategoryPickerComponent.Category> selectedCategories = new List<CategoryPickerComponent.Category>();
-    
+    private FilterRequestDto? filterRequestDto;
+    private List<CategoryPickerComponent.Category>? selectedCategories;
+
 
     private void ToggleFilters() {
         showFilterPopup = !showFilterPopup;
@@ -19,7 +19,13 @@
     private void ApplyFilters() {
         showFilterPopup = false;
         Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
-        // Add logic to apply filters
+        filterRequestDto = new FilterRequestDto {
+            Categories = selectedCategories.Select(c => c.Name).ToList(),
+            MinOfferPrice = priceRange[0],
+            MaxOfferPrice = priceRange[1],
+            PickupTimeStart = new TimeDto { Hour = timeRange[0], Minute = 0 },
+            PickupTimeEnd = new TimeDto { Hour = timeRange[1], Minute = 0 }
+        };
     }
 
     private void ClearFilters() {
@@ -27,7 +33,7 @@
         timeRange = new int[] { 0, 24 };
         Console.WriteLine("Filters Cleared");
     }
-    
+
 }
 
 <div class="search-bar-container">

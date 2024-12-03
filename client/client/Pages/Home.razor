@@ -3,12 +3,14 @@
 @using client.Models
 @using client.Pages.Components
 @inject client.Services.IOfferService OfferService
-<PageTitle>Home</PageTitle>
+<PageTitle xmlns="http://www.w3.org/1999/html">Home</PageTitle>
 
-<h2> The main page</h2>
+
+<div class="search-bar-container">
+    <SearchBarComponent/>
+</div>
 
 <div class="container">
-    <SearchBarComponent/>
     @if (offers == null) {
         <p>Loading offers...</p>
     }
@@ -29,7 +31,8 @@
     protected override async Task OnInitializedAsync() {
         // Call the service to get the offers
         try {
-            offers = await OfferService.GetOffersAsync();
+            FilterRequestDto filterRequestDto = null;
+            offers = await OfferService.GetOffersAsync(filterRequestDto);
             if (offers != null) {
                 foreach (var offer in offers) {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
