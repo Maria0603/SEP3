@@ -1,6 +1,4 @@
-﻿/* Styling Section */
-
-/* Container for the entire search bar */
+﻿/* Search bar */
 .search-bar-container {
   display: flex;
   align-items: center;
@@ -10,20 +8,6 @@
   margin: 0 auto;
 }
 
-/* Styling for the map icon bubble */
-.map-icon {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
-
-/* Search bar styling */
 .search-bar {
   display: flex;
   align-items: center;
@@ -43,26 +27,9 @@
   background-color: #fff;
 }
 
-/* Search icon inside the search bar */
-.search-icon {
-  margin-left: 10px;
-  cursor: pointer;
-}
 
-/* Styling for the filter icon bubble */
-.filter-icon-bubble {
-  width: 40px;
-  height: 40px;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f5f5f5;
-  border-radius: 50%;
-  cursor: pointer;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-}
 
-/* Popup overlay */
+/* Filters Popup */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -76,7 +43,6 @@
   z-index: 999;
 }
 
-/* Popup window */
 .popup-window {
   background-color: #fff;
   border-radius: 10px;
@@ -87,7 +53,6 @@
   position: relative;
 }
 
-/* Popup header */
 .popup-header {
   display: flex;
   justify-content: space-between;
@@ -107,7 +72,6 @@
   cursor: pointer;
 }
 
-/* Popup body */
 .popup-body {
   margin-bottom: 20px;
 }
@@ -145,4 +109,35 @@
 .apply-button {
   background-color: #6200ee;
   color: #fff;
+}
+
+
+/* Icons */
+.map-icon {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.search-icon {
+  margin-left: 10px;
+  cursor: pointer;
+}
+
+.filter-icon-bubble {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5f5f5;
+  border-radius: 50%;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
