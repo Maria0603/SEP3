@@ -13,28 +13,31 @@
       <_ContentIncludedByDefault Remove="Components\Pages\Error.razor" />
       <_ContentIncludedByDefault Remove="Components\Pages\Home.razor" />
       <_ContentIncludedByDefault Remove="Components\Pages\Weather.razor" />
-    </ItemGroup>
-
-    <ItemGroup>
-      <AdditionalFiles Include="Components\Layout\Pages\AddFoodBag.razor" />
-      <AdditionalFiles Include="Components\Layout\Pages\FilterFoodBags.razor" />
-      <AdditionalFiles Include="Components\Layout\Pages\FoodBagCard.razor" />
-      <AdditionalFiles Include="Components\Layout\Pages\Home.razor" />
-      <AdditionalFiles Include="Components\Layout\Pages\Reservation.razor" />
-      <AdditionalFiles Include="Components\Pages\Business-profile.razor" />
-      <AdditionalFiles Include="Components\Pages\Components\OfferComponent.razor" />
-      <AdditionalFiles Include="Components\Pages\CreateOffer.razor" />
-      <AdditionalFiles Include="Components\Pages\Favourites.razor" />
-      <AdditionalFiles Include="Components\Pages\Home.razor" />
-      <AdditionalFiles Include="Components\Pages\Offer.razor" />
-      <AdditionalFiles Include="Components\Pages\PaymentFailed.razor" />
-      <AdditionalFiles Include="Components\Pages\PaymentSuccess.razor" />
-      <AdditionalFiles Include="Components\Pages\Profile.razor" />
-      <AdditionalFiles Include="Components\Pages\Shared\Logout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\Pages\AddFoodBag.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\Pages\FilterFoodBags.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\Pages\FoodBagCard.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Components\Layout\Pages\Reservation.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Business-profile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Components\OfferComponent.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\CreateOffer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Favourites.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Offer.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\PaymentFailed.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\PaymentSuccess.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Profile.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Shared\Logout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Shared\MainLayout.razor" />
+      <_ContentIncludedByDefault Remove="Components\Pages\Shared\NavMenu.razor" />
     </ItemGroup>
 
     <ItemGroup>
       <PackageReference Include="Stripe.net" Version="47.1.0" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <AdditionalFiles Include="Pages\Shared\MainLayout.razor" />
+      <AdditionalFiles Include="Pages\Shared\NavMenu.razor" />
     </ItemGroup>
 
 </Project>

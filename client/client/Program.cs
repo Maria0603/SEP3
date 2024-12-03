@@ -1,4 +1,4 @@
-using client.Components;
+using client;
 using client.Services;
 using Stripe;
 
