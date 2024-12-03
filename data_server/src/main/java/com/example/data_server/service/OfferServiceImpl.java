@@ -15,20 +15,17 @@ import java.util.List;
 import java.util.Optional;
 
 @GrpcService public class OfferServiceImpl
-    extends OfferServiceGrpc.OfferServiceImplBase
-{
+    extends OfferServiceGrpc.OfferServiceImplBase {
   private OfferRepository offerRepository;
 
-  @Autowired public OfferServiceImpl(OfferRepository offerRepository)
-  {
+  @Autowired public OfferServiceImpl(OfferRepository offerRepository) {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
 
   }
 
   @Override public void saveOffer(SaveOfferRequest request,
-      StreamObserver<SaveOfferResponse> responseObserver)
-  {
+      StreamObserver<SaveOfferResponse> responseObserver) {
     System.out.println("Request for save offer");
 
     // Prepare to save the offer in database
@@ -45,8 +42,7 @@ import java.util.Optional;
   }
 
   @Override public void getAvailableOffers(EmptyMessage request,
-      StreamObserver<OfferList> responseObserver)
-  {
+      StreamObserver<OfferList> responseObserver) {
     System.out.println("Request for all offers");
     List<OfferDao> availableOffers = offerRepository.findByStatus(
         OfferStatus.AVAILABLE.getStatus());
@@ -61,77 +57,102 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getOffers(FilterRequest request, StreamObserver<OfferList> responseObserver) {
-    System.out.println("Request for filtered offers");
+  @Override public void getOffers(FilterRequest request,
+      StreamObserver<OfferList> responseObserver) {
 
     List<OfferDao> filteredOffers = new ArrayList<>();
 
-    if (request.getCategoriesList() != null && !request.getCategoriesList().isEmpty()) {
-      System.out.println("Filtering by categories: " + request.getCategoriesList());
-      filteredOffers = offerRepository.findByCategories(request.getCategoriesList());
-    } else {
-      filteredOffers = offerRepository.findByStatus("AVAILABLE");
-    }
-
-    if (request.hasMinOfferPrice() || request.hasMaxOfferPrice()) {
-      int minPrice = request.hasMinOfferPrice() ? request.getMinOfferPrice() : Integer.MIN_VALUE;
-      int maxPrice = request.hasMaxOfferPrice() ? request.getMaxOfferPrice() : Integer.MAX_VALUE;
-      System.out.println("Filtering by price range: " + minPrice + " to " + maxPrice);
-      filteredOffers = filterOffersByPrice(filteredOffers, minPrice, maxPrice);
+    if (request.hasMinOfferPrice() && request.hasMaxOfferPrice()) {
+      filteredOffers = filterOffersByPrice(offerRepository.findAll(), request.getMinOfferPrice(),
+          request.getMaxOfferPrice());
     }
 
     if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
-      System.out.println("Filtering by pickup time range");
-      filteredOffers = filterOffersByTime(filteredOffers, request.getPickupTimeStart(), request.getPickupTimeEnd());
+      filteredOffers = filterOffersByTime(filteredOffers, request.getPickupTimeStart(),
+          request.getPickupTimeEnd());
     }
 
+    if (!request.getCategoriesList().isEmpty()) {
+      filteredOffers = filterOffersByCategories(filteredOffers, request.getCategoriesList());
+    }
+
+    // Build the response
     OfferList.Builder offerListBuilder = OfferList.newBuilder();
     for (OfferDao offerDao : filteredOffers) {
       offerListBuilder.addOffer(buildShortOfferResponse(offerDao));
     }
 
-    OfferList response = offerListBuilder.build();
-    responseObserver.onNext(response);
+    OfferList offerListResponse = offerListBuilder.build();
+    responseObserver.onNext(offerListResponse);
     responseObserver.onCompleted();
   }
 
+  private List<OfferDao> filterOffersByPrice(List<OfferDao> previousFilterResult, int minPrice, int maxPrice) {
+    List<OfferDao> filteredOffers = offerRepository.findByOfferPriceRange(minPrice, maxPrice);
+    System.out.println("Offers before filtering by price: ");
+    for (OfferDao offer : filteredOffers) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
 
-  private List<OfferDao> filterOffersByPrice(List<OfferDao> offers, int minPrice, int maxPrice) {
-    List<OfferDao> filtered = new ArrayList<>();
-    for (OfferDao offer : offers) {
-      if (offer.getOfferPrice() >= minPrice && offer.getOfferPrice() <= maxPrice) {
-        filtered.add(offer);
+    List<OfferDao> output = new ArrayList<>();
+    for (OfferDao offer : filteredOffers) {
+      if (previousFilterResult.contains(offer)) {
+        output.add(offer);
       }
     }
-    return filtered;
+    System.out.println("Offers after filtering by price: ");
+    for (OfferDao offer : output) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
+    return output;
   }
 
-  private List<OfferDao> filterOffersByTime(List<OfferDao> offers, TimeDao startTime, TimeDao endTime) {
-    List<OfferDao> filtered = new ArrayList<>();
-    for (OfferDao offer : offers) {
-      TimeDao pickupStart = offer.getPickupTimeStart();
-      TimeDao pickupEnd = offer.getPickupTimeEnd();
 
-      if ((pickupStart.getHour() > startTime.getHour() ||
-          (pickupStart.getHour() == startTime.getHour() && pickupStart.getMinute() >= startTime.getMinute())) &&
-          (pickupEnd.getHour() < endTime.getHour() ||
-              (pickupEnd.getHour() == endTime.getHour() && pickupEnd.getMinute() <= endTime.getMinute()))) {
-        filtered.add(offer);
+  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, Time pickupTimeStart,
+      Time pickupTimeEnd) {
+    List<OfferDao> filteredOffers = offerRepository.findByPickupTimeRange(
+        pickupTimeStart, pickupTimeEnd);
+    for (OfferDao offer : previousFilterResult) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
+    List<OfferDao> output = new ArrayList<>();
+    for (OfferDao offer : filteredOffers) {
+      if (previousFilterResult.contains(offer)) {
+        output.add(offer);
       }
     }
-    return filtered;
+    for (OfferDao offer : previousFilterResult) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
+    return output;
+  }
+
+
+  private List<OfferDao> filterOffersByCategories(List<OfferDao> previousFilterResult, List<String> categories) {
+    List<OfferDao> filteredOffers = offerRepository.findByCategories(
+        categories);
+    for (OfferDao offer : previousFilterResult) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
+    List<OfferDao> output = new ArrayList<>();
+    for (OfferDao offer : filteredOffers) {
+      if (previousFilterResult.contains(offer)) {
+        output.add(offer);
+      }
+    }
+    for (OfferDao offer : previousFilterResult) {
+      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
+    }
+    return output;
   }
 
 
   @Override public void getOfferById(OfferIdRequest request,
-      StreamObserver<OfferResponse> responseObserver)
-  {
+      StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for offer by id");
 
     Optional<OfferDao> offer = offerRepository.findById(request.getId());
-    if (offer.isPresent())
-    {
+    if (offer.isPresent()) {
       OfferDao offerDao = offer.get();
 
       OfferResponse offerResponse = buildOfferResponse(
@@ -144,8 +165,7 @@ import java.util.Optional;
   }
 
   @Override public void updateOffer(OfferResponse request,
-      StreamObserver<OfferResponse> responseObserver)
-  {
+      StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for update offer.");
     if (!offerRepository.existsById(request.getId()))
       throw new IllegalArgumentException(
@@ -163,8 +183,7 @@ import java.util.Optional;
   }
 
   private OfferDao generateOfferDaoFromSaveOfferRequest(
-      SaveOfferRequest request)
-  {
+      SaveOfferRequest request) {
     OfferDao offer = new OfferDao();
     offer.setTitle(request.getTitle());
     offer.setDescription(request.getDescription());
@@ -189,9 +208,7 @@ import java.util.Optional;
     return offer;
   }
 
-  private OfferDao generateOfferDaoFromOfferResponse(
-      OfferResponse request)
-  {
+  private OfferDao generateOfferDaoFromOfferResponse(OfferResponse request) {
     OfferDao offer = new OfferDao();
     offer.setId(request.getId());
     offer.setTitle(request.getTitle());
@@ -211,15 +228,15 @@ import java.util.Optional;
 
     offer.setNumberOfItems(request.getNumberOfItems());
     offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-    System.out.println("**********************Available: " + request.getNumberOfAvailableItems());
+    System.out.println("**********************Available: "
+        + request.getNumberOfAvailableItems());
     offer.setStatus(request.getStatus());
     offer.setImagePath(request.getImagePath());
 
     return offer;
   }
 
-  private SaveOfferResponse buildSaveOfferResponse(OfferDao offer)
-  {
+  private SaveOfferResponse buildSaveOfferResponse(OfferDao offer) {
     return SaveOfferResponse.newBuilder().setId(offer.getId())
         .setTitle(offer.getTitle()).setDescription(offer.getDescription())
         .setOfferPrice(offer.getOfferPrice())
@@ -234,8 +251,7 @@ import java.util.Optional;
 
   }
 
-  private OfferResponse buildOfferResponse(OfferDao offerDao)
-  {
+  private OfferResponse buildOfferResponse(OfferDao offerDao) {
     return OfferResponse.newBuilder().setId(offerDao.getId())
         .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
         .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
@@ -254,8 +270,7 @@ import java.util.Optional;
         .build();
   }
 
-  private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao)
-  {
+  private ShortOfferResponse buildShortOfferResponse(OfferDao offerDao) {
     return ShortOfferResponse.newBuilder().setId(offerDao.getId())
         .setTitle(offerDao.getTitle()).setStatus(offerDao.getStatus())
         .setOfferPrice(offerDao.getOfferPrice())
