@@ -1,11 +1,15 @@
 @page "/offer"
 @using client.DTO.Offer
 @using Microsoft.AspNetCore.Authorization
+@attribute [Authorize]
+@using System.Net
+@using client.DTO
+@using client.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
 @inject NavigationManager NavigationManager
-
-@attribute [Authorize]
+@inject IWebAssemblyHostEnvironment Environment;
 
 @if (createdOffer is null)
 {
@@ -144,6 +148,50 @@ else
         PickupTimeEnd = new DateTime(),
         NumberOfItems = 1 //Default
     };
+    
+    protected override void OnInitialized()
+    {
+        if (availableCategories.Any())
+        {
+            selectedCategory = availableCategories.First().Name;
+        }
+
+        // Pre-fill data for development environment
+        if (Environment.Environment == "Development")
+        {
+            PrefillTestData();
+        }
+    }
+
+    private void PrefillTestData()
+    {
+        //used random time/date for more realistic offers view
+        
+        Random random = new Random();
+        
+        int randomDays = random.Next(1, 4); 
+        dateValue = DateTime.Now.AddDays(randomDays);
+
+       
+        int startHour = random.Next(8, 12); 
+        int startMinute = random.Next(0, 60); 
+        timeStart = new TimeOnly(startHour, startMinute);
+
+        
+        int endHour = random.Next(13, 20); 
+        int endMinute = random.Next(0, 60); 
+        timeEnd = new TimeOnly(endHour, endMinute);
+        
+        offerDto.Title = "Bread and buns";
+        offerDto.Description = "This is bread description";
+        offerDto.OriginalPrice = 100;
+        offerDto.OfferPrice = 30;
+        offerDto.NumberOfItems = 5;
+        offerDto.Categories.Add("Bread");
+        offerDto.Categories.Add("Vegan");
+    }
+
+
 
     private List<Category> availableCategories = new List<Category>
     {

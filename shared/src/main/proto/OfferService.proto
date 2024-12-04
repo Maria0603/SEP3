@@ -12,8 +12,18 @@ service OfferService {
   rpc SaveOffer(SaveOfferRequest) returns (SaveOfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
   rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
+  rpc GetOffers(FilterRequest) returns (FullOfferList);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
 }
+
+message FilterRequest {
+  repeated string categories = 1;
+  optional int32 minOfferPrice = 2;
+  optional int32 maxOfferPrice = 3;
+  optional Time pickupTimeStart = 4;
+  optional Time pickupTimeEnd = 5;
+}
+
 
 message SaveOfferRequest {
   string title = 1;
@@ -76,9 +86,26 @@ message OfferList {
   repeated ShortOfferResponse offer = 1;
 }
 
+message FullOfferList {
+  repeated OfferResponse offer = 1;
+}
+
+message Time {
+  int32 hour = 1;
+  int32 minute = 2;
+}
+
+message Date {
+  int32 year = 1;
+  int32 month = 2;
+  int32 day = 3;
+}
+
 message EmptyMessage {
 
 }
+
+
 
 
 
