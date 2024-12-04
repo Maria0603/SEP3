@@ -1,14 +1,15 @@
 @page "/offer"
+@using System.Net
+@using client.DTO
 @using client.DTO.Offer
-@using Microsoft.AspNetCore.Authorization
+@using client.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
 @inject NavigationManager NavigationManager
+@inject IWebAssemblyHostEnvironment Environment;
 
-@attribute [Authorize]
-
-@if (createdOffer is null)
-{
+@if (createdOffer is null) {
     <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
         <DataAnnotationsValidator/>
         <ValidationSummary/>
@@ -65,16 +66,14 @@
             <label for="categories">Categories</label>
             <div class="d-flex align-items-center">
                 <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
-                    @foreach (var category in availableCategories)
-                    {
+                    @foreach (var category in availableCategories) {
                         <option value="@category.Name">@category.Name</option>
                     }
                 </select>
                 <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
             </div>
             <div class="selected-categories mt-2">
-                @foreach (var category in offerDto.Categories)
-                {
+                @foreach (var category in offerDto.Categories) {
                     <div class="category-box">
                         <span class="category-text">@category</span>
                         <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
@@ -88,65 +87,73 @@
             <InputFile id="image" OnChange="HandleImageUpload" class="form-control"/>
         </div>
 
-        @if (!string.IsNullOrEmpty(errorLabel))
-        {
+        @if (!string.IsNullOrEmpty(errorLabel)) {
             <div class="alert alert-danger mt-3">@errorLabel</div>
         }
-        @if (!string.IsNullOrEmpty(successLabel))
-        {
+        @if (!string.IsNullOrEmpty(successLabel)) {
             <div class="alert alert-success mt-3">@successLabel</div>
         }
 
         <button type="submit" class="btn btn-danger mt-3">Submit</button>
     </EditForm>
 }
-else
-{
-    <div class="mt-4">
-        <h3>Offer ID #@createdOffer.Id</h3>
-        <p>
 
-            <strong>Title:</strong> @createdOffer.Title
-        </p>
-        <p>
-            <strong>Description:</strong> @createdOffer.Description
-        </p>
-        <p><strong>Original Price:</strong> @createdOffer.OriginalPrice kr</p>
-        <p><strong>Offer Price:</strong> @createdOffer.OfferPrice kr</p>
-        <p>
-            <strong>Number of Items:</strong> @createdOffer.NumberOfItems
-        </p>
-        <p><strong>Pickup Date:</strong> @createdOffer.PickupTimeStart.Day/@createdOffer.PickupTimeStart.Month/@createdOffer.PickupTimeStart.Year</p>
-        <p>
-            <strong>Pickup Time:</strong> @createdOffer.PickupTimeStart.Hour:@createdOffer.PickupTimeStart.Minute -
-            @createdOffer.PickupTimeEnd.Hour:@createdOffer.PickupTimeEnd.Minute
-        </p>
-        <p>
-            <strong>Categories:</strong> @string.Join(", ", createdOffer.Categories)
-        </p>
-        <p>
-            <strong>Status:</strong> @createdOffer.Status
-        </p>
-        <div>
-            <img src="@(HttpClient.BaseAddress + createdOffer.ImagePath)" alt="Offer Image" class="img-fluid" style="max-width: 300px;"/>
-        </div>
-        <button class="btn btn-danger mt-3" @onclick="ResetForm">Create Another Offer</button>
-
-    </div>
-}
+else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
 @code {
 
-    private CreateOfferRequestDto offerDto = new()
-    {
+    private CreateOfferRequestDto offerDto = new() {
         Categories = new List<string>(),
         PickupTimeStart = new DateTime(),
         PickupTimeEnd = new DateTime(),
         NumberOfItems = 1 //Default
     };
-
-    private List<Category> availableCategories = new List<Category>
+    
+    protected override void OnInitialized()
     {
+        if (availableCategories.Any())
+        {
+            selectedCategory = availableCategories.First().Name;
+        }
+
+        // Pre-fill data for development environment
+        if (Environment.Environment == "Development")
+        {
+            PrefillTestData();
+        }
+    }
+
+    private void PrefillTestData()
+    {
+        //used random time/date for more realistic offers view
+        
+        Random random = new Random();
+        
+        int randomDays = random.Next(1, 4); 
+        dateValue = DateTime.Now.AddDays(randomDays);
+
+       
+        int startHour = random.Next(8, 12); 
+        int startMinute = random.Next(0, 60); 
+        timeStart = new TimeOnly(startHour, startMinute);
+
+        
+        int endHour = random.Next(13, 20); 
+        int endMinute = random.Next(0, 60); 
+        timeEnd = new TimeOnly(endHour, endMinute);
+        
+        offerDto.Title = "Bread and buns";
+        offerDto.Description = "This is bread description";
+        offerDto.OriginalPrice = 100;
+        offerDto.OfferPrice = 30;
+        offerDto.NumberOfItems = 5;
+        offerDto.Categories.Add("Bread");
+        offerDto.Categories.Add("Vegan");
+    }
+
+
+
+    private List<Category> availableCategories = new List<Category> {
         new Category { Name = "Bread" },
         new Category { Name = "Vegan" },
         new Category { Name = "Pastry" },
@@ -157,36 +164,25 @@ else
 
     private TimeOnly? timeStart;
     private TimeOnly? timeEnd;
-    private DateOnly? dateValue;
+    private DateTime? dateValue;
     private string categoriesInput = string.Empty;
     private string errorLabel = "";
     private string successLabel = "";
 
     private OfferResponseDto? createdOffer = null;
+    
 
-    protected override void OnInitialized()
-    {
-        if (availableCategories.Any())
-        {
-            selectedCategory = availableCategories.First().Name;
-        }
-    }
-
-    private void AddCategory()
-    {
-        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory))
-        {
+    private void AddCategory() {
+        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
             offerDto.Categories.Add(selectedCategory);
         }
     }
 
-    private void RemoveCategory(string category)
-    {
+    private void RemoveCategory(string category) {
         offerDto.Categories.Remove(category);
     }
 
-    private async Task HandleImageUpload(InputFileChangeEventArgs e)
-    {
+    private async Task HandleImageUpload(InputFileChangeEventArgs e) {
         errorLabel = "";
         successLabel = "";
         var file = e.File;
@@ -200,27 +196,55 @@ else
         errorLabel = "";
         successLabel = "";
 
+        // Validate Pickup Date
         if (dateValue is not null)
         {
-            if (timeStart is not null)
-                offerDto.PickupTimeStart = new DateTime(dateValue.Value, timeStart.Value);
-            else
-            {
-                errorLabel = "Please provide pickup time start.";
-                return;
-            }
+            offerDto.PickupTimeEnd = dateValue.Value;
+            offerDto.PickupTimeStart = dateValue.Value;
+        }
+        else
+        {
+            errorLabel = "Please provide pickup date.";
+            return;
+        }
 
-            if (timeEnd is not null)
-                offerDto.PickupTimeEnd = new DateTime(dateValue.Value, timeEnd.Value);
-            else
-            {
-                errorLabel = "Please provide pickup time end.";
-                return;
-            }
+        // Validate Pickup Start Time
+        if (timeStart is not null)
+        {
+            offerDto.PickupTimeStart = new DateTime(
+                dateValue.Value.Year,
+                dateValue.Value.Month,
+                dateValue.Value.Day,
+                timeStart.Value.Hour,
+                timeStart.Value.Minute,
+                0); // Combine date and time
+        }
+        else
+        {
+            errorLabel = "Please provide pickup time start.";
+            return;
+        }
+
+        // Validate Pickup End Time
+        if (timeEnd is not null)
+        {
+            offerDto.PickupTimeEnd = new DateTime(
+                dateValue.Value.Year,
+                dateValue.Value.Month,
+                dateValue.Value.Day,
+                timeEnd.Value.Hour,
+                timeEnd.Value.Minute,
+                0); // Combine date and time
+        }
+        else
+        {
+            errorLabel = "Please provide pickup time end.";
+            return;
         }
 
         try
         {
+            // Save Offer
             createdOffer = await OfferService.SaveOfferAsync(offerDto);
 
             if (createdOffer is not null)
@@ -236,11 +260,10 @@ else
         }
     }
 
-    private void ResetForm()
-    {
+
+    private void ResetForm() {
         createdOffer = null;
-        offerDto = new CreateOfferRequestDto
-        {
+        offerDto = new CreateOfferRequestDto {
             Categories = new List<string>(),
             PickupTimeStart = new DateTime(),
             PickupTimeEnd = new DateTime(),
@@ -254,8 +277,7 @@ else
         successLabel = "";
     }
 
-    public class Category
-    {
+    public class Category {
         public string Name { get; set; }
         public bool IsSelected { get; set; }
     }
