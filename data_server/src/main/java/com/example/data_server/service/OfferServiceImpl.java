@@ -68,8 +68,8 @@ import java.util.Optional;
     }
 
     if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
-      filteredOffers = filterOffersByTime(filteredOffers, request.getPickupTimeStart(),
-          request.getPickupTimeEnd());
+      filteredOffers = filterOffersByTime(filteredOffers, DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()),
+          DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
     }
 
     if (!request.getCategoriesList().isEmpty()) {
@@ -113,8 +113,9 @@ import java.util.Optional;
   }
 
 
-  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, Time pickupTimeStart,
-      Time pickupTimeEnd) {
+  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, TimeDao pickupTimeStart,
+      TimeDao pickupTimeEnd) {
+    System.out.println("Filtering by time");
     List<OfferDao> filteredOffers = offerRepository.findByPickupTimeRange(
         pickupTimeStart, pickupTimeEnd);
     for (OfferDao offer : previousFilterResult) {
