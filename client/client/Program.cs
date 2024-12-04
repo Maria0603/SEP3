@@ -20,7 +20,10 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<AuthStateProvider>(); 
-builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthStateProvider>());
+// builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthStateProvider>());
+// builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+
+
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();

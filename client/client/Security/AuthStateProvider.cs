@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Components.Authorization;
 using client.Services;
 using client.DTO.Auth;
 using Microsoft.AspNetCore.Components;
+using Microsoft.JSInterop;
 
 namespace client.Security;
 
@@ -14,17 +15,19 @@ public class AuthStateProvider : AuthenticationStateProvider
     private readonly IAuthService _authService;
     private readonly ILocalStorageService _localStorage;
     private readonly NavigationManager _navigationManager;
+    private readonly IJSRuntime _jsRuntime;
     
     private readonly string _tokenKey="authToken";
     private readonly string _refreshTokenKey="refreshToken";
 
 
     public AuthStateProvider(IAuthService authService,
-        ILocalStorageService localStorage, NavigationManager navigationManager)
+        ILocalStorageService localStorage, NavigationManager navigationManager, IJSRuntime jsRuntime)
     {
         _authService = authService;
         _localStorage = localStorage;
         _navigationManager = navigationManager;
+        _jsRuntime = jsRuntime;
     }
 
     public override async Task<AuthenticationState>
@@ -32,7 +35,9 @@ public class AuthStateProvider : AuthenticationStateProvider
     {
         // Retrieve token from local storage
         // var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
-        var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1wbGVAYnVzaW5lc3MuY29tIiwiaWF0IjoxNzMzMjM0NDE5LCJleHAiOjE3MzMzMjA4MTksInJvbGUiOlsiQlVTSU5FU1MiXX0.EcJMmonaVRFZW4PkQB6P0F1fY1VOwOMBfqAGpMozbTE";
+        var token = await _jsRuntime.InvokeAsync<string>("localStorage.getItem", _tokenKey);
+        Console.WriteLine("This is token retrieved from localStorage: " + token);
+        // var token = "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJzYW1wbGVAYnVzaW5lc3MuY29tIiwiaWF0IjoxNzMzMjM0NDE5LCJleHAiOjE3MzMzMjA4MTksInJvbGUiOlsiQlVTSU5FU1MiXX0.EcJMmonaVRFZW4PkQB6P0F1fY1VOwOMBfqAGpMozbTE";
         if (string.IsNullOrEmpty(token))
         {
             var uri = _navigationManager.Uri;
@@ -58,9 +63,11 @@ public class AuthStateProvider : AuthenticationStateProvider
 
         if (tokens != null)
         {
-            await _localStorage.SetItemAsStringAsync(_tokenKey, tokens.Token);
-            await _localStorage.SetItemAsStringAsync(_refreshTokenKey,
-                tokens.RefreshToken);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", _tokenKey, tokens.Token);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", _refreshTokenKey, tokens.RefreshToken);
+            // await _localStorage.SetItemAsStringAsync(_tokenKey, tokens.Token);
+            // await _localStorage.SetItemAsStringAsync(_refreshTokenKey,
+            //     tokens.RefreshToken);
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }
@@ -75,9 +82,11 @@ public class AuthStateProvider : AuthenticationStateProvider
 
         if (tokens != null)
         {
-            await _localStorage.SetItemAsStringAsync(_tokenKey, tokens.Token);
-            await _localStorage.SetItemAsStringAsync(_refreshTokenKey,
-                tokens.RefreshToken);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", _tokenKey, tokens.Token);
+            await _jsRuntime.InvokeVoidAsync("localStorage.setItem", _refreshTokenKey, tokens.RefreshToken);
+
+            // await _localStorage.SetItemAsStringAsync(_tokenKey, tokens.Token);
+            // await _localStorage.SetItemAsStringAsync(_refreshTokenKey, tokens.RefreshToken);
 
             NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
         }

@@ -31,7 +31,8 @@ import java.io.IOException;
     final String authHeader = request.getHeader("Authorization");
     final String jwtToken;
     final String userEmail;
-    if (authHeader == null || authHeader.isBlank())
+//    if (authHeader == null || authHeader.isBlank())
+    if (authHeader == null || !authHeader.startsWith("Bearer "))
     {
       filterChain.doFilter(request, response);
       return;

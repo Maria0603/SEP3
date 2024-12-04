@@ -65,8 +65,22 @@ public class OfferService : IOfferService
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
     public async Task<List<ShortOfferResponseDto>> GetOffersAsync()
     {
+        
+        // Log the request URL
+        var requestUrl = "offers";
+        Console.WriteLine("Request URL: " + client.BaseAddress + requestUrl);
+
+        // Log the headers
+        Console.WriteLine("Request Headers:");
+        foreach (var header in client.DefaultRequestHeaders)
+        {
+            Console.WriteLine($"{header.Key}: {string.Join(", ", header.Value)}");
+        }
+
         var response = await client.GetAsync("offers");
+        
         var json = await response.Content.ReadAsStringAsync();
+        Console.WriteLine("Offer: "+json);
         var offers = JsonSerializer.Deserialize<List<ShortOfferResponseDto>>(
             json,
             new JsonSerializerOptions

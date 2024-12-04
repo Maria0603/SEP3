@@ -131,14 +131,42 @@ else {
 
 @code {
 
-    private CreateOfferRequestDto offerDto = new() {
-        Categories = new List<string>(),
-        PickupDate = new DateDto(),
-        PickupTimeStart = new TimeDto(),
-        PickupTimeEnd = new TimeDto(),
-        NumberOfItems = 1 //Default
+    // private CreateOfferRequestDto offerDto = new() {
+    //     Categories = new List<string>(),
+    //     PickupDate = new DateDto(),
+    //     PickupTimeStart = new TimeDto(),
+    //     PickupTimeEnd = new TimeDto(),
+    //     NumberOfItems = 1 //Default
+    // };
+
+    private CreateOfferRequestDto offerDto = new()
+    {
+        Title = "Sample Offer Title",
+        Description = "This is a dummy offer description.",
+        OriginalPrice = 100,
+        OfferPrice = 50,
+        NumberOfItems = 5,
+        PickupDate = new DateDto
+        {
+            Day = 10,
+            Month = 12,
+            Year = 2024
+        },
+        PickupTimeStart = new TimeDto
+        {
+            Hour = 14,
+            Minute = 30
+        },
+        PickupTimeEnd = new TimeDto
+        {
+            Hour = 16,
+            Minute = 0
+        },
+        Categories = new List<string> { "Food", "Drinks" },
+        Image = null // No image included
     };
 
+    
     private List<Category> availableCategories = new List<Category> {
         new Category { Name = "Bread" },
         new Category { Name = "Vegan" },

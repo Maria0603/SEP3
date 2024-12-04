@@ -36,6 +36,7 @@
         try
         {
             offers = await OfferService.GetOffersAsync();
+            Console.WriteLine("Offers: "+offers);
             if (offers != null)
             {
                 foreach (var offer in offers)
