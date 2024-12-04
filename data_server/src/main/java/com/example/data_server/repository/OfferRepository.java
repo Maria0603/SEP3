@@ -20,6 +20,6 @@ public interface OfferRepository extends MongoRepository<OfferDao, String> {
   @Query("{ 'pickup_time_start' : { $gte: ?0 }, 'pickup_time_end' : { $lte: ?1 } }")
   List<OfferDao> findByPickupTimeRange(Time pickupTimeStart, Time pickupTimeEnd);
 
-  @Query("{ 'offer_price' : { $gte: 0, $lte: 100 } }")
+  @Query("{ 'offer_price' : { $gte: ?0, $lte: ?1 } }")
   List<OfferDao> findByOfferPriceRange(int minPrice, int maxPrice);
 }

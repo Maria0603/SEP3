@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Document(collection = "offer") public class OfferDao
 {
@@ -158,6 +159,20 @@ import java.util.List;
   public void setPickupDate(DateDao pickupDate)
   {
     this.pickupDate = pickupDate;
+  }
+
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    OfferDao offerDao = (OfferDao) o;
+    return Objects.equals(id, offerDao.id);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id);
   }
 
 }
