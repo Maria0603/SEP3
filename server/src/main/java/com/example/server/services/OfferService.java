@@ -138,6 +138,13 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
   }
 
+  private OfferResponseDto getOffersByPriceRange(int minPrice, int maxPrice)
+  {
+    PriceRangeRequest request = PriceRangeRequest.newBuilder().setMinOfferPrice(minPrice).setMaxOfferPrice(maxPrice).build();
+    FullOfferList response = dataServerStub.get(request);
+    return OfferDtoGrpcConverter.FullOfferListGrpc_To_OfferResponseDto(response);
+  }
+
   private boolean isPickupInFuture(LocalDateTime time)
   {
     return time.isAfter(LocalDateTime.now());

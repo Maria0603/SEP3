@@ -15,36 +15,7 @@ public class FiltersTemp {
   private OfferRepository offerRepository;
 
 
-/*  private void getOffers(FilterRequest request,
-      StreamObserver<FullOfferList> responseObserver) {
-    List<OfferDao> filteredOffers = new ArrayList<>();
 
-    if (request.hasMinOfferPrice() && request.hasMaxOfferPrice()) {
-      filteredOffers = filterOffersByPrice(offerRepository.findAll(), request.getMinOfferPrice(),
-          request.getMaxOfferPrice());
-    }
-
-    if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
-      filteredOffers = filterOffersByTime(filteredOffers,
-          DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeStart()), DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeEnd()));
-    }
-
-    if (!request.getCategoriesList().isEmpty()) {
-      filteredOffers = filterOffersByCategories(filteredOffers, request.getCategoriesList());
-    }
-
-    // Build the response
-    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
-    for (OfferDao offerDao : filteredOffers) {
-      offerListBuilder.addOffer(buildOfferResponse(offerDao));
-    }
-
-
-    FullOfferList offerListResponse = offerListBuilder.build();
-    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
-    responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();
-  }*/
 
 
   private List<OfferDao> filterOffersByPrice(List<OfferDao> previousFilterResult, int minPrice, int maxPrice) {

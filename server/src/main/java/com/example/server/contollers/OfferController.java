@@ -72,4 +72,6 @@ import java.util.List;
     }
   }
 
+  @GetMapping("/offers/{")
+
 }
