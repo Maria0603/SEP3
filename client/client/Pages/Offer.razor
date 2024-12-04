@@ -18,7 +18,7 @@
 {
 <div class="container">
     <div>
-        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image">
+        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
         <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
         <header class="BusinessName">BUSINESS NAME HERE</header>
         <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
