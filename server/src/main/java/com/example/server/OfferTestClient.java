@@ -1,9 +1,7 @@
 package com.example.server;
 
 import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.offer.OfferResponseDto;
-import com.example.server.dto.date_time.TimeDto;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -36,7 +34,7 @@ public class OfferTestClient
       dto.setNumberOfItems(5);
       dto.setOriginalPrice(20);
       dto.setImage(createImageByteArray());
-      DateDto dateDto=new DateDto();
+      /**DateDto dateDto=new DateDto();
       dateDto.setYear(2024);
       dateDto.setMonth(12);
       dateDto.setDay(15);
@@ -48,7 +46,7 @@ public class OfferTestClient
       end.setMinute(30);
       dto.setPickupDate(dateDto);
       dto.setPickupTimeStart(start);
-      dto.setPickupTimeEnd(end);
+      dto.setPickupTimeEnd(end);*/
       ArrayList<String> categories=new ArrayList<>();
       categories.add("Meal");
       categories.add("Vegan");

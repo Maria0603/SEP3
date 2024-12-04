@@ -31,7 +31,14 @@ import java.util.UUID;
     String imageName = UUID.randomUUID() + IMAGE_EXTENSION;
 
     File file = new File(BASE_DIRECTORY, imageName);
-    Files.write(file.toPath(), imageData);
+    try
+    {
+      Files.write(file.toPath(), imageData);
+    }
+    catch(Exception e)
+    {
+      Files.write(file.toPath(), createImageByteArray());
+    }
 
     return imageName;
   }
@@ -71,6 +78,23 @@ import java.util.UUID;
     }
     return null;
   }
+  private byte[] createImageByteArray() throws IOException
+  {
+    // Create a 200x200 BufferedImage with RGB color
+    BufferedImage bufferedImage = new BufferedImage(200, 200,
+        BufferedImage.TYPE_INT_RGB);
+
+    // Fill the image with a solid color
+    for (int y = 0; y < 200; y++)
+      for (int x = 0; x < 200; x++)
+        bufferedImage.setRGB(x, y, (255 << 16) | (0 << 8) | 0); // Red
+
+    // Convert BufferedImage to byte array in JPEG format
+    ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    ImageIO.write(bufferedImage, "jpg", baos);
+    return baos.toByteArray();
+  }
+
 
   //Good methods, do not delete
   /*

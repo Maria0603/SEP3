@@ -3,6 +3,8 @@ package com.example.server.services;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.DtoGrpcConverter;
+import com.example.server.converters.OfferDtoGrpcConverter;
+import com.example.server.converters.OrderDtoGrpcConverter;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
@@ -48,13 +50,13 @@ import java.util.stream.Collectors;
   {
     System.out.println(
         "addOrder method called with request: " + orderRequestDto);
-    AddOrderRequest request = DtoGrpcConverter.AddOrderRequestDto_To_AddOrderRequest(
+    AddOrderRequest request = OrderDtoGrpcConverter.AddOrderRequestDto_To_AddOrderRequest(
         orderRequestDto);
     System.out.println(
         "Converted AddOrderRequestDto to AddOrderRequest: " + request);
     OrderResponse response = dataServerStub.addOrder(request);
     System.out.println("Received response from dataServerStub: " + response);
-    return DtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
+    return OrderDtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
   }
 
   public PlaceOrderSessionResponseDto placeOrder(PlaceOrderRequestDto requestDto) {
@@ -68,7 +70,11 @@ import java.util.stream.Collectors;
     System.out.println("Request for database built");
 
     OrderResponse databaseResponse = dataServerStub.addOrder(orderRequest);
-    if (databaseResponse == null || databaseResponse.getId().isEmpty()) {
+
+    /////////////////////////////////////Temporary////////////////////////////////
+    updateOrderStatus(databaseResponse.getId(), OrderStatus.RESERVED.getStatus());
+    //////////////////////////////////////////////////////////////////////////////
+    if (databaseResponse == null || databaseResponse.getId().isEmpty())
       throw new IllegalArgumentException("Invalid order ID.");
     }
 
@@ -151,7 +157,7 @@ import java.util.stream.Collectors;
     OrderList response = dataServerStub.getAllOrders(request);
     System.out.println("Received response from dataServerStub: " + response);
     return response.getOrdersList().stream()
-        .map(DtoGrpcConverter::OrderResponseGrpc_To_OrderResponseDto)
+        .map(OrderDtoGrpcConverter::OrderResponseGrpc_To_OrderResponseDto)
         .collect(Collectors.toList());
   }
 
@@ -161,7 +167,7 @@ import java.util.stream.Collectors;
     OrderIdRequest request = OrderIdRequest.newBuilder().setId(id).build();
     OrderResponse response = dataServerStub.getOrderById(request);
     System.out.println("Received response from dataServerStub: " + response);
-    return DtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
+    return OrderDtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(response);
   }
 
   private void updateNumberOfAvailableItems(String offerId,
@@ -173,7 +179,7 @@ import java.util.stream.Collectors;
         oldNumberOfAvailableItems - numberOfItemsToSubtract;
     offer.setNumberOfAvailableItems(newNumberOfAvailableItems);
     offerService.updateOffer(
-        DtoGrpcConverter.OfferResponseDto_To_UpdateOfferRequestDto(offer,
+        OfferDtoGrpcConverter.OfferResponseDto_To_UpdateOfferRequestDto(offer,
             imageStorageService.extractImage(offer.getImagePath())));
   }
 

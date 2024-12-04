@@ -1,8 +1,8 @@
 package com.example.data_server.service;
 
-import com.example.data_server.utility.DateTimeConverter;
+import com.example.shared.converters.DateTimeConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.OfferDao;
+import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.model.OfferStatus;
 import com.google.protobuf.ByteString;
 import io.grpc.stub.StreamObserver;
@@ -39,10 +39,10 @@ import java.util.Optional;
     OfferDao offer = generateOfferDaoFromSaveOfferRequest(request);
 
     // Save the offer
-    offerRepository.save(offer);
+    OfferDao createdOffer = offerRepository.save(offer);
 
     // Build the response with everything
-    SaveOfferResponse response = buildSaveOfferResponse(offer);
+    SaveOfferResponse response = buildSaveOfferResponse(createdOffer);
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
@@ -113,12 +113,12 @@ import java.util.Optional;
     offer.setOriginalPrice(request.getOriginalPrice());
     offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
 
-    offer.setPickupDate(
-        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
-        request.getPickupTimeStart()));
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
-        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeEnd()));
 
     ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
     offer.setCategories(categories);
@@ -130,8 +130,7 @@ import java.util.Optional;
     return offer;
   }
 
-  private OfferDao generateOfferDaoFromOfferResponse(
-      OfferResponse request)
+  private OfferDao generateOfferDaoFromOfferResponse(OfferResponse request)
   {
     OfferDao offer = new OfferDao();
     offer.setId(request.getId());
@@ -140,19 +139,20 @@ import java.util.Optional;
     offer.setOfferPrice(request.getOfferPrice());
     offer.setOriginalPrice(request.getOriginalPrice());
 
-    offer.setPickupDate(
-        DateTimeConverter.convertGrpcDateToDateDao(request.getPickupDate()));
-    offer.setPickupTimeStart(DateTimeConverter.convertGrpcTimeToTimeDao(
-        request.getPickupTimeStart()));
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
-        DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeEnd()));
 
     ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
     offer.setCategories(categories);
 
     offer.setNumberOfItems(request.getNumberOfItems());
     offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-    System.out.println("**********************Available: " + request.getNumberOfAvailableItems());
+    System.out.println("**********************Available: "
+        + request.getNumberOfAvailableItems());
     offer.setStatus(request.getStatus());
     offer.setImagePath(request.getImagePath());
 
@@ -165,11 +165,10 @@ import java.util.Optional;
         .setTitle(offer.getTitle()).setDescription(offer.getDescription())
         .setOfferPrice(offer.getOfferPrice())
         .setOriginalPrice(offer.getOriginalPrice())
-        .setNumberOfItems(offer.getNumberOfItems()).setPickupDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(offer.getPickupDate()))
-        .setPickupTimeStart(DateTimeConverter.convertTimeDaoToGrpcTime(
-            offer.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
+        .setNumberOfItems(offer.getNumberOfItems()).setPickupTimeStart(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                offer.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
         .addAllCategories(offer.getCategories()).build();
 
@@ -183,11 +182,10 @@ import java.util.Optional;
         .setOriginalPrice(offerDao.getOriginalPrice())
         .setNumberOfItems(offerDao.getNumberOfItems())
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
-        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
-            offerDao.getPickupDate())).setPickupTimeStart(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
+        .setPickupTimeStart(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
         .addAllCategories(offerDao.getCategories())
@@ -202,11 +200,10 @@ import java.util.Optional;
         .setOfferPrice(offerDao.getOfferPrice())
         .setOriginalPrice(offerDao.getOriginalPrice())
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
-        .setPickupDate(DateTimeConverter.convertDateDaoToGrpcDate(
-            offerDao.getPickupDate())).setPickupTimeStart(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
+        .setPickupTimeStart(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertTimeDaoToGrpcTime(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath()).build();
   }

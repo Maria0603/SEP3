@@ -1,13 +1,18 @@
 @page "/offers/{id}"
 
 @using client.DTO
+@using client.DTO.Offer
+@using client.DTO.Order
 @using client.Models
 @using client.Services
+@using Microsoft.AspNetCore.Authorization
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
 @inject IOrderService OrderService
 @inject IOfferService OfferService
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
+
+@attribute [Authorize]
 
 @if (_offer is not null)
 {
@@ -37,9 +42,7 @@
                 </div>
                 <div class="row">
                     <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
-                    <p>Collect @_offer.PickupDate.Day/@_offer.PickupDate.Month/@_offer.PickupDate.Year
-                        from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute
-                        to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
+                    <p>Collect @_offer.PickupTimeStart.Day/@_offer.PickupTimeStart.Month/@_offer.PickupTimeStart.Year from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
                 </div>
             </div>
         </div>

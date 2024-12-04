@@ -1,8 +1,12 @@
+using System.Net.Security;
+using Blazored.LocalStorage;
 using client;
+using client.Security;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
-using Stripe;
+using client.Services.Implementations;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -13,8 +17,13 @@ builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
+//builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<AuthStateProvider>(); 
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthStateProvider>());
 
-StripeConfiguration.ApiKey =
-    "sk_test_51QLXFcEJybmJ8DbtUW95vPtVV4vCIHtWi7MgOuqlhLngWoki5Bo0iMF8s2Nfxhzpub5gnIAD3d0CUpZBcSAJanmp004vLU11xd";
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+
 await builder.Build().RunAsync();

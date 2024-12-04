@@ -7,7 +7,7 @@ option java_outer_classname = "OrderServiceProto";
 package proto;
 
 import "OfferService.proto";
-
+import "google/protobuf/timestamp.proto";
 
 service OrderService {
     rpc AddOrder (AddOrderRequest) returns (OrderResponse);
@@ -27,8 +27,7 @@ message OrderResponse {
     string userId = 2;
     string offerId = 3;
     int32 numberOfItems = 4;
-    Date orderDate = 5;
-    Time orderTime = 6;
+    google.protobuf.Timestamp orderTime = 5;
     string status = 7;
     int32 pricePerItem = 8;
 }

@@ -1,0 +1,133 @@
+﻿@page "/auth/registration/business"
+@using client.DTO
+@using client.DTO.Auth
+@using client.Security
+<h3>RegisterBusiness</h3>
+@inject NavigationManager NavigationManager
+@inject AuthStateProvider AuthStateProvider
+
+
+<h3>Register Business</h3>
+<EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
+    <DataAnnotationsValidator/>
+    <ValidationSummary/>
+
+    <div>
+        <label>Business Name:</label>
+        <InputText @bind-Value="registerModel.BusinessName"/>
+    </div>
+    <div>
+        <label>CVR:</label>
+        <InputText @bind-Value="registerModel.Cvr"/>
+    </div>
+    <div>
+        <label>Email:</label>
+        <InputText @bind-Value="registerModel.Email"/>
+    </div>
+    <div>
+        <label>Password:</label>
+        <InputText @bind-Value="registerModel.Password" Type="password"/>
+    </div>
+    <div>
+        <label>Phone Number:</label>
+        <InputText @bind-Value="registerModel.PhoneNumber"/>
+    </div>
+
+    <h4>Address</h4>
+    <div>
+        <label>Street:</label>
+        <InputText @bind-Value="registerModel.Address.Street"/>
+    </div>
+    <div>
+        <label>Number:</label>
+        <InputText @bind-Value="registerModel.Address.Number"/>
+    </div>
+    <div>
+        <label>City:</label>
+        <InputText @bind-Value="registerModel.Address.City"/>
+    </div>
+    <div>
+        <label>County:</label>
+        <InputText @bind-Value="registerModel.Address.County"/>
+    </div>
+    <div>
+        <label>State:</label>
+        <InputText @bind-Value="registerModel.Address.State"/>
+    </div>
+    <div>
+        <label>Country:</label>
+        <InputText @bind-Value="registerModel.Address.Country"/>
+    </div>
+    <div>
+        <label>Postal Code:</label>
+        <InputText @bind-Value="registerModel.Address.PostalCode"/>
+    </div>
+
+    <div>
+        <label>Logo:</label>
+        <InputFile OnChange="HandleLogoUpload"/>
+    </div>
+
+    <button type="submit">Register</button>
+</EditForm>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <p style="color: green;">@successMessage</p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color: red;">@errorMessage</p>
+}
+
+@code {
+
+    private RegisterBusinessRequestDto registerModel = new()
+    {
+        Address = new AddressDto(),
+        Logo = Array.Empty<byte>()
+    };
+
+    private string? successMessage;
+    private string? errorMessage;
+
+    private async Task HandleRegistration()
+    {
+        try
+        {
+            errorMessage = "";
+            Console.WriteLine("Logooo2222o : " + registerModel.Logo);
+
+            await AuthStateProvider.RegisterBusinessAsync(registerModel);
+            
+            successMessage = "Business registered successfully!";
+            NavigationManager.NavigateTo("/offers");
+        }
+        catch (Exception e)
+        {
+            errorMessage = "Registration failed. Please check the details and try again.";
+            successMessage = "";
+        }
+    }
+    
+    private async Task HandleLogoUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        registerModel.Logo = memoryStream.ToArray();
+        Console.WriteLine("Logoooo : " + registerModel.Logo);
+    }
+
+/*
+    private async Task HandleLogoUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        registerModel.Logo = buffer;
+    }
+    */
+
+}

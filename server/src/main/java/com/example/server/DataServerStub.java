@@ -9,6 +9,7 @@ public class DataServerStub
   private final ManagedChannel channel;
   private final OfferServiceGrpc.OfferServiceBlockingStub offerBlockingStub;
   private final OrderServiceGrpc.OrderServiceBlockingStub orderBlockingStub;
+  private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
 
   public DataServerStub(String host, int port)
   {
@@ -17,9 +18,12 @@ public class DataServerStub
 
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
     orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
+    businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
+
     System.out.println("DataServerStub created");
   }
 
+  // ********************************* OFFERS *********************************
   public OfferList getAvailableOffers(EmptyMessage request)
   {
     return offerBlockingStub.getAvailableOffers(request);
@@ -40,6 +44,7 @@ public class DataServerStub
     return offerBlockingStub.updateOffer(request);
   }
 
+  // ********************************* ORDERS *********************************
   public OrderResponse addOrder(AddOrderRequest request)
   {
     System.out.println("addOrder called with request: " + request);
@@ -62,6 +67,19 @@ public class DataServerStub
   {
     return orderBlockingStub.updateOrderStatus(request);
   }
+
+  // ********************************* BUSINESS *********************************
+
+  public void registerBusiness(RegisterBusinessRequest request)
+  {
+    businessBlockingStub.registerBusiness(request);
+  }
+
+  public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
+  {
+    return businessBlockingStub.getBusinessByEmail(request);
+  }
+
 
   public void shutdown()
   {

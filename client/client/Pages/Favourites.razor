@@ -1,6 +1,8 @@
 @page "/favourites"
 @using client.Models
+@using Microsoft.AspNetCore.Authorization
 @inject client.Services.IOfferService OfferService
+@attribute [Authorize]
 <PageTitle>Favourites</PageTitle>
 
 <h2> Favourites</h2>

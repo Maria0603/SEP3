@@ -1,4 +1,5 @@
 ﻿using client.DTO;
+using client.DTO.Offer;
 using client.Pages;
 
 namespace client.Services;
