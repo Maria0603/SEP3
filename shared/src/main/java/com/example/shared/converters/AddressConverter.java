@@ -1,4 +1,4 @@
-package com.example.data_server.utility;
+package com.example.shared.converters;
 
 import com.example.sep3.grpc.Address;
 import com.example.shared.dao.auxDao.AddressDao;
@@ -26,4 +26,6 @@ public class AddressConverter
     addressDao.setStreet(address.getStreet());
     return addressDao;
   }
+
+
 }

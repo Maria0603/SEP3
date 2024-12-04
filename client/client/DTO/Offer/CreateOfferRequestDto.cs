@@ -1,4 +1,4 @@
-﻿namespace client.DTO;
+﻿namespace client.DTO.Offer;
 
 public class CreateOfferRequestDto
 {
@@ -7,9 +7,8 @@ public class CreateOfferRequestDto
     public int OriginalPrice { get; set; }
     public int OfferPrice { get; set; }
     public int NumberOfItems { get; set; }
-    public DateDto PickupDate { get; set; }
-    public TimeDto PickupTimeStart { get; set; }
-    public TimeDto PickupTimeEnd { get; set; }
+    public DateTime PickupTimeStart { get; set; }
+    public DateTime PickupTimeEnd { get; set; }
     public List<string>? Categories { get; set; }
     public byte[]? Image { get; set; }
 }

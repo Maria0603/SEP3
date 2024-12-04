@@ -1,11 +1,10 @@
 package com.example.shared.dao.domainDao;
 
-import com.example.shared.dao.auxDao.DateDao;
-import com.example.shared.dao.auxDao.TimeDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 
 @Document(collection = "offers") public class OfferDao
@@ -19,9 +18,8 @@ import java.util.ArrayList;
   @Field("offer_price") private int offerPrice;
   @Field("number_of_items") private int numberOfItems;
   @Field("number_of_available_items") private int numberOfAvailableItems;
-  @Field("pickup_date") private DateDao pickupDate;
-  @Field("pickup_time_start") private TimeDao pickupTimeStart;
-  @Field("pickup_time_end") private TimeDao pickupTimeEnd;
+  @Field("pickup_time_start") private LocalDateTime pickupTimeStart;
+  @Field("pickup_time_end") private LocalDateTime pickupTimeEnd;
   @Field("image_path") private String imagePath;
 
   public int getNumberOfAvailableItems()
@@ -129,34 +127,25 @@ import java.util.ArrayList;
     this.categories = categories;
   }
 
-  public TimeDao getPickupTimeEnd()
+  public LocalDateTime getPickupTimeEnd()
   {
     return pickupTimeEnd;
   }
 
-  public void setPickupTimeEnd(TimeDao pickupTimeEnd)
+  public void setPickupTimeEnd(LocalDateTime pickupTimeEnd)
   {
     this.pickupTimeEnd = pickupTimeEnd;
   }
 
-  public TimeDao getPickupTimeStart()
+  public LocalDateTime getPickupTimeStart()
   {
     return pickupTimeStart;
   }
 
-  public void setPickupTimeStart(TimeDao pickupTimeStart)
+  public void setPickupTimeStart(LocalDateTime pickupTimeStart)
   {
     this.pickupTimeStart = pickupTimeStart;
   }
 
-  public DateDao getPickupDate()
-  {
-    return pickupDate;
-  }
-
-  public void setPickupDate(DateDao pickupDate)
-  {
-    this.pickupDate = pickupDate;
-  }
 
 }
