@@ -1,5 +1,6 @@
 package com.example.shared.dao.usersDao;
 
+import com.example.shared.dao.auxDao.AddressDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -23,6 +24,7 @@ import java.util.List;
 
   @Field("first_name") private String firstName;
   @Field("last_name") private String lastName;
+  @Field("address") private AddressDao address;
 
   // the email will be used to log in, not the username, but the method must be called getUsername
   @Override public String getUsername()
@@ -104,7 +106,15 @@ import java.util.List;
   {
     this.id = id;
   }
+  public AddressDao getAddress()
+  {
+    return address;
+  }
 
+  public void setAddress(AddressDao address)
+  {
+    this.address = address;
+  }
 
   public String getLastName()
   {
