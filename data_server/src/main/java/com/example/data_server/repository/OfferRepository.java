@@ -1,8 +1,10 @@
 package com.example.data_server.repository;
 
-import com.example.shared.dao.domainDao.OfferDao;import om.eimport com.google.protobuf.Timestamp;
+import com.example.shared.dao.domainDao.OfferDao;
 import org.springframework.data.mongodb.repository.MongoRepository;
-import org.springframework.stereotype 
+import org.springframework.data.mongodb.repository.Query;
+import org.springframework.stereotype.Repository;
+
 import java.time.LocalDateTime;
 import java.util.List;
 

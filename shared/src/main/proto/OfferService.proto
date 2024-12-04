@@ -103,6 +103,10 @@ message OfferList {
   repeated ShortOfferResponse offer = 1;
 }
 
+message FullOfferList {
+  repeated OfferResponse offer = 1;
+}
+
 message EmptyMessage {
 
 }
