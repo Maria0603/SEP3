@@ -43,6 +43,7 @@ import java.util.List;
     }
   }
 
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
   @GetMapping public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers()
   {
     try
@@ -58,6 +59,7 @@ import java.util.List;
     }
   }
 
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
   @GetMapping("/{id}") public ResponseEntity<OfferResponseDto> getOfferById(
       @PathVariable String id)
   {
@@ -68,7 +70,7 @@ import java.util.List;
     }
     catch (Exception e)
     {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 

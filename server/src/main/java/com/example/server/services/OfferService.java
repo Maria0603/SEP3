@@ -19,7 +19,7 @@ import java.util.List;
 
 import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
-@Service public class OfferService extends OfferServiceGrpc.OfferServiceImplBase
+@Service public class OfferService
 {
   private final DataServerStub dataServerStub;
   private final ImageStorageService imageStorageService;

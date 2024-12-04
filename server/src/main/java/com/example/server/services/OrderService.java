@@ -26,7 +26,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
+public class OrderService
+{
     private final DataServerStub dataServerStub;
     private final OfferService offerService;
     private final ImageStorageService imageStorageService;

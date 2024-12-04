@@ -10,6 +10,7 @@ public class DataServerStub
   private final OfferServiceGrpc.OfferServiceBlockingStub offerBlockingStub;
   private final OrderServiceGrpc.OrderServiceBlockingStub orderBlockingStub;
   private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
+  private final CustomerServiceGrpc.CustomerServiceBlockingStub customerBlockingStub;
 
   public DataServerStub(String host, int port)
   {
@@ -19,6 +20,7 @@ public class DataServerStub
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
     orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
     businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
+    customerBlockingStub = CustomerServiceGrpc.newBlockingStub(channel);
 
     System.out.println("DataServerStub created");
   }
@@ -78,6 +80,13 @@ public class DataServerStub
   public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
   {
     return businessBlockingStub.getBusinessByEmail(request);
+  }
+
+  // ********************************* CUSTOMER *********************************
+
+  public BusinessesInRadiusResponse updateCustomerLocation(BusinessesInRadiusRequest request)
+  {
+    return customerBlockingStub.updateCustomerLocation(request);
   }
 
 
