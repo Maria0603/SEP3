@@ -2,6 +2,7 @@ package com.example.data_server.repository;
 
 import com.example.shared.dao.domainDao.OfferDao;
 import com.example.sep3.grpc.Time;
+import com.google.protobuf.Timestamp;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
