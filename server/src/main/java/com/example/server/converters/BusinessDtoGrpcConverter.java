@@ -1,6 +1,8 @@
 package com.example.server.converters;
 
+import com.example.sep3.grpc.BusinessesInRadiusRequest;
 import com.example.sep3.grpc.RegisterBusinessRequest;
+import com.example.server.dto.business.BusinessesInRadiusRequestDto;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.shared.model.UserRole;
 
@@ -17,5 +19,12 @@ public class BusinessDtoGrpcConverter
         .setRole(UserRole.BUSINESS.getRoleName()).build();
   }
 
+  public static BusinessesInRadiusRequest generateBusinessesInRadiusRequest(
+      BusinessesInRadiusRequestDto dto)
+  {
+    return BusinessesInRadiusRequest.newBuilder().setRadius(dto.getRadius())
+        .setLatitude(dto.getLatitude()).setLongitude(dto.getLongitude())
+        .build();
+  }
 
 }
