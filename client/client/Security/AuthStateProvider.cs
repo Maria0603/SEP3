@@ -80,6 +80,20 @@ public class AuthStateProvider : AuthenticationStateProvider
         }
     }
 
+    public async Task RegisterCustomerAsync(RegisterCustomerRequestDto registerRequest)
+    {
+        CredentialsResponseDto? tokens = await _authService.RegisterCustomerAsync(registerRequest);
+        
+        if (tokens != null)
+        {
+            await _localStorage.SetItemAsStringAsync(_tokenKey, tokens.Token);
+            await _localStorage.SetItemAsStringAsync(_refreshTokenKey,
+                tokens.RefreshToken);
+
+            NotifyAuthenticationStateChanged(GetAuthenticationStateAsync());
+        }
+    }
+
     public async Task LogoutAsync()
     {
         _authService.SetAuthorizationHeader(null);
@@ -90,6 +104,7 @@ public class AuthStateProvider : AuthenticationStateProvider
         NotifyAuthenticationStateChanged(Task.FromResult(
             new AuthenticationState(
                 new ClaimsPrincipal(new ClaimsIdentity()))));
+        _navigationManager.NavigateTo("/auth/login", true);
     }
 
     private IEnumerable<Claim> ParseClaimsFromJwt(string jwt)
