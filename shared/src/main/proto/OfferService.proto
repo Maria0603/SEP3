@@ -20,8 +20,8 @@ message FilterRequest {
   repeated string categories = 1;
   optional int32 minOfferPrice = 2;
   optional int32 maxOfferPrice = 3;
-  optional Time pickupTimeStart = 4;
-  optional Time pickupTimeEnd = 5;
+  optional  google.protobuf.Timestamp pickupTimeStart = 4;
+  optional  google.protobuf.Timestamp pickupTimeEnd = 5;
 }
 
 

@@ -1,15 +1,15 @@
 package com.example.data_server.service;
 
 import com.example.data_server.repository.OfferRepository;
-import com.example.data_server.utility.DateTimeConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.OfferDao;
-import com.example.shared.dao.TimeDao;
+import com.example.shared.converters.DateTimeConverter;
+import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.model.OfferStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -61,37 +61,6 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getOffers(FilterRequest request,
-      StreamObserver<OfferList> responseObserver) {
-
-    List<OfferDao> filteredOffers = new ArrayList<>();
-
-    if (request.hasMinOfferPrice() && request.hasMaxOfferPrice()) {
-      filteredOffers = filterOffersByPrice(offerRepository.findAll(), request.getMinOfferPrice(),
-          request.getMaxOfferPrice());
-    }
-
-    if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
-      filteredOffers = filterOffersByTime(filteredOffers,
-          DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()),
-          DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
-    }
-
-    if (!request.getCategoriesList().isEmpty()) {
-      filteredOffers = filterOffersByCategories(filteredOffers, request.getCategoriesList());
-    }
-
-    // Build the response
-    OfferList.Builder offerListBuilder = OfferList.newBuilder();
-    for (OfferDao offerDao : filteredOffers) {
-      offerListBuilder.addOffer(buildShortOfferResponse(offerDao));
-    }
-
-    OfferList offerListResponse = offerListBuilder.build();
-    responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();
-  }
 
   private List<OfferDao> filterOffersByPrice(List<OfferDao> previousFilterResult, int minPrice, int maxPrice) {
     List<OfferDao> filteredOffers = offerRepository.findByOfferPriceRange(minPrice, maxPrice);
@@ -118,8 +87,8 @@ public class OfferServiceImpl
     return output;
   }
 
-  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, TimeDao pickupTimeStart,
-      TimeDao pickupTimeEnd) {
+  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, LocalDateTime pickupTimeStart,
+      LocalDateTime pickupTimeEnd) {
     System.out.println("Filtering by time");
     List<OfferDao> filteredOffers = offerRepository.findByPickupTimeRange(
         pickupTimeStart, pickupTimeEnd);
@@ -227,9 +196,7 @@ public class OfferServiceImpl
     offer.setOfferPrice(request.getOfferPrice());
     offer.setOriginalPrice(request.getOriginalPrice());
 
-    offer.setPickupTimeStart(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            request.getPickupTimeStart()));
+    offer.setPickupTimeStart(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
         DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
             request.getPickupTimeEnd()));
@@ -295,6 +262,36 @@ public class OfferServiceImpl
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath()).build();
+  }
+
+  @Override public void getOffers(FilterRequest request,
+      StreamObserver<FullOfferList> responseObserver) {
+    List<OfferDao> filteredOffers = new ArrayList<>();
+
+    if (request.hasMinOfferPrice() && request.hasMaxOfferPrice()) {
+      filteredOffers = filterOffersByPrice(offerRepository.findAll(), request.getMinOfferPrice(),
+          request.getMaxOfferPrice());
+    }
+
+    if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
+      filteredOffers = filterOffersByTime(filteredOffers,
+          DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeStart()),
+          DateTimeConverter.convertGrpcTimeToTimeDao(request.getPickupTimeEnd()));
+    }
+
+    if (!request.getCategoriesList().isEmpty()) {
+      filteredOffers = filterOffersByCategories(filteredOffers, request.getCategoriesList());
+    }
+
+    // Build the response
+    OfferList.Builder offerListBuilder = OfferList.newBuilder();
+    for (OfferDao offerDao : filteredOffers) {
+      offerListBuilder.addOffer(buildShortOfferResponse(offerDao));
+    }
+
+    OfferList offerListResponse = offerListBuilder.build();
+    responseObserver.onNext(offerListResponse);
+    responseObserver.onCompleted();
   }
 
 }
