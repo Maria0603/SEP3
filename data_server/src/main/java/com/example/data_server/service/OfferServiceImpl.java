@@ -5,7 +5,6 @@ import com.example.sep3.grpc.*;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.model.OfferStatus;
-import com.google.protobuf.Timestamp;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.slf4j.Logger;
@@ -17,21 +16,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@GrpcService
-public class OfferServiceImpl
+@GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase {
   private OfferRepository offerRepository;
-  private static final Logger logger = LoggerFactory.getLogger(OfferServiceImpl.class);
+  private static final Logger logger = LoggerFactory.getLogger(
+      OfferServiceImpl.class);
 
-  @Autowired
-  public OfferServiceImpl(OfferRepository offerRepository) {
+  @Autowired public OfferServiceImpl(OfferRepository offerRepository) {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
 
   }
 
-  @Override
-  public void saveOffer(SaveOfferRequest request,
+  @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver) {
     System.out.println("Request for save offer");
 
@@ -48,8 +45,7 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getAvailableOffers(EmptyMessage request,
+  @Override public void getAvailableOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver) {
     System.out.println("Request for all offers");
     List<OfferDao> availableOffers = offerRepository.findByStatus(
@@ -65,9 +61,7 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-
-  @Override
-  public void getOfferById(OfferIdRequest request,
+  @Override public void getOfferById(OfferIdRequest request,
       StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for offer by id");
 
@@ -84,8 +78,7 @@ public class OfferServiceImpl
 
   }
 
-  @Override
-  public void updateOffer(OfferResponse request,
+  @Override public void updateOffer(OfferResponse request,
       StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for update offer.");
     if (!offerRepository.existsById(request.getId()))
@@ -101,6 +94,51 @@ public class OfferServiceImpl
     responseObserver.onNext(offerResponse);
     responseObserver.onCompleted();
 
+  }
+
+  @Override public void getOffersByCategory(CategoryRequest request,
+      StreamObserver<FullOfferList> responseObserver) {
+    logger.info("Request for offers by category: {}", request);
+
+    List<OfferDao> offersByCategory = offerRepository.findByCategories(
+        request.getCategoriesList());
+
+    buildFullOfferListResponseFromListDao(responseObserver, offersByCategory);
+  }
+
+  @Override public void getOffersByPriceRange(PriceRangeRequest request,
+      StreamObserver<FullOfferList> responseObserver) {
+    logger.info("Request for offers by price range: {} - {}",
+        request.getMinOfferPrice(), request.getMaxOfferPrice());
+
+    List<OfferDao> offersByPriceRange = offerRepository.findByOfferPriceRange(
+        request.getMinOfferPrice(), request.getMaxOfferPrice());
+
+    buildFullOfferListResponseFromListDao(responseObserver, offersByPriceRange);
+  }
+
+  @Override public void getOffersByTime(TimeRangeRequest request,
+      StreamObserver<FullOfferList> responseObserver) {
+    logger.info("Request for offers by time range: {} - {}", request.getStart(),
+        request.getEnd());
+
+    LocalDateTime startTime = DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+        request.getStart());
+    LocalDateTime endTime = DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+        request.getEnd());
+
+    List<OfferDao> offersByTimeRange = offerRepository.findByPickupTimeRange(
+        startTime, endTime);
+
+    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
+    for (OfferDao offerDao : offersByTimeRange) {
+      offerListBuilder.addOffer(buildOfferResponse(offerDao));
+    }
+
+    FullOfferList offerListResponse = offerListBuilder.build();
+    logger.info("Sending FullOfferList response: {}", offerListResponse);
+    responseObserver.onNext(offerListResponse);
+    responseObserver.onCompleted();
   }
 
   private OfferDao generateOfferDaoFromSaveOfferRequest(
@@ -137,7 +175,9 @@ public class OfferServiceImpl
     offer.setOfferPrice(request.getOfferPrice());
     offer.setOriginalPrice(request.getOriginalPrice());
 
-    offer.setPickupTimeStart(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeStart()));
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeStart()));
     offer.setPickupTimeEnd(
         DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
             request.getPickupTimeEnd()));
@@ -162,11 +202,9 @@ public class OfferServiceImpl
         .setOriginalPrice(offer.getOriginalPrice())
         .setNumberOfItems(offer.getNumberOfItems()).setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offer.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeEnd()))
-        .setImagePath(offer.getImagePath())
+                offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
         .addAllCategories(offer.getCategories()).build();
 
   }
@@ -180,8 +218,7 @@ public class OfferServiceImpl
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
@@ -198,38 +235,19 @@ public class OfferServiceImpl
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath()).build();
   }
 
-  /////////////////////////// FILTER OFFERS ///////////////////////////
-  private void getOffers(FilterRequest request,
-      StreamObserver<FullOfferList> responseObserver) {
-    List<OfferDao> filteredOffers = new ArrayList<>();
-
-    if (request.hasMinOfferPrice() && request.hasMaxOfferPrice()) {
-      filteredOffers = filterOffersByPrice(offerRepository.findAll(), request.getMinOfferPrice(),
-          request.getMaxOfferPrice());
-    }
-
-    if (request.hasPickupTimeStart() && request.hasPickupTimeEnd()) {
-      filteredOffers = filterOffersByTime(filteredOffers,
-          DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeStart()), DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeEnd()));
-    }
-
-    if (!request.getCategoriesList().isEmpty()) {
-      filteredOffers = filterOffersByCategories(filteredOffers, request.getCategoriesList());
-    }
-
-    // Build the response
+  private void buildFullOfferListResponseFromListDao(
+      StreamObserver<FullOfferList> responseObserver,
+      List<OfferDao> offersByCategory) {
     FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
-    for (OfferDao offerDao : filteredOffers) {
+    for (OfferDao offerDao : offersByCategory) {
       offerListBuilder.addOffer(buildOfferResponse(offerDao));
     }
-
 
     FullOfferList offerListResponse = offerListBuilder.build();
     logger.info("Sending SaveOfferResponse: {}", offerListResponse);
@@ -237,67 +255,4 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-
-  private List<OfferDao> filterOffersByPrice(List<OfferDao> previousFilterResult, int minPrice, int maxPrice) {
-    List<OfferDao> filteredOffers = offerRepository.findByOfferPriceRange(minPrice, maxPrice);
-    System.out.println("Offers before filtering by price: ");
-    for (OfferDao offer : previousFilterResult) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-    System.out.println("Offers before filtering by price: ");
-    for (OfferDao offer : filteredOffers) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-
-    List<OfferDao> output = new ArrayList<>();
-    System.out.println("Offers after filtering by price: ");
-    for (OfferDao offer : filteredOffers) {
-      if (previousFilterResult.contains(offer)) {
-        output.add(offer);
-        System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-      } else {
-        System.out.println("Offer is not in the previous filter result");
-      }
-    }
-
-    return output;
-  }
-
-  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, LocalDateTime pickupTimeStart,
-      LocalDateTime pickupTimeEnd) {
-    System.out.println("Filtering by time");
-    List<OfferDao> filteredOffers = offerRepository.findByPickupTimeRange(
-        pickupTimeStart, pickupTimeEnd);
-    for (OfferDao offer : previousFilterResult) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-    List<OfferDao> output = new ArrayList<>();
-    for (OfferDao offer : filteredOffers) {
-      if (previousFilterResult.contains(offer)) {
-        output.add(offer);
-      }
-    }
-    for (OfferDao offer : previousFilterResult) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-    return output;
-  }
-
-  private List<OfferDao> filterOffersByCategories(List<OfferDao> previousFilterResult, List<String> categories) {
-    List<OfferDao> filteredOffers = offerRepository.findByCategories(
-        categories);
-    for (OfferDao offer : previousFilterResult) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-    List<OfferDao> output = new ArrayList<>();
-    for (OfferDao offer : filteredOffers) {
-      if (previousFilterResult.contains(offer)) {
-        output.add(offer);
-      }
-    }
-    for (OfferDao offer : previousFilterResult) {
-      System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
-    }
-    return output;
-  }
 }
