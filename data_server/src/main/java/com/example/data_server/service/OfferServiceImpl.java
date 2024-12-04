@@ -273,7 +273,7 @@ import java.util.Optional;
         item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
             .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
                 request.getPickupTimeStart()))).filter(
-        item -> !request.hasPickupTimeEnd() || !item.getPickupTimeEnd().isAfter(
+        item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd().isAfter(
             DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
                 request.getPickupTimeEnd()))).filter(
         item -> request.getCategoriesList().isEmpty() || item.getCategories()

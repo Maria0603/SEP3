@@ -1,4 +1,4 @@
-package com.example.data_server.utility;
+package com.example.shared.converters;
 
 import org.springframework.core.convert.converter.Converter;
 

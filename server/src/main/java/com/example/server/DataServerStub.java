@@ -44,6 +44,11 @@ public class DataServerStub
     return offerBlockingStub.updateOffer(request);
   }
 
+  public FullOfferList getOffers(FilterRequest request)
+  {
+    return offerBlockingStub.getOffers(request);
+  }
+
   // ********************************* ORDERS *********************************
   public OrderResponse addOrder(AddOrderRequest request)
   {
