@@ -4,6 +4,7 @@ import com.example.sep3.grpc.AddOrderRequest;
 import com.example.sep3.grpc.OrderResponse;
 import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
+import com.example.shared.converters.DateTimeConverter;
 
 public class OrderDtoGrpcConverter
 {
@@ -26,10 +27,8 @@ public class OrderDtoGrpcConverter
     dto.setOfferId(orderResponse.getOfferId());
     dto.setNumberOfItems(orderResponse.getNumberOfItems());
     dto.setStatus(orderResponse.getStatus());
-    dto.setOrderDate(
-        DateConverter.convertGrpcDateToDateDto(orderResponse.getOrderDate()));
-    dto.setOrderTime(
-        TimeConverter.convertGrpcTimeToTimeDto(orderResponse.getOrderTime()));
+
+    dto.setOrderTime(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(orderResponse.getOrderTime()));
     dto.setPricePerItem(orderResponse.getPricePerItem());
     return dto;
   }

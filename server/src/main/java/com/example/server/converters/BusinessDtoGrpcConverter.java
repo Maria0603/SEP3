@@ -9,7 +9,6 @@ public class BusinessDtoGrpcConverter
   public static RegisterBusinessRequest RegisterBusinessRequestDto_To_RegisterBusinessRequest(
       RegisterBusinessRequestDto dto, String logoPath, String hashedPassword)
   {
-    RegisterBusinessRequest.Builder builder = RegisterBusinessRequest.newBuilder();
     return RegisterBusinessRequest.newBuilder()
         .setBusinessName(dto.getBusinessName()).setCvr(dto.getCvr()).setAddress(
             AddressConverter.convertAddressDtoToGrpcAddress(dto.getAddress()))

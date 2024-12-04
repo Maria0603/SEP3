@@ -5,6 +5,10 @@ import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
+import com.example.shared.converters.DateTimeConverter;
+import com.google.protobuf.Timestamp;
+
+import java.time.LocalDateTime;
 
 public class OfferDtoGrpcConverter
 {
@@ -30,17 +34,11 @@ public class OfferDtoGrpcConverter
         createOfferRequestDto.getCategories());
     saveOfferRequestBuilder.setImagePath(imagePath);
 
-    // Convert DateDto to Date
-    Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
-        createOfferRequestDto.getPickupDate());
-    saveOfferRequestBuilder.setPickupDate(pickupDate);
-
-    // Convert TimeDto to Time for start and end time
-    Time pickupTimeStart = TimeConverter.convertTimeDtoToGrpcTime(
+    Timestamp pickupTimeStart = DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
         createOfferRequestDto.getPickupTimeStart());
     saveOfferRequestBuilder.setPickupTimeStart(pickupTimeStart);
 
-    Time pickupTimeEnd = TimeConverter.convertTimeDtoToGrpcTime(
+    Timestamp pickupTimeEnd = DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
         createOfferRequestDto.getPickupTimeEnd());
     saveOfferRequestBuilder.setPickupTimeEnd(pickupTimeEnd);
 
@@ -69,17 +67,11 @@ public class OfferDtoGrpcConverter
     offerResponseBuilder.setImagePath(imagePath);
     offerResponseBuilder.setStatus(updateOfferRequestDto.getStatus());
 
-    // Convert DateDto to Date
-    Date pickupDate = DateConverter.convertDateDtoToGrpcDate(
-        updateOfferRequestDto.getPickupDate());
-    offerResponseBuilder.setPickupDate(pickupDate);
-
-    // Convert TimeDto to Time for start and end time
-    Time pickupTimeStart = TimeConverter.convertTimeDtoToGrpcTime(
+    Timestamp pickupTimeStart = DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
         updateOfferRequestDto.getPickupTimeStart());
     offerResponseBuilder.setPickupTimeStart(pickupTimeStart);
 
-    Time pickupTimeEnd = TimeConverter.convertTimeDtoToGrpcTime(
+    Timestamp pickupTimeEnd = DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
         updateOfferRequestDto.getPickupTimeEnd());
     offerResponseBuilder.setPickupTimeEnd(pickupTimeEnd);
 
@@ -96,12 +88,13 @@ public class OfferDtoGrpcConverter
     dto.setOriginalPrice(saveOfferResponseGrpc.getOriginalPrice());
     dto.setOfferPrice(saveOfferResponseGrpc.getOfferPrice());
     dto.setNumberOfItems(saveOfferResponseGrpc.getNumberOfItems());
-    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
-        saveOfferResponseGrpc.getPickupDate()));
-    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
-        saveOfferResponseGrpc.getPickupTimeStart()));
-    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
-        saveOfferResponseGrpc.getPickupTimeEnd()));
+
+    dto.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            saveOfferResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            saveOfferResponseGrpc.getPickupTimeEnd()));
     dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
     dto.setDescription(saveOfferResponseGrpc.getDescription());
     dto.setImagePath(saveOfferResponseGrpc.getImagePath());
@@ -119,17 +112,16 @@ public class OfferDtoGrpcConverter
     dto.setOfferPrice(offerResponseGrpc.getOfferPrice());
     dto.setNumberOfAvailableItems(
         offerResponseGrpc.getNumberOfAvailableItems());
-    dto.setPickupDate(DateConverter.convertGrpcDateToDateDto(
-        offerResponseGrpc.getPickupDate()));
-    dto.setPickupTimeStart(TimeConverter.convertGrpcTimeToTimeDto(
-        offerResponseGrpc.getPickupTimeStart()));
-    dto.setPickupTimeEnd(TimeConverter.convertGrpcTimeToTimeDto(
-        offerResponseGrpc.getPickupTimeEnd()));
+    dto.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            offerResponseGrpc.getPickupTimeStart()));
+    dto.setPickupTimeEnd(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            offerResponseGrpc.getPickupTimeEnd()));
     dto.setStatus(offerResponseGrpc.getStatus());
 
     return dto;
   }
-
 
   public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
       OfferResponse response)
@@ -142,12 +134,13 @@ public class OfferDtoGrpcConverter
     dto.setOfferPrice(response.getOfferPrice());
     dto.setNumberOfItems(response.getNumberOfItems());
     dto.setNumberOfAvailableItems(response.getNumberOfAvailableItems());
-    dto.setPickupDate(
-        DateConverter.convertGrpcDateToDateDto(response.getPickupDate()));
+
     dto.setPickupTimeStart(
-        TimeConverter.convertGrpcTimeToTimeDto(response.getPickupTimeStart()));
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            response.getPickupTimeStart()));
     dto.setPickupTimeEnd(
-        TimeConverter.convertGrpcTimeToTimeDto(response.getPickupTimeEnd()));
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            response.getPickupTimeEnd()));
     dto.setCategories(response.getCategoriesList());
     dto.setDescription(response.getDescription());
     dto.setImagePath(response.getImagePath());
@@ -156,7 +149,8 @@ public class OfferDtoGrpcConverter
     return dto;
   }
 
-  public static UpdateOfferRequestDto OfferResponseDto_To_UpdateOfferRequestDto(OfferResponseDto offerResponseDto, byte[] image)
+  public static UpdateOfferRequestDto OfferResponseDto_To_UpdateOfferRequestDto(
+      OfferResponseDto offerResponseDto, byte[] image)
   {
     UpdateOfferRequestDto dto = new UpdateOfferRequestDto();
 
@@ -166,7 +160,6 @@ public class OfferDtoGrpcConverter
     dto.setOfferPrice(offerResponseDto.getOfferPrice());
     dto.setNumberOfItems(offerResponseDto.getNumberOfItems());
     dto.setNumberOfAvailableItems(offerResponseDto.getNumberOfAvailableItems());
-    dto.setPickupDate(offerResponseDto.getPickupDate());
     dto.setPickupTimeStart(offerResponseDto.getPickupTimeStart());
     dto.setPickupTimeEnd(offerResponseDto.getPickupTimeEnd());
     dto.setCategories(offerResponseDto.getCategories());
