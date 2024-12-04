@@ -13,6 +13,7 @@ service BusinessService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
   rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
 }
+
 message BusinessByEmailRequest {
   string email = 1;
 }

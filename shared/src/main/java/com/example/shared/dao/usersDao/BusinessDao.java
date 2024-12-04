@@ -1,7 +1,9 @@
 package com.example.shared.dao.usersDao;
 
 import com.example.shared.dao.auxDao.AddressDao;
+import com.mongodb.client.model.geojson.Point;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -24,6 +26,8 @@ import java.util.List;
   @Field("cvr") private String cvr;
   @Field("logo_path") private String logoPath;
   @Field("address") private AddressDao address;
+  @Field("latitude") private double latitude;
+  @Field("longitude") private double longitude;
 
   // the email will be used to log in, not the username, but the method must be called getUsername
   @Override public String getUsername()
@@ -54,6 +58,27 @@ import java.util.List;
   @Override public boolean isEnabled()
   {
     return true;
+  }
+
+
+  public double getLongitude()
+  {
+    return longitude;
+  }
+
+  public void setLongitude(double longitude)
+  {
+    this.longitude = longitude;
+  }
+
+  public double getLatitude()
+  {
+    return latitude;
+  }
+
+  public void setLatitude(double latitude)
+  {
+    this.latitude = latitude;
   }
 
   public String getPhoneNumber()

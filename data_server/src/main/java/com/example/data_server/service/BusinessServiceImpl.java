@@ -18,7 +18,7 @@ import java.util.Optional;
   @Autowired public BusinessServiceImpl(BusinessRepository businessRepository)
   {
     this.businessRepository = businessRepository;
-    System.out.println("AuthServiceImpl created");
+    System.out.println("BusinessServiceImpl created");
 
   }
 

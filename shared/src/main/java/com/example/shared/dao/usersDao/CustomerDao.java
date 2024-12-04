@@ -24,6 +24,40 @@ import java.util.List;
   @Field("first_name") private String firstName;
   @Field("last_name") private String lastName;
 
+  @Field("latitude") private String latitude;
+  @Field("longitude") private String longitude;
+  @Field("search_radius") private String searchRadius;
+
+  public String getSearchRadius()
+  {
+    return searchRadius;
+  }
+
+  public void setSearchRadius(String searchRadius)
+  {
+    this.searchRadius = searchRadius;
+  }
+
+  public String getLongitude()
+  {
+    return longitude;
+  }
+
+  public void setLongitude(String longitude)
+  {
+    this.longitude = longitude;
+  }
+
+  public String getLatitude()
+  {
+    return latitude;
+  }
+
+  public void setLatitude(String latitude)
+  {
+    this.latitude = latitude;
+  }
+
   // the email will be used to log in, not the username, but the method must be called getUsername
   @Override public String getUsername()
   {
