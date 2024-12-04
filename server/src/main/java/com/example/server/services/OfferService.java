@@ -3,8 +3,6 @@ package com.example.server.services;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.OfferDtoGrpcConverter;
-import com.example.server.dto.date_time.DateDto;
-import com.example.server.dto.date_time.TimeDto;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
@@ -15,9 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.File;
 import java.io.IOException;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,7 +23,6 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 {
   private final DataServerStub dataServerStub;
   private final ImageStorageService imageStorageService;
-
 
   @Autowired public OfferService(DataServerStub dataServerStub,
       ImageStorageService imageStorageService)
@@ -41,10 +36,8 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
       CreateOfferRequestDto offerRequestDto)
   {
 
-    if (!isPickupInFuture(offerRequestDto.getPickupDate(),
-        offerRequestDto.getPickupTimeEnd()))
-      throw new IllegalArgumentException(
-          "Pickup date and time must be in the future");
+    if (!isPickupInFuture(offerRequestDto.getPickupTimeStart()))
+      throw new IllegalArgumentException("Pickup time must be in the future");
 
     String imagePath = null;
     try
@@ -77,10 +70,10 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     OfferIdRequest request = OfferIdRequest.newBuilder().setId(id).build();
     OfferResponse response = dataServerStub.getOfferById(request);
 
-
     System.out.println("Received response from dataServerStub: " + response);
 
-    return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(response);
+    return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
+        response);
   }
 
   public List<ShortOfferResponseDto> getAvailableOffers()
@@ -103,9 +96,9 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
         dto.setImagePath(imagePath);
       else
         dto.setImagePath(null);
-//        throw new IllegalArgumentException(
-//            "Image not found for order ID: " + response.getOffer(i).getId()
-//                + " with path " + imagePath);
+      //        throw new IllegalArgumentException(
+      //            "Image not found for order ID: " + response.getOffer(i).getId()
+      //                + " with path " + imagePath);
       offers.add(dto);
     }
 
@@ -116,10 +109,8 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
       UpdateOfferRequestDto updateOfferRequestDto)
   {
     //First check what we couldn't check in the Dto class
-    if (!isPickupInFuture(updateOfferRequestDto.getPickupDate(),
-        updateOfferRequestDto.getPickupTimeEnd()))
-      throw new IllegalArgumentException(
-          "Pickup date and time must be in the future");
+    if (!isPickupInFuture(updateOfferRequestDto.getPickupTimeStart()))
+      throw new IllegalArgumentException("Pickup time must be in the future");
 
     String imagePath = null;
     try
@@ -127,7 +118,8 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
       imagePath = imageStorageService.getBaseDirectory()
           + imageStorageService.saveImage(updateOfferRequestDto.getImage());
       //Transform the dto to grpc message
-      OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(updateOfferRequestDto, imagePath);
+      OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(
+          updateOfferRequestDto, imagePath);
 
       //Send the request to the data server
       OfferResponse response = dataServerStub.updateOffer(request);
@@ -145,12 +137,9 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
   }
 
-  private boolean isPickupInFuture(DateDto date, TimeDto time)
+  private boolean isPickupInFuture(LocalDateTime time)
   {
-    LocalDateTime pickupDateTime = LocalDateTime.of(
-        LocalDate.of(date.getYear(), date.getMonth(), date.getDay()),
-        LocalTime.of(time.getHour(), time.getMinute()));
-    return pickupDateTime.isAfter(LocalDateTime.now());
+    return time.isAfter(LocalDateTime.now());
   }
 
   public boolean imageExists(String filePath)

@@ -1,7 +1,7 @@
 package com.example.data_server.service;
 
 import com.example.data_server.repository.BusinessRepository;
-import com.example.data_server.utility.AddressConverter;
+import com.example.shared.converters.AddressConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.usersDao.BusinessDao;
 import io.grpc.stub.StreamObserver;

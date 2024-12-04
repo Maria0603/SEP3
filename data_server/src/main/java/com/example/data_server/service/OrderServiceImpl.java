@@ -5,12 +5,13 @@ import com.example.sep3.grpc.*;
 import com.example.data_server.repository.OrderRepository;
 import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.dao.domainDao.OrderDao;
-import com.example.data_server.utility.DateTimeConverter;
+import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.model.OrderStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -104,10 +105,9 @@ import java.util.Optional;
     return OrderResponse.newBuilder().setId(orderDao.getId())
         .setUserId(orderDao.getUserId())
         .setOfferId(orderDao.getOffer().getId())
-        .setNumberOfItems(orderDao.getNumberOfItems()).setOrderDate(
-            DateTimeConverter.convertDateDaoToGrpcDate(orderDao.getOrderDate()))
+        .setNumberOfItems(orderDao.getNumberOfItems())
         .setOrderTime(
-            DateTimeConverter.convertTimeDaoToGrpcTime(orderDao.getOrderTime()))
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(orderDao.getOrderTime()))
         .setStatus(orderDao.getStatus())
         .setPricePerItem(orderDao.getPricePerItem()).build();
   }
@@ -117,8 +117,7 @@ import java.util.Optional;
     OrderDao order = new OrderDao();
     order.setUserId(request.getUserId());
     order.setNumberOfItems(request.getNumberOfItems());
-    order.setOrderDate(DateTimeConverter.getCurrentDateDao());
-    order.setOrderTime(DateTimeConverter.getCurrentTimeDao());
+    order.setOrderTime(LocalDateTime.now());
     order.setStatus(OrderStatus.PENDING.getStatus());
 
     Optional<OfferDao> offer = offerRepository.findById(request.getOfferId());
