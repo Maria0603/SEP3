@@ -12,9 +12,15 @@ package proto;
 service BusinessService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
   rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
+  rpc GetBusinessById(BusinessIdRequest) returns (BusinessResponse);
 }
 message BusinessByEmailRequest {
   string email = 1;
+}
+
+
+message BusinessIdRequest {
+    string id = 1;
 }
 
 message BusinessResponse {

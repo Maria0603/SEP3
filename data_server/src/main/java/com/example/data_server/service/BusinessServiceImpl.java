@@ -22,6 +22,25 @@ import java.util.Optional;
 
   }
 
+  @Override public void getBusinessById(BusinessIdRequest request,
+      StreamObserver<BusinessResponse> responseObserver)
+  {
+
+    System.out.println("Request for business by id");
+
+    Optional<BusinessDao> business = businessRepository.findById(request.getId());
+
+    if(business.isPresent()){
+      BusinessDao businessDao = business.get();
+
+      BusinessResponse businessResponse = buildBusinessResponse(businessDao);
+
+      responseObserver.onNext(businessResponse);
+      responseObserver.onCompleted();
+    }
+
+  }
+
   @Override public void registerBusiness(RegisterBusinessRequest request,
       StreamObserver<EmptyMessage> responseObserver)
   {
