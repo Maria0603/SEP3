@@ -205,7 +205,8 @@ public class OfferServiceImpl
         .setImagePath(offerDao.getImagePath()).build();
   }
 
-  @Override public void getOffers(FilterRequest request,
+  /////////////////////////// FILTER OFFERS ///////////////////////////
+  private void getOffers(FilterRequest request,
       StreamObserver<FullOfferList> responseObserver) {
     List<OfferDao> filteredOffers = new ArrayList<>();
 

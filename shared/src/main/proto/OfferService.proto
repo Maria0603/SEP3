@@ -14,6 +14,10 @@ service OfferService {
   rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
   rpc GetOffers(FilterRequest) returns (FullOfferList);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
+  rpc GetOffersByTime(TimeRangeRequest) returns (FullOfferList);
+  rpc GetOffersByCategory(CategoryRequest) returns (FullOfferList);
+  rpc GetOffersByPriceRange(PriceRangeRequest) returns (FullOfferList);
+
 }
 
 message FilterRequest {
@@ -22,6 +26,20 @@ message FilterRequest {
   optional int32 maxOfferPrice = 3;
   optional  google.protobuf.Timestamp pickupTimeStart = 4;
   optional  google.protobuf.Timestamp pickupTimeEnd = 5;
+}
+
+message TimeRangeRequest {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+}
+
+message CategoryRequest {
+  repeated string categories = 1;
+}
+
+message PriceRangeRequest {
+  int32 minOfferPrice = 1;
+  int32 maxOfferPrice = 2;
 }
 
 
