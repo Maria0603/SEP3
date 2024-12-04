@@ -1,3 +1,4 @@
+@using client.DTO.Offer
 @using client.DTO
 @inject HttpClient HttpClient
 @inherits ComponentBase
@@ -29,7 +30,7 @@
         <h3 class="offer__bottom--name">@OfferData.Title</h3>
         @* <div class="offer__bottom--pickup">Collect "DD:MM:YY"</div> *@
         <div class="offer__bottom--pickup">
-            Collect on <em>@OfferData.PickupDate.Day:@OfferData.PickupDate.Month:@OfferData.PickupDate.Year</em>, 
+            Collect on <em>@OfferData.PickupTimeStart.Day/@OfferData.PickupTimeStart.Month/@OfferData.PickupTimeStart.Year</em>, 
             from <em>@OfferData.PickupTimeStart.Hour:@OfferData.PickupTimeStart.Minute</em> 
             to <em>@OfferData.PickupTimeEnd.Hour:@OfferData.PickupTimeEnd.Minute</em> 
         </div>
