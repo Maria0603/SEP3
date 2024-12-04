@@ -12,7 +12,7 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddSingleton(sp => new HttpClient
 {
-    BaseAddress = new Uri("https://localhost:8082")
+    BaseAddress = new Uri("http://localhost:8082")
 });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();

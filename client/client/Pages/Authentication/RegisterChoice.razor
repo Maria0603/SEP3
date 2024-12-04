@@ -1,0 +1,42 @@
+@page "/auth/registration"
+
+<h3 class="text-center">Register</h3>
+
+<div class="d-flex justify-content-center mt-5">
+    <div class="card m-3 text-center" style="width: 18rem;" @onclick="NavigateToBusiness">
+        <div class="card-body">
+            <div class="svg-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-building" viewBox="0 0 16 16">
+                    <path d="M8 .5a.5.5 0 0 1 .5.5v1H14.5a.5.5 0 0 1 .5.5v10a.5.5 0 0 1-.5.5H14v2.5a.5.5 0 0 1-1 0V12H3v2.5a.5.5 0 0 1-1 0V12H1.5a.5.5 0 0 1-.5-.5V2a.5.5 0 0 1 .5-.5H7.5V1a.5.5 0 0 1 .5-.5zM14 2H2v10h12V2zm-2 2a.5.5 0 0 0-.5.5V7h-2V4.5a.5.5 0 0 0-.5-.5h-2a.5.5 0 0 0-.5.5V7h-2V4.5a.5.5 0 0 0-.5-.5H4v7h8V4h.5a.5.5 0 0 0 .5-.5v-1a.5.5 0 0 0-.5-.5H12z"/>
+                </svg>
+            </div>
+            <h5 class="card-title mt-3">Register as Business</h5>
+        </div>
+    </div>
+
+    <div class="card m-3 text-center" style="width: 18rem;" @onclick="NavigateToCustomer">
+        <div class="card-body">
+            <div class="svg-container">
+                <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" fill="currentColor" class="bi bi-person" viewBox="0 0 16 16">
+                    <path d="M10.5 4a2.5 2.5 0 1 1-5 0 2.5 2.5 0 0 1 5 0zM11 4a3 3 0 1 0-6 0 3 3 0 0 0 6 0zM4 9a1 1 0 0 0-1 1v.5c0 1 1 1 2 1h6c1 0 2 0 2-1V10a1 1 0 0 0-1-1H4zm-3 1.5a2 2 0 0 1 2-2h8a2 2 0 0 1 2 2v.5c0 2-2.686 2.5-4 2.5H5c-1.314 0-4-.5-4-2.5V10.5z"/>
+                </svg>
+            </div>
+            <h5 class="card-title mt-3">Register as Customer</h5>
+        </div>
+    </div>
+</div>
+
+@code {
+private void NavigateToBusiness()
+{
+NavigationManager.NavigateTo("/auth/registration/business");
+}
+
+private void NavigateToCustomer()
+{
+NavigationManager.NavigateTo("/auth/registration/customer");
+}
+
+[Inject]
+private NavigationManager NavigationManager { get; set; } = default!;
+}

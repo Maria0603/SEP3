@@ -68,8 +68,10 @@ public class AuthStateProvider : AuthenticationStateProvider
 
     public async Task RegisterBusinessAsync(RegisterBusinessRequestDto registerRequest)
     {
+        Console.WriteLine("Before sending:" + registerRequest);
         CredentialsResponseDto? tokens = await _authService.RegisterBusinessAsync(registerRequest);
         Console.WriteLine("Logoooo33333333 : " + registerRequest.Logo);
+        Console.WriteLine("Tokens after : " + tokens);
 
         if (tokens != null)
         {

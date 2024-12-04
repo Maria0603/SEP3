@@ -44,7 +44,7 @@ public class AuthService : IAuthService
         Console.WriteLine("Logoooo44444 : " + request.Logo);
 
         HttpResponseMessage response = await client.PostAsJsonAsync("auth/registration/business", request);
-        
+        Console.WriteLine("Response: " + response);
         if (response.IsSuccessStatusCode)
         {
             String responseContent = await response.Content.ReadAsStringAsync();

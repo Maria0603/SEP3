@@ -118,12 +118,33 @@
 
 @code {
 
+    // private RegisterBusinessRequestDto registerModel = new()
+    // {
+    //     Address = new AddressDto(),
+    //     Logo = Array.Empty<byte>()
+    // };
+
     private RegisterBusinessRequestDto registerModel = new()
     {
-        Address = new AddressDto(),
-        Logo = Array.Empty<byte>()
+        BusinessName = "Dummy Business Name",
+        Cvr = "12345678",
+        Email = $"dummyemail{DateTime.UtcNow:HHmmssfff}@example.com",
+        Password = "DummyPassword123!",
+        PhoneNumber = "1234567890",
+        Address = new AddressDto
+        {
+            Street = "Dummy Street",
+            Number = "123",
+            City = "Dummy City",
+            County = "Dummy County",
+            State = "Dummy State",
+            Country = "Dummy Country",
+            PostalCode = "12345"
+        },
+        Logo = Array.Empty<byte>() // Empty array for Logo
     };
 
+    
     private string? successMessage;
     private string? errorMessage;
 
@@ -132,8 +153,6 @@
         try
         {
             errorMessage = "";
-            Console.WriteLine("Logooo2222o : " + registerModel.Logo);
-
             await AuthStateProvider.RegisterBusinessAsync(registerModel);
             
             successMessage = "Business registered successfully!";
