@@ -1,6 +1,6 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.image.UploadImageRequestDto;
+
 import com.example.server.services.ImageStorageService;
 import com.example.shared.model.Category;
 import org.junit.jupiter.api.BeforeEach;
