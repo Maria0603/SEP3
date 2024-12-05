@@ -97,13 +97,6 @@ public class DataServerStub
 
   public void registerCustomer(RegisterCustomerRequest request) {customerBlockingStub.registerCustomer(request);}
 
-// ******************* USER *****************
-
-  public UserResponse getUserByEmail(UserByEmailRequest request)
-  {
-    return userBlockingStub.getUserByEmail(request);
-  }
-
   public BusinessesInRadiusResponse updateCustomerLocation(CustomerLocationRequest request)
   {
     return customerBlockingStub.updateCustomerLocation(request);
@@ -112,6 +105,14 @@ public class DataServerStub
   {
     return customerBlockingStub.getCustomerLocation(request);
   }
+// ******************* USER *****************
+
+  public UserResponse getUserByEmail(UserByEmailRequest request)
+  {
+    return userBlockingStub.getUserByEmail(request);
+  }
+
+
 
   // ****************************************************************************
   public void shutdown()

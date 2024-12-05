@@ -9,7 +9,6 @@ import com.example.server.dto.auth.LoginRequestDto;
 import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.dto.customer.RegisterCustomerRequestDto;
-import com.example.server.services.ImageStorageService;
 import com.example.server.services.auxServices.GeocodingService;
 import com.example.server.services.auxServices.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,11 +63,13 @@ public class AuthService
     String logoPath = null;
     try
     {
-      logoPath = imageStorageService.getBaseDirectory()
-          + imageStorageService.saveImage(registrationRequestDto.getLogo());
+      /*logoPath = imageStorageService.getBaseDirectory()
+          + imageStorageService.saveImage(registrationRequestDto.getLogo());*/
+      logoPath = saveImageAndGetPath(registrationRequestDto.getLogo());
 
       Map<String, Double> location = geocodingService.geocodeAddress(
           registrationRequestDto.getAddress());
+
 
       //Transform the dto to grpc message
       RegisterBusinessRequest registerBusinessRequest = BusinessDtoGrpcConverter.RegisterBusinessRequestDto_To_RegisterBusinessRequest(
@@ -101,32 +102,6 @@ public class AuthService
       throw new IllegalArgumentException("Failed to save the image");
     }
 }
-
-
-    public CredentialsResponseDto registerBusiness(RegisterBusinessRequestDto registrationRequestDto) {
-        System.out.println("Request for register business in service");
-        String logoPath = null;
-
-        try {
-            // Save the logo and transform the DTO into a gRPC message
-            logoPath = saveImageAndGetPath(registrationRequestDto.getLogo());
-            RegisterBusinessRequest grpcRequest = BusinessDtoGrpcConverter.RegisterBusinessRequestDto_To_RegisterBusinessRequest(
-                    registrationRequestDto,
-                    logoPath,
-                    passwordEncoder.encode(registrationRequestDto.getPassword())
-            );
-
-            // Send the request to the data server and generate tokens
-            dataServerStub.registerBusiness(grpcRequest);
-            return generateAndReturnCredentials(registrationRequestDto.getEmail());
-        } catch (IOException e) {
-            e.printStackTrace();
-            if (logoPath != null) {
-                imageStorageService.deleteImage(logoPath); // Rollback
-            }
-            throw new IllegalArgumentException("Failed to save the image");
-        }
-    }
 
     private String saveImageAndGetPath(byte[] logo) throws IOException {
         if (logo == null || logo.length == 0) {

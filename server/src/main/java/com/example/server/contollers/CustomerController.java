@@ -6,6 +6,7 @@ import com.example.server.dto.customer.CustomerLocationRequestDto;
 import com.example.server.services.CustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
     return ResponseEntity.ok(businessesInRadius);
   }
 
-  @GetMapping("/radius-businesses") public ResponseEntity<List<BusinessInRadiusResponseDto>> getBusinessesInRadius(HttpServletRequest request)
+  @GetMapping("/radius-businesses")  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")public ResponseEntity<List<BusinessInRadiusResponseDto>> getBusinessesInRadius(HttpServletRequest request)
   {
     String email = (String) request.getAttribute("email");
     System.out.println("Email:.................: " + email);

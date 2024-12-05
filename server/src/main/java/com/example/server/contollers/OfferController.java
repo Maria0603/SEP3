@@ -37,7 +37,7 @@ import java.util.Optional;
     }
   }
 
-  @GetMapping public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers() {
+  @GetMapping@PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers() {
     try {
       List<ShortOfferResponseDto> offers = offerService.getAvailableOffers();
 
@@ -49,8 +49,8 @@ import java.util.Optional;
     }
   }
 
-  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
-  @GetMapping("/{id}") public ResponseEntity<OfferResponseDto> getOfferById(
+
+  @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
       @PathVariable String id) {
     try {
       OfferResponseDto offer = offerService.getOfferById(id);
