@@ -32,7 +32,10 @@ import java.util.List;
 
   @GetMapping("/radius-businesses") public ResponseEntity<List<BusinessInRadiusResponseDto>> getBusinessesInRadius(HttpServletRequest request)
   {
-    return null;
+    String email = (String) request.getAttribute("email");
+    System.out.println("Email:.................: " + email);
+    List<BusinessInRadiusResponseDto> businessesInRadius = customerService.getBusinessesInRadius(email);
+    return ResponseEntity.ok(businessesInRadius);
   }
 
 }

@@ -43,4 +43,19 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
     return businessesInRadiusResponseDto;
   }
 
+  public List<BusinessInRadiusResponseDto> getBusinessesInRadius(String customerEmail)
+  {
+    BusinessesInRadiusResponse databaseResponse = dataServerStub.getBusinessesInRadius(
+        BusinessesInRadiusRequest.newBuilder().setCustomerEmail(customerEmail).build());
+    List<BusinessInRadiusResponseDto> businessesInRadiusResponseDto = new ArrayList<>();
+
+    for (BusinessOnMap business : databaseResponse.getBusinessesList())
+    {
+      BusinessInRadiusResponseDto dto = generateBusinessInRadiusResponseDtoFromBusinessOnMap(business);
+      businessesInRadiusResponseDto.add(dto);
+    }
+
+    return businessesInRadiusResponseDto;
+  }
+
 }

@@ -67,6 +67,7 @@ import java.util.Optional;
       StreamObserver<BusinessesInRadiusResponse> responseObserver)
   {
     //extract the latitude, longitude and radius from customer
+    System.out.println("Request for businesses by radius");
     Optional<CustomerDao> customer = customerRepository.findByEmail(
         request.getCustomerEmail());
     if (customer.isPresent())
@@ -76,6 +77,9 @@ import java.util.Optional;
       List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
           customer.get().getLongitude(), customer.get().getLatitude(),
           radiusRadians);
+      System.out.println("Radius: " + customer.get().getSearchRadius());
+      System.out.println("Lat: " + customer.get().getLatitude());
+      System.out.println("Long: " + customer.get().getLongitude());
 
       BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
       for (BusinessDao business : businesses)
