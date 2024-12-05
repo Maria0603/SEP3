@@ -2,18 +2,17 @@ package com.example.server.services;
 
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
+import com.example.server.converters.FullOfferListToShortOfferListConverter;
 import com.example.server.converters.OfferDtoGrpcConverter;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
 import com.example.shared.converters.StringToTimestampConverter;
-import io.grpc.stub.StreamObserver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.print.DocFlavor;
 import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -140,7 +139,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return imageFile.exists();
   }
 
-  public List<OfferResponseDto> getFilteredOffers(
+  public List<ShortOfferResponseDto> getFilteredOffers(
       Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice,
       Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd,
       Optional<List<String>> categories) {
@@ -167,8 +166,9 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
       req.setPickupTimeEnd(stringConverter.convert(pickupTimeEnd.get()));
     }
 
-    FullOfferList response = dataServerStub.getOffers(req.build());
-    return response.getOfferList().stream()
-        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
+    FullOfferList fullResponse = dataServerStub.getOffers(req.build());
+    return FullOfferListToShortOfferListConverter.convert(fullResponse);
+//    return response.getOfferList().stream()
+//        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
   }
 }
