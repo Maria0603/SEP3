@@ -3,31 +3,37 @@
 <div class="mb-3">
     <label for="categories">Categories</label>
     <div class="d-flex align-items-center">
-        <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
-            @foreach (var category in availableCategories)
+        <select id="categories" @bind="selectedCategoryName" class="form-control category-dropdown">
+            @if (AvailableCategories != null)
             {
-                <option value="@category.Name">@category.Name</option>
+                @foreach (var category in AvailableCategories)
+                {
+                    <option value="@category.Name">@category.Name</option>
+                }
             }
         </select>
         <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
     </div>
 
     <div class="selected-categories mt-2">
-        @foreach (var category in OfferDto.Categories)
+        @if (SelectedCategories != null)
         {
-            <div class="category-box">
-                <span class="category-text">@category</span>
-                <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
-            </div>
+            @foreach (var category in SelectedCategories)
+            {
+                <div class="category-box">
+                    <span class="category-text">@category.Name</span>
+                    <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
+                </div>
+            }
         }
     </div>
 </div>
 
 @code {
-    [Parameter] public CreateOfferRequestDto OfferDto { get; set; } 
+    [Parameter]
+    public List<Category> SelectedCategories { get; set; } = new();
 
-    private string selectedCategory;
-    private readonly List<Category> availableCategories = new()
+    public List<Category> AvailableCategories { get; set; } = new()
     {
         new Category { Name = "Bread" },
         new Category { Name = "Vegan" },
@@ -35,31 +41,53 @@
         new Category { Name = "Dairy" }
     };
 
-    protected override void OnInitialized()
-    {
-        if (availableCategories.Any())
-        {
-            selectedCategory = availableCategories.First().Name;
-        }
-    }
+    private string selectedCategoryName = string.Empty;
 
     private void AddCategory()
     {
-
-        if (!string.IsNullOrEmpty(selectedCategory) &&
-            !OfferDto.Categories.Contains(selectedCategory))
+        if (string.IsNullOrEmpty(selectedCategoryName))
         {
-            OfferDto.Categories.Add(selectedCategory);
+            Console.WriteLine("No category selected.");
+            return;
+        }
+
+        if (AvailableCategories == null)
+        {
+            Console.WriteLine("Available categories are not initialized.");
+            return;
+        }
+
+        var category = AvailableCategories.FirstOrDefault(c => c.Name == selectedCategoryName);
+        if (category == null)
+        {
+            Console.WriteLine("Selected category not found in available categories.");
+            return;
+        }
+
+        if (SelectedCategories == null)
+        {
+            Console.WriteLine("Selected categories are not initialized.");
+            SelectedCategories = new List<Category>();
+        }
+
+        if (!SelectedCategories.Contains(category))
+        {
+            SelectedCategories.Add(category);
+            Console.WriteLine($"Category '{category.Name}' added successfully.");
+        }
+        else
+        {
+            Console.WriteLine($"Category '{category.Name}' is already selected.");
         }
     }
 
-    private void RemoveCategory(string category)
+    private void RemoveCategory(Category category)
     {
-        OfferDto.Categories.Remove(category);
+        SelectedCategories.Remove(category);
     }
 
     public class Category
     {
-        public string Name { get; set; }
+        public string Name { get; set; } = string.Empty;
     }
 }
