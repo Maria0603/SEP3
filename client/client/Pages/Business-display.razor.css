@@ -1,0 +1,204 @@
+/*FIRST SECTION*/
+/* General Container Styling */
+.container {
+    position: relative;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 15px;
+}
+
+
+/* Business Logo */
+.logo-image {
+    position: absolute;
+    top: 137px;
+    left: 17px;
+    width: 75px;
+    height: 60px;
+    border-radius: 20%;
+    z-index: 2;
+}
+
+/* Business Name */
+.BusinessName {
+    font-weight: bold;
+    position: absolute;
+    top: 155px;
+    left: 110px;
+    font-size: 32px;
+    color: white;
+    -webkit-text-stroke: 1.3px black;
+    z-index: 3;
+}
+
+.offer__top--left {
+    position: absolute;
+    left: 1.4rem;
+    top: 0.7rem;
+    background: #fff;
+    border-radius: 0.5rem;
+    padding: 0.3rem;
+    color: #d11049;
+    font-size: 1rem;
+}
+
+/*SECOND SECTION*/
+/* Float Container */
+.float-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.float-child2 {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-end;
+    text-align: right;
+
+}
+
+.amount-reserve-container {
+    display: flex;
+    align-items: start;
+    gap: 10px;
+}
+
+.crossed-row{
+    text-decoration: line-through;
+    text-decoration-color: black;
+}
+
+.float-child,.float-child2{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.row {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    flex-wrap: nowrap;
+}
+
+.icon {
+    width: 50px;
+}
+
+p {
+    margin: 0;
+    font-size: 15px;
+    color: #333;
+}
+
+h2{
+    margin-bottom: 15px;
+}
+
+
+
+/* Amount and Reservation button  */
+.amount-input {
+    width: 60px;
+    padding: 5px;
+    text-align: center;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.reserve-button {
+    padding: 8px 16px;
+    font-size: 18px;
+    background-color: #5A041D;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
+}
+
+.reserve-button:hover {
+    background-color: #5A041D;
+    transform: scale(1.05);
+}
+
+/* THIRD SECTION  */
+/* Location Section */
+.location {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+}
+
+.location-content {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    width: 100%;
+}
+
+.location-row {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.location-icon {
+    width: 23px;
+    height: auto;
+}
+
+.location-text {
+    font-size: 16px;
+    color: #333;
+    margin: 0;
+}
+
+/* FOURTH PART  */
+/*Description, allergens*/
+
+.description{
+    margin-top:20px;
+    margin-bottom: 10px;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 768px) {
+    .float-container {
+        flex-direction: column;
+    }
+
+    .float-child,
+    .float-child2 {
+        width: 100%;
+    }
+
+    .amount-reserve-container {
+        justify-content: center;
+    }
+
+    .description-allergens-content {
+        padding: 10px;
+        gap: 15px;
+    }
+
+    .description header1,
+    .allergens header1 {
+        font-size: 1.3rem;
+    }
+
+    .description p,
+    .allergens p {
+        font-size: 0.9rem;
+    }
+
+}

@@ -80,7 +80,10 @@ public class DataServerStub
     return businessBlockingStub.getBusinessByEmail(request);
   }
 
-
+  public BusinessResponse getBusinessById(BusinessIdRequest request)
+  {
+    return businessBlockingStub.getBusinessById(request);
+  }
   public void shutdown()
   {
     channel.shutdown();

@@ -11,11 +11,9 @@ import org.springframework.stereotype.Service;
 @Service public class BusinessService {
 
     private final DataServerStub dataServerStub;
-    private final ImageStorageService imageStorageService;
 
     @Autowired public BusinessService(DataServerStub dataServerStub, ImageStorageService imageStorageService) {
         this.dataServerStub = dataServerStub;
-        this.imageStorageService = imageStorageService;
         System.out.println("BusinessService created");
     }
 
@@ -26,7 +24,5 @@ import org.springframework.stereotype.Service;
         System.out.println("Received response from dataServerStub " + response);
 
         return BusinessDtoGrpcConverter.BusinessResponseGrpc_To_BusinessResponseDto(response);
-
-
     }
 }

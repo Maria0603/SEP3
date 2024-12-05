@@ -1,0 +1,23 @@
+@page "/business/"
+@* @page "/business/{id}" *@
+<h3>Business</h3>
+
+<div class="container">
+
+    <div class="location">
+        <div class="location-content">
+            <div class="location-row">
+                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
+            </div>
+        </div>
+    </div>
+    
+    <div> add offers from this shii </div>
+    <div> add reviews and rating on dis shii</div>
+
+</div>
+
+@code {
+    [Parameter] public string id { get; set; }
+}
