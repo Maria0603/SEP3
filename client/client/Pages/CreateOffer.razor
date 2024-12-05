@@ -4,6 +4,7 @@
 @using client.Services
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
 
 @if (createdOffer is null) {
     <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
@@ -45,12 +46,12 @@
                 <InputDate id="pickupDate" @bind-Value="dateValue" class="form-control"/>
             </div>
         </div>
+
         <div class="row">
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeStart">Pickup Start Time</label>
                 <input type="time" id="pickupTimeStart" @bind="timeStart" class="form-control"/>
             </div>
-
 
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeEnd">Pickup End Time</label>
@@ -58,7 +59,27 @@
             </div>
         </div>
 
-        <CategoryPickerComponent offerDto="offerDto" />
+        <!-- Categories Picker -->
+        <div class="mb-3">
+            <label for="categories">Categories</label>
+            <div class="d-flex align-items-center">
+                <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
+                    @foreach (var category in availableCategories) {
+                        <option value="@category">@category</option>
+                    }
+                </select>
+                <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
+            </div>
+
+            <div class="selected-categories mt-2">
+                @foreach (var category in offerDto.Categories) {
+                    <div class="category-box">
+                        <span class="category-text">@category</span>
+                        <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
+                    </div>
+                }
+            </div>
+        </div>
 
         <div class="mb-3">
             <label for="image">Image</label>
@@ -76,67 +97,52 @@
     </EditForm>
 }
 else {
-    <div class="mt-4">
-        <h3>Offer ID #@createdOffer.Id</h3>
-        <p>
-
-            <strong>Title:</strong> @createdOffer.Title
-        </p>
-        <p>
-            <strong>Description:</strong> @createdOffer.Description
-        </p>
-        <p><strong>Original Price:</strong> @createdOffer.OriginalPrice kr</p>
-        <p><strong>Offer Price:</strong> @createdOffer.OfferPrice kr</p>
-        <p>
-            <strong>Number of Items:</strong> @createdOffer.NumberOfItems
-        </p>
-        <p><strong>Pickup Date:</strong> @createdOffer.PickupDate.Day/@createdOffer.PickupDate.Month/@createdOffer.PickupDate.Year</p>
-        <p>
-            <strong>Pickup Time:</strong> @createdOffer.PickupTimeStart.Hour:@createdOffer.PickupTimeStart.Minute -
-            @createdOffer.PickupTimeEnd.Hour:@createdOffer.PickupTimeEnd.Minute
-        </p>
-        <p>
-            <strong>Categories:</strong> @string.Join(", ", createdOffer.Categories)
-        </p>
-        <p>
-            <strong>Status:</strong> @createdOffer.Status
-        </p>
-        <div>
-            <img src="@(HttpClient.BaseAddress + createdOffer.ImagePath)" alt="Offer Image" class="img-fluid" style="max-width: 300px;"/>
-        </div>
-        <button class="btn btn-danger mt-3" @onclick="ResetForm">Create Another Offer</button>
-
-    </div>
+NavigationManager.NavigateTo($"/offers/{createdOffer.Id}");
 }
 
-@code {
 
+@code {
     private CreateOfferRequestDto offerDto = new() {
         Categories = new List<string>(),
         PickupDate = new DateDto(),
         PickupTimeStart = new TimeDto(),
         PickupTimeEnd = new TimeDto(),
-        NumberOfItems = 1 //Default
+        NumberOfItems = 1 // Default
     };
-    
-    private string categoriesInput = string.Empty;
+
+    private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
+    private string selectedCategory;
+    private DateTime? dateValue = DateTime.Now.Date;
     private TimeOnly? timeStart;
     private TimeOnly? timeEnd;
-    private DateTime? dateValue;
     private string errorLabel = "";
     private string successLabel = "";
-
-    private OfferResponseDto? createdOffer = null;
-    
-   
+    private OfferResponseDto? createdOffer;
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e) {
         errorLabel = "";
         successLabel = "";
         var file = e.File;
+
+        if (!file.ContentType.StartsWith("image/")) {
+            errorLabel = "Please upload a valid image file.";
+            return;
+        }
+
         using var memoryStream = new MemoryStream();
         await file.OpenReadStream().CopyToAsync(memoryStream);
         offerDto.Image = memoryStream.ToArray();
+    }
+
+    private void AddCategory() {
+        if (!string.IsNullOrEmpty(selectedCategory) &&
+            !offerDto.Categories.Contains(selectedCategory)) {
+            offerDto.Categories.Add(selectedCategory);
+        }
+    }
+
+    private void RemoveCategory(string category) {
+        offerDto.Categories.Remove(category);
     }
 
     private async Task SubmitOffer() {
@@ -147,17 +153,20 @@ else {
             offerDto.PickupDate.Day = dateValue.Value.Day;
             offerDto.PickupDate.Month = dateValue.Value.Month;
             offerDto.PickupDate.Year = dateValue.Value.Year;
-        }
-        else {
+        } else {
             errorLabel = "Please provide pickup date.";
+            return;
+        }
+
+        if (timeStart is not null && timeEnd is not null && timeStart >= timeEnd) {
+            errorLabel = "Pickup end time must be after start time.";
             return;
         }
 
         if (timeStart is not null) {
             offerDto.PickupTimeStart.Hour = timeStart.Value.Hour;
             offerDto.PickupTimeStart.Minute = timeStart.Value.Minute;
-        }
-        else {
+        } else {
             errorLabel = "Please provide pickup time start.";
             return;
         }
@@ -165,8 +174,7 @@ else {
         if (timeEnd is not null) {
             offerDto.PickupTimeEnd.Hour = timeEnd.Value.Hour;
             offerDto.PickupTimeEnd.Minute = timeEnd.Value.Minute;
-        }
-        else {
+        } else {
             errorLabel = "Please provide pickup time end.";
             return;
         }
@@ -178,10 +186,9 @@ else {
                 Console.WriteLine("Offer created successfully!");
                 successLabel = $"Offer created successfully: {createdOffer.Id}";
             }
-        }
-        catch (Exception e) {
-            Console.WriteLine($"Error: {e.Message}");
-            errorLabel = e.Message;
+        } catch (Exception ex) {
+            Console.WriteLine($"Error: {ex}");
+            errorLabel = ex.Message;
         }
     }
 
@@ -194,14 +201,11 @@ else {
             PickupTimeEnd = new TimeDto(),
             NumberOfItems = 1
         };
-        categoriesInput = string.Empty;
+        selectedCategory = string.Empty;
         timeStart = null;
         timeEnd = null;
         dateValue = null;
         errorLabel = "";
         successLabel = "";
     }
-
-  
-
 }

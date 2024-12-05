@@ -3,9 +3,9 @@
 @inherits ComponentBase
 @inject NavigationManager NavigationManager
 
-<div @attributes="AdditionalAttributes" class="offer" @onclick="()=>ShowOfferDetails(OfferData.Id)">
+<div @attributes="AdditionalAttributes" class="offer" @onclick="()=>ShowOfferDetails(OfferDto.Id)">
     <div class="offer__top">
-        <div class="offer__top--left">@OfferData.NumberOfAvailableItems Left</div>
+        <div class="offer__top--left">@OfferDto.NumberOfAvailableItems Left</div>
         <svg class="offer__top--favourite @(false ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 13.1371C5 18 9.01943 20.5914 11.9617 22.9109C13 23.7294 14 24.5 15 24.5C16 24.5 17 23.7294 18.0383 22.9109C20.9806 20.5914 25 18 25 13.1371C25 8.27416 19.4998 4.82546 15 9.50063C10.5002 4.82546 5 8.27416 5 13.1371Z" fill="currentColor"/>
         </svg>
@@ -15,23 +15,22 @@
                 <img src="https://cdn-icons-png.flaticon.com/512/1170/1170627.png" alt="Business Icon">
                 @* <img src="@OfferData.BusinessDetails.Icon" alt="Business Icon"> *@
             </div>
-            <h3 class="offer__top--business__name">Business name: @OfferData.Title</h3>
+            <h3 class="offer__top--business__name">Business name: @OfferDto.Title</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
         </div>
     </div>
     <div class="offer__img">
-        <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+        <img src="@(HttpClient.BaseAddress + OfferDto.ImagePath)" alt="Offer Image">
         @* <img src="/images/7aa8c421-3bf0-4d16-ad2b-c6400fdae530.jpg" alt="Offer Image"> *@
         @* <img src="@OfferData.Image" alt="Offer Image"> *@
     </div>
 
     <div class="offer__bottom">
-        <h3 class="offer__bottom--name">@OfferData.Title</h3>
+        <h3 class="offer__bottom--name">@OfferDto.Title</h3>
         @* <div class="offer__bottom--pickup">Collect "DD:MM:YY"</div> *@
         <div class="offer__bottom--pickup">
-            Collect on <em>@OfferData.PickupDate.Day:@OfferData.PickupDate.Month:@OfferData.PickupDate.Year</em>, 
-            from <em>@OfferData.PickupTimeStart.Hour:@OfferData.PickupTimeStart.Minute</em> 
-            to <em>@OfferData.PickupTimeEnd.Hour:@OfferData.PickupTimeEnd.Minute</em> 
+            Collect on <em>@OfferDto.PickupDate</em>
+            from <em>@OfferDto.PickupTimeStart/@OfferDto.PickupTimeEnd</em> 
         </div>
 
         <div class="offer__bottom--stats">
@@ -45,19 +44,19 @@
     
             <div class="offer__bottom--stats__distance">¿10 km</div>
             @* <div class="offer__bottom--stats__distance">@OfferData.Distance km</div> *@
-            <div class="offer__bottom--stats__price">@OfferData.OfferPrice.ToString("0.00") kr.</div>
+            <div class="offer__bottom--stats__price">@OfferDto.OfferPrice.ToString("0.00") kr.</div>
         </div>
     </div>
 </div>
 
 @code {
     [Parameter] 
-    public ShortOfferResponseDto OfferData { get; set; }
+    public ShortOfferResponseDto OfferDto { get; set; }
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
     private void ShowOfferDetails(string offerId)
     {
-        NavigationManager.NavigateTo($"offers/{OfferData.Id}");
+        NavigationManager.NavigateTo($"offers/{OfferDto.Id}");
     }
 
 
