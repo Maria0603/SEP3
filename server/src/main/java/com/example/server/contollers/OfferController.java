@@ -37,7 +37,33 @@ import java.util.Optional;
     }
   }
 
-  @GetMapping@PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers() {
+  @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
+      @PathVariable String id) {
+    try {
+      OfferResponseDto offer = offerService.getOfferById(id);
+      return ResponseEntity.ok(offer);
+    }
+    catch (Exception e) {
+      throw new IllegalArgumentException(e.getMessage());
+    }
+  }
+
+  @GetMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<ShortOfferResponseDto>> getFilteredOffers(
+      @RequestParam(required = false) Integer minOfferPrice,
+      @RequestParam(required = false) Integer maxOfferPrice,
+      @RequestParam(required = false) String pickupTimeStart,
+      @RequestParam(required = false) String pickupTimeEnd,
+      @RequestParam(required = false) List<String> categories) {
+    System.out.println("maxofferprice" + maxOfferPrice);
+
+    var response = offerService.getFilteredOffers(
+        Optional.ofNullable(minOfferPrice), Optional.ofNullable(maxOfferPrice),
+        Optional.ofNullable(pickupTimeStart),
+        Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories));
+    return ResponseEntity.ok(response);
+  }
+
+   public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers() {
     try {
       List<ShortOfferResponseDto> offers = offerService.getAvailableOffers();
 
@@ -47,35 +73,5 @@ import java.util.Optional;
       e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
-  }
-
-
-  @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
-      @PathVariable String id) {
-    try {
-      OfferResponseDto offer = offerService.getOfferById(id);
-      return ResponseEntity.ok(offer);
-    }
-    catch (Exception e)
-    {
-      throw new IllegalArgumentException(e.getMessage());
-    }
-  }
-
-  @GetMapping("/filteredOffers") public ResponseEntity<List<ShortOfferResponseDto>> getFilteredOffers(
-      @RequestParam(required = false) Integer minOfferPrice,
-      @RequestParam(required = false) Integer maxOfferPrice,
-      @RequestParam(required = false) String pickupTimeStart,
-      @RequestParam(required = false) String pickupTimeEnd,
-      @RequestParam(required = false) List<String> categories) {
-    System.out.println("maxofferprice" + maxOfferPrice);
-
-    var response = offerService.getFilteredOffers(
-        Optional.ofNullable(minOfferPrice),
-        Optional.ofNullable(maxOfferPrice),
-        Optional.ofNullable(pickupTimeStart),
-        Optional.ofNullable(pickupTimeEnd),
-        Optional.ofNullable(categories));
-    return ResponseEntity.ok(response);
   }
 }
