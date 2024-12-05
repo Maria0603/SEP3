@@ -1,4 +1,4 @@
-package com.example.server.dto.business;
+package com.example.server.dto.location;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,12 +9,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BusinessesInRadiusResponseDto
+public class GeoLocation
 {
-  private String businessName;
-  private String businessId;
-  private String businessEmail;
-  private String logoPath;
   private double latitude;
   private double longitude;
 }

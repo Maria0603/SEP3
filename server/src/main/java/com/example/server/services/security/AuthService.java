@@ -7,7 +7,8 @@ import com.example.server.dto.auth.CredentialsResponseDto;
 import com.example.server.dto.auth.LoginRequestDto;
 import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
-import com.example.server.services.ImageStorageService;
+import com.example.server.services.auxServices.GeocodingService;
+import com.example.server.services.auxServices.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,6 +19,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @Service public class AuthService
 {
@@ -29,15 +31,17 @@ import java.util.HashMap;
   private final PasswordEncoder passwordEncoder;
   private final AuthenticationManager authenticationManager;
   private final UserDetailsService userDetailsService;
+  private final GeocodingService geocodingService;
 
   @Autowired AuthService(DataServerStub dataServerStub,
       ImageStorageService imageService, JWTUtils jwtUtils,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
-      UserDetailsService userDetailsService)
+      UserDetailsService userDetailsService, GeocodingService geocodingService)
   {
     this.dataServerStub = dataServerStub;
     this.imageStorageService = imageService;
+    this.geocodingService = geocodingService;
 
     this.jwtUtils = jwtUtils;
     this.passwordEncoder = passwordEncoder;
@@ -59,10 +63,13 @@ import java.util.HashMap;
       logoPath = imageStorageService.getBaseDirectory()
           + imageStorageService.saveImage(registrationRequestDto.getLogo());
 
+      Map<String, Double> location = geocodingService.geocodeAddress(
+          registrationRequestDto.getAddress());
 
       //Transform the dto to grpc message
       RegisterBusinessRequest registerBusinessRequest = BusinessDtoGrpcConverter.RegisterBusinessRequestDto_To_RegisterBusinessRequest(
-          registrationRequestDto, logoPath,
+          registrationRequestDto, logoPath, location.get("lat"),
+          location.get("lng"),
           passwordEncoder.encode(registrationRequestDto.getPassword()));
 
       //Send the request to the data server
