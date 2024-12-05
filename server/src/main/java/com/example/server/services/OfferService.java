@@ -9,6 +9,7 @@ import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
 import com.example.shared.converters.StringToTimestampConverter;
+import com.example.server.services.auxServices.ImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,7 +23,8 @@ import java.util.Optional;
 
 import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
-@Service public class OfferService {
+@Service public class OfferService
+{
   private final DataServerStub dataServerStub;
   private final ImageStorageService imageStorageService;
 

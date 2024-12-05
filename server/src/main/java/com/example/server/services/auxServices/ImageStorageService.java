@@ -1,6 +1,5 @@
-package com.example.server.services;
+package com.example.server.services.auxServices;
 
-import com.example.shared.model.Category;
 import org.springframework.stereotype.Service;
 
 import javax.imageio.ImageIO;

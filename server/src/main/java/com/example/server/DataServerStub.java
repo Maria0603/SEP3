@@ -88,6 +88,10 @@ public class DataServerStub
   {
     return businessBlockingStub.getBusinessByEmail(request);
   }
+  public BusinessesInRadiusResponse getBusinessesInRadius(BusinessesInRadiusRequest request)
+  {
+    return businessBlockingStub.getBusinessesInRadius(request);
+  }
 
   // ******************************** CUSTOMER **************************
 
@@ -100,8 +104,16 @@ public class DataServerStub
     return userBlockingStub.getUserByEmail(request);
   }
 
+  public BusinessesInRadiusResponse updateCustomerLocation(CustomerLocationRequest request)
+  {
+    return customerBlockingStub.updateCustomerLocation(request);
+  }
+  public CustomerLocationRequest getCustomerLocation(CustomerByEmailRequest request)
+  {
+    return customerBlockingStub.getCustomerLocation(request);
+  }
 
-
+  // ****************************************************************************
   public void shutdown()
   {
     channel.shutdown();

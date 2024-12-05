@@ -13,7 +13,11 @@ package proto;
 service CustomerService {
   rpc RegisterCustomer(RegisterCustomerRequest) returns (EmptyMessage);
   rpc GetCustomerByEmail(CustomerByEmailRequest) returns (CustomerResponse);
+  rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
+  rpc GetCustomerLocation(CustomerByEmailRequest) returns (CustomerLocationRequest);
 }
+
+
 message CustomerByEmailRequest {
   string email = 1;
 }
@@ -37,4 +41,23 @@ message RegisterCustomerRequest {
   string hashedPassword = 5;
   Address address = 6;
   string role = 7;
+}
+message CustomerLocationRequest {
+  double latitude = 1;
+  double longitude = 2;
+  int32 radius = 3;
+  string customerEmail=4;
+}
+
+message BusinessOnMap {
+  double latitude = 1;
+  double longitude = 2;
+  string logoPath = 3;
+  string businessName = 4;
+  string businessId = 5;
+  string businessEmail = 6;
+}
+
+message BusinessesInRadiusResponse {
+  repeated BusinessOnMap businesses = 1;
 }

@@ -9,6 +9,7 @@ import com.example.server.dto.order.AddOrderRequestDto;
 import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.dto.order.PlaceOrderRequestDto;
 import com.example.server.dto.order.PlaceOrderSessionResponseDto;
+import com.example.server.services.auxServices.ImageStorageService;
 import com.example.shared.model.OrderStatus;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
@@ -26,7 +27,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
-public class OrderService extends OrderServiceGrpc.OrderServiceImplBase {
+public class OrderService
+{
     private final DataServerStub dataServerStub;
     private final OfferService offerService;
     private final ImageStorageService imageStorageService;

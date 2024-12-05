@@ -49,14 +49,16 @@ import java.util.Optional;
     }
   }
 
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
   @GetMapping("/{id}") public ResponseEntity<OfferResponseDto> getOfferById(
       @PathVariable String id) {
     try {
       OfferResponseDto offer = offerService.getOfferById(id);
       return ResponseEntity.ok(offer);
     }
-    catch (Exception e) {
-      return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 
