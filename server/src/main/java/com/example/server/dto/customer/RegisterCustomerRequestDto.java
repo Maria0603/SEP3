@@ -1,4 +1,4 @@
-package com.example.server.dto.business;
+package com.example.server.dto.customer;
 
 import com.example.server.dto.address.AddressDto;
 import jakarta.validation.constraints.*;
@@ -12,15 +12,15 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class RegisterBusinessRequestDto {
+public class RegisterCustomerRequestDto {
 
-    @NotBlank(message = "Business name cannot be empty.")
-    @Size(min = 2, max = 50, message = "Business name must be between 2 and 50 characters.")
-    private String businessName;
+    @NotBlank(message = "First name cannot be empty.")
+    @Size(min = 2, max = 50, message = "First name must be between 2 and 50 characters.")
+    private String firstName;
 
-    @NotBlank(message = "CVR cannot be empty.")
-    @Pattern(regexp = "^[0-9]{8}$", message = "CVR must be exactly 8 digits.")
-    private String cvr;
+    @NotBlank(message = "Last name cannot be empty.")
+    @Size(min = 2, max = 50, message = "Last name must be between 2 and 50 characters.")
+    private String lastName;
 
     @NotBlank(message = "Email cannot be empty.")
     @Email(message = "Email must be a valid email address.")
@@ -37,8 +37,4 @@ public class RegisterBusinessRequestDto {
     @Valid
     // Validates the AddressDto inside this field if it has its own validation
     private AddressDto address;
-
-    @NotNull(message = "Logo is required.")
-    private byte[] logo;
-
 }

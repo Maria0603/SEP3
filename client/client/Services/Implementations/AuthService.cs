@@ -38,12 +38,26 @@ public class AuthService : IAuthService
     
     public async Task<CredentialsResponseDto> RegisterBusinessAsync (RegisterBusinessRequestDto request)
     {
-        string jsonRequest = JsonSerializer.Serialize(request);
-        Console.WriteLine(jsonRequest);
-
-        Console.WriteLine("Logoooo44444 : " + request.Logo);
-
         HttpResponseMessage response = await client.PostAsJsonAsync("auth/registration/business", request);
+        
+        if (response.IsSuccessStatusCode)
+        {
+            String responseContent = await response.Content.ReadAsStringAsync();
+            Console.WriteLine(responseContent);
+            CredentialsResponseDto tokens = JsonSerializer.Deserialize<CredentialsResponseDto>(responseContent,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                })!;
+            
+            return tokens;
+        }
+        
+        throw new Exception("Error while registering in.");
+    }
+    public async Task<CredentialsResponseDto> RegisterCustomerAsync (RegisterCustomerRequestDto request)
+    {
+        HttpResponseMessage response = await client.PostAsJsonAsync("auth/registration/customer", request);
         
         if (response.IsSuccessStatusCode)
         {

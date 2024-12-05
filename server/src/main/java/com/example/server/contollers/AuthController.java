@@ -4,6 +4,7 @@ import com.example.server.dto.auth.CredentialsResponseDto;
 import com.example.server.dto.auth.LoginRequestDto;
 import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
+import com.example.server.dto.customer.RegisterCustomerRequestDto;
 import com.example.server.services.security.AuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,13 @@ import org.springframework.web.bind.annotation.RestController;
   {
     System.out.println("Request for register business in controller");
     return ResponseEntity.ok(authService.registerBusiness(registerRequest));
+  }
+
+  @PostMapping("/registration/customer") public ResponseEntity<CredentialsResponseDto> registerCustomer(
+          @Valid @RequestBody RegisterCustomerRequestDto registerRequest)
+  {
+    System.out.println("Request for register customer in controller");
+    return ResponseEntity.ok(authService.registerCustomer(registerRequest));
   }
 
   @PostMapping("/login") public ResponseEntity<CredentialsResponseDto> logInBusiness(

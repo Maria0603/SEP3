@@ -10,6 +10,8 @@ public class DataServerStub
   private final OfferServiceGrpc.OfferServiceBlockingStub offerBlockingStub;
   private final OrderServiceGrpc.OrderServiceBlockingStub orderBlockingStub;
   private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
+  private final CustomerServiceGrpc.CustomerServiceBlockingStub customerBlockingStub;
+  private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
 
   public DataServerStub(String host, int port)
   {
@@ -19,6 +21,8 @@ public class DataServerStub
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
     orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
     businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
+    customerBlockingStub = CustomerServiceGrpc.newBlockingStub(channel);
+    userBlockingStub = UserServiceGrpc.newBlockingStub(channel);
 
     System.out.println("DataServerStub created");
   }
@@ -79,6 +83,18 @@ public class DataServerStub
   {
     return businessBlockingStub.getBusinessByEmail(request);
   }
+
+  // ******************************** CUSTOMER **************************
+
+  public void registerCustomer(RegisterCustomerRequest request) {customerBlockingStub.registerCustomer(request);}
+
+// ******************* USER *****************
+
+  public UserResponse getUserByEmail(UserByEmailRequest request)
+  {
+    return userBlockingStub.getUserByEmail(request);
+  }
+
 
 
   public void shutdown()

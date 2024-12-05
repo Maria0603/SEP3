@@ -5,7 +5,7 @@ option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "BusinessServiceProto";
 
 import "OfferService.proto";
-
+import "UserService.proto";
 
 package proto;
 
@@ -41,15 +41,6 @@ message RegisterBusinessRequest {
 }
 
 
-message Address {
-  string street = 1;
-  string number = 2;
-  string city = 3;
-  string county = 4;
-  string state = 5;
-  string country = 6;
-  string postalCode = 7;
-}
 
 
 
