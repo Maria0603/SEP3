@@ -38,11 +38,14 @@ import java.io.IOException;
     }
     jwtToken = authHeader.substring(7);
     userEmail = jwtUtils.extractUsername(jwtToken);
+    System.out.println("Generating JWT for....: " + userEmail);
+    request.setAttribute("email", userEmail);
     if (userEmail != null
         && SecurityContextHolder.getContext().getAuthentication() == null)
     {
       UserDetails userDetails = userDetailsService.loadUserByUsername(
           userEmail);
+      System.out.println("Generating JWT for: " + userDetails.getUsername());
 
       if (jwtUtils.isTokenValid(jwtToken, userDetails))
       {
