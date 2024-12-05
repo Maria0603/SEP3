@@ -163,6 +163,8 @@ import java.util.Optional;
         DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
             request.getPickupTimeEnd()));
 
+    offer.setCreationTime(LocalDateTime.now());
+
     ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
     offer.setCategories(categories);
 
@@ -279,6 +281,9 @@ import java.util.Optional;
         item -> request.getCategoriesList().isEmpty() || item.getCategories()
             .stream().anyMatch(request.getCategoriesList()::contains)).toList();
 
+    filteredOffers = filteredOffers.stream()
+    .sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+    .toList();
     //    var test = offerRepository.findAll();
     //    filteredOffers = test.stream().filter(
     //        offer -> offer.getCategories().stream()

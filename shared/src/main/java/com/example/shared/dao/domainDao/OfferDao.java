@@ -20,6 +20,7 @@ import java.util.ArrayList;
   @Field("number_of_available_items") private int numberOfAvailableItems;
   @Field("pickup_time_start") private LocalDateTime pickupTimeStart;
   @Field("pickup_time_end") private LocalDateTime pickupTimeEnd;
+  @Field("creation_time") private LocalDateTime creationTime;
   @Field("image_path") private String imagePath;
 
   public int getNumberOfAvailableItems()
@@ -147,5 +148,11 @@ import java.util.ArrayList;
     this.pickupTimeStart = pickupTimeStart;
   }
 
+  public LocalDateTime getCreationTime() {
+    return creationTime;
+  }
 
+  public void setCreationTime(LocalDateTime creationTime) {
+    this.creationTime = creationTime;
+  }
 }
