@@ -60,18 +60,20 @@ import java.util.Optional;
     }
   }
 
-  @GetMapping("/filteredOffers") public List<OfferResponseDto> getFilteredOffers(
+  @GetMapping("/filteredOffers") public ResponseEntity<List<ShortOfferResponseDto>> getFilteredOffers(
       @RequestParam(required = false) Integer minOfferPrice,
       @RequestParam(required = false) Integer maxOfferPrice,
       @RequestParam(required = false) String pickupTimeStart,
       @RequestParam(required = false) String pickupTimeEnd,
       @RequestParam(required = false) List<String> categories) {
     System.out.println("maxofferprice" + maxOfferPrice);
-    return offerService.getFilteredOffers(
+
+    var response = offerService.getFilteredOffers(
         Optional.ofNullable(minOfferPrice),
         Optional.ofNullable(maxOfferPrice),
         Optional.ofNullable(pickupTimeStart),
         Optional.ofNullable(pickupTimeEnd),
         Optional.ofNullable(categories));
+    return ResponseEntity.ok(response);
   }
 }

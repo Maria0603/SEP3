@@ -1,4 +1,4 @@
-﻿package com.example.server.converters;
+package com.example.server.converters;
 
 import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.sep3.grpc.FullOfferList;
