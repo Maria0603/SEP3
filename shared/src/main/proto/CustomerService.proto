@@ -7,10 +7,28 @@ option java_outer_classname = "CustomerServiceProto";
 package proto;
 
 service CustomerService {
-  rpc UpdateCustomerLocation(BusinessesInRadiusRequest) returns (BusinessesInRadiusResponse);
+  ////////////////////////////////////////////////
+  rpc RegisterCustomer (RegCusReq) returns (RegCusRes);
+  //////////////////////////////////////////////////
+  rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
+  rpc GetCustomerLocation(CustomerByEmailRequest) returns (CustomerLocationRequest);
+}
+////////////////////////////
+message RegCusReq {
+  string email = 1;
+  double latitude = 2;
+  double longitude =3;
+  int32 radius = 4;
+}
+message RegCusRes {}
+//////////////////////////////
+
+
+message CustomerByEmailRequest {
+  string email = 1;
 }
 
-message BusinessesInRadiusRequest {
+message CustomerLocationRequest {
   double latitude = 1;
   double longitude = 2;
   int32 radius = 3;

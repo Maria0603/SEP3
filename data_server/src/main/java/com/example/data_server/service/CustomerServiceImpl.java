@@ -4,16 +4,14 @@ import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.repository.CustomerRepository;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.usersDao.BusinessDao;
-import com.mongodb.client.model.geojson.Point;
+import com.example.shared.dao.usersDao.CustomerDao;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Distance;
-import org.springframework.data.geo.Metrics;
+import org.springframework.data.geo.Circle;
+import org.springframework.data.geo.Point;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @GrpcService public class CustomerServiceImpl
     extends CustomerServiceGrpc.CustomerServiceImplBase
@@ -30,36 +28,41 @@ import java.util.Optional;
 
   }
 
-  @Override public void updateCustomerLocation(
-      BusinessesInRadiusRequest request,
+  @Override public void updateCustomerLocation(CustomerLocationRequest request,
       StreamObserver<BusinessesInRadiusResponse> responseObserver)
   {
-    System.out.println("Request for businesses by radius.");
+    System.out.println("Request for updating customer location.");
 
-    customerRepository.updateLocationByEmail(request.getCustomerEmail(), request.getLatitude(), request.getLongitude(), request.getRadius());
+    customerRepository.updateLocationByEmail(request.getCustomerEmail(),
+        request.getLatitude(), request.getLongitude(), request.getRadius());
 
+    double radiusRadians = request.getRadius() / 6378.1;
+
+    List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
+        request.getLongitude(), request.getLatitude(), radiusRadians);
+
+    BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
+
+    for (BusinessDao business : businesses)
+    {
+      builder.addBusinesses(buildBusinessOnMap(business));
+    }
     //Send the businesses in radius
-    responseObserver.onNext(getBusinessesInRadius(request));
+    responseObserver.onNext(builder.build());
     responseObserver.onCompleted();
   }
 
-  public BusinessesInRadiusResponse getBusinessesInRadius(BusinessesInRadiusRequest request)
+  @Override public void getCustomerLocation(CustomerByEmailRequest request,
+      StreamObserver<CustomerLocationRequest> responseObserver)
   {
-    List<BusinessDao> businesses = businessRepository.findAll();
-
-    BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
-    for (BusinessDao business : businesses)
-    {
-      double distance = calculateDistance(request.getLatitude(),
-          request.getLongitude(), business.getLatitude(),
-          business.getLongitude());
-
-      if (distance <= request.getRadius())
-      {
-        builder.addBusinesses(buildBusinessOnMap(business));
-      }
-    }
-    return builder.build();
+    CustomerDao customer = customerRepository.findByEmail(request.getEmail())
+        .orElseThrow();
+    CustomerLocationRequest response = CustomerLocationRequest.newBuilder()
+        .setLatitude(customer.getLatitude())
+        .setLongitude(customer.getLongitude())
+        .setRadius(customer.getSearchRadius()).build();
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
   }
 
   private BusinessOnMap buildBusinessOnMap(BusinessDao dao)
@@ -70,18 +73,4 @@ import java.util.Optional;
         .setLongitude(dao.getLongitude()).build();
   }
 
-  private double calculateDistance(double lat1, double lon1, double lat2,
-      double lon2)
-  {
-    final int R = 6371; // Earth radius in km
-    double latDistance = Math.toRadians(lat2 - lat1);
-    double lonDistance = Math.toRadians(lon2 - lon1);
-
-    double a = Math.sin(latDistance / 2) * Math.sin(latDistance / 2)
-        + Math.cos(Math.toRadians(lat1)) * Math.cos(Math.toRadians(lat2))
-        * Math.sin(lonDistance / 2) * Math.sin(lonDistance / 2);
-
-    double c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return R * c; // Distance in km
-  }
 }

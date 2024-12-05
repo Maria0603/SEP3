@@ -3,6 +3,8 @@ package com.example.shared.dao.usersDao;
 import com.example.shared.dao.auxDao.AddressDao;
 import com.mongodb.client.model.geojson.Point;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
+import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -28,6 +30,21 @@ import java.util.List;
   @Field("address") private AddressDao address;
   @Field("latitude") private double latitude;
   @Field("longitude") private double longitude;
+
+  @Field("location")
+  @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
+  private GeoJsonPoint location;
+
+
+  public GeoJsonPoint getLocation()
+  {
+    return location;
+  }
+
+  public void setLocation(GeoJsonPoint location)
+  {
+    this.location = location;
+  }
 
   // the email will be used to log in, not the username, but the method must be called getUsername
   @Override public String getUsername()

@@ -24,36 +24,36 @@ import java.util.List;
   @Field("first_name") private String firstName;
   @Field("last_name") private String lastName;
 
-  @Field("latitude") private String latitude;
-  @Field("longitude") private String longitude;
-  @Field("search_radius") private String searchRadius;
+  @Field("latitude") private double latitude;
+  @Field("longitude") private double longitude;
+  @Field("search_radius") private int searchRadius;
 
-  public String getSearchRadius()
+  public int getSearchRadius()
   {
     return searchRadius;
   }
 
-  public void setSearchRadius(String searchRadius)
+  public void setSearchRadius(int searchRadius)
   {
     this.searchRadius = searchRadius;
   }
 
-  public String getLongitude()
+  public double getLongitude()
   {
     return longitude;
   }
 
-  public void setLongitude(String longitude)
+  public void setLongitude(double longitude)
   {
     this.longitude = longitude;
   }
 
-  public String getLatitude()
+  public double getLatitude()
   {
     return latitude;
   }
 
-  public void setLatitude(String latitude)
+  public void setLatitude(double latitude)
   {
     this.latitude = latitude;
   }

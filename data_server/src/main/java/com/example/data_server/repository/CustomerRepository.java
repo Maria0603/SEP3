@@ -14,4 +14,6 @@ public interface CustomerRepository extends MongoRepository<CustomerDao, String>
   @Query("{ 'email': ?0 }")
   @Update("{ $set: { 'latitude': ?1, 'longitude': ?2,  'search_radius': ?3} }")
   void updateLocationByEmail(String email, double latitude, double longitude, int radius);
+
+
 }
