@@ -22,22 +22,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-@GrpcService
-public class OfferServiceImpl
+@GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase {
   private OfferRepository offerRepository;
   private static final Logger logger = LoggerFactory.getLogger(
       OfferServiceImpl.class);
 
-  @Autowired
-  public OfferServiceImpl(OfferRepository offerRepository) {
+  @Autowired public OfferServiceImpl(OfferRepository offerRepository) {
     this.offerRepository = offerRepository;
     System.out.println("OfferServiceImpl created");
 
   }
 
-  @Override
-  public void saveOffer(SaveOfferRequest request,
+  @Override public void saveOffer(SaveOfferRequest request,
       StreamObserver<SaveOfferResponse> responseObserver) {
     System.out.println("Request for save offer");
 
@@ -54,8 +51,7 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getAvailableOffers(EmptyMessage request,
+  @Override public void getAvailableOffers(EmptyMessage request,
       StreamObserver<OfferList> responseObserver) {
     System.out.println("Request for all offers");
     List<OfferDao> availableOffers = offerRepository.findByStatus(
@@ -71,8 +67,7 @@ public class OfferServiceImpl
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getOfferById(OfferIdRequest request,
+  @Override public void getOfferById(OfferIdRequest request,
       StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for offer by id");
 
@@ -89,8 +84,7 @@ public class OfferServiceImpl
 
   }
 
-  @Override
-  public void updateOffer(OfferResponse request,
+  @Override public void updateOffer(OfferResponse request,
       StreamObserver<OfferResponse> responseObserver) {
     System.out.println("Request for update offer.");
     if (!offerRepository.existsById(request.getId()))
@@ -108,8 +102,7 @@ public class OfferServiceImpl
 
   }
 
-  @Override
-  public void getOffersByCategory(CategoryRequest request,
+  @Override public void getOffersByCategory(CategoryRequest request,
       StreamObserver<FullOfferList> responseObserver) {
     logger.info("Request for offers by category: {}", request);
 
@@ -119,8 +112,7 @@ public class OfferServiceImpl
     buildFullOfferListResponseFromListDao(responseObserver, offersByCategory);
   }
 
-  @Override
-  public void getOffersByPriceRange(PriceRangeRequest request,
+  @Override public void getOffersByPriceRange(PriceRangeRequest request,
       StreamObserver<FullOfferList> responseObserver) {
     logger.info("Request for offers by price range: {} - {}",
         request.getMinOfferPrice(), request.getMaxOfferPrice());
@@ -131,8 +123,7 @@ public class OfferServiceImpl
     buildFullOfferListResponseFromListDao(responseObserver, offersByPriceRange);
   }
 
-  @Override
-  public void getOffersByTime(TimeRangeRequest request,
+  @Override public void getOffersByTime(TimeRangeRequest request,
       StreamObserver<FullOfferList> responseObserver) {
     logger.info("Request for offers by time range: {} - {}", request.getStart(),
         request.getEnd());
@@ -217,11 +208,9 @@ public class OfferServiceImpl
         .setOriginalPrice(offer.getOriginalPrice())
         .setNumberOfItems(offer.getNumberOfItems()).setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offer.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeEnd()))
-        .setImagePath(offer.getImagePath())
+                offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
         .addAllCategories(offer.getCategories()).build();
 
   }
@@ -235,8 +224,7 @@ public class OfferServiceImpl
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath())
@@ -253,8 +241,7 @@ public class OfferServiceImpl
         .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeStart()))
-        .setPickupTimeEnd(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 offerDao.getPickupTimeEnd()))
         .setImagePath(offerDao.getImagePath()).build();
@@ -265,6 +252,41 @@ public class OfferServiceImpl
       List<OfferDao> offersByCategory) {
     FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
     for (OfferDao offerDao : offersByCategory) {
+      offerListBuilder.addOffer(buildOfferResponse(offerDao));
+    }
+
+    FullOfferList offerListResponse = offerListBuilder.build();
+    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
+    responseObserver.onNext(offerListResponse);
+    responseObserver.onCompleted();
+  }
+
+  @Override public void getOffers(FilterRequest request,
+      StreamObserver<FullOfferList> responseObserver) {
+    List<OfferDao> filteredOffers;
+    var allOffers = offerRepository.findAll();
+    filteredOffers = allOffers.stream().filter(
+        item -> !request.hasMaxOfferPrice()
+            || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
+        item -> !request.hasMinOfferPrice()
+            || item.getOfferPrice() >= request.getMinOfferPrice()).filter(
+        item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
+            .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                request.getPickupTimeStart()))).filter(
+        item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd().isAfter(
+            DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                request.getPickupTimeEnd()))).filter(
+        item -> request.getCategoriesList().isEmpty() || item.getCategories()
+            .stream().anyMatch(request.getCategoriesList()::contains)).toList();
+
+    //    var test = offerRepository.findAll();
+    //    filteredOffers = test.stream().filter(
+    //        offer -> offer.getCategories().stream()
+    //            .anyMatch(request.getCategoriesList()::contains)).toList();
+
+    // Build the response
+    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
+    for (OfferDao offerDao : filteredOffers) {
       offerListBuilder.addOffer(buildOfferResponse(offerDao));
     }
 

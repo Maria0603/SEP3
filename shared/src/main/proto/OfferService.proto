@@ -18,6 +18,8 @@ service OfferService {
   rpc GetOffersByCategory(CategoryRequest) returns (FullOfferList);
   rpc GetOffersByPriceRange(PriceRangeRequest) returns (FullOfferList);
 
+  rpc GetOffers(FilterRequest) returns (FullOfferList);
+
 }
 
 message FilterRequest {
