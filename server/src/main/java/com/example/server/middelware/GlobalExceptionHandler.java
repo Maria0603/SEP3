@@ -33,8 +33,7 @@ import java.util.stream.Collectors;
       Exception ex)
   {
     ex.printStackTrace();
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("An unexpected error occurred: " + ex.getMessage());
+    return ResponseEntity.badRequest().body("An unexpected error occurred: " + ex.getMessage());
   }
 }
 

@@ -19,8 +19,7 @@ import java.nio.file.Paths;
   private static final Path IMAGE_DIR = Paths.get("server/images")
       .toAbsolutePath().normalize();
 
-
-  @GetMapping("/server/images/{filename:.+}")  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")public ResponseEntity<Resource> getImage(
+  @GetMapping("/server/images/{filename:.+}") public ResponseEntity<Resource> getImage(
       @PathVariable String filename)
   {
     try
