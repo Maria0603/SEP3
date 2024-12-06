@@ -14,19 +14,19 @@ public class AddressConverter
 
   }
 
-  public static Address convertGrpcAddressToAddressDao(
+  public static Address convertGrpcAddressToAddress(
       com.example.sep3.grpc.Address address)
   {
-    Address addressDao = new Address();
-    addressDao.setCity(address.getCity());
-    addressDao.setCountry(address.getCountry());
-    addressDao.setNumber(address.getNumber());
-    addressDao.setPostalCode(address.getPostalCode());
-    addressDao.setState(address.getState());
-    addressDao.setCounty(address.getCounty());
-    addressDao.setStreet(address.getStreet());
+    Address addr = new Address();
+    addr.setCity(address.getCity());
+    addr.setCountry(address.getCountry());
+    addr.setNumber(address.getNumber());
+    addr.setPostalCode(address.getPostalCode());
+    addr.setState(address.getState());
+    addr.setCounty(address.getCounty());
+    addr.setStreet(address.getStreet());
 
-    return addressDao;
+    return addr;
   }
 
   public static AddressDto convertGrpcAddressToAddressDto(

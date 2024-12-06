@@ -151,19 +151,19 @@ import java.util.Optional;
     purchase.setPurchaseTime(LocalDateTime.now());
     purchase.setStatus(PurchaseStatus.PENDING.getStatus());
 
-    Optional<Offer> offer = offerRepository.findById(request.getOfferId());
-    if (offer.isPresent())
+    Optional<Offer> offerOptional = offerRepository.findById(request.getOfferId());
+    if (offerOptional.isPresent())
     {
-      Offer offerDao = offer.get();
-      purchase.setPricePerItem(offerDao.getOfferPrice());
-      purchase.setOffer(offerDao);
+      Offer offer = offerOptional.get();
+      purchase.setPricePerItem(offer.getOfferPrice());
+      purchase.setOffer(offer);
 
       //Extract business
       Optional<Business> businessOptional = businessRepository.findById(
-          offerDao.getBusiness().getId());
+          offer.getBusiness().getId());
       if (businessOptional.isEmpty())
         throw new IllegalArgumentException(
-            "Business not found with ID: " + offerDao.getBusiness().getId());
+            "Business not found with ID: " + offer.getBusiness().getId());
       Business business = businessOptional.get();
       purchase.setBusiness(business);
     }

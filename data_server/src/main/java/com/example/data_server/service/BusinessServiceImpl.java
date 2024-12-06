@@ -35,7 +35,7 @@ import java.util.Optional;
     System.out.println("Request for register business.");
 
     // Prepare to save the business details in database
-    Business business = generateBusinessDaoFromRegisterBusinessRequest(
+    Business business = generateBusinessFromRegisterBusinessRequest(
         request);
 
     Business createdBusiness = businessRepository.save(business);
@@ -94,7 +94,7 @@ import java.util.Optional;
   {
     return BusinessResponse.newBuilder()
         .setBusinessName(business.getBusinessName()).setAddress(
-            AddressConverter.convertAddressDaoToGrpcAddress(
+            AddressConverter.convertAddressToGrpcAddress(
                 business.getAddress())).setEmail(business.getEmail())
         .setCvr(business.getCvr()).setHashedPassword(business.getPassword())
         .setId(business.getId()).setLogoPath(business.getLogoPath())
@@ -102,7 +102,7 @@ import java.util.Optional;
         .build();
   }
 
-  private Business generateBusinessDaoFromRegisterBusinessRequest(
+  private Business generateBusinessFromRegisterBusinessRequest(
       RegisterBusinessRequest request)
   {
     Business business = new Business();
@@ -114,19 +114,19 @@ import java.util.Optional;
     business.setLogoPath(request.getLogoPath());
     business.setRole(request.getRole());
     business.setAddress(
-        AddressConverter.convertGrpcAddressToAddressDao(request.getAddress()));
+        AddressConverter.convertGrpcAddressToAddress(request.getAddress()));
     business.setLocation(
         new GeoJsonPoint(request.getLongitude(), request.getLatitude()));
     return business;
   }
 
-  private BusinessOnMap buildBusinessOnMap(Business dao)
+  private BusinessOnMap buildBusinessOnMap(Business business)
   {
-    return BusinessOnMap.newBuilder().setBusinessId(dao.getId())
-        .setBusinessName(dao.getBusinessName()).setBusinessEmail(dao.getEmail())
-        .setLogoPath(dao.getLogoPath())
-        .setLongitude(dao.getLocation().getCoordinates().getFirst())
-        .setLatitude(dao.getLocation().getCoordinates().getLast()).build();
+    return BusinessOnMap.newBuilder().setBusinessId(business.getId())
+        .setBusinessName(business.getBusinessName()).setBusinessEmail(business.getEmail())
+        .setLogoPath(business.getLogoPath())
+        .setLongitude(business.getLocation().getCoordinates().getFirst())
+        .setLatitude(business.getLocation().getCoordinates().getLast()).build();
   }
 
 }

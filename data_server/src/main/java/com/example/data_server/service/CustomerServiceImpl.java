@@ -35,7 +35,7 @@ import java.util.Optional;
     System.out.println("Request for register customer.");
 
     // Prepare to save the customer details in database
-    Customer customer = generateCustomerDaoFromRegisterCustomerRequest(
+    Customer customer = generateCustomerFromRegisterCustomerRequest(
         request);
 
     try
@@ -109,13 +109,13 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  private BusinessOnMap buildBusinessOnMap(Business dao)
+  private BusinessOnMap buildBusinessOnMap(Business business)
   {
-    return BusinessOnMap.newBuilder().setBusinessId(dao.getId())
-        .setBusinessName(dao.getBusinessName()).setBusinessEmail(dao.getEmail())
-        .setLogoPath(dao.getLogoPath())
-        .setLatitude(dao.getLocation().getCoordinates().getLast())
-        .setLongitude(dao.getLocation().getCoordinates().getFirst()).build();
+    return BusinessOnMap.newBuilder().setBusinessId(business.getId())
+        .setBusinessName(business.getBusinessName()).setBusinessEmail(business.getEmail())
+        .setLogoPath(business.getLogoPath())
+        .setLatitude(business.getLocation().getCoordinates().getLast())
+        .setLongitude(business.getLocation().getCoordinates().getFirst()).build();
   }
 
   private CustomerResponse buildCustomerResponse(Customer customer)
@@ -127,7 +127,7 @@ import java.util.Optional;
         .setRole(customer.getRole()).build();
   }
 
-  private Customer generateCustomerDaoFromRegisterCustomerRequest(
+  private Customer generateCustomerFromRegisterCustomerRequest(
       RegisterCustomerRequest request)
   {
     Customer customer = new Customer();

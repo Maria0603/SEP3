@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
       UserResponse userResponse = dataServerStub.getUserByEmail(
           UserByEmailRequest.newBuilder().setEmail(username).build());
 
-      //Convert to dao, because dao implements UserDetails interface
+      //Convert to entity, because it implements UserDetails interface
       return new UserDetailsResponseDto(userResponse.getEmail(),
           userResponse.getHashedPassword(), userResponse.getRole());
     }

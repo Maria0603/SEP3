@@ -65,13 +65,13 @@ import java.util.Optional;
   {
     System.out.println("Request for offer by id");
 
-    Optional<Offer> offer = offerRepository.findById(request.getId());
-    if (offer.isPresent())
+    Optional<Offer> offerOptional = offerRepository.findById(request.getId());
+    if (offerOptional.isPresent())
     {
-      Offer offerDao = offer.get();
+      Offer offer = offerOptional.get();
 
       OfferResponse offerResponse = buildOfferResponse(
-          offerDao); // method to build the response
+          offer); // method to build the response
 
       responseObserver.onNext(offerResponse);
       responseObserver.onCompleted();
@@ -89,7 +89,7 @@ import java.util.Optional;
 
     // Save the updated document (will replace the existing one)
     Offer updatedOffer = offerRepository.save(
-        generateOfferDaoFromOfferResponse(request));
+        generateOfferFromOfferResponse(request));
     OfferResponse offerResponse = buildOfferResponse(
         updatedOffer); // method to build the response
 
@@ -151,23 +151,23 @@ import java.util.Optional;
       StreamObserver<OfferListResponse> responseObserver)
   {
 
-    Optional<Customer> customer = customerRepository.findById(
+    Optional<Customer> customerOptional = customerRepository.findById(
         request.getUserId());
 
     // Extract the radius from the customer, if they have one
-    Customer customerDao;
+    Customer customer;
     boolean hasLocationFilter;
-    if (customer.isPresent())
+    if (customerOptional.isPresent())
     {
-      customerDao = customer.get();
+      customer = customerOptional.get();
       hasLocationFilter =
-          customerDao.getLatitude() != 0 && customerDao.getLongitude() != 0
-              && customerDao.getSearchRadius() > 0;
+          customer.getLatitude() != 0 && customer.getLongitude() != 0
+              && customer.getSearchRadius() > 0;
     }
     else
     {
       //If the user is not a customer, it must be business, and they don't have a radius
-      customerDao = null;
+      customer = null;
       hasLocationFilter = false;
     }
 
@@ -191,16 +191,16 @@ import java.util.Optional;
           {
             Business business = item.getBusiness();
             double distance = GeoUtils.calculateDistance(
-                customerDao.getLatitude(), customerDao.getLongitude(),
+                customer.getLatitude(), customer.getLongitude(),
                 business.getLocation().getCoordinates().getLast(),
                 business.getLocation().getCoordinates().getFirst());
             System.out.println("Business: " + business.getId());
-            System.out.println("Customer: " + customerDao.getId() + " radius: "
-                + customer.get().getSearchRadius());
+            System.out.println("Customer: " + customer.getId() + " radius: "
+                + customerOptional.get().getSearchRadius());
 
             System.out.println(
                 "Distance: " + distance + " for ID " + item.getId());
-            return distance <= customerDao.getSearchRadius();
+            return distance <= customer.getSearchRadius();
           }
           return true; // If no location filter, include all offers
         })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
@@ -256,7 +256,7 @@ import java.util.Optional;
     return offer;
   }
 
-  private Offer generateOfferDaoFromOfferResponse(OfferResponse request)
+  private Offer generateOfferFromOfferResponse(OfferResponse request)
   {
     Offer offer = new Offer();
     offer.setId(request.getId());
@@ -306,7 +306,7 @@ import java.util.Optional;
         .setBusinessId(offer.getBusiness().getId())
         .setBusinessName(offer.getBusiness().getBusinessName())
         .setBusinessLogoPath(offer.getBusiness().getLogoPath())
-        .setBusinessAddress(AddressConverter.convertAddressDaoToGrpcAddress(
+        .setBusinessAddress(AddressConverter.convertAddressToGrpcAddress(
             offer.getBusiness().getAddress())).build();
   }
 
