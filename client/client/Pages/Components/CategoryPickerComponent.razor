@@ -1,39 +1,29 @@
-﻿@using client.DTO
-
-<div class="mb-3">
+﻿<div class="mb-3">
     <label for="categories">Categories</label>
     <div class="d-flex align-items-center">
-        <select id="categories" @bind="selectedCategoryName" class="form-control category-dropdown">
-            @if (AvailableCategories != null)
+        <select id="categories" @bind="SelectedCategory" class="form-control category-dropdown">
+            @foreach (var category in AvailableCategories)
             {
-                @foreach (Category category in AvailableCategories)
-                {
-                    <option value="@category.Name">@category.Name</option>
-                }
+                <option value="@category.Name">@category.Name</option>
             }
         </select>
         <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
     </div>
 
     <div class="selected-categories mt-2">
-        @if (SelectedCategories != null)
+        @foreach (var category in SelectedCategories)
         {
-            @foreach (Category category in SelectedCategories)
-            {
-                <div class="category-box">
-                    <span class="category-text">@category.Name</span>
-                    <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
-                </div>
-            }
+            <div class="category-box">
+                <span class="category-text">@category.Name</span>
+                <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
+            </div>
         }
     </div>
 </div>
 
 @code {
-    [Parameter]
-    public List<Category> SelectedCategories { get; set; } = new();
 
-    public List<Category> AvailableCategories { get; set; } = new()
+    private List<Category> AvailableCategories { get; set; } = new()
     {
         new Category { Name = "Bread" },
         new Category { Name = "Vegan" },
@@ -41,54 +31,34 @@
         new Category { Name = "Dairy" }
     };
 
-    private string selectedCategoryName = string.Empty;
+    private string SelectedCategory { get; set; }
+
+    [Parameter] public List<Category> SelectedCategories { get; set; } = new();
+
+    [Parameter] public EventCallback<List<Category>> SelectedCategoriesChanged { get; set; }
 
     private void AddCategory()
     {
-        if (string.IsNullOrEmpty(selectedCategoryName))
+        if (!string.IsNullOrEmpty(SelectedCategory))
         {
-            Console.WriteLine("No category selected.");
-            return;
-        }
-
-        if (AvailableCategories == null)
-        {
-            Console.WriteLine("Available categories are not initialized.");
-            return;
-        }
-
-        
-        Category category = AvailableCategories.FirstOrDefault(c => c.Name == selectedCategoryName);
-        if (category == null)
-        {
-            Console.WriteLine("Selected category not found in available categories.");
-            return;
-        }
-
-        if (SelectedCategories == null)
-        {
-            Console.WriteLine("Selected categories are not initialized.");
-            SelectedCategories = new List<Category>();
-        }
-
-        if (!SelectedCategories.Contains(category))
-        {
-            SelectedCategories.Add(category);
-            Console.WriteLine($"Category '{category.Name}' added successfully.");
-        }
-        else
-        {
-            Console.WriteLine($"Category '{category.Name}' is already selected.");
+            var category = AvailableCategories.FirstOrDefault(c => c.Name == SelectedCategory);
+            if (category != null && !SelectedCategories.Contains(category))
+            {
+                SelectedCategories.Add(category);
+                SelectedCategoriesChanged.InvokeAsync(SelectedCategories);
+            }
         }
     }
 
     private void RemoveCategory(Category category)
     {
         SelectedCategories.Remove(category);
+        SelectedCategoriesChanged.InvokeAsync(SelectedCategories);
     }
 
     public class Category
     {
-        public string Name { get; set; } = string.Empty;
+        public string Name { get; set; }
     }
+
 }

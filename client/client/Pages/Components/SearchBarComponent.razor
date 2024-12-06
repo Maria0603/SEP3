@@ -9,8 +9,13 @@
     private int[] timeRange = { 6, 16 };
 
     private FilterRequestDto? filterRequestDto;
-    private List<CategoryPickerComponent.Category>? selectedCategories;
-
+    private List<CategoryPickerComponent.Category>? selectedCategories = new();
+    
+    private void OnSelectedCategoriesChanged(List<CategoryPickerComponent.Category> categories)
+    {
+        // Handle updated categories
+        selectedCategories = categories;
+    }
 
     private void ToggleFilters() {
         showFilterPopup = !showFilterPopup;
@@ -33,6 +38,7 @@
         timeRange = new int[] { 0, 24 };
         Console.WriteLine("Filters Cleared");
     }
+    
 
 }
 
@@ -59,7 +65,7 @@
                 <button class="close-button" @onclick="ToggleFilters">&times;</button>
             </div>
             <div class="popup-body">
-                <CategoryPickerComponent selectedCategories="selectedCategories"/>
+                <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged" />
                 <div class="filter-section">
                     <label>Collection Time</label>
                     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1">
