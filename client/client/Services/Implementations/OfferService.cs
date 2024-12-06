@@ -62,6 +62,7 @@ public class OfferService : IOfferService {
 
     if (filterRequestDto != null)
     {
+        query.Append("/filter");
         query.Append($"?minOfferPrice={filterRequestDto.MinOfferPrice}");
         query.Append($"&maxOfferPrice={filterRequestDto.MaxOfferPrice}");
         query.Append($"&pickupTimeStart={filterRequestDto.PickupTimeStart}");
@@ -73,7 +74,8 @@ public class OfferService : IOfferService {
         }
     }
 
-    var response = await client.GetAsync($"offers/filter{query}");
+    Console.WriteLine(query.ToString());
+    var response = await client.GetAsync($"offers{query}");
     var json = await response.Content.ReadAsStringAsync();
     var offers = JsonSerializer.Deserialize<List<ShortOfferResponseDto>>(
         json,

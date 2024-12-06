@@ -22,9 +22,9 @@
         <p>No offers available at the moment.</p>
     }
     else {
-        @* @foreach (ShortOfferResponseDto offer in offers) { *@
-        @*     <OfferComponent OfferData="offer"></OfferComponent> *@
-        @* } *@
+        @foreach (ShortOfferResponseDto offer in offers) {
+            <OfferComponent OfferData="offer"></OfferComponent>
+        }
     }
 </div>
 
