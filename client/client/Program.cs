@@ -1,10 +1,15 @@
+using System.Net.Security;
+using Blazored.LocalStorage;
 using client;
+using client.Security;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
 using client.Services;
 using Stripe;
 using Syncfusion.Blazor;
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH1ednRQR2VZU0N2XEU=");
+using client.Services.Implementations;
+using Microsoft.AspNetCore.Components.Authorization;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -16,8 +21,13 @@ builder.Services.AddScoped(sp => new HttpClient
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
 builder.Services.AddSyncfusionBlazor();
+builder.Services.AddScoped<IAuthService, AuthService>();
 
+//builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
+builder.Services.AddScoped<AuthStateProvider>(); 
+builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.GetRequiredService<AuthStateProvider>());
 
-StripeConfiguration.ApiKey =
-    "sk_test_51QLXFcEJybmJ8DbtUW95vPtVV4vCIHtWi7MgOuqlhLngWoki5Bo0iMF8s2Nfxhzpub5gnIAD3d0CUpZBcSAJanmp004vLU11xd";
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddAuthorizationCore();
+
 await builder.Build().RunAsync();

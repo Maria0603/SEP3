@@ -1,0 +1,105 @@
+@page "/business-profile"
+@using client.DTO
+@inject NavigationManager NavigationManager
+@inject AuthStateProvider AuthStateProvider
+
+
+<h1>Edit profile (business)</h1>
+
+<EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="mb-3">
+        <label for="businessName">Business Name</label>
+        <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="email">Email</label>
+        <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="phoneNumber">Phone Number</label>
+        <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label for="image">Business Image</label>
+        <InputFile id="image" OnChange="UploadImage" class="form-control" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Update Profile</button>
+</EditForm>
+
+<button @onclick="Logout" class="btn btn-danger mt-3">Log Out</button>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success mt-3">@successMessage</div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger mt-3">@errorMessage</div>
+}
+
+@code {
+    private BusinessProfileDto businessProfile = new();
+    private string successMessage;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Fetch the current business profile from the API
+        businessProfile = await GetBusinessProfileAsync();
+    }
+
+    private async Task UpdateProfile()
+    {
+        try
+        {
+            await SaveBusinessProfileAsync(businessProfile);
+            successMessage = "Profile updated successfully.";
+        }
+        catch (Exception ex)
+        {
+            errorMessage = "An error occurred: " + ex.Message;
+        }
+    }
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        businessProfile.Image = memoryStream.ToArray();
+    }
+
+    private async Task Logout()
+    {
+        await AuthStateProvider.LogoutAsync();
+        NavigationManager.NavigateTo("/login", true);
+    }
+
+
+    // Mock methods for API calls - replace with real API service
+    private Task<BusinessProfileDto> GetBusinessProfileAsync()
+    {
+        // Simulate fetching the business profile
+        return Task.FromResult(new BusinessProfileDto
+        {
+            BusinessName = "Example Business",
+            Email = "example@business.com",
+            PhoneNumber = "+1234567890",
+            Image = null
+        });
+    }
+
+    private Task SaveBusinessProfileAsync(BusinessProfileDto profile)
+    {
+        // Simulate saving the profile
+        return Task.CompletedTask;
+    }
+}

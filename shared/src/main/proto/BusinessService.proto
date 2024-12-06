@@ -1,0 +1,73 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "BusinessServiceProto";
+
+import "OfferService.proto";
+import "UserService.proto";
+import "CustomerService.proto";
+
+
+package proto;
+
+service BusinessService {
+  rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
+  rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
+  rpc GetBusinessesInRadius(BusinessesInRadiusRequest) returns (BusinessesInRadiusResponse);
+
+  //just to test
+  rpc GetBusinessesInRadiuss(RadiusRequest) returns (BusinessesInRadiusResponse);
+}
+
+
+/////just to test////////
+message RadiusRequest {
+  double lat =1;
+  double lng = 2;
+}
+////////////////////////
+
+
+message BusinessByEmailRequest {
+  string email = 1;
+}
+
+message BusinessesInRadiusRequest {
+  string customerEmail = 1;
+}
+
+message BusinessResponse {
+  string id = 1;
+  string email = 2;
+  string phoneNumber = 3;
+  string hashedPassword = 4;
+  string role = 5;
+  string businessName = 6;
+  string cvr = 7;
+  string logoPath = 8;
+  double latitude = 9;
+  double longitude = 10;
+  Address address = 11;
+}
+
+message RegisterBusinessRequest {
+  string businessName = 1;
+  string email = 2;
+  string phoneNumber = 3;
+  string cvr = 4;
+  string logoPath = 5;
+  string hashedPassword = 6;
+  Address address = 7;
+  double latitude = 8;
+  double longitude = 9;
+  string role = 10;
+}
+
+
+
+
+
+
+
+

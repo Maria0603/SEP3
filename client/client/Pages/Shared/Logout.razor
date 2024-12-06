@@ -1,0 +1,12 @@
+@page "/logout"
+@inject NavigationManager NavigationManager
+
+<h1>Logging Out...</h1>
+
+@code {
+    protected override void OnInitialized()
+    {
+        // Clear any session data or tokens here
+        NavigationManager.NavigateTo("/login", forceLoad: true);
+    }
+}

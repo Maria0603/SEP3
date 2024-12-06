@@ -4,6 +4,8 @@ option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "OfferServiceProto";
 
+import "google/protobuf/timestamp.proto";
+
 package proto;
 
 service OfferService {
@@ -11,6 +13,35 @@ service OfferService {
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
   rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
+
+  rpc GetOffersByTime(TimeRangeRequest) returns (FullOfferList);
+  rpc GetOffersByCategory(CategoryRequest) returns (FullOfferList);
+  rpc GetOffersByPriceRange(PriceRangeRequest) returns (FullOfferList);
+
+  rpc GetOffers(FilterRequest) returns (FullOfferList);
+
+}
+
+message FilterRequest {
+  repeated string categories = 1;
+  optional int32 minOfferPrice = 2;
+  optional int32 maxOfferPrice = 3;
+  optional  google.protobuf.Timestamp pickupTimeStart = 4;
+  optional  google.protobuf.Timestamp pickupTimeEnd = 5;
+}
+
+message TimeRangeRequest {
+  google.protobuf.Timestamp start = 1;
+  google.protobuf.Timestamp end = 2;
+}
+
+message CategoryRequest {
+  repeated string categories = 1;
+}
+
+message PriceRangeRequest {
+  int32 minOfferPrice = 1;
+  int32 maxOfferPrice = 2;
 }
 
 message SaveOfferRequest {
@@ -19,9 +50,8 @@ message SaveOfferRequest {
   int32 originalPrice = 3;
   int32 offerPrice = 4;
   int32 numberOfItems = 5;
-  Date pickupDate = 6;
-  Time pickupTimeStart = 7;
-  Time pickupTimeEnd = 8;
+  google.protobuf.Timestamp pickupTimeStart = 7;
+  google.protobuf.Timestamp pickupTimeEnd = 8;
   repeated string categories = 9;
   string imagePath = 10;
   int32 numberOfAvailableItems = 11;
@@ -38,9 +68,8 @@ message OfferResponse {
   int32 originalPrice = 4;
   int32 offerPrice = 5;
   int32 numberOfItems = 6;
-  Date pickupDate = 7;
-  Time pickupTimeStart = 8;
-  Time pickupTimeEnd = 9;
+  google.protobuf.Timestamp pickupTimeStart = 7;
+  google.protobuf.Timestamp pickupTimeEnd = 8;
   repeated string categories = 10;
   string imagePath = 11;
   string status = 12;
@@ -54,9 +83,8 @@ message SaveOfferResponse {
   int32 originalPrice = 4;
   int32 offerPrice = 5;
   int32 numberOfItems = 6;
-  Date pickupDate = 7;
-  Time pickupTimeStart = 8;
-  Time pickupTimeEnd = 9;
+  google.protobuf.Timestamp pickupTimeStart = 7;
+  google.protobuf.Timestamp pickupTimeEnd = 8;
   repeated string categories = 10;
   string imagePath = 11;
 }
@@ -68,9 +96,8 @@ message ShortOfferResponse
   int32 originalPrice = 3;
   int32 offerPrice = 4;
   int32 numberOfAvailableItems = 5;
-  Date pickupDate = 6;
-  Time pickupTimeStart = 7;
-  Time pickupTimeEnd = 8;
+  google.protobuf.Timestamp pickupTimeStart = 7;
+  google.protobuf.Timestamp pickupTimeEnd = 8;
   string imagePath = 9;
   string status = 10;
 }
@@ -78,15 +105,8 @@ message OfferList {
   repeated ShortOfferResponse offer = 1;
 }
 
-message Time {
-  int32 hour = 1;
-  int32 minute = 2;
-}
-
-message Date {
-  int32 year = 1;
-  int32 month = 2;
-  int32 day = 3;
+message FullOfferList {
+  repeated OfferResponse offer = 1;
 }
 
 message EmptyMessage {

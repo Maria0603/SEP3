@@ -1,9 +1,12 @@
 @page "/"
 @using client.DTO
+@using client.DTO.Offer
 @using client.Models
 @using client.Pages.Components
+@using Microsoft.AspNetCore.Authorization
 @inject client.Services.IOfferService OfferService
-<PageTitle>My Page Title</PageTitle>
+@attribute [Authorize]
+<PageTitle>Home</PageTitle>
 
 
 
