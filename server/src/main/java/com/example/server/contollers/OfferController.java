@@ -5,6 +5,7 @@ import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.services.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,11 +15,13 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
-@RestController @RequestMapping("/offers") public class OfferController {
+@RestController @RequestMapping("/offers") public class OfferController
+{
 
   private final OfferService offerService;
 
-  public OfferController(OfferService offerService) {
+  public OfferController(OfferService offerService)
+  {
     this.offerService = offerService;
 
   }
@@ -26,52 +29,57 @@ import java.util.Optional;
   //Look at OfferTestClient to see how the request should look like
   // Only accessible by BUSINESS and ADMIN
   @PostMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'ADMIN')") public ResponseEntity<OfferResponseDto> saveOffer(
-      @Valid @RequestBody CreateOfferRequestDto offerRequestDto) {
-    try {
-      OfferResponseDto offerDto = offerService.saveOffer(offerRequestDto);
+      @Valid @RequestBody CreateOfferRequestDto offerRequestDto,
+      HttpServletRequest request)
+  {
+    String userId = (String) request.getAttribute("userId");
+    try
+    {
+      OfferResponseDto offerDto = offerService.saveOffer(offerRequestDto,
+          userId);
       return ResponseEntity.ok(offerDto);
     }
-    catch (Exception e) {
+    catch (Exception e)
+    {
       e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
 
   @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
-      @PathVariable String id) {
-    try {
+      @PathVariable String id)
+  {
+    try
+    {
       OfferResponseDto offer = offerService.getOfferById(id);
       return ResponseEntity.ok(offer);
     }
-    catch (Exception e) {
+    catch (Exception e)
+    {
       throw new IllegalArgumentException(e.getMessage());
     }
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<ShortOfferResponseDto>> getFilteredOffers(
+  @GetMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
       @RequestParam(required = false) Integer minOfferPrice,
       @RequestParam(required = false) Integer maxOfferPrice,
       @RequestParam(required = false) String pickupTimeStart,
       @RequestParam(required = false) String pickupTimeEnd,
-      @RequestParam(required = false) List<String> categories) {
+      @RequestParam(required = false) List<String> categories,
+      HttpServletRequest request)
+  {
     System.out.println("maxofferprice" + maxOfferPrice);
 
-    var response = offerService.getFilteredOffers(
-        Optional.ofNullable(minOfferPrice), Optional.ofNullable(maxOfferPrice),
+    String userId = (String) request.getAttribute("userId");
+
+    System.out.println("Offers for Id **********: " + userId);
+
+    var response = offerService.getOffers(Optional.ofNullable(minOfferPrice),
+        Optional.ofNullable(maxOfferPrice),
         Optional.ofNullable(pickupTimeStart),
-        Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories));
+        Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories),
+        userId);
     return ResponseEntity.ok(response);
   }
 
-   public ResponseEntity<List<ShortOfferResponseDto>> getShortAvailableOffers() {
-    try {
-      List<ShortOfferResponseDto> offers = offerService.getAvailableOffers();
-
-      return ResponseEntity.ok(offers);
-    }
-    catch (Exception e) {
-      e.printStackTrace();
-      throw new IllegalArgumentException(e.getMessage());
-    }
-  }
 }

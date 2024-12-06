@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 {
 
   private SecretKey Key;
-  private static final long EXPIRATION_TIME = 86400000; //24hours or 86400000 milliseconds
+  private static final long EXPIRATION_TIME =864000000L; //24hours = 86400000 milliseconds, so 10 days
 
   public JWTUtils()
   {
@@ -34,12 +34,13 @@ import java.util.stream.Collectors;
     return EXPIRATION_TIME;
   }
 
-  public String generateToken(UserDetails userDetails)
+  public String generateToken(UserDetails userDetails, String userId)
   {
     Map<String, Object> claims = new HashMap<>();
     claims.put("role", userDetails.getAuthorities().stream()
         .map(GrantedAuthority::getAuthority)
         .collect(Collectors.toList())); // Add roles as claims
+    claims.put("userId", userId);
     return Jwts.builder().subject(userDetails.getUsername())
         .issuedAt(new Date(System.currentTimeMillis()))
         .expiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
@@ -83,6 +84,9 @@ import java.util.stream.Collectors;
   public boolean isTokenExpired(String token)
   {
     return extractClaims(token, Claims::getExpiration).before(new Date());
+  }
+  public String extractUserId(String token) {
+    return extractClaims(token, claims -> claims.get("userId", String.class));
   }
 
 }

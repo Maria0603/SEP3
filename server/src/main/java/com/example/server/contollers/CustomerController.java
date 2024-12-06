@@ -24,18 +24,18 @@ import java.util.List;
   @PostMapping("/location") public ResponseEntity<List<BusinessInRadiusResponseDto>> updateCustomerLocation(
       @RequestBody CustomerLocationRequestDto dto, HttpServletRequest request)
   {
-    String email = (String) request.getAttribute("email");
-    System.out.println("Email:.................: " + email);
+    String userId = (String) request.getAttribute("userId");
+    System.out.println("Id:.................: " + userId);
     List<BusinessInRadiusResponseDto> businessesInRadius = customerService.updateCustomerLocation(
-        dto, email);
+        dto, userId);
     return ResponseEntity.ok(businessesInRadius);
   }
 
   @GetMapping("/radius-businesses")  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")public ResponseEntity<List<BusinessInRadiusResponseDto>> getBusinessesInRadius(HttpServletRequest request)
   {
-    String email = (String) request.getAttribute("email");
-    System.out.println("Email:.................: " + email);
-    List<BusinessInRadiusResponseDto> businessesInRadius = customerService.getBusinessesInRadius(email);
+    String userId = (String) request.getAttribute("userId");
+    System.out.println("Id:.................: " + userId);
+    List<BusinessInRadiusResponseDto> businessesInRadius = customerService.getBusinessesInRadius(userId);
     return ResponseEntity.ok(businessesInRadius);
   }
 
