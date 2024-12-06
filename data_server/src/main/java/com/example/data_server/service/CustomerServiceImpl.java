@@ -2,18 +2,13 @@ package com.example.data_server.service;
 
 import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.utility.GeoUtils;
-import com.example.shared.converters.AddressConverter;
 import com.example.sep3.grpc.*;
 import com.example.data_server.repository.BusinessRepository;
-import com.example.data_server.repository.CustomerRepository;
-import com.example.sep3.grpc.*;
-import com.example.shared.dao.usersDao.BusinessDao;
-import com.example.shared.dao.usersDao.CustomerDao;
+import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.usersEntities.Customer;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Circle;
-import org.springframework.data.geo.Point;
 
 import java.util.List;
 import java.util.Optional;
@@ -40,12 +35,12 @@ import java.util.Optional;
     System.out.println("Request for register customer.");
 
     // Prepare to save the customer details in database
-    CustomerDao customer = generateCustomerDaoFromRegisterCustomerRequest(
+    Customer customer = generateCustomerDaoFromRegisterCustomerRequest(
         request);
 
     try
     {
-      CustomerDao createdCustomer = customerRepository.save(customer);
+      Customer createdCustomer = customerRepository.save(customer);
       IdRequestResponse response = IdRequestResponse.newBuilder()
           .setId(createdCustomer.getId()).build();
       responseObserver.onNext(response);
@@ -61,7 +56,7 @@ import java.util.Optional;
   @Override public void getCustomerByEmail(EmailRequestResponse request,
       StreamObserver<CustomerResponse> responseObserver)
   {
-    Optional<CustomerDao> customer = customerRepository.findByEmail(
+    Optional<Customer> customer = customerRepository.findByEmail(
         request.getEmail());
     if (customer.isPresent())
     {
@@ -87,12 +82,12 @@ import java.util.Optional;
 
     double radiusRadians = request.getRadius() / GeoUtils.EARTH_RADIUS_KM;
 
-    List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
+    List<Business> businesses = businessRepository.findBusinessesWithinRadius(
         request.getLongitude(), request.getLatitude(), radiusRadians);
 
     BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
 
-    for (BusinessDao business : businesses)
+    for (Business business : businesses)
     {
       builder.addBusinesses(buildBusinessOnMap(business));
     }
@@ -104,7 +99,7 @@ import java.util.Optional;
   @Override public void getCustomerLocation(IdRequestResponse request,
       StreamObserver<CustomerLocationRequest> responseObserver)
   {
-    CustomerDao customer = customerRepository.findById(request.getId())
+    Customer customer = customerRepository.findById(request.getId())
         .orElseThrow();
     CustomerLocationRequest response = CustomerLocationRequest.newBuilder()
         .setLatitude(customer.getLatitude())
@@ -114,7 +109,7 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  private BusinessOnMap buildBusinessOnMap(BusinessDao dao)
+  private BusinessOnMap buildBusinessOnMap(Business dao)
   {
     return BusinessOnMap.newBuilder().setBusinessId(dao.getId())
         .setBusinessName(dao.getBusinessName()).setBusinessEmail(dao.getEmail())
@@ -123,7 +118,7 @@ import java.util.Optional;
         .setLongitude(dao.getLocation().getCoordinates().getFirst()).build();
   }
 
-  private CustomerResponse buildCustomerResponse(CustomerDao customer)
+  private CustomerResponse buildCustomerResponse(Customer customer)
   {
     return CustomerResponse.newBuilder().setFirstName(customer.getFirstName())
         .setLastName(customer.getLastName()).setEmail(customer.getEmail())
@@ -132,10 +127,10 @@ import java.util.Optional;
         .setRole(customer.getRole()).build();
   }
 
-  private CustomerDao generateCustomerDaoFromRegisterCustomerRequest(
+  private Customer generateCustomerDaoFromRegisterCustomerRequest(
       RegisterCustomerRequest request)
   {
-    CustomerDao customer = new CustomerDao();
+    Customer customer = new Customer();
     customer.setFirstName(request.getFirstName());
     customer.setLastName(request.getLastName());
     customer.setEmail(request.getEmail());

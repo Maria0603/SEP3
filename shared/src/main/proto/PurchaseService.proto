@@ -1,0 +1,48 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "PurchaseServiceProto";
+
+package proto;
+
+import "google/protobuf/timestamp.proto";
+import "CustomerService.proto";
+
+service PurchaseService {
+  rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
+  rpc GetPurchaseById (PurchaseIdRequest) returns (PurchaseResponse);
+  rpc GetPurchases (IdRequestResponse) returns (PurchaseListResponse);
+  rpc UpdatePurchaseStatus (PurchaseStatusRequest) returns (PurchaseResponse);
+}
+
+message CreatePurchaseRequest {
+  string offerId = 1;
+  string customerId = 2;
+  int32 numberOfItems = 3;
+}
+
+message PurchaseResponse {
+  string id = 1;
+  string customerId = 2;
+  string offerId = 3;
+  int32 numberOfItems = 4;
+  google.protobuf.Timestamp purchaseTime = 5;
+  string status = 7;
+  int32 pricePerItem = 8;
+  string businessName = 9;
+}
+
+message PurchaseIdRequest {
+  string id = 1;
+}
+
+message PurchaseStatusRequest {
+  string id = 1;
+  string status = 2;
+}
+
+message PurchaseListResponse {
+  repeated PurchaseResponse purchases = 1;
+}
+

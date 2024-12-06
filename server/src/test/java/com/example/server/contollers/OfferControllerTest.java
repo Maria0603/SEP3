@@ -4,7 +4,7 @@ package com.example.server.contollers;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.date_time.DateDto;
 import com.example.server.dto.date_time.TimeDto;
-import com.example.server.services.OfferService;
+import com.example.server.services.Implementations.OfferService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

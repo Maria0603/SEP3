@@ -8,7 +8,7 @@ public class DataServerStub
 {
   private final ManagedChannel channel;
   private final OfferServiceGrpc.OfferServiceBlockingStub offerBlockingStub;
-  private final OrderServiceGrpc.OrderServiceBlockingStub orderBlockingStub;
+  private final PurchaseServiceGrpc.PurchaseServiceBlockingStub purchaseBlockingStub;
   private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
   private final CustomerServiceGrpc.CustomerServiceBlockingStub customerBlockingStub;
   private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
@@ -19,7 +19,7 @@ public class DataServerStub
         .usePlaintext().build();
 
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
-    orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
+    purchaseBlockingStub = PurchaseServiceGrpc.newBlockingStub(channel);
     businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
     customerBlockingStub = CustomerServiceGrpc.newBlockingStub(channel);
     userBlockingStub = UserServiceGrpc.newBlockingStub(channel);
@@ -28,9 +28,9 @@ public class DataServerStub
   }
 
   // ********************************* OFFERS *********************************
-  public OfferResponse saveOffer(SaveOfferRequest request)
+  public OfferResponse createOffer(CreateOfferRequest request)
   {
-    return offerBlockingStub.saveOffer(request);
+    return offerBlockingStub.createOffer(request);
   }
 
   public OfferResponse getOfferById(OfferIdRequest request)
@@ -43,33 +43,30 @@ public class DataServerStub
     return offerBlockingStub.updateOffer(request);
   }
 
-  public FullOfferList getOffers(FilterRequest request)
+  public OfferListResponse getOffers(FilterRequest request)
   {
     return offerBlockingStub.getOffers(request);
   }
 
-  // ********************************* ORDERS *********************************
-  public OrderResponse addOrder(AddOrderRequest request)
+  // ********************************* Purchases *********************************
+  public PurchaseResponse createPurchase(CreatePurchaseRequest request)
   {
-    System.out.println("addOrder called with request: " + request);
-    OrderResponse response = orderBlockingStub.addOrder(request);
-    System.out.println("Received response: " + response);
-    return response;
+    return purchaseBlockingStub.createPurchase(request);
   }
 
-  public OrderResponse getOrderById(OrderIdRequest request)
+  public PurchaseResponse getPurchaseById(PurchaseIdRequest request)
   {
-    return orderBlockingStub.getOrderById(request);
+    return purchaseBlockingStub.getPurchaseById(request);
   }
 
-  public OrderList getAllOrders(IdRequestResponse request)
+  public PurchaseListResponse getPurchases(IdRequestResponse request)
   {
-    return orderBlockingStub.getAllOrders(request);
+    return purchaseBlockingStub.getPurchases(request);
   }
 
-  public OrderResponse updateOrderStatus(OrderStatusRequest request)
+  public PurchaseResponse updatePurchaseStatus(PurchaseStatusRequest request)
   {
-    return orderBlockingStub.updateOrderStatus(request);
+    return purchaseBlockingStub.updatePurchaseStatus(request);
   }
 
   // ********************************* BUSINESS *********************************

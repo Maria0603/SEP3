@@ -1,6 +1,6 @@
 package com.example.data_server.config;
 
-import com.example.shared.dao.domainDao.OfferDao;
+import com.example.shared.entities.domainEntities.Offer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -15,8 +15,8 @@ public class RedisConfig
 {
 
   @Bean
-  public RedisTemplate<String, OfferDao> redisTemplate() {
-    RedisTemplate<String, OfferDao> template = new RedisTemplate<>();
+  public RedisTemplate<String, Offer> redisTemplate() {
+    RedisTemplate<String, Offer> template = new RedisTemplate<>();
     template.setConnectionFactory(redisConnectionFactory());
     template.setKeySerializer(new StringRedisSerializer());
     template.setValueSerializer(new GenericJackson2JsonRedisSerializer());

@@ -1,22 +1,23 @@
 package com.example.shared.converters;
 
-import com.example.sep3.grpc.Address;
-import com.example.shared.dao.auxDao.AddressDao;
+import com.example.shared.model.Address;
 
 public class AddressConverter
 {
-  public static Address convertAddressDaoToGrpcAddress(AddressDao dao)
+  public static com.example.sep3.grpc.Address convertAddressDaoToGrpcAddress(
+      Address dao)
   {
-    return Address.newBuilder().setCity(dao.getCity())
+    return com.example.sep3.grpc.Address.newBuilder().setCity(dao.getCity())
         .setCountry(dao.getCountry()).setNumber(dao.getNumber())
         .setPostalCode(dao.getPostalCode()).setState(dao.getState())
         .setCounty(dao.getCounty()).setStreet(dao.getStreet()).build();
 
   }
 
-  public static AddressDao convertGrpcAddressToAddressDao(Address address)
+  public static Address convertGrpcAddressToAddressDao(
+      com.example.sep3.grpc.Address address)
   {
-    AddressDao addressDao = new AddressDao();
+    Address addressDao = new Address();
     addressDao.setCity(address.getCity());
     addressDao.setCountry(address.getCountry());
     addressDao.setNumber(address.getNumber());

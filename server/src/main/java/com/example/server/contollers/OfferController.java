@@ -1,6 +1,6 @@
 package com.example.server.contollers;
 
-import com.example.server.services.OfferService;
+import com.example.server.services.Implementations.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
@@ -32,7 +32,7 @@ import java.util.Optional;
     String userId = (String) request.getAttribute("userId");
     try
     {
-      OfferResponseDto offerDto = offerService.saveOffer(offerRequestDto,
+      OfferResponseDto offerDto = offerService.createOffer(offerRequestDto,
           userId);
       return ResponseEntity.ok(offerDto);
     }

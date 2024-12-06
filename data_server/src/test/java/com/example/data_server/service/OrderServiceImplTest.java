@@ -7,10 +7,10 @@ import static org.mockito.ArgumentMatchers.any;
 /*
 class OrderServiceImplTest {
 
-  @Mock private OrderRepository orderRepository;
+  @Mock private PurchaseRepository orderRepository;
   @Mock private OfferRepository offerRepository;
 
-  @InjectMocks private OrderServiceImpl orderService;
+  @InjectMocks private PurchaseServiceImpl orderService;
   @InjectMocks private OfferServiceImpl offerService;
 
   @BeforeEach void setUp() {
@@ -20,18 +20,18 @@ class OrderServiceImplTest {
   @Test
 void testAddOrder() {
     // Create an offer
-    OfferDao offer = new OfferDao();
+    Offer offer = new Offer();
     offer.setOriginalPrice(100);
     offer.setOfferPrice(80);
 
     // Mock the OfferRepository to save and return the created offer
-    when(offerRepository.save(any(OfferDao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    when(offerRepository.save(any(Offer.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Save the offer
-    OfferDao savedOffer = offerRepository.save(offer);
+    Offer savedOffer = offerRepository.save(offer);
 
-    // Mock the OrderRepository to save and return the created order
-    when(orderRepository.save(any(OrderDao.class))).thenAnswer(invocation -> invocation.getArgument(0));
+    // Mock the PurchaseRepository to save and return the created order
+    when(orderRepository.save(any(Purchase.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Create the AddOrderRequest
     AddOrderRequest request = AddOrderRequest.newBuilder()
@@ -52,7 +52,7 @@ void testAddOrder() {
 }
 
   @Test void testGetOrderById() {
-    OrderDao Order = new OrderDao();
+    Purchase Order = new Purchase();
     Order.setId("Order123");
     Order.setUserId("user123");
     Order.setNumberOfItems(2);
@@ -84,13 +84,13 @@ void testAddOrder() {
   }
 
   @Test void testGetAllOrders() {
-    OrderDao Order1 = new OrderDao();
+    Purchase Order1 = new Purchase();
     Order1.setId("Order123");
     Order1.setUserId("user123");
     Order1.setNumberOfItems(2);
     Order1.setOrderDate(DateTimeConverter.getCurrentDateDao());
 
-    OrderDao Order2 = new OrderDao();
+    Purchase Order2 = new Purchase();
     Order2.setId("Order456");
     Order2.setUserId("user456");
     Order2.setNumberOfItems(3);

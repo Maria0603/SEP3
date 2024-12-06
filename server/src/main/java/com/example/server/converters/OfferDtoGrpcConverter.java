@@ -12,11 +12,11 @@ import java.util.stream.Collectors;
 
 public class OfferDtoGrpcConverter
 {
-  public static SaveOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
+  public static CreateOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
       CreateOfferRequestDto createOfferRequestDto, String imagePath, String userId)
   {
     // Create SaveOfferRequest builder
-    SaveOfferRequest.Builder saveOfferRequestBuilder = SaveOfferRequest.newBuilder();
+    CreateOfferRequest.Builder saveOfferRequestBuilder = CreateOfferRequest.newBuilder();
 
     // Mapping simple fields
     saveOfferRequestBuilder.setTitle(createOfferRequestDto.getTitle());
@@ -133,9 +133,9 @@ public class OfferDtoGrpcConverter
     return dto;
   }
 
-  public static List<OfferResponseDto> convert(FullOfferList fullOfferList)
+  public static List<OfferResponseDto> OfferListResponse_To_ListOfferResponseDto(OfferListResponse offerList)
   {
-    return fullOfferList.getOfferList().stream().map(
+    return offerList.getOfferList().stream().map(
             offer -> OfferResponseDto.builder().id(offer.getId())
                 .title(offer.getTitle()).originalPrice(offer.getOriginalPrice())
                 .offerPrice(offer.getOfferPrice())

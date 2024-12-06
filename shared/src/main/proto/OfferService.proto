@@ -10,15 +10,15 @@ import "UserService.proto";
 package proto;
 
 service OfferService {
-  rpc SaveOffer(SaveOfferRequest) returns (OfferResponse);
+  rpc CreateOffer(CreateOfferRequest) returns (OfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
-  rpc GetOffers(FilterRequest) returns (FullOfferList);
+  rpc GetOffers(FilterRequest) returns (OfferListResponse);
 
   ///////////////////////////////////////////////////////////////////////
-  rpc GetOffersByTime(TimeRangeRequest) returns (FullOfferList);
-  rpc GetOffersByCategory(CategoryRequest) returns (FullOfferList);
-  rpc GetOffersByPriceRange(PriceRangeRequest) returns (FullOfferList);
+  rpc GetOffersByTime(TimeRangeRequest) returns (OfferListResponse);
+  rpc GetOffersByCategory(CategoryRequest) returns (OfferListResponse);
+  rpc GetOffersByPriceRange(PriceRangeRequest) returns (OfferListResponse);
   //////////////////////////////////////////////////////////////////////
 }
 
@@ -45,7 +45,7 @@ message PriceRangeRequest {
 }
 ///////////////////////////////////////////////////////////
 
-message SaveOfferRequest {
+message CreateOfferRequest {
   string title = 1;
   string description = 2;
   int32 originalPrice = 3;
@@ -81,25 +81,8 @@ message OfferResponse {
   string businessLogoPath = 16;
   Address businessAddress = 17;
 }
-/*
-message SaveOfferResponse {
-  string id = 1;
-  string title = 2;
-  string description = 3;
-  int32 originalPrice = 4;
-  int32 offerPrice = 5;
-  int32 numberOfItems = 6;
-  google.protobuf.Timestamp pickupTimeStart = 7;
-  google.protobuf.Timestamp pickupTimeEnd = 8;
-  repeated string categories = 10;
-  string imagePath = 11;
-  string businessId = 12;
-  string businessName = 13;
-  string businessLogoPath = 14;
-}*/
 
-
-message FullOfferList {
+message OfferListResponse {
   repeated OfferResponse offer = 1;
 }
 

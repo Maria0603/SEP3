@@ -245,7 +245,7 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
         try
         {
             // Save Offer
-            createdOffer = await OfferService.SaveOfferAsync(offerDto);
+            createdOffer = await OfferService.CreateOfferAsync(offerDto);
 
             if (createdOffer is not null)
             {

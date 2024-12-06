@@ -7,9 +7,9 @@ import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
 import com.example.shared.converters.AddressConverter;
 import com.example.shared.converters.DateTimeConverter;
-import com.example.shared.dao.domainDao.OfferDao;
-import com.example.shared.dao.usersDao.BusinessDao;
-import com.example.shared.dao.usersDao.CustomerDao;
+import com.example.shared.entities.domainEntities.Offer;
+import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.usersEntities.Customer;
 import com.example.shared.model.OfferStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -42,16 +42,16 @@ import java.util.Optional;
     System.out.println("OfferServiceImpl created");
   }
 
-  @Override public void saveOffer(SaveOfferRequest request,
+  @Override public void createOffer(CreateOfferRequest request,
       StreamObserver<OfferResponse> responseObserver)
   {
     System.out.println("Request for save offer");
 
     // Prepare to save the offer in database
-    OfferDao offer = generateOfferDaoFromSaveOfferRequest(request);
+    Offer offer = generateOfferFromCreateOfferRequest(request);
 
     // Save the offer
-    OfferDao createdOffer = offerRepository.save(offer);
+    Offer createdOffer = offerRepository.save(offer);
 
     // Build the response with everything
     OfferResponse response = buildOfferResponse(createdOffer);
@@ -65,10 +65,10 @@ import java.util.Optional;
   {
     System.out.println("Request for offer by id");
 
-    Optional<OfferDao> offer = offerRepository.findById(request.getId());
+    Optional<Offer> offer = offerRepository.findById(request.getId());
     if (offer.isPresent())
     {
-      OfferDao offerDao = offer.get();
+      Offer offerDao = offer.get();
 
       OfferResponse offerResponse = buildOfferResponse(
           offerDao); // method to build the response
@@ -88,7 +88,7 @@ import java.util.Optional;
           "Offer with ID " + request.getId() + " not found.");
 
     // Save the updated document (will replace the existing one)
-    OfferDao updatedOffer = offerRepository.save(
+    Offer updatedOffer = offerRepository.save(
         generateOfferDaoFromOfferResponse(request));
     OfferResponse offerResponse = buildOfferResponse(
         updatedOffer); // method to build the response
@@ -99,30 +99,30 @@ import java.util.Optional;
   }
 
   @Override public void getOffersByCategory(CategoryRequest request,
-      StreamObserver<FullOfferList> responseObserver)
+      StreamObserver<OfferListResponse> responseObserver)
   {
     logger.info("Request for offers by category: {}", request);
 
-    List<OfferDao> offersByCategory = offerRepository.findByCategories(
+    List<Offer> offersByCategory = offerRepository.findByCategories(
         request.getCategoriesList());
 
-    buildFullOfferListResponseFromListDao(responseObserver, offersByCategory);
+    buildOfferListResponseFromOffersList(responseObserver, offersByCategory);
   }
 
   @Override public void getOffersByPriceRange(PriceRangeRequest request,
-      StreamObserver<FullOfferList> responseObserver)
+      StreamObserver<OfferListResponse> responseObserver)
   {
     logger.info("Request for offers by price range: {} - {}",
         request.getMinOfferPrice(), request.getMaxOfferPrice());
 
-    List<OfferDao> offersByPriceRange = offerRepository.findByOfferPriceRange(
+    List<Offer> offersByPriceRange = offerRepository.findByOfferPriceRange(
         request.getMinOfferPrice(), request.getMaxOfferPrice());
 
-    buildFullOfferListResponseFromListDao(responseObserver, offersByPriceRange);
+    buildOfferListResponseFromOffersList(responseObserver, offersByPriceRange);
   }
 
   @Override public void getOffersByTime(TimeRangeRequest request,
-      StreamObserver<FullOfferList> responseObserver)
+      StreamObserver<OfferListResponse> responseObserver)
   {
     logger.info("Request for offers by time range: {} - {}", request.getStart(),
         request.getEnd());
@@ -132,30 +132,30 @@ import java.util.Optional;
     LocalDateTime endTime = DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
         request.getEnd());
 
-    List<OfferDao> offersByTimeRange = offerRepository.findByPickupTimeRange(
+    List<Offer> offersByTimeRange = offerRepository.findByPickupTimeRange(
         startTime, endTime);
 
-    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
-    for (OfferDao offerDao : offersByTimeRange)
+    OfferListResponse.Builder offerListBuilder = OfferListResponse.newBuilder();
+    for (Offer offer : offersByTimeRange)
     {
-      offerListBuilder.addOffer(buildOfferResponse(offerDao));
+      offerListBuilder.addOffer(buildOfferResponse(offer));
     }
 
-    FullOfferList offerListResponse = offerListBuilder.build();
+    OfferListResponse offerListResponse = offerListBuilder.build();
     logger.info("Sending FullOfferList response: {}", offerListResponse);
     responseObserver.onNext(offerListResponse);
     responseObserver.onCompleted();
   }
 
   @Override public void getOffers(FilterRequest request,
-      StreamObserver<FullOfferList> responseObserver)
+      StreamObserver<OfferListResponse> responseObserver)
   {
 
-    Optional<CustomerDao> customer = customerRepository.findById(
+    Optional<Customer> customer = customerRepository.findById(
         request.getUserId());
 
     // Extract the radius from the customer, if they have one
-    CustomerDao customerDao;
+    Customer customerDao;
     boolean hasLocationFilter;
     if (customer.isPresent())
     {
@@ -171,7 +171,7 @@ import java.util.Optional;
       hasLocationFilter = false;
     }
 
-    List<OfferDao> filteredOffers;
+    List<Offer> filteredOffers;
     var allAvailableOffers = offerRepository.findByStatus(OfferStatus.AVAILABLE.getStatus());
     filteredOffers = allAvailableOffers.stream().filter(
             item -> !request.hasMaxOfferPrice()
@@ -189,7 +189,7 @@ import java.util.Optional;
         .filter(item -> {
           if (hasLocationFilter)
           {
-            BusinessDao business = item.getBusiness();
+            Business business = item.getBusiness();
             double distance = GeoUtils.calculateDistance(
                 customerDao.getLatitude(), customerDao.getLongitude(),
                 business.getLocation().getCoordinates().getLast(),
@@ -215,20 +215,20 @@ import java.util.Optional;
     //            .anyMatch(request.getCategoriesList()::contains)).toList();
 
     // Build the response
-    buildFullOfferListResponseFromListDao(responseObserver, filteredOffers);
+    buildOfferListResponseFromOffersList(responseObserver, filteredOffers);
   }
 
-  private OfferDao generateOfferDaoFromSaveOfferRequest(
-      SaveOfferRequest request)
+  private Offer generateOfferFromCreateOfferRequest(
+      CreateOfferRequest request)
   {
-    OfferDao offer = new OfferDao();
-    Optional<BusinessDao> businessOptional = businessRepository.findById(
+    Offer offer = new Offer();
+    Optional<Business> businessOptional = businessRepository.findById(
         request.getBusinessId());
     if (businessOptional.isEmpty())
       throw new IllegalArgumentException(
           "Business not found with ID: " + request.getBusinessId());
 
-    BusinessDao business = businessOptional.get();
+    Business business = businessOptional.get();
     offer.setBusiness(business);
 
     offer.setTitle(request.getTitle());
@@ -256,9 +256,9 @@ import java.util.Optional;
     return offer;
   }
 
-  private OfferDao generateOfferDaoFromOfferResponse(OfferResponse request)
+  private Offer generateOfferDaoFromOfferResponse(OfferResponse request)
   {
-    OfferDao offer = new OfferDao();
+    Offer offer = new Offer();
     offer.setId(request.getId());
     offer.setTitle(request.getTitle());
     offer.setDescription(request.getDescription());
@@ -287,40 +287,40 @@ import java.util.Optional;
     return offer;
   }
 
-  private OfferResponse buildOfferResponse(OfferDao offerDao)
+  private OfferResponse buildOfferResponse(Offer offer)
   {
-    return OfferResponse.newBuilder().setId(offerDao.getId())
-        .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
-        .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
-        .setOriginalPrice(offerDao.getOriginalPrice())
-        .setNumberOfItems(offerDao.getNumberOfItems())
-        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+    return OfferResponse.newBuilder().setId(offer.getId())
+        .setTitle(offer.getTitle()).setDescription(offer.getDescription())
+        .setStatus(offer.getStatus()).setOfferPrice(offer.getOfferPrice())
+        .setOriginalPrice(offer.getOriginalPrice())
+        .setNumberOfItems(offer.getNumberOfItems())
+        .setNumberOfAvailableItems(offer.getNumberOfAvailableItems())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeStart())).setPickupTimeEnd(
+                offer.getPickupTimeStart())).setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offerDao.getPickupTimeEnd()))
-        .setImagePath(offerDao.getImagePath())
-        .addAllCategories(offerDao.getCategories())
-        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
-        .setBusinessId(offerDao.getBusiness().getId())
-        .setBusinessName(offerDao.getBusiness().getBusinessName())
-        .setBusinessLogoPath(offerDao.getBusiness().getLogoPath())
+                offer.getPickupTimeEnd()))
+        .setImagePath(offer.getImagePath())
+        .addAllCategories(offer.getCategories())
+        .setNumberOfAvailableItems(offer.getNumberOfAvailableItems())
+        .setBusinessId(offer.getBusiness().getId())
+        .setBusinessName(offer.getBusiness().getBusinessName())
+        .setBusinessLogoPath(offer.getBusiness().getLogoPath())
         .setBusinessAddress(AddressConverter.convertAddressDaoToGrpcAddress(
-            offerDao.getBusiness().getAddress())).build();
+            offer.getBusiness().getAddress())).build();
   }
 
-  private void buildFullOfferListResponseFromListDao(
-      StreamObserver<FullOfferList> responseObserver,
-      List<OfferDao> offersByCategory)
+  private void buildOfferListResponseFromOffersList(
+      StreamObserver<OfferListResponse> responseObserver,
+      List<Offer> offersByCategory)
   {
-    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
-    for (OfferDao offerDao : offersByCategory)
+    OfferListResponse.Builder offerListBuilder = OfferListResponse.newBuilder();
+    for (Offer offer : offersByCategory)
     {
-      offerListBuilder.addOffer(buildOfferResponse(offerDao));
+      offerListBuilder.addOffer(buildOfferResponse(offer));
     }
 
-    FullOfferList offerListResponse = offerListBuilder.build();
+    OfferListResponse offerListResponse = offerListBuilder.build();
     logger.info("Sending SaveOfferResponse: {}", offerListResponse);
     responseObserver.onNext(offerListResponse);
     responseObserver.onCompleted();

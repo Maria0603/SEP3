@@ -1,11 +1,7 @@
 package com.example.data_server.service;
 
 import com.example.data_server.repository.OfferRepository;
-import com.example.sep3.grpc.FilterRequest;
-import com.example.sep3.grpc.FullOfferList;
-import com.example.shared.converters.DateTimeConverter;
-import com.example.shared.dao.domainDao.OfferDao;
-import io.grpc.stub.StreamObserver;
+import com.example.shared.entities.domainEntities.Offer;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -18,20 +14,20 @@ public class FiltersTemp {
 
 
 
-  private List<OfferDao> filterOffersByPrice(List<OfferDao> previousFilterResult, int minPrice, int maxPrice) {
-    List<OfferDao> filteredOffers = offerRepository.findByOfferPriceRange(minPrice, maxPrice);
+  private List<Offer> filterOffersByPrice(List<Offer> previousFilterResult, int minPrice, int maxPrice) {
+    List<Offer> filteredOffers = offerRepository.findByOfferPriceRange(minPrice, maxPrice);
     System.out.println("Offers before filtering by price: ");
-    for (OfferDao offer : previousFilterResult) {
+    for (Offer offer : previousFilterResult) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
     System.out.println("Offers before filtering by price: ");
-    for (OfferDao offer : filteredOffers) {
+    for (Offer offer : filteredOffers) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
 
-    List<OfferDao> output = new ArrayList<>();
+    List<Offer> output = new ArrayList<>();
     System.out.println("Offers after filtering by price: ");
-    for (OfferDao offer : filteredOffers) {
+    for (Offer offer : filteredOffers) {
       if (previousFilterResult.contains(offer)) {
         output.add(offer);
         System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
@@ -43,39 +39,39 @@ public class FiltersTemp {
     return output;
   }
 
-  private List<OfferDao> filterOffersByTime(List<OfferDao> previousFilterResult, LocalDateTime pickupTimeStart,
+  private List<Offer> filterOffersByTime(List<Offer> previousFilterResult, LocalDateTime pickupTimeStart,
       LocalDateTime pickupTimeEnd) {
     System.out.println("Filtering by time");
-    List<OfferDao> filteredOffers = offerRepository.findByPickupTimeRange(
+    List<Offer> filteredOffers = offerRepository.findByPickupTimeRange(
         pickupTimeStart, pickupTimeEnd);
-    for (OfferDao offer : previousFilterResult) {
+    for (Offer offer : previousFilterResult) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
-    List<OfferDao> output = new ArrayList<>();
-    for (OfferDao offer : filteredOffers) {
+    List<Offer> output = new ArrayList<>();
+    for (Offer offer : filteredOffers) {
       if (previousFilterResult.contains(offer)) {
         output.add(offer);
       }
     }
-    for (OfferDao offer : previousFilterResult) {
+    for (Offer offer : previousFilterResult) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
     return output;
   }
 
-  private List<OfferDao> filterOffersByCategories(List<OfferDao> previousFilterResult, List<String> categories) {
-    List<OfferDao> filteredOffers = offerRepository.findByCategories(
+  private List<Offer> filterOffersByCategories(List<Offer> previousFilterResult, List<String> categories) {
+    List<Offer> filteredOffers = offerRepository.findByCategories(
         categories);
-    for (OfferDao offer : previousFilterResult) {
+    for (Offer offer : previousFilterResult) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
-    List<OfferDao> output = new ArrayList<>();
-    for (OfferDao offer : filteredOffers) {
+    List<Offer> output = new ArrayList<>();
+    for (Offer offer : filteredOffers) {
       if (previousFilterResult.contains(offer)) {
         output.add(offer);
       }
     }
-    for (OfferDao offer : previousFilterResult) {
+    for (Offer offer : previousFilterResult) {
       System.out.println("Offer ID: " + offer.getId() + ", Price: " + offer.getOfferPrice());
     }
     return output;

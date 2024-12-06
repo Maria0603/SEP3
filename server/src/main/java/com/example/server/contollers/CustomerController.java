@@ -1,9 +1,9 @@
 package com.example.server.contollers;
 
-import com.example.sep3.grpc.CustomerLocationRequest;
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
 import com.example.server.dto.customer.CustomerLocationRequestDto;
-import com.example.server.services.CustomerService;
+import com.example.server.services.Implementations.CustomerService;
+import com.example.server.services.ICustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -14,9 +14,9 @@ import java.util.List;
 @RestController @RequestMapping("/customers") public class CustomerController
 {
 
-  private final CustomerService customerService;
+  private final ICustomerService customerService;
 
-  public CustomerController(CustomerService customerService)
+  public CustomerController(ICustomerService customerService)
   {
     this.customerService = customerService;
   }

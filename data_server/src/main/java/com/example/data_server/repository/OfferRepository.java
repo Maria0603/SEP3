@@ -1,6 +1,6 @@
 package com.example.data_server.repository;
 
-import com.example.shared.dao.domainDao.OfferDao;
+import com.example.shared.entities.domainEntities.Offer;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.Update;
@@ -10,9 +10,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
-public interface OfferRepository extends MongoRepository<OfferDao, String>
+public interface OfferRepository extends MongoRepository<Offer, String>
 {
-  List<OfferDao> findByStatus(String status);
+  List<Offer> findByStatus(String status);
   @Query("{ '_id': ?0 }")
   @Update("{ $set: { 'number_of_available_items': ?1} }")
   void updateNumberOfAvailableItems(String offerId, int numberOfItems);
@@ -22,12 +22,12 @@ public interface OfferRepository extends MongoRepository<OfferDao, String>
   void updateStatus(String offerId, String status);
 
   @Query("{ 'categories' : { $in: ?0 } }")
-  List<OfferDao> findByCategories(List<String> categories);
+  List<Offer> findByCategories(List<String> categories);
 
   @Query("{ 'pickup_time_start' : { $gte: ?0 }, 'pickup_time_end' : { $lte: ?1 } }")
-  List<OfferDao> findByPickupTimeRange(LocalDateTime pickupTimeStart, LocalDateTime pickupTimeEnd);
+  List<Offer> findByPickupTimeRange(LocalDateTime pickupTimeStart, LocalDateTime pickupTimeEnd);
 
   @Query("{ 'offer_price' : { $gte: ?0, $lte: ?1 } }")
-  List<OfferDao> findByOfferPriceRange(int minPrice, int maxPrice);
+  List<Offer> findByOfferPriceRange(int minPrice, int maxPrice);
 }
  

@@ -18,7 +18,7 @@ public class OfferService : IOfferService
         this.client = client;
     }
 
-    public async Task<OfferResponseDto> SaveOfferAsync(
+    public async Task<OfferResponseDto> CreateOfferAsync(
         CreateOfferRequestDto createOfferRequestDto)
     {
         string jsonRequest = JsonSerializer.Serialize(createOfferRequestDto);

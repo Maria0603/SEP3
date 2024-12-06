@@ -2,12 +2,12 @@
 
 @using client.DTO
 @using client.DTO.Offer
-@using client.DTO.Order
+@using client.DTO.Purchase
 @using client.Models
 @using client.Services
 @using Microsoft.AspNetCore.Authorization
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
-@inject IOrderService OrderService
+@inject IPurchaseService PurchaseService
 @inject IOfferService OfferService
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
@@ -117,7 +117,7 @@ else
 
     private async Task SubmitPurchase()
     {
-        var request = new OrderRequestDto
+        var request = new PurchaseRequestDto
         {
             OfferId = id,
             NumberOfItems = amount
@@ -125,7 +125,7 @@ else
 
         try
         {
-            var response = await OrderService.PlaceOrderAsync(request);
+            var response = await PurchaseService.CreatePurchaseAsync(request);
             string sessionUrl = response.Url;
             NavigationManager.NavigateTo(sessionUrl);
         }

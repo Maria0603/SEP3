@@ -5,13 +5,11 @@ import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.utility.GeoUtils;
 import com.example.shared.converters.AddressConverter;
 import com.example.sep3.grpc.*;
-import com.example.shared.dao.usersDao.BusinessDao;
-import com.example.shared.dao.usersDao.CustomerDao;
+import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.usersEntities.Customer;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.geo.Circle;
-import org.springframework.data.geo.Point;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.List;
@@ -37,10 +35,10 @@ import java.util.Optional;
     System.out.println("Request for register business.");
 
     // Prepare to save the business details in database
-    BusinessDao business = generateBusinessDaoFromRegisterBusinessRequest(
+    Business business = generateBusinessDaoFromRegisterBusinessRequest(
         request);
 
-    BusinessDao createdBusiness = businessRepository.save(business);
+    Business createdBusiness = businessRepository.save(business);
 
     IdRequestResponse response = IdRequestResponse.newBuilder().setId(createdBusiness.getId()).build();
 
@@ -51,7 +49,7 @@ import java.util.Optional;
   @Override public void getBusinessByEmail(EmailRequestResponse request,
       StreamObserver<BusinessResponse> responseObserver)
   {
-    Optional<BusinessDao> business = businessRepository.findByEmail(
+    Optional<Business> business = businessRepository.findByEmail(
         request.getEmail());
     if (business.isPresent())
     {
@@ -69,13 +67,13 @@ import java.util.Optional;
   {
     //extract the latitude, longitude and radius from customer
     System.out.println("Request for businesses by radius");
-    Optional<CustomerDao> customer = customerRepository.findById(
+    Optional<Customer> customer = customerRepository.findById(
         request.getId());
     if (customer.isPresent())
     {
       double radiusRadians = customer.get().getSearchRadius() / GeoUtils.EARTH_RADIUS_KM;
 
-      List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
+      List<Business> businesses = businessRepository.findBusinessesWithinRadius(
           customer.get().getLongitude(), customer.get().getLatitude(),
           radiusRadians);
       System.out.println("Radius: " + customer.get().getSearchRadius());
@@ -83,7 +81,7 @@ import java.util.Optional;
       System.out.println("Long: " + customer.get().getLongitude());
 
       BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
-      for (BusinessDao business : businesses)
+      for (Business business : businesses)
         builder.addBusinesses(buildBusinessOnMap(business));
 
       responseObserver.onNext(builder.build());
@@ -92,7 +90,7 @@ import java.util.Optional;
 
   }
 
-  private BusinessResponse buildBusinessResponse(BusinessDao business)
+  private BusinessResponse buildBusinessResponse(Business business)
   {
     return BusinessResponse.newBuilder()
         .setBusinessName(business.getBusinessName()).setAddress(
@@ -104,10 +102,10 @@ import java.util.Optional;
         .build();
   }
 
-  private BusinessDao generateBusinessDaoFromRegisterBusinessRequest(
+  private Business generateBusinessDaoFromRegisterBusinessRequest(
       RegisterBusinessRequest request)
   {
-    BusinessDao business = new BusinessDao();
+    Business business = new Business();
     business.setBusinessName(request.getBusinessName());
     business.setCvr(request.getCvr());
     business.setEmail(request.getEmail());
@@ -122,7 +120,7 @@ import java.util.Optional;
     return business;
   }
 
-  private BusinessOnMap buildBusinessOnMap(BusinessDao dao)
+  private BusinessOnMap buildBusinessOnMap(Business dao)
   {
     return BusinessOnMap.newBuilder().setBusinessId(dao.getId())
         .setBusinessName(dao.getBusinessName()).setBusinessEmail(dao.getEmail())

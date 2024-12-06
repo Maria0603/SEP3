@@ -5,7 +5,7 @@ import com.example.server.dto.auth.LoginRequestDto;
 import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.dto.customer.RegisterCustomerRequestDto;
-import com.example.server.services.security.AuthService;
+import com.example.server.services.IAuthService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController @RequestMapping("/auth") @RequiredArgsConstructor public class AuthController
 {
-  private final AuthService authService;
+  private final IAuthService authService;
 
   @PostMapping("/registration/business") public ResponseEntity<CredentialsResponseDto> registerBusiness(
       @Valid @RequestBody RegisterBusinessRequestDto registerRequest)
