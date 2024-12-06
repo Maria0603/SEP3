@@ -2,6 +2,7 @@ package com.example.data_server.service;
 
 import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.repository.CustomerRepository;
+import com.example.data_server.utility.GeoUtils;
 import com.example.shared.converters.AddressConverter;
 import com.example.sep3.grpc.*;
 import com.example.shared.dao.usersDao.BusinessDao;
@@ -31,7 +32,7 @@ import java.util.Optional;
   }
 
   @Override public void registerBusiness(RegisterBusinessRequest request,
-      StreamObserver<EmptyMessage> responseObserver)
+      StreamObserver<IdRequestResponse> responseObserver)
   {
     System.out.println("Request for register business.");
 
@@ -39,15 +40,15 @@ import java.util.Optional;
     BusinessDao business = generateBusinessDaoFromRegisterBusinessRequest(
         request);
 
-    businessRepository.save(business);
+    BusinessDao createdBusiness = businessRepository.save(business);
 
-    EmptyMessage response = EmptyMessage.newBuilder().build();
+    IdRequestResponse response = IdRequestResponse.newBuilder().setId(createdBusiness.getId()).build();
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
-  @Override public void getBusinessByEmail(BusinessByEmailRequest request,
+  @Override public void getBusinessByEmail(EmailRequestResponse request,
       StreamObserver<BusinessResponse> responseObserver)
   {
     Optional<BusinessDao> business = businessRepository.findByEmail(
@@ -63,16 +64,16 @@ import java.util.Optional;
     throw new IllegalArgumentException("Business not found");
   }
 
-  @Override public void getBusinessesInRadius(BusinessesInRadiusRequest request,
+  @Override public void getBusinessesInRadius(IdRequestResponse request,
       StreamObserver<BusinessesInRadiusResponse> responseObserver)
   {
     //extract the latitude, longitude and radius from customer
     System.out.println("Request for businesses by radius");
-    Optional<CustomerDao> customer = customerRepository.findByEmail(
-        request.getCustomerEmail());
+    Optional<CustomerDao> customer = customerRepository.findById(
+        request.getId());
     if (customer.isPresent())
     {
-      double radiusRadians = customer.get().getSearchRadius() / 6378.1;
+      double radiusRadians = customer.get().getSearchRadius() / GeoUtils.EARTH_RADIUS_KM;
 
       List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
           customer.get().getLongitude(), customer.get().getLatitude(),
@@ -89,25 +90,6 @@ import java.util.Optional;
       responseObserver.onCompleted();
     }
 
-  }
-
-  //just to test
-  @Override public void getBusinessesInRadiuss(RadiusRequest request,
-      StreamObserver<BusinessesInRadiusResponse> responseObserver)
-  {
-    System.out.println("Request for radiuss");
-    double radius = 20 / 6378.1;
-
-    List<BusinessDao> businesses = businessRepository.findBusinessesWithinRadius(
-        request.getLng(), request.getLat(), radius);
-    System.out.println(businesses.isEmpty());
-
-    BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
-    for (BusinessDao business : businesses)
-      builder.addBusinesses(buildBusinessOnMap(business));
-
-    responseObserver.onNext(builder.build());
-    responseObserver.onCompleted();
   }
 
   private BusinessResponse buildBusinessResponse(BusinessDao business)
@@ -135,8 +117,6 @@ import java.util.Optional;
     business.setRole(request.getRole());
     business.setAddress(
         AddressConverter.convertGrpcAddressToAddressDao(request.getAddress()));
-    business.setLatitude(request.getLatitude());
-    business.setLongitude(request.getLongitude());
     business.setLocation(
         new GeoJsonPoint(request.getLongitude(), request.getLatitude()));
     return business;
@@ -146,8 +126,9 @@ import java.util.Optional;
   {
     return BusinessOnMap.newBuilder().setBusinessId(dao.getId())
         .setBusinessName(dao.getBusinessName()).setBusinessEmail(dao.getEmail())
-        .setLogoPath(dao.getLogoPath()).setLatitude(dao.getLatitude())
-        .setLongitude(dao.getLongitude()).build();
+        .setLogoPath(dao.getLogoPath())
+        .setLongitude(dao.getLocation().getCoordinates().getFirst())
+        .setLatitude(dao.getLocation().getCoordinates().getLast()).build();
   }
 
   private double calculateDistance(double lat1, double lon1, double lat2,
