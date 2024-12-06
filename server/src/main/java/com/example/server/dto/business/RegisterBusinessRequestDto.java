@@ -35,7 +35,6 @@ public class RegisterBusinessRequestDto {
     private String phoneNumber;
 
     @Valid
-    // Validates the AddressDto inside this field if it has its own validation
     private AddressDto address;
 
     @NotNull(message = "Logo is required.")

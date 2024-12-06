@@ -3,12 +3,10 @@ package com.example.server.converters;
 import com.example.sep3.grpc.*;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
-import com.example.server.dto.offer.ShortOfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
 import com.example.shared.converters.DateTimeConverter;
 import com.google.protobuf.Timestamp;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -83,29 +81,6 @@ public class OfferDtoGrpcConverter
     return offerResponseBuilder.build();
   }
 
-  public static OfferResponseDto SaveOfferResponseGrpc_To_OfferResponseDto(
-      SaveOfferResponse saveOfferResponseGrpc)
-  {
-    OfferResponseDto dto = new OfferResponseDto();
-    dto.setId(saveOfferResponseGrpc.getId());
-    dto.setTitle(saveOfferResponseGrpc.getTitle());
-    dto.setOriginalPrice(saveOfferResponseGrpc.getOriginalPrice());
-    dto.setOfferPrice(saveOfferResponseGrpc.getOfferPrice());
-    dto.setNumberOfItems(saveOfferResponseGrpc.getNumberOfItems());
-
-    dto.setPickupTimeStart(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            saveOfferResponseGrpc.getPickupTimeStart()));
-    dto.setPickupTimeEnd(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            saveOfferResponseGrpc.getPickupTimeEnd()));
-    dto.setCategories(saveOfferResponseGrpc.getCategoriesList());
-    dto.setDescription(saveOfferResponseGrpc.getDescription());
-    dto.setImagePath(saveOfferResponseGrpc.getImagePath());
-    dto.setStatus("available");// maybe not send it at all
-    return dto;
-  }
-
   public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
       OfferResponse response)
   {
@@ -128,6 +103,11 @@ public class OfferDtoGrpcConverter
     dto.setDescription(response.getDescription());
     dto.setImagePath(response.getImagePath());
     dto.setStatus(response.getStatus());
+
+    dto.setBusinessAddress(AddressConverter.convertGrpcAddressToAddressDto(response.getBusinessAddress()));
+    dto.setBusinessId(response.getBusinessId());
+    dto.setBusinessName(response.getBusinessName());
+    dto.setBusinessLogoPath(response.getBusinessLogoPath());
 
     return dto;
   }

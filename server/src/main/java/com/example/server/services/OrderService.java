@@ -58,6 +58,9 @@ import java.util.stream.Collectors;
     /////////////////////////////////////Temporary////////////////////////////////
     updateOrderStatus(databaseResponse.getId(),
         OrderStatus.RESERVED.getStatus());
+    OrderResponseDto order = getOrderById(databaseResponse.getId());
+    //updateNumberOfAvailableItems(order.getOfferId(),
+        //order.getNumberOfItems());
     //////////////////////////////////////////////////////////////////////////////
     if (databaseResponse == null || databaseResponse.getId().isEmpty())
       throw new IllegalArgumentException("Invalid order ID.");
@@ -126,8 +129,8 @@ import java.util.stream.Collectors;
         updateOrderStatus(orderId, OrderStatus.RESERVED.getStatus());
 
         OrderResponseDto order = getOrderById(orderId);
-        updateNumberOfAvailableItems(order.getOfferId(),
-            order.getNumberOfItems());
+        //updateNumberOfAvailableItems(order.getOfferId(),
+            //order.getNumberOfItems());
       }
     }
   }
@@ -161,7 +164,7 @@ import java.util.stream.Collectors;
     return OrderDtoGrpcConverter.OrderResponseGrpc_To_OrderResponseDto(
         response);
   }
-
+/*
   private void updateNumberOfAvailableItems(String offerId,
       int numberOfItemsToSubtract)
   {
@@ -173,7 +176,7 @@ import java.util.stream.Collectors;
     offerService.updateOffer(
         OfferDtoGrpcConverter.OfferResponseDto_To_UpdateOfferRequestDto(offer,
             imageStorageService.extractImage(offer.getImagePath())));
-  }
+  }*/
 
 }
 

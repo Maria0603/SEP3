@@ -24,7 +24,6 @@ import java.util.List;
 
   @Field("first_name") private String firstName;
   @Field("last_name") private String lastName;
-  @Field("address") private AddressDao address;
 
   @Field("latitude") private double latitude;
   @Field("longitude") private double longitude;
@@ -139,15 +138,6 @@ import java.util.List;
   public void setId(String id)
   {
     this.id = id;
-  }
-  public AddressDao getAddress()
-  {
-    return address;
-  }
-
-  public void setAddress(AddressDao address)
-  {
-    this.address = address;
   }
 
   public String getLastName()

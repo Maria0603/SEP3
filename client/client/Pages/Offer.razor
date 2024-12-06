@@ -19,9 +19,8 @@
 <div class="container">
     <div>
         <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
-        <!-- LOGO <img src="@(HttpClient.BaseAddress + )" alt="Offer Image" class="offer-image"/> -->
-        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
-        <header class="BusinessName">BUSINESS NAME HERE</header>
+        <img src="@(HttpClient.BaseAddress + _offer.BusinessLogoPath)" alt="Logo" class="logo-image"/>
+        <header class="BusinessName">@_offer.BusinessName</header>
         <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
             @( _offer.NumberOfAvailableItems > 0
             ? $"{_offer.NumberOfAvailableItems} Left"
@@ -77,7 +76,7 @@
         <div class="location-content">
             <div class="location-row">
                 <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
-                <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
+                <p class="location-text">@_offer.BusinessAddress.Street @_offer.BusinessAddress.Number, @_offer.BusinessAddress.PostalCode, @_offer.BusinessAddress.City</p>
             </div>
         </div>
     </div>
@@ -121,8 +120,7 @@ else
         var request = new OrderRequestDto
         {
             OfferId = id,
-            NumberOfItems = amount,
-            UserId = "123abc"
+            NumberOfItems = amount
         };
 
         try

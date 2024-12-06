@@ -14,16 +14,16 @@
 
         <div class="offer__top--business">
             <div class="offer__top--business__icon">
-                @if (!string.IsNullOrEmpty(OfferData.ImagePath))
+                @if (!string.IsNullOrEmpty(OfferData.BusinessLogoPath))
                 {
-                <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+                <img src="@(HttpClient.BaseAddress + OfferData.BusinessLogoPath)" alt="Offer Image">
                 }
                 else
                 {
                 <img src="images/icons/cart.jpeg" alt="Default Logo">
                 }
             </div>
-            <h3 class="offer__top--business__name"> Business name</h3>
+            <h3 class="offer__top--business__name"> @OfferData.BusinessName</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
         </div>
     </div>
@@ -65,7 +65,7 @@
 
 @code {
     [Parameter] 
-    public ShortOfferResponseDto OfferData { get; set; }
+    public OfferResponseDto OfferData { get; set; }
     
     public Dictionary<string, object> AdditionalAttributes { get; set; }
     private void ShowOfferDetails(string offerId)

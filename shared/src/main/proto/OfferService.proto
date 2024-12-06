@@ -5,11 +5,12 @@ option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "OfferServiceProto";
 
 import "google/protobuf/timestamp.proto";
+import "UserService.proto";
 
 package proto;
 
 service OfferService {
-  rpc SaveOffer(SaveOfferRequest) returns (SaveOfferResponse);
+  rpc SaveOffer(SaveOfferRequest) returns (OfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
   rpc GetOffers(FilterRequest) returns (FullOfferList);
@@ -30,19 +31,19 @@ message FilterRequest {
   string userId = 6;
 }
 
+//////////////////////////////////////////////////////////
 message TimeRangeRequest {
   google.protobuf.Timestamp start = 1;
   google.protobuf.Timestamp end = 2;
 }
-
 message CategoryRequest {
   repeated string categories = 1;
 }
-
 message PriceRangeRequest {
   int32 minOfferPrice = 1;
   int32 maxOfferPrice = 2;
 }
+///////////////////////////////////////////////////////////
 
 message SaveOfferRequest {
   string title = 1;
@@ -78,8 +79,9 @@ message OfferResponse {
   string businessId = 14;
   string businessName = 15;
   string businessLogoPath = 16;
+  Address businessAddress = 17;
 }
-
+/*
 message SaveOfferResponse {
   string id = 1;
   string title = 2;
@@ -94,7 +96,7 @@ message SaveOfferResponse {
   string businessId = 12;
   string businessName = 13;
   string businessLogoPath = 14;
-}
+}*/
 
 
 message FullOfferList {

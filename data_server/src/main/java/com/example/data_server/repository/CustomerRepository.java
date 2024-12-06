@@ -10,8 +10,7 @@ import java.util.Optional;
 public interface CustomerRepository extends MongoRepository<CustomerDao, String>
 {
   Optional<CustomerDao> findByEmail(String email);
-  void deleteByEmail(String email);
-  @Query("{ 'email': ?0 }")
+  @Query("{ '_id': ?0 }")
   @Update("{ $set: { 'latitude': ?1, 'longitude': ?2,  'search_radius': ?3} }")
   void updateLocationById(String id, double latitude, double longitude, int radius);
 

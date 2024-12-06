@@ -21,7 +21,7 @@
     }
     else
     {
-        @foreach (ShortOfferResponseDto offer in offers)
+        @foreach (OfferResponseDto offer in offers)
         {
             <OfferComponent OfferData="offer"></OfferComponent>
         }
@@ -31,7 +31,7 @@
 
 
 @code {
-    private List<ShortOfferResponseDto>? offers;
+    private List<OfferResponseDto>? offers;
     protected override async Task OnInitializedAsync()
     {
         // Call the service to get the offers
@@ -54,7 +54,7 @@
         {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
-            offers = new List<ShortOfferResponseDto>(); // Ensure the UI does not break
+            offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
     }
     

@@ -64,11 +64,11 @@ public class OfferService : IOfferService
     }
 
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
-    public async Task<List<ShortOfferResponseDto>> GetOffersAsync()
+    public async Task<List<OfferResponseDto>> GetOffersAsync()
     {
         var response = await client.GetAsync("offers");
         var json = await response.Content.ReadAsStringAsync();
-        var offers = JsonSerializer.Deserialize<List<ShortOfferResponseDto>>(
+        var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(
             json,
             new JsonSerializerOptions
             {

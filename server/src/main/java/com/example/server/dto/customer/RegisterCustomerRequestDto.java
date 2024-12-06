@@ -33,8 +33,4 @@ public class RegisterCustomerRequestDto {
     @NotBlank(message = "Phone number cannot be empty.")
     @Size(min = 6, max = 20, message = "Phone number must be between 6 and 20 characters.")
     private String phoneNumber;
-
-    @Valid
-    // Validates the AddressDto inside this field if it has its own validation
-    private AddressDto address;
 }

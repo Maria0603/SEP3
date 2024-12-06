@@ -3,6 +3,7 @@ package com.example.data_server.repository;
 import com.example.shared.dao.domainDao.OfferDao;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,9 @@ import java.util.List;
 public interface OfferRepository extends MongoRepository<OfferDao, String>
 {
   List<OfferDao> findByStatus(String status);
-  List<OfferDao> findByBusinessId(String businessId);
+  @Query("{ '_id': ?0 }")
+  @Update("{ $set: { 'number_of_available_items': ?1} }")
+  void updateNumberOfAvailableItems(String offerId, int numberOfItems);
 
   @Query("{ 'categories' : { $in: ?0 } }")
   List<OfferDao> findByCategories(List<String> categories);

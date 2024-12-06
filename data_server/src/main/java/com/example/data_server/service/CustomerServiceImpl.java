@@ -81,6 +81,9 @@ import java.util.Optional;
 
     customerRepository.updateLocationById(request.getCustomerId(),
         request.getLatitude(), request.getLongitude(), request.getRadius());
+    System.out.println(
+        "Customer location updated: " + customerRepository.findById(
+            request.getCustomerId()).get().getSearchRadius());
 
     double radiusRadians = request.getRadius() / GeoUtils.EARTH_RADIUS_KM;
 
@@ -126,8 +129,7 @@ import java.util.Optional;
         .setLastName(customer.getLastName()).setEmail(customer.getEmail())
         .setPhoneNumber(customer.getPhoneNumber())
         .setHashedPassword(customer.getPassword()).setId(customer.getId())
-        .setAddress(AddressConverter.convertAddressDaoToGrpcAddress(
-            customer.getAddress())).setRole(customer.getRole()).build();
+        .setRole(customer.getRole()).build();
   }
 
   private CustomerDao generateCustomerDaoFromRegisterCustomerRequest(
@@ -140,8 +142,6 @@ import java.util.Optional;
     customer.setPassword(request.getHashedPassword());
     customer.setPhoneNumber(request.getPhoneNumber());
     customer.setRole(request.getRole());
-    customer.setAddress(
-        AddressConverter.convertGrpcAddressToAddressDao(request.getAddress()));
     return customer;
   }
 
