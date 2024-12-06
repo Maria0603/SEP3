@@ -1,13 +1,10 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.offer.ShortOfferResponseDto;
-import com.example.server.dto.order.OrderResponseDto;
 import com.example.server.services.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

@@ -51,10 +51,10 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
           offerRequestDto, imagePath, userId);
 
       //Send the request to the data server
-      SaveOfferResponse response = dataServerStub.saveOffer(request);
+      OfferResponse response = dataServerStub.saveOffer(request);
 
       //Return the offer as dto
-      return SaveOfferResponseGrpc_To_OfferResponseDto(response);
+      return OfferResponseGrpc_To_OfferResponseDto(response);
     }
     catch (IOException e)
     {

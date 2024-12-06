@@ -5,6 +5,7 @@ import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.repository.OfferRepository;
 import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
+import com.example.shared.converters.AddressConverter;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.dao.usersDao.BusinessDao;
@@ -42,7 +43,7 @@ import java.util.Optional;
   }
 
   @Override public void saveOffer(SaveOfferRequest request,
-      StreamObserver<SaveOfferResponse> responseObserver)
+      StreamObserver<OfferResponse> responseObserver)
   {
     System.out.println("Request for save offer");
 
@@ -53,7 +54,7 @@ import java.util.Optional;
     OfferDao createdOffer = offerRepository.save(offer);
 
     // Build the response with everything
-    SaveOfferResponse response = buildSaveOfferResponse(createdOffer);
+    OfferResponse response = buildOfferResponse(createdOffer);
 
     responseObserver.onNext(response);
     responseObserver.onCompleted();
@@ -194,9 +195,11 @@ import java.util.Optional;
                 business.getLocation().getCoordinates().getLast(),
                 business.getLocation().getCoordinates().getFirst());
             System.out.println("Business: " + business.getId());
-            System.out.println("Customer: " + customerDao.getId() + " radius: " + customer.get().getSearchRadius());
+            System.out.println("Customer: " + customerDao.getId() + " radius: "
+                + customer.get().getSearchRadius());
 
-            System.out.println("Distance: " + distance + " for ID " + item.getId());
+            System.out.println(
+                "Distance: " + distance + " for ID " + item.getId());
             return distance <= customerDao.getSearchRadius();
           }
           return true; // If no location filter, include all offers
@@ -213,125 +216,113 @@ import java.util.Optional;
 
     // Build the response
     buildFullOfferListResponseFromListDao(responseObserver, filteredOffers);
-}
-
-private OfferDao generateOfferDaoFromSaveOfferRequest(SaveOfferRequest request)
-{
-  OfferDao offer = new OfferDao();
-  Optional<BusinessDao> businessOptional = businessRepository.findById(
-      request.getBusinessId());
-  if (businessOptional.isEmpty())
-    throw new IllegalArgumentException(
-        "Business not found with ID: " + request.getBusinessId());
-
-  BusinessDao business = businessOptional.get();
-  offer.setBusiness(business);
-
-  offer.setTitle(request.getTitle());
-  offer.setDescription(request.getDescription());
-  offer.setOfferPrice(request.getOfferPrice());
-  offer.setOriginalPrice(request.getOriginalPrice());
-  offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-
-  offer.setPickupTimeStart(
-      DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-          request.getPickupTimeStart()));
-  offer.setPickupTimeEnd(
-      DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-          request.getPickupTimeEnd()));
-
-  offer.setCreationTime(LocalDateTime.now());
-
-  ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-  offer.setCategories(categories);
-
-  offer.setNumberOfItems(request.getNumberOfItems());
-  offer.setStatus(OfferStatus.AVAILABLE.getStatus());
-  offer.setImagePath(request.getImagePath());
-
-  return offer;
-}
-
-private OfferDao generateOfferDaoFromOfferResponse(OfferResponse request)
-{
-  OfferDao offer = new OfferDao();
-  offer.setId(request.getId());
-  offer.setTitle(request.getTitle());
-  offer.setDescription(request.getDescription());
-  offer.setOfferPrice(request.getOfferPrice());
-  offer.setOriginalPrice(request.getOriginalPrice());
-
-  offer.setPickupTimeStart(
-      DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-          request.getPickupTimeStart()));
-  offer.setPickupTimeEnd(
-      DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-          request.getPickupTimeEnd()));
-
-  ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-  offer.setCategories(categories);
-
-  offer.setNumberOfItems(request.getNumberOfItems());
-  offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-  System.out.println("**********************Available: "
-      + request.getNumberOfAvailableItems());
-  offer.setStatus(request.getStatus());
-  offer.setImagePath(request.getImagePath());
-
-  return offer;
-}
-
-private SaveOfferResponse buildSaveOfferResponse(OfferDao offer)
-{
-  return SaveOfferResponse.newBuilder().setId(offer.getId())
-      .setTitle(offer.getTitle()).setDescription(offer.getDescription())
-      .setOfferPrice(offer.getOfferPrice())
-      .setOriginalPrice(offer.getOriginalPrice())
-      .setNumberOfItems(offer.getNumberOfItems()).setPickupTimeStart(
-          DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-              offer.getPickupTimeStart())).setPickupTimeEnd(
-          DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-              offer.getPickupTimeEnd())).setImagePath(offer.getImagePath())
-      .addAllCategories(offer.getCategories())
-      .setBusinessId(offer.getBusiness().getId())
-      .setBusinessName(offer.getBusiness().getBusinessName())
-      .setBusinessLogoPath(offer.getBusiness().getLogoPath()).build();
-}
-
-private OfferResponse buildOfferResponse(OfferDao offerDao)
-{
-  return OfferResponse.newBuilder().setId(offerDao.getId())
-      .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
-      .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
-      .setOriginalPrice(offerDao.getOriginalPrice())
-      .setNumberOfItems(offerDao.getNumberOfItems())
-      .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
-      .setPickupTimeStart(
-          DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-              offerDao.getPickupTimeStart())).setPickupTimeEnd(
-          DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-              offerDao.getPickupTimeEnd()))
-      .setImagePath(offerDao.getImagePath())
-      .addAllCategories(offerDao.getCategories())
-      .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
-      .setBusinessId(offerDao.getBusiness().getId())
-      .setBusinessName(offerDao.getBusiness().getBusinessName())
-      .setBusinessLogoPath(offerDao.getBusiness().getLogoPath()).build();
-}
-
-private void buildFullOfferListResponseFromListDao(
-    StreamObserver<FullOfferList> responseObserver,
-    List<OfferDao> offersByCategory)
-{
-  FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
-  for (OfferDao offerDao : offersByCategory)
-  {
-    offerListBuilder.addOffer(buildOfferResponse(offerDao));
   }
 
-  FullOfferList offerListResponse = offerListBuilder.build();
-  logger.info("Sending SaveOfferResponse: {}", offerListResponse);
-  responseObserver.onNext(offerListResponse);
-  responseObserver.onCompleted();
-}
+  private OfferDao generateOfferDaoFromSaveOfferRequest(
+      SaveOfferRequest request)
+  {
+    OfferDao offer = new OfferDao();
+    Optional<BusinessDao> businessOptional = businessRepository.findById(
+        request.getBusinessId());
+    if (businessOptional.isEmpty())
+      throw new IllegalArgumentException(
+          "Business not found with ID: " + request.getBusinessId());
+
+    BusinessDao business = businessOptional.get();
+    offer.setBusiness(business);
+
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
+
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeEnd()));
+
+    offer.setCreationTime(LocalDateTime.now());
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    offer.setCategories(categories);
+
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
+    offer.setImagePath(request.getImagePath());
+
+    return offer;
+  }
+
+  private OfferDao generateOfferDaoFromOfferResponse(OfferResponse request)
+  {
+    OfferDao offer = new OfferDao();
+    offer.setId(request.getId());
+    offer.setTitle(request.getTitle());
+    offer.setDescription(request.getDescription());
+    offer.setOfferPrice(request.getOfferPrice());
+    offer.setOriginalPrice(request.getOriginalPrice());
+
+    offer.setPickupTimeStart(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeStart()));
+    offer.setPickupTimeEnd(
+        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+            request.getPickupTimeEnd()));
+
+    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
+    offer.setCategories(categories);
+
+    offer.setNumberOfItems(request.getNumberOfItems());
+    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
+    System.out.println("**********************Available: "
+        + request.getNumberOfAvailableItems());
+    offer.setStatus(request.getStatus());
+    offer.setImagePath(request.getImagePath());
+    offer.setBusiness(
+        businessRepository.findById(request.getBusinessId()).get());
+
+    return offer;
+  }
+
+  private OfferResponse buildOfferResponse(OfferDao offerDao)
+  {
+    return OfferResponse.newBuilder().setId(offerDao.getId())
+        .setTitle(offerDao.getTitle()).setDescription(offerDao.getDescription())
+        .setStatus(offerDao.getStatus()).setOfferPrice(offerDao.getOfferPrice())
+        .setOriginalPrice(offerDao.getOriginalPrice())
+        .setNumberOfItems(offerDao.getNumberOfItems())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setPickupTimeStart(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                offerDao.getPickupTimeStart())).setPickupTimeEnd(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                offerDao.getPickupTimeEnd()))
+        .setImagePath(offerDao.getImagePath())
+        .addAllCategories(offerDao.getCategories())
+        .setNumberOfAvailableItems(offerDao.getNumberOfAvailableItems())
+        .setBusinessId(offerDao.getBusiness().getId())
+        .setBusinessName(offerDao.getBusiness().getBusinessName())
+        .setBusinessLogoPath(offerDao.getBusiness().getLogoPath())
+        .setBusinessAddress(AddressConverter.convertAddressDaoToGrpcAddress(
+            offerDao.getBusiness().getAddress())).build();
+  }
+
+  private void buildFullOfferListResponseFromListDao(
+      StreamObserver<FullOfferList> responseObserver,
+      List<OfferDao> offersByCategory)
+  {
+    FullOfferList.Builder offerListBuilder = FullOfferList.newBuilder();
+    for (OfferDao offerDao : offersByCategory)
+    {
+      offerListBuilder.addOffer(buildOfferResponse(offerDao));
+    }
+
+    FullOfferList offerListResponse = offerListBuilder.build();
+    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
+    responseObserver.onNext(offerListResponse);
+    responseObserver.onCompleted();
+  }
 }
