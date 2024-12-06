@@ -17,6 +17,7 @@ builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IOrderService, OrderService>();
+builder.Services.AddScoped<IBusinessService, BusinessService>();
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();

@@ -13,7 +13,7 @@ public class BusinessService : IBusinessService
         this.client = client;
     }
     
-    public async Task<BusinessResponseDto> GetBusinessAsync(string id)
+    public async Task<BusinessResponseDto> GetBusinessByIdAsync(string id)
     {
         HttpResponseMessage response = 
             await client.GetAsync($"business/{id}");

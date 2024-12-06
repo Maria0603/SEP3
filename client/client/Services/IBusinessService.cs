@@ -4,5 +4,5 @@ namespace client.Services;
 
 public interface IBusinessService
 {
-    public Task<BusinessResponseDto> GetBusinessAsync(string id);
+    public Task<BusinessResponseDto> GetBusinessByIdAsync(string id);
 }
