@@ -11,14 +11,17 @@ import "UserService.proto";
 package proto;
 
 service CustomerService {
-  rpc RegisterCustomer(RegisterCustomerRequest) returns (EmptyMessage);
-  rpc GetCustomerByEmail(CustomerByEmailRequest) returns (CustomerResponse);
+  rpc RegisterCustomer(RegisterCustomerRequest) returns (IdRequestResponse);
+  rpc GetCustomerByEmail(EmailRequestResponse) returns (CustomerResponse);
   rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
-  rpc GetCustomerLocation(CustomerByEmailRequest) returns (CustomerLocationRequest);
+  rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
 }
 
 
-message CustomerByEmailRequest {
+message IdRequestResponse {
+  string id = 1;
+}
+message EmailRequestResponse {
   string email = 1;
 }
 
@@ -46,7 +49,7 @@ message CustomerLocationRequest {
   double latitude = 1;
   double longitude = 2;
   int32 radius = 3;
-  string customerEmail=4;
+  string customerId=4;
 }
 
 message BusinessOnMap {

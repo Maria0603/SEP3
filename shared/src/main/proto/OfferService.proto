@@ -11,15 +11,14 @@ package proto;
 service OfferService {
   rpc SaveOffer(SaveOfferRequest) returns (SaveOfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
-  rpc GetAvailableOffers(EmptyMessage) returns (OfferList);
   rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
+  rpc GetOffers(FilterRequest) returns (FullOfferList);
 
+  ///////////////////////////////////////////////////////////////////////
   rpc GetOffersByTime(TimeRangeRequest) returns (FullOfferList);
   rpc GetOffersByCategory(CategoryRequest) returns (FullOfferList);
   rpc GetOffersByPriceRange(PriceRangeRequest) returns (FullOfferList);
-
-  rpc GetOffers(FilterRequest) returns (FullOfferList);
-
+  //////////////////////////////////////////////////////////////////////
 }
 
 message FilterRequest {
@@ -28,6 +27,7 @@ message FilterRequest {
   optional int32 maxOfferPrice = 3;
   optional  google.protobuf.Timestamp pickupTimeStart = 4;
   optional  google.protobuf.Timestamp pickupTimeEnd = 5;
+  string userId = 6;
 }
 
 message TimeRangeRequest {
@@ -55,6 +55,7 @@ message SaveOfferRequest {
   repeated string categories = 9;
   string imagePath = 10;
   int32 numberOfAvailableItems = 11;
+  string businessId = 12;
 }
 
 message OfferIdRequest {
@@ -74,6 +75,9 @@ message OfferResponse {
   string imagePath = 11;
   string status = 12;
   int32 numberOfAvailableItems = 13;
+  string businessId = 14;
+  string businessName = 15;
+  string businessLogoPath = 16;
 }
 
 message SaveOfferResponse {
@@ -87,31 +91,17 @@ message SaveOfferResponse {
   google.protobuf.Timestamp pickupTimeEnd = 8;
   repeated string categories = 10;
   string imagePath = 11;
+  string businessId = 12;
+  string businessName = 13;
+  string businessLogoPath = 14;
 }
 
-message ShortOfferResponse
-{
-  string id = 1;
-  string title = 2;
-  int32 originalPrice = 3;
-  int32 offerPrice = 4;
-  int32 numberOfAvailableItems = 5;
-  google.protobuf.Timestamp pickupTimeStart = 7;
-  google.protobuf.Timestamp pickupTimeEnd = 8;
-  string imagePath = 9;
-  string status = 10;
-}
-message OfferList {
-  repeated ShortOfferResponse offer = 1;
-}
 
 message FullOfferList {
   repeated OfferResponse offer = 1;
 }
 
-message EmptyMessage {
 
-}
 
 
 
