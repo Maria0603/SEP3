@@ -23,6 +23,8 @@ public class ShortOfferResponseDto
   private LocalDateTime pickupTimeEnd;
   private String imagePath;
   private String status;
-
+  private String businessId;
+  private String businessName ;
+  private String businessLogoPath;
 }
 
