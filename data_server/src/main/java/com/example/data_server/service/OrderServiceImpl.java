@@ -45,6 +45,9 @@ import java.util.Optional;
     System.out.println("Request to add Order");
 
     OrderDao Order = generateOrderDaoFromAddOrderRequest(request);
+    OfferDao offer = offerRepository.findById(request.getOfferId()).get();
+    offerRepository.updateNumberOfAvailableItems(offer.getId(),
+        offer.getNumberOfAvailableItems() - request.getNumberOfItems());
     OrderDao createdOrder = orderRepository.save(Order);
 
     buildOrderResponseFromOrderDao(responseObserver, createdOrder);
