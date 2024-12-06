@@ -129,8 +129,7 @@ import java.util.Optional;
         .setLastName(customer.getLastName()).setEmail(customer.getEmail())
         .setPhoneNumber(customer.getPhoneNumber())
         .setHashedPassword(customer.getPassword()).setId(customer.getId())
-        .setAddress(AddressConverter.convertAddressDaoToGrpcAddress(
-            customer.getAddress())).setRole(customer.getRole()).build();
+        .setRole(customer.getRole()).build();
   }
 
   private CustomerDao generateCustomerDaoFromRegisterCustomerRequest(
@@ -143,8 +142,6 @@ import java.util.Optional;
     customer.setPassword(request.getHashedPassword());
     customer.setPhoneNumber(request.getPhoneNumber());
     customer.setRole(request.getRole());
-    customer.setAddress(
-        AddressConverter.convertGrpcAddressToAddressDao(request.getAddress()));
     return customer;
   }
 

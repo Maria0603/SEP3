@@ -16,8 +16,6 @@ public class CustomerDtoGrpcConverter
     return RegisterCustomerRequest.newBuilder().setFirstName(dto.getFirstName())
         .setLastName(dto.getLastName()).setEmail(dto.getEmail())
         .setPhoneNumber(dto.getPhoneNumber()).setHashedPassword(hashedPassword)
-        .setAddress(
-            AddressConverter.convertAddressDtoToGrpcAddress(dto.getAddress()))
         .setRole(UserRole.CUSTOMER.getRoleName()).build();
   }
 
