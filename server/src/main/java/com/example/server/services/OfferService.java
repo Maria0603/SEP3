@@ -80,7 +80,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
   public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
       Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
       Optional<String> pickupTimeEnd, Optional<List<String>> categories,
-      String userId)
+                                          Optional<String> userId)
   {
     var stringConverter = new StringToTimestampConverter();
     var req = FilterRequest.newBuilder();
@@ -93,7 +93,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     pickupTimeEnd.ifPresent(
         s -> req.setPickupTimeEnd(stringConverter.convert(s)));
 
-    req.setUserId(userId);
+    userId.ifPresent(req::setUserId);
 
     FullOfferList fullResponse = dataServerStub.getOffers(req.build());
     return OfferDtoGrpcConverter.convert(fullResponse);
@@ -160,4 +160,3 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     // FullOfferList fullResponse = dataServerStub.getOffers(req.build());
     // return FullOfferListToShortOfferListConverter.convert(fullResponse);
   }
-}

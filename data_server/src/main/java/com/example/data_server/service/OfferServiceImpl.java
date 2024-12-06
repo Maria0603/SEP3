@@ -147,71 +147,58 @@ import java.util.Optional;
   }
 
   @Override public void getOffers(FilterRequest request,
-      StreamObserver<FullOfferList> responseObserver)
-  {
+      StreamObserver<FullOfferList> responseObserver) {
 
     Optional<CustomerDao> customer = customerRepository.findById(
-        request.getUserId());
+            request.getUserId());
 
     CustomerDao customerDao;
     boolean hasLocationFilter;
-    if (customer.isPresent())
-    {
+    if (customer.isPresent()) {
       customerDao = customer.get();
       hasLocationFilter =
-          customerDao.getLatitude() != 0 && customerDao.getLongitude() != 0
-              && customerDao.getSearchRadius() > 0;
-    }
-    else
-    {
+              customerDao.getLatitude() != 0 && customerDao.getLongitude() != 0
+                      && customerDao.getSearchRadius() > 0;
+    } else {
       customerDao = null;
       hasLocationFilter = false;
     }
 
-    FullOfferList offerListResponse = offerListBuilder.build();
-    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
-    responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();
-  }
 
-  @Override public void getOffers(FilterRequest request,
-      StreamObserver<FullOfferList> responseObserver) {
-    try{
     List<OfferDao> filteredOffers;
     logger.info("Received FilterRequest: {}", request);
 
     var allOffers = offerRepository.findAll();
     logger.info("Received Offers: ", allOffers);
     filteredOffers = allOffers.stream().filter(
-            item -> !request.hasMaxOfferPrice()
-                || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
-            item -> !request.hasMinOfferPrice()
-                || item.getOfferPrice() >= request.getMinOfferPrice()).filter(
-            item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
-                .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-                    request.getPickupTimeStart()))).filter(
-            item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd().isAfter(
-                DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-                    request.getPickupTimeEnd()))).filter(
-            item -> request.getCategoriesList().isEmpty() || item.getCategories()
-                .stream().anyMatch(request.getCategoriesList()::contains))
-        .filter(item -> {
-          if (hasLocationFilter)
-          {
-            BusinessDao business = item.getBusiness();
-            double distance = GeoUtils.calculateDistance(
-                customerDao.getLatitude(), customerDao.getLongitude(),
-                business.getLocation().getCoordinates().getLast(),
-                business.getLocation().getCoordinates().getFirst());
-            return distance <= customerDao.getSearchRadius();
-          }
-          return true; // If no location filter, include all offers
-        })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-        .toList();
+                    item -> !request.hasMaxOfferPrice()
+                            || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
+                    item -> !request.hasMinOfferPrice()
+                            || item.getOfferPrice() >= request.getMinOfferPrice()).filter(
+                    item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
+                            .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                                    request.getPickupTimeStart()))).filter(
+                    item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd().isAfter(
+                            DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                                    request.getPickupTimeEnd()))).filter(
+                    item -> request.getCategoriesList().isEmpty() || item.getCategories()
+                            .stream().anyMatch(request.getCategoriesList()::contains))
+            .filter(item -> {
+              if (hasLocationFilter) {
+                BusinessDao business = item.getBusiness();
+                double distance = GeoUtils.calculateDistance(
+                        customerDao.getLatitude(), customerDao.getLongitude(),
+                        business.getLocation().getCoordinates().getLast(),
+                        business.getLocation().getCoordinates().getFirst());
+                return distance <= customerDao.getSearchRadius();
+              }
+              return true; // If no location filter, include all offers
+            })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+            .toList();
 
     filteredOffers = filteredOffers.stream().sorted(
-            (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-        .toList();
+                    (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+            .toList();
     //    var test = offerRepository.findAll();
     //    filteredOffers = test.stream().filter(
     //        offer -> offer.getCategories().stream()
@@ -219,16 +206,8 @@ import java.util.Optional;
 
     // Build the response
     buildFullOfferListResponseFromListDao(responseObserver, filteredOffers);
-}
-
-    FullOfferList offerListResponse = offerListBuilder.build();
-    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
-    responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();
-  } catch (Exception e) {
-    logger.error("Error processing getOffers: ", e);
-    responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("Internal server error").withCause(e).asRuntimeException());
   }
+
 private OfferDao generateOfferDaoFromSaveOfferRequest(SaveOfferRequest request)
 {
   OfferDao offer = new OfferDao();

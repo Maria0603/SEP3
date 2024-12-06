@@ -78,7 +78,7 @@ import java.util.Optional;
         Optional.ofNullable(maxOfferPrice),
         Optional.ofNullable(pickupTimeStart),
         Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories),
-        userId);
+            Optional.ofNullable(userId));
     return ResponseEntity.ok(response);
   }
 
