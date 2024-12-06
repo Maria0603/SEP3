@@ -155,22 +155,20 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
 
 
-    private List<Category> availableCategories = new List<Category> {
-        new Category { Name = "Bread" },
-        new Category { Name = "Vegan" },
-        new Category { Name = "Pastry" },
-        new Category { Name = "Dairy" }
+    private List<CategoryPickerComponent.Category> availableCategories = new List<CategoryPickerComponent.Category> {
+        new CategoryPickerComponent.Category() { Name = "Bread" },
+        new CategoryPickerComponent.Category { Name = "Vegan" },
+        new CategoryPickerComponent.Category { Name = "Pastry" },
+        new CategoryPickerComponent.Category { Name = "Dairy" }
     };
 
-    private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
+    // private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
     private string selectedCategory;
     private DateTime? dateValue = DateTime.Now.Date;
     private TimeOnly? timeStart;
     private TimeOnly? timeEnd;
     private string errorLabel = "";
     private string successLabel = "";
-    private OfferResponseDto? createdOffer;
-
     private OfferResponseDto? createdOffer = null;
     
 

@@ -50,6 +50,7 @@ public class DataServerStub
 
   public FullOfferList getOffers(FilterRequest request)
   {
+    System.out.println("DataServerStub:" + request);
     return offerBlockingStub.getOffers(request);
   }
 

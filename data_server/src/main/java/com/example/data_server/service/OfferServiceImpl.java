@@ -265,8 +265,12 @@ import java.util.Optional;
 
   @Override public void getOffers(FilterRequest request,
       StreamObserver<FullOfferList> responseObserver) {
+    try{
     List<OfferDao> filteredOffers;
+    logger.info("Received FilterRequest: {}", request);
+
     var allOffers = offerRepository.findAll();
+    logger.info("Received Offers: ", allOffers);
     filteredOffers = allOffers.stream().filter(
         item -> !request.hasMaxOfferPrice()
             || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
@@ -299,6 +303,10 @@ import java.util.Optional;
     logger.info("Sending SaveOfferResponse: {}", offerListResponse);
     responseObserver.onNext(offerListResponse);
     responseObserver.onCompleted();
+  } catch (Exception e) {
+    logger.error("Error processing getOffers: ", e);
+    responseObserver.onError(io.grpc.Status.INTERNAL.withDescription("Internal server error").withCause(e).asRuntimeException());
+  }
   }
 
 }

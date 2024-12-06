@@ -148,29 +148,18 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     var stringConverter = new StringToTimestampConverter();
     var req = FilterRequest.newBuilder();
 
-    if (minOfferPrice.isPresent()) {
-      req.setMinOfferPrice(minOfferPrice.get());
-    }
 
-    if (maxOfferPrice.isPresent()) {
-      req.setMaxOfferPrice(maxOfferPrice.get());
-    }
+      minOfferPrice.ifPresent(req::setMinOfferPrice);
 
-    if (categories.isPresent()) {
-      req.addAllCategories(categories.get());
-    }
+      maxOfferPrice.ifPresent(req::setMaxOfferPrice);
 
-    if (pickupTimeStart.isPresent()) {
-      req.setPickupTimeStart(stringConverter.convert(pickupTimeStart.get()));
-    }
+      categories.ifPresent(req::addAllCategories);
 
-    if (pickupTimeEnd.isPresent()) {
-      req.setPickupTimeEnd(stringConverter.convert(pickupTimeEnd.get()));
-    }
+      pickupTimeStart.ifPresent(s -> req.setPickupTimeStart(stringConverter.convert(s)));
+
+      pickupTimeEnd.ifPresent(s -> req.setPickupTimeEnd(stringConverter.convert(s)));
 
     FullOfferList fullResponse = dataServerStub.getOffers(req.build());
     return FullOfferListToShortOfferListConverter.convert(fullResponse);
-//    return response.getOfferList().stream()
-//        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
   }
 }

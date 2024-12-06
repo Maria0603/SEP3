@@ -7,56 +7,56 @@
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor
 
-<div class="search-bar-container">
-    <div class="map-icon">
-        <i class="bi bi-geo-alt"></i>
-    </div>
-    <div class="search-bar">
-        <input class="search-input" placeholder="Search..." />
-        <div class="search-icon">
-            <i class="bi bi-search"></i>
-        </div>
-    </div>
-    <div class="filter-icon-bubble" @onclick="ToggleFilters">
-        <i class="bi bi-sliders"></i>
-    </div>
-</div>
+@* <div class="search-bar-container"> *@
+@*     <div class="map-icon"> *@
+@*         <i class="bi bi-geo-alt"></i> *@
+@*     </div> *@
+@*     <div class="search-bar"> *@
+@*         <input class="search-input" placeholder="Search..." /> *@
+@*         <div class="search-icon"> *@
+@*             <i class="bi bi-search"></i> *@
+@*         </div> *@
+@*     </div> *@
+@*     <div class="filter-icon-bubble" @onclick="ToggleFilters"> *@
+@*         <i class="bi bi-sliders"></i> *@
+@*     </div> *@
+@* </div> *@
 
-@if (showFilterPopup)
-{
-    <div class="popup-overlay">
-        <div class="popup-window">
-            <div class="popup-header">
-                <h3>Filters</h3>
-                <button class="close-button" @onclick="ToggleFilters">&times;</button>
-            </div>
-            <div class="popup-body">
-                <!-- Category Picker for Filters -->
-                <CategoryPickerComponent @bind-selectedCategories="selectedCategories" />
+@* @if (showFilterPopup) *@
+@* { *@
+@*     <div class="popup-overlay"> *@
+@*         <div class="popup-window"> *@
+@*             <div class="popup-header"> *@
+@*                 <h3>Filters</h3> *@
+@*                 <button class="close-button" @onclick="ToggleFilters">&times;</button> *@
+@*             </div> *@
+@*             <div class="popup-body"> *@
+@*                 <!-- Category Picker for Filters --> *@
+@*                 <CategoryPickerComponent @bind-selectedCategories="selectedCategories" /> *@
+@* *@
+@*                 <!-- Collection Time Filter --> *@
+@*                 <div class="filter-section"> *@
+@*                     <label>Collection Time</label> *@
+@*                     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1" /> *@
+@*                     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
+@*                 </div> *@
+@* *@
+@*                 <!-- Price Range Filter --> *@
+@*                 <div class="filter-section"> *@
+@*                     <label>Price Range</label> *@
+@*                     <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1" /> *@
+@*                     <p>From: @priceRange[0] To: @priceRange[1]</p> *@
+@*                 </div> *@
+@*             </div> *@
+@*             <div class="popup-footer"> *@
+@*                 <button class="clear-button" @onclick="ClearFilters">Clear Filters</button> *@
+@*                 <button class="apply-button" @onclick="ApplyFilters">Apply</button> *@
+@*             </div> *@
+@*         </div> *@
+@*     </div> *@
+@* } *@
 
-                <!-- Collection Time Filter -->
-                <div class="filter-section">
-                    <label>Collection Time</label>
-                    <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1" />
-                    <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p>
-                </div>
-
-                <!-- Price Range Filter -->
-                <div class="filter-section">
-                    <label>Price Range</label>
-                    <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1" />
-                    <p>From: @priceRange[0] To: @priceRange[1]</p>
-                </div>
-            </div>
-            <div class="popup-footer">
-                <button class="clear-button" @onclick="ClearFilters">Clear Filters</button>
-                <button class="apply-button" @onclick="ApplyFilters">Apply</button>
-            </div>
-        </div>
-    </div>
-}
-
-<div @attributes="AdditionalAttributes" class="offer" @onclick="()=>ShowOfferDetails(OfferDto.Id)">
+<div @attributes="AdditionalAttributes" class="offer" @onclick="() => ShowOfferDetails(OfferDto.Id)">
     <div class="offer__top">
         <div class="offer__top--left">@OfferDto.NumberOfAvailableItems Left</div>
         <svg class="offer__top--favourite @(false ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -65,24 +65,23 @@
 
         <div class="offer__top--business">
             <div class="offer__top--business__icon">
-                @if (!string.IsNullOrEmpty(OfferData.ImagePath))
+                @if (!string.IsNullOrEmpty(OfferDto.ImagePath))
                 {
-                <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+                <img src="@(HttpClient.BaseAddress + OfferDto.ImagePath)" alt="Offer Image">
                 }
                 else
                 {
                 <img src="images/icons/cart.jpeg" alt="Default Logo">
                 }
             </div>
-            <h3 class="offer__top--business__name"> Business name</h3>
-            @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
+            <h3 class="offer__top--business__name">Business Name</h3>
         </div>
     </div>
 
     <div class="offer__img">
-        @if (!string.IsNullOrEmpty(OfferData.ImagePath))
+        @if (!string.IsNullOrEmpty(OfferDto.ImagePath))
         {
-        <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+        <img src="@(HttpClient.BaseAddress + OfferDto.ImagePath)" alt="Offer Image">
         }
         else
         {
@@ -93,25 +92,24 @@
     <div class="offer__bottom">
         <h3 class="offer__bottom--name">@OfferDto.Title</h3>
         <div class="offer__bottom--pickup">
-            Collect on <em>@OfferData.PickupTimeStart.Day/@OfferData.PickupTimeStart.Month/@OfferData.PickupTimeStart.Year</em>, 
-            from <em>@OfferData.PickupTimeStart.Hour:@OfferData.PickupTimeStart.Minute</em> 
-            to <em>@OfferData.PickupTimeEnd.Hour:@OfferData.PickupTimeEnd.Minute</em> 
+            Collect on <em>@OfferDto.PickupTimeStart:dd/MM/yyyy</em>,
+            from <em>@OfferDto.PickupTimeStart:HH:mm</em>
+            to <em>@OfferDto.PickupTimeEnd:HH:mm</em>
         </div>
         <div class="offer__bottom--stats">
             <div class="offer__bottom--stats__rating">
                 <svg class="offer__bottom--stats__rating--svg" width="26" height="24" viewBox="0 0 26 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12.0489 0.927052C12.3483 0.00574109 13.6517 0.00573986 13.9511 0.92705L16.1432 7.67376C16.2771 8.08578 16.661 8.36475 17.0943 8.36475H24.1882C25.1569 8.36475 25.5597 9.60436 24.776 10.1738L19.0369 14.3435C18.6864 14.5981 18.5397 15.0495 18.6736 15.4615L20.8657 22.2082C21.1651 23.1295 20.1106 23.8956 19.3269 23.3262L13.5878 19.1565C13.2373 18.9019 12.7627 18.9019 12.4122 19.1565L6.67312 23.3262C5.88941 23.8956 4.83493 23.1295 5.13428 22.2082L7.32642 15.4615C7.46029 15.0495 7.31363 14.5981 6.96315 14.3435L1.22405 10.1738C0.440337 9.60436 0.843112 8.36475 1.81184 8.36475H8.90575C9.33897 8.36475 9.72293 8.08578 9.8568 7.67376L12.0489 0.927052Z" fill="white"/>
+                    <path d="M12.0489 0.927052C12.3483 0.00574109 13.6517 0.00573986 13.9511 0.92705L16.1432 7.67376C16.2771 8.08578 16.661 8.36475 17.0943 8.36475H24.1882C25.1569 8.36475 25.5597 9.60436 24.776 10.1738L19.0369 14.3435C18.6864 14.5981 18.5397 15.0495 18.6736 15.4615L20.8657 22.2082C21.1651 23.1295 20.1106 23.8956 19.3269 23.3262L13.5878 19.1565C13.2373 18.9019 12.7627 18.9019 12.4122 19.1565L6.67312 23.3262C5.88941 23.8956 4.83493 23.1295 5.13428 22.2082L7.32642 15.4615C7.46029 15.0495 7.31363 14.5981 6.96315 14.3435L1.22405 10.1738C0.440337 9.60436 0.843112 8.36475 1.81184 8.36475H8.90575C9.33897 8.36475 9.72293 8.08578 9.8568 7.67376L12.0489 0.927052Z" fill="white" />
                 </svg>
                 <p class="offer__bottom--stats__rating--text">3.5</p>
-                @* <p class="offer__bottom--stats__rating--text">@OfferData.Rating</p> *@
             </div>
-    
+
             <div class="offer__bottom--stats__distance">10 km</div>
-            @* <div class="offer__bottom--stats__distance">@OfferData.Distance km</div> *@
-            <div class="offer__bottom--stats__price">@OfferData.OfferPrice.ToString("0.00") kr.</div>
+            <div class="offer__bottom--stats__price">@OfferDto.OfferPrice.ToString("0.00") kr.</div>
         </div>
     </div>
 </div>
+
 
 @code {
    
@@ -134,30 +132,30 @@
         NavigationManager.NavigateTo($"offers/{OfferDto.Id}");
     }
     
-    private void ToggleFilters()
-    {
-        showFilterPopup = !showFilterPopup;
-    }
-    
-    private void ApplyFilters()
-    {
-        showFilterPopup = false;
-        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
-
-        filterRequestDto = new FilterRequestDto
-        {
-            Categories = selectedCategories?.Select(c => c.Name).ToList(),
-            MinOfferPrice = priceRange[0],
-            MaxOfferPrice = priceRange[1],
-            PickupTimeStart = new TimeDto { Hour = timeRange[0], Minute = 0 },
-            PickupTimeEnd = new TimeDto { Hour = timeRange[1], Minute = 0 }
-        };
-    }
-    
-    private void ClearFilters()
-    {
-        priceRange = new int[] { 0, 500 };
-        timeRange = new int[] { 0, 24 };
-        Console.WriteLine("Filters Cleared");
-    }
+    // private void ToggleFilters()
+    // {
+    //     showFilterPopup = !showFilterPopup;
+    // }
+    //
+    // private void ApplyFilters()
+    // {
+    //     showFilterPopup = false;
+    //     Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
+    //
+    //     filterRequestDto = new FilterRequestDto
+    //     {
+    //         Categories = selectedCategories?.Select(c => c.Name).ToList(),
+    //         MinOfferPrice = priceRange[0],
+    //         MaxOfferPrice = priceRange[1],
+    //         PickupTimeStart = new TimeDto { Hour = timeRange[0], Minute = 0 },
+    //         PickupTimeEnd = new TimeDto { Hour = timeRange[1], Minute = 0 }
+    //     };
+    // }
+    //
+    // private void ClearFilters()
+    // {
+    //     priceRange = new int[] { 0, 500 };
+    //     timeRange = new int[] { 0, 24 };
+    //     Console.WriteLine("Filters Cleared");
+    // }
 }

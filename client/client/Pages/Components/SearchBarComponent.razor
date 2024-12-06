@@ -6,39 +6,48 @@
 @code {
     private bool showFilterPopup = false;
     private int[] priceRange = { 10, 100 };
+
     private int[] timeRange = { 6, 16 };
+
+    // Date range
+    private DateTime? pickupDateStart { get; set; }
+    private DateTime? pickupDateEnd { get; set; }
 
     private FilterRequestDto? filterRequestDto;
     private List<CategoryPickerComponent.Category>? selectedCategories = new();
-    
+
     private void OnSelectedCategoriesChanged(List<CategoryPickerComponent.Category> categories)
     {
         // Handle updated categories
         selectedCategories = categories;
     }
 
-    private void ToggleFilters() {
+    private void ToggleFilters()
+    {
         showFilterPopup = !showFilterPopup;
     }
 
-    private void ApplyFilters() {
+    private void ApplyFilters()
+    {
         showFilterPopup = false;
-        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
-        filterRequestDto = new FilterRequestDto {
+        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}");
+        filterRequestDto = new FilterRequestDto
+        {
             Categories = selectedCategories.Select(c => c.Name).ToList(),
             MinOfferPrice = priceRange[0],
             MaxOfferPrice = priceRange[1],
-            PickupTimeStart = new TimeDto { Hour = timeRange[0], Minute = 0 },
-            PickupTimeEnd = new TimeDto { Hour = timeRange[1], Minute = 0 }
+            PickupTimeStart = pickupDateStart,
+            PickupTimeEnd = pickupDateEnd
         };
     }
 
-    private void ClearFilters() {
+    private void ClearFilters()
+    {
         priceRange = new int[] { 0, 100 };
         timeRange = new int[] { 0, 24 };
         Console.WriteLine("Filters Cleared");
     }
-    
+
 
 }
 
@@ -57,7 +66,8 @@
     </div>
 </div>
 
-@if (showFilterPopup) {
+@if (showFilterPopup)
+{
     <div class="popup-overlay">
         <div class="popup-window">
             <div class="popup-header">
@@ -65,13 +75,25 @@
                 <button class="close-button" @onclick="ToggleFilters">&times;</button>
             </div>
             <div class="popup-body">
-                <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged" />
+                <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged"/>
                 <div class="filter-section">
-                    <label>Collection Time</label>
-                    <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1">
-                    </SfSlider>
-                    <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p>
+                    <label>Collection Date</label>
+                    <div class="date-range">
+                        <InputDate @bind-Value="pickupDateStart" class="form-control" Placeholder="Start Date"/>
+                        <span class="mx-2">to</span>
+                        <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
+                    </div>
                 </div>
+
+
+                @* <div class="filter-section"> *@
+                @*     <label>Collection Time</label> *@
+                @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
+                @*     </SfSlider> *@
+                @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
+                @* </div> *@
+
+
                 <div class="filter-section">
                     <label>Price Range</label>
                     <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">

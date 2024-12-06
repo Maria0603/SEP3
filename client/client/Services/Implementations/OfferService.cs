@@ -64,8 +64,8 @@ public class OfferService : IOfferService {
     {
         query.Append($"?minOfferPrice={filterRequestDto.MinOfferPrice}");
         query.Append($"&maxOfferPrice={filterRequestDto.MaxOfferPrice}");
-        query.Append($"&pickupTimeStart={filterRequestDto.PickupTimeStart.Hour}:{filterRequestDto.PickupTimeStart.Minute}");
-        query.Append($"&pickupTimeEnd={filterRequestDto.PickupTimeEnd.Hour}:{filterRequestDto.PickupTimeEnd.Minute}");
+        query.Append($"&pickupTimeStart={filterRequestDto.PickupTimeStart}");
+        query.Append($"&pickupTimeEnd={filterRequestDto.PickupTimeEnd}");
 
         foreach (var category in filterRequestDto.Categories)
         {
