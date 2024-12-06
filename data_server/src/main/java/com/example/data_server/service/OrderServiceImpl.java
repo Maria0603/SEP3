@@ -10,6 +10,7 @@ import com.example.shared.dao.domainDao.OrderDao;
 import com.example.shared.dao.usersDao.BusinessDao;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.dao.usersDao.CustomerDao;
+import com.example.shared.model.OfferStatus;
 import com.example.shared.model.OrderStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -46,8 +47,14 @@ import java.util.Optional;
 
     OrderDao Order = generateOrderDaoFromAddOrderRequest(request);
     OfferDao offer = offerRepository.findById(request.getOfferId()).get();
+
+    if(offer.getNumberOfAvailableItems() == request.getNumberOfItems())
+      offerRepository.updateStatus(offer.getId(), OfferStatus.RESERVED.getStatus());
+
     offerRepository.updateNumberOfAvailableItems(offer.getId(),
         offer.getNumberOfAvailableItems() - request.getNumberOfItems());
+
+
     OrderDao createdOrder = orderRepository.save(Order);
 
     buildOrderResponseFromOrderDao(responseObserver, createdOrder);

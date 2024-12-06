@@ -17,6 +17,10 @@ public interface OfferRepository extends MongoRepository<OfferDao, String>
   @Update("{ $set: { 'number_of_available_items': ?1} }")
   void updateNumberOfAvailableItems(String offerId, int numberOfItems);
 
+  @Query("{ '_id': ?0 }")
+  @Update("{ $set: { 'status': ?1} }")
+  void updateStatus(String offerId, String status);
+
   @Query("{ 'categories' : { $in: ?0 } }")
   List<OfferDao> findByCategories(List<String> categories);
 

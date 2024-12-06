@@ -172,8 +172,8 @@ import java.util.Optional;
     }
 
     List<OfferDao> filteredOffers;
-    var allOffers = offerRepository.findAll();
-    filteredOffers = allOffers.stream().filter(
+    var allAvailableOffers = offerRepository.findByStatus(OfferStatus.AVAILABLE.getStatus());
+    filteredOffers = allAvailableOffers.stream().filter(
             item -> !request.hasMaxOfferPrice()
                 || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
             item -> !request.hasMinOfferPrice()
