@@ -12,6 +12,7 @@ import java.util.List;
 public interface OfferRepository extends MongoRepository<OfferDao, String>
 {
   List<OfferDao> findByStatus(String status);
+  List<OfferDao> findByBusinessId(String businessId);
 
   @Query("{ 'categories' : { $in: ?0 } }")
   List<OfferDao> findByCategories(List<String> categories);

@@ -9,11 +9,13 @@ import com.example.shared.converters.DateTimeConverter;
 import com.google.protobuf.Timestamp;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class OfferDtoGrpcConverter
 {
   public static SaveOfferRequest CreateOfferRequestDto_To_SaveOfferRequest(
-      CreateOfferRequestDto createOfferRequestDto, String imagePath)
+      CreateOfferRequestDto createOfferRequestDto, String imagePath, String userId)
   {
     // Create SaveOfferRequest builder
     SaveOfferRequest.Builder saveOfferRequestBuilder = SaveOfferRequest.newBuilder();
@@ -33,6 +35,8 @@ public class OfferDtoGrpcConverter
     saveOfferRequestBuilder.addAllCategories(
         createOfferRequestDto.getCategories());
     saveOfferRequestBuilder.setImagePath(imagePath);
+
+    saveOfferRequestBuilder.setBusinessId(userId);
 
     Timestamp pickupTimeStart = DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
         createOfferRequestDto.getPickupTimeStart());
@@ -102,27 +106,6 @@ public class OfferDtoGrpcConverter
     return dto;
   }
 
-  public static ShortOfferResponseDto ShortOfferResponseGrpc_To_ShortOfferResponseDto(
-      ShortOfferResponse offerResponseGrpc)
-  {
-    ShortOfferResponseDto dto = new ShortOfferResponseDto();
-    dto.setId(offerResponseGrpc.getId());
-    dto.setTitle(offerResponseGrpc.getTitle());
-    dto.setOriginalPrice(offerResponseGrpc.getOriginalPrice());
-    dto.setOfferPrice(offerResponseGrpc.getOfferPrice());
-    dto.setNumberOfAvailableItems(
-        offerResponseGrpc.getNumberOfAvailableItems());
-    dto.setPickupTimeStart(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            offerResponseGrpc.getPickupTimeStart()));
-    dto.setPickupTimeEnd(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            offerResponseGrpc.getPickupTimeEnd()));
-    dto.setStatus(offerResponseGrpc.getStatus());
-
-    return dto;
-  }
-
   public static OfferResponseDto OfferResponseGrpc_To_OfferResponseDto(
       OfferResponse response)
   {
@@ -168,5 +151,24 @@ public class OfferDtoGrpcConverter
     dto.setStatus(offerResponseDto.getStatus());
 
     return dto;
+  }
+
+  public static List<OfferResponseDto> convert(FullOfferList fullOfferList)
+  {
+    return fullOfferList.getOfferList().stream().map(
+            offer -> OfferResponseDto.builder().id(offer.getId())
+                .title(offer.getTitle()).originalPrice(offer.getOriginalPrice())
+                .offerPrice(offer.getOfferPrice())
+                .numberOfAvailableItems(offer.getNumberOfAvailableItems())
+                .pickupTimeStart(
+                    DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                        offer.getPickupTimeStart())).pickupTimeEnd(
+                    DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
+                        offer.getPickupTimeEnd())).imagePath(offer.getImagePath())
+                .status(offer.getStatus()).businessId(offer.getBusinessId())
+                .categories(offer.getCategoriesList()).description(offer.getDescription())
+                .businessLogoPath(offer.getBusinessLogoPath())
+                .businessName(offer.getBusinessName()).build())
+        .collect(Collectors.toList());
   }
 }

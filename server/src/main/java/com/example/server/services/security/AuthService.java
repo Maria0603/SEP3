@@ -23,12 +23,11 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-public class AuthService 
+@Service public class AuthService
 {
 
-    private final DataServerStub dataServerStub;
-    private final ImageStorageService imageStorageService;
+  private final DataServerStub dataServerStub;
+  private final ImageStorageService imageStorageService;
 
   private final JWTUtils jwtUtils;
   private final PasswordEncoder passwordEncoder;
@@ -46,10 +45,10 @@ public class AuthService
     this.imageStorageService = imageService;
     this.geocodingService = geocodingService;
 
-        this.jwtUtils = jwtUtils;
-        this.passwordEncoder = passwordEncoder;
-        this.authenticationManager = authenticationManager;
-        this.userDetailsService = userDetailsService;
+    this.jwtUtils = jwtUtils;
+    this.passwordEncoder = passwordEncoder;
+    this.authenticationManager = authenticationManager;
+    this.userDetailsService = userDetailsService;
 
     System.out.println("AuthService created");
   }
@@ -70,7 +69,6 @@ public class AuthService
       Map<String, Double> location = geocodingService.geocodeAddress(
           registrationRequestDto.getAddress());
 
-
       //Transform the dto to grpc message
       RegisterBusinessRequest registerBusinessRequest = BusinessDtoGrpcConverter.RegisterBusinessRequestDto_To_RegisterBusinessRequest(
           registrationRequestDto, logoPath, location.get("lat"),
@@ -78,7 +76,8 @@ public class AuthService
           passwordEncoder.encode(registrationRequestDto.getPassword()));
 
       //Send the request to the data server
-      dataServerStub.registerBusiness(registerBusinessRequest);
+      String userId = dataServerStub.registerBusiness(registerBusinessRequest)
+          .getId();
 
       UserDetails userDetails = userDetailsService.loadUserByUsername(
           registrationRequestDto.getEmail());
@@ -86,7 +85,7 @@ public class AuthService
       System.out.println("USER IS: " + userDetails.getUsername());
 
       //Generate the token
-      String jwt = jwtUtils.generateToken(userDetails);
+      String jwt = jwtUtils.generateToken(userDetails, userId);
       String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
           userDetails);
 
@@ -101,93 +100,134 @@ public class AuthService
         imageStorageService.deleteImage(logoPath); //rollback
       throw new IllegalArgumentException("Failed to save the image");
     }
-}
+  }
 
-    private String saveImageAndGetPath(byte[] logo) throws IOException {
-        if (logo == null || logo.length == 0) {
-            throw new IllegalArgumentException("Logo cannot be null or empty");
-        }
-
-        return imageStorageService.getBaseDirectory() + imageStorageService.saveImage(logo);
+  private String saveImageAndGetPath(byte[] logo) throws IOException
+  {
+    if (logo == null || logo.length == 0)
+    {
+      throw new IllegalArgumentException("Logo cannot be null or empty");
     }
 
-    public CredentialsResponseDto registerCustomer(RegisterCustomerRequestDto registrationRequestDto) {
-        System.out.println("Request for register customer in service");
+    return imageStorageService.getBaseDirectory()
+        + imageStorageService.saveImage(logo);
+  }
 
-        try {
-            // Transform the DTO into a gRPC message
-            RegisterCustomerRequest grpcRequest = CustomerDtoGrpcConverter.RegisterCustomerRequestDto_To_RegisterCustomerRequest(
-                    registrationRequestDto,
-                    passwordEncoder.encode(registrationRequestDto.getPassword())
-            );
+  public CredentialsResponseDto registerCustomer(
+      RegisterCustomerRequestDto registrationRequestDto)
+  {
+    System.out.println("Request for register customer in service");
 
-            // Send the request to the data server and generate tokens
-            dataServerStub.registerCustomer(grpcRequest);
-            return generateAndReturnCredentials(registrationRequestDto.getEmail());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("Failed to register customer");
-        }
+    try
+    {
+      // Transform the DTO into a gRPC message
+      RegisterCustomerRequest grpcRequest = CustomerDtoGrpcConverter.RegisterCustomerRequestDto_To_RegisterCustomerRequest(
+          registrationRequestDto,
+          passwordEncoder.encode(registrationRequestDto.getPassword()));
+
+      // Send the request to the data server and generate tokens
+      String userId = dataServerStub.registerCustomer(grpcRequest).getId();
+      return generateAndReturnCredentials(registrationRequestDto.getEmail(),
+          userId);
     }
-
-    private CredentialsResponseDto generateAndReturnCredentials(String email) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(email);
-
-        System.out.println("USER IS: " + userDetails.getUsername());
-
-        // Generate the token
-        String jwt = jwtUtils.generateToken(userDetails);
-        String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(), userDetails);
-
-        System.out.println("Token successfully generated");
-
-        // Return the credentials
-        return buildCredentialsResponseDto(jwt, refreshToken);
+    catch (Exception e)
+    {
+      e.printStackTrace();
+      throw new IllegalArgumentException("Failed to register customer");
     }
+  }
 
-    public CredentialsResponseDto logIn(LoginRequestDto loginRequest) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
-                            loginRequest.getPassword()));
+  private CredentialsResponseDto generateAndReturnCredentials(String email,
+      String userId)
+  {
+    UserDetails userDetails = userDetailsService.loadUserByUsername(email);
 
-            UserDetails userDetails = userDetailsService.loadUserByUsername(
-                    loginRequest.getEmail());
+    System.out.println("USER IS: " + userDetails.getUsername());
+
+    // Generate the token
+    String jwt = jwtUtils.generateToken(userDetails, userId);
+    String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
+        userDetails);
+
+    System.out.println("Token successfully generated");
+
+    // Return the credentials
+    return buildCredentialsResponseDto(jwt, refreshToken);
+  }
+
+  public CredentialsResponseDto logIn(LoginRequestDto loginRequest)
+  {
+    try
+    {
+      authenticationManager.authenticate(
+          new UsernamePasswordAuthenticationToken(loginRequest.getEmail(),
+              loginRequest.getPassword()));
+
+      UserDetails userDetails = userDetailsService.loadUserByUsername(
+          loginRequest.getEmail());
+      String userId = null;
+      try
+      {
+        userId = dataServerStub.getUserByEmail(
+            UserByEmailRequest.newBuilder()
+                .setEmail(loginRequest.getEmail()).build()).getId();
+      }
+      catch (Exception e)
+      {
+        throw new IllegalArgumentException("No user with email: " + loginRequest.getEmail());
+      }
 
       /*BusinessResponse user = dataServerStub.getBusinessByEmail(
           BusinessByEmailRequest.newBuilder().setEmail(loginRequest.getEmail())
               .build());*/
-            System.out.println("USER IS: " + userDetails.getUsername());
-            String jwt = jwtUtils.generateToken(userDetails);
-            String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
-                    userDetails);
+      System.out.println("USER IS: " + userDetails.getUsername());
+      String jwt = jwtUtils.generateToken(userDetails, userId);
+      String refreshToken = jwtUtils.generateRefreshToken(new HashMap<>(),
+          userDetails);
 
-            return buildCredentialsResponseDto(jwt, refreshToken);
-        } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage());
-        }
+      return buildCredentialsResponseDto(jwt, refreshToken);
     }
-
-    public CredentialsResponseDto refreshToken(
-            RefreshTokenRequest refreshTokenRequest) {
-        String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
-
-        UserDetails business = userDetailsService.loadUserByUsername(
-                email); //Remember, the username is the email
-
-        if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(), business)) {
-            var jwt = jwtUtils.generateToken(business);
-            return buildCredentialsResponseDto(jwt, refreshTokenRequest.getToken());
-        }
-        throw new IllegalArgumentException("Invalid refresh token");
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
     }
+  }
 
-    private CredentialsResponseDto buildCredentialsResponseDto(String token,
-                                                               String refreshToken) {
-        CredentialsResponseDto dto = new CredentialsResponseDto();
-        dto.setToken(token);
-        dto.setRefreshToken(refreshToken);
-        return dto;
+  public CredentialsResponseDto refreshToken(
+      RefreshTokenRequest refreshTokenRequest)
+  {
+    String email = jwtUtils.extractUsername(refreshTokenRequest.getToken());
+
+    UserDetails user = userDetailsService.loadUserByUsername(
+        email); //Remember, the username is the email
+
+    if (jwtUtils.isTokenValid(refreshTokenRequest.getToken(), user))
+    {
+      String userId = null;
+      try
+      {
+        userId = dataServerStub.getUserByEmail(
+            UserByEmailRequest.newBuilder()
+                .setEmail(user.getUsername()).build()).getId();
+      }
+      catch (Exception e)
+      {
+        throw new IllegalArgumentException("No user with email: " + user.getUsername());
+      }
+
+      var jwt = jwtUtils.generateToken(user, userId);
+      return buildCredentialsResponseDto(jwt, refreshTokenRequest.getToken());
     }
+    throw new IllegalArgumentException("Invalid refresh token");
+  }
+
+  private CredentialsResponseDto buildCredentialsResponseDto(String token,
+      String refreshToken)
+  {
+    CredentialsResponseDto dto = new CredentialsResponseDto();
+    dto.setToken(token);
+    dto.setRefreshToken(refreshToken);
+    return dto;
+  }
 
 }

@@ -1,5 +1,7 @@
 package com.example.shared.dao.domainDao;
 
+import com.example.shared.dao.usersDao.BusinessDao;
+import com.example.shared.dao.usersDao.CustomerDao;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -11,17 +13,30 @@ import java.time.LocalDateTime;
 {
   @Id private String id;
   @DBRef @Field("offer_id") private OfferDao offer;
-  @Field("user_id") private String userId;
+  @DBRef @Field("customer_id") private CustomerDao customer;
+  @DBRef @Field("business_id") private BusinessDao business;
   @Field("number_of_items") private int numberOfItems;
   @Field("order_time") private LocalDateTime orderTime;
   @Field("status") private String status;
   @Field("price_per_item") private int pricePerItem;
 
-  public OrderDao(String id, OfferDao offer, String userId, int numberOfItems, LocalDateTime orderTime, String status, int pricePerItem)
+  public BusinessDao getBusiness()
+  {
+    return business;
+  }
+
+  public void setBusiness(BusinessDao business)
+  {
+    this.business = business;
+  }
+
+  public OrderDao(String id, OfferDao offer, CustomerDao customer,
+      int numberOfItems, LocalDateTime orderTime, String status,
+      int pricePerItem)
   {
     this.id = id;
     this.offer = offer;
-    this.userId = userId;
+    this.customer = customer;
     this.numberOfItems = numberOfItems;
     this.orderTime = orderTime;
     this.status = status;
@@ -82,14 +97,14 @@ import java.time.LocalDateTime;
     this.offer = offer;
   }
 
-  public String getUserId()
+  public CustomerDao getCustomer()
   {
-    return userId;
+    return customer;
   }
 
-  public void setUserId(String userId)
+  public void setCustomer(CustomerDao customer)
   {
-    this.userId = userId;
+    this.customer = customer;
   }
 
   public int getNumberOfItems()

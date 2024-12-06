@@ -2,6 +2,7 @@ package com.example.server.contollers;
 
 import com.example.server.dto.order.*;
 import com.example.server.services.OrderService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +23,14 @@ import java.util.List;
   }
 
   @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<PlaceOrderSessionResponseDto> placeOrder(
-      @RequestBody PlaceOrderRequestDto orderRequest)
+      @RequestBody PlaceOrderRequestDto orderRequest, HttpServletRequest request)
   {
+    String userId = (String) request.getAttribute("userId");
     System.out.println("Request for place order in controller.");
     try
     {
       PlaceOrderSessionResponseDto response = orderService.placeOrder(
-          orderRequest);
+          orderRequest, userId);
       return ResponseEntity.ok(response);
     }
     catch (IllegalArgumentException e)
@@ -48,11 +50,12 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<List<OrderResponseDto>> getOrders()
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<List<OrderResponseDto>> getOrders(HttpServletRequest request)
   {
+    String userId = (String) request.getAttribute("userId");
     try
     {
-      List<OrderResponseDto> orders = orderService.getAllOrders();
+      List<OrderResponseDto> orders = orderService.getAllOrders(userId);
       return ResponseEntity.ok(orders);
     }
     catch (Exception e)

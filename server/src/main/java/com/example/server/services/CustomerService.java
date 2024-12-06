@@ -26,11 +26,11 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
   }
 
   public List<BusinessInRadiusResponseDto> updateCustomerLocation(
-      CustomerLocationRequestDto request, String customerEmail)
+      CustomerLocationRequestDto request, String userId)
   {
     BusinessesInRadiusResponse databaseResponse = dataServerStub.updateCustomerLocation(
         generateCustomerLocationRequestFromCustomerLocationRequestDto(request,
-            customerEmail));
+            userId));
 
     List<BusinessInRadiusResponseDto> businessesInRadiusResponseDto = new ArrayList<>();
 
@@ -43,10 +43,10 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
     return businessesInRadiusResponseDto;
   }
 
-  public List<BusinessInRadiusResponseDto> getBusinessesInRadius(String customerEmail)
+  public List<BusinessInRadiusResponseDto> getBusinessesInRadius(String userId)
   {
     BusinessesInRadiusResponse databaseResponse = dataServerStub.getBusinessesInRadius(
-        BusinessesInRadiusRequest.newBuilder().setCustomerEmail(customerEmail).build());
+        IdRequestResponse.newBuilder().setId(userId).build());
     List<BusinessInRadiusResponseDto> businessesInRadiusResponseDto = new ArrayList<>();
 
     for (BusinessOnMap business : databaseResponse.getBusinessesList())

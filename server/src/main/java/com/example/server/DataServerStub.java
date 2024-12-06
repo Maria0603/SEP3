@@ -28,11 +28,6 @@ public class DataServerStub
   }
 
   // ********************************* OFFERS *********************************
-  public OfferList getAvailableOffers(EmptyMessage request)
-  {
-    return offerBlockingStub.getAvailableOffers(request);
-  }
-
   public SaveOfferResponse saveOffer(SaveOfferRequest request)
   {
     return offerBlockingStub.saveOffer(request);
@@ -68,7 +63,7 @@ public class DataServerStub
     return orderBlockingStub.getOrderById(request);
   }
 
-  public OrderList getAllOrders(EmptyMessage request)
+  public OrderList getAllOrders(IdRequestResponse request)
   {
     return orderBlockingStub.getAllOrders(request);
   }
@@ -80,29 +75,29 @@ public class DataServerStub
 
   // ********************************* BUSINESS *********************************
 
-  public void registerBusiness(RegisterBusinessRequest request)
+  public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
   {
-    businessBlockingStub.registerBusiness(request);
+    return businessBlockingStub.registerBusiness(request);
   }
 
-  public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
+  public BusinessResponse getBusinessByEmail(EmailRequestResponse request)
   {
     return businessBlockingStub.getBusinessByEmail(request);
   }
-  public BusinessesInRadiusResponse getBusinessesInRadius(BusinessesInRadiusRequest request)
+  public BusinessesInRadiusResponse getBusinessesInRadius(IdRequestResponse request)
   {
     return businessBlockingStub.getBusinessesInRadius(request);
   }
 
   // ******************************** CUSTOMER **************************
 
-  public void registerCustomer(RegisterCustomerRequest request) {customerBlockingStub.registerCustomer(request);}
+  public IdRequestResponse registerCustomer(RegisterCustomerRequest request) { return customerBlockingStub.registerCustomer(request);}
 
   public BusinessesInRadiusResponse updateCustomerLocation(CustomerLocationRequest request)
   {
     return customerBlockingStub.updateCustomerLocation(request);
   }
-  public CustomerLocationRequest getCustomerLocation(CustomerByEmailRequest request)
+  public CustomerLocationRequest getCustomerLocation(IdRequestResponse request)
   {
     return customerBlockingStub.getCustomerLocation(request);
   }

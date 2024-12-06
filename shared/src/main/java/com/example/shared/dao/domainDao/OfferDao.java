@@ -1,6 +1,8 @@
 package com.example.shared.dao.domainDao;
 
+import com.example.shared.dao.usersDao.BusinessDao;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -22,6 +24,17 @@ import java.util.ArrayList;
   @Field("pickup_time_end") private LocalDateTime pickupTimeEnd;
   @Field("creation_time") private LocalDateTime creationTime;
   @Field("image_path") private String imagePath;
+  @DBRef @Field("business_id") private BusinessDao business;
+
+  public BusinessDao getBusiness()
+  {
+    return business;
+  }
+
+  public void setBusiness(BusinessDao business)
+  {
+    this.business = business;
+  }
 
   public int getNumberOfAvailableItems()
   {
@@ -148,11 +161,13 @@ import java.util.ArrayList;
     this.pickupTimeStart = pickupTimeStart;
   }
 
-  public LocalDateTime getCreationTime() {
+  public LocalDateTime getCreationTime()
+  {
     return creationTime;
   }
 
-  public void setCreationTime(LocalDateTime creationTime) {
+  public void setCreationTime(LocalDateTime creationTime)
+  {
     this.creationTime = creationTime;
   }
 }

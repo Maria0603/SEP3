@@ -1,6 +1,5 @@
 package com.example.server.services.security;
 
-import com.example.sep3.grpc.BusinessByEmailRequest;
 import com.example.sep3.grpc.BusinessResponse;
 import com.example.sep3.grpc.UserByEmailRequest;
 import com.example.sep3.grpc.UserResponse;
@@ -13,7 +12,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service public class UserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService
+@Service public class UserDetailsService
+    implements org.springframework.security.core.userdetails.UserDetailsService
 {
 
   private final DataServerStub dataServerStub;
@@ -27,25 +27,19 @@ import org.springframework.stereotype.Service;
       throws UsernameNotFoundException
   {
     //Extract the user from database
-    try {
-      UserResponse userResponse = dataServerStub.getUserByEmail(UserByEmailRequest.newBuilder().setEmail(username).build());
-
+    try
+    {
+      UserResponse userResponse = dataServerStub.getUserByEmail(
+          UserByEmailRequest.newBuilder().setEmail(username).build());
 
       //Convert to dao, because dao implements UserDetails interface
-      return new UserDetailsResponseDto(userResponse.getEmail(), userResponse.getHashedPassword(), userResponse.getRole());
-    } catch (Exception businessException) {
-      throw new UsernameNotFoundException("Account not found for email: " + username);
+      return new UserDetailsResponseDto(userResponse.getEmail(),
+          userResponse.getHashedPassword(), userResponse.getRole());
+    }
+    catch (Exception businessException)
+    {
+      throw new UsernameNotFoundException(
+          "Account not found for email: " + username);
     }
   }
-
-//  private UserDao generateUserDaoFromUserResponse(UserResponse response) {
-//    UserDao dao = new UserDao();
-//    dao.setId(response.getId());
-//    dao.setEmail(response.getEmail());
-//    dao.setFirstName(response.getFirstName());
-//    dao.setLastName(response.getLastName());
-//    dao.setRole(response.getRole());
-//    dao.setPassword(response.getHashedPassword());
-//    return dao;
-//  }
 }

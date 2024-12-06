@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 
   @NotNull(message = "Order ID is required.") private String orderId;
 
-  @NotNull(message = "User ID is required.") private String userId;
+  @NotNull(message = "Customer ID is required.") private String customerId;
 
   @NotNull(message = "Offer ID is required.") private String offerId;
 
@@ -24,5 +24,6 @@ import java.time.LocalDateTime;
   @NotNull(message = "Order time is required.") private LocalDateTime orderTime;
 
   @NotNull(message = "Price per item is required.") private int pricePerItem;
+  private String businessName;
 
 }

@@ -23,9 +23,9 @@ public class CustomerDtoGrpcConverter {
     }
 
     public static CustomerLocationRequest generateCustomerLocationRequestFromCustomerLocationRequestDto(
-      CustomerLocationRequestDto dto, String customerEmail)
+      CustomerLocationRequestDto dto, String customerId)
   {
-    return CustomerLocationRequest.newBuilder().setCustomerEmail(customerEmail)
+    return CustomerLocationRequest.newBuilder().setCustomerId(customerId)
         .setRadius(dto.getRadius()).setLatitude(dto.getLatitude())
         .setLongitude(dto.getLongitude()).build();
   }

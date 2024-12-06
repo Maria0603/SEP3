@@ -27,4 +27,8 @@ public class OfferResponseDto
   private List<String> categories;
   private String imagePath;
   private String status;
+  private String businessId;
+  private String businessName;
+  private String businessLogoPath;
+
 }

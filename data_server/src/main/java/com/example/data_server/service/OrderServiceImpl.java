@@ -1,11 +1,15 @@
 package com.example.data_server.service;
 
+import com.example.data_server.repository.BusinessRepository;
+import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.repository.OfferRepository;
 import com.example.sep3.grpc.*;
 import com.example.data_server.repository.OrderRepository;
 import com.example.shared.dao.domainDao.OfferDao;
 import com.example.shared.dao.domainDao.OrderDao;
+import com.example.shared.dao.usersDao.BusinessDao;
 import com.example.shared.converters.DateTimeConverter;
+import com.example.shared.dao.usersDao.CustomerDao;
 import com.example.shared.model.OrderStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -21,12 +25,18 @@ import java.util.Optional;
 
   private final OrderRepository orderRepository;
   private final OfferRepository offerRepository;
+  private final BusinessRepository businessRepository;
+  private final CustomerRepository customerRepository;
 
   @Autowired public OrderServiceImpl(OrderRepository orderRepository,
-      OfferRepository offerRepository)
+      OfferRepository offerRepository, BusinessRepository businessRepository,
+      CustomerRepository customerRepository)
   {
     this.orderRepository = orderRepository;
     this.offerRepository = offerRepository;
+    this.businessRepository = businessRepository;
+    this.customerRepository = customerRepository;
+    System.out.println("OrderServiceImpl created");
   }
 
   @Override public void addOrder(AddOrderRequest request,
@@ -58,11 +68,12 @@ import java.util.Optional;
     }
   }
 
-  @Override public void getAllOrders(EmptyMessage request,
+  @Override public void getAllOrders(IdRequestResponse request,
       StreamObserver<OrderList> responseObserver)
   {
     System.out.println("Request for all Orders");
 
+    //TODO: only fetch the ones which match the id
     List<OrderDao> Orders = orderRepository.findAll();
 
     OrderList.Builder OrderListBuilder = OrderList.newBuilder();
@@ -103,19 +114,29 @@ import java.util.Optional;
   private OrderResponse generateOrderResponseFromOrderDao(OrderDao orderDao)
   {
     return OrderResponse.newBuilder().setId(orderDao.getId())
-        .setUserId(orderDao.getUserId())
+        .setCustomerId(orderDao.getCustomer().getId())
         .setOfferId(orderDao.getOffer().getId())
-        .setNumberOfItems(orderDao.getNumberOfItems())
-        .setOrderTime(
-            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(orderDao.getOrderTime()))
-        .setStatus(orderDao.getStatus())
-        .setPricePerItem(orderDao.getPricePerItem()).build();
+        .setNumberOfItems(orderDao.getNumberOfItems()).setOrderTime(
+            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                orderDao.getOrderTime())).setStatus(orderDao.getStatus())
+        .setPricePerItem(orderDao.getPricePerItem())
+        .setBusinessName(orderDao.getBusiness().getBusinessName()).build();
   }
 
   private OrderDao generateOrderDaoFromAddOrderRequest(AddOrderRequest request)
   {
     OrderDao order = new OrderDao();
-    order.setUserId(request.getUserId());
+
+    // Extract customer
+    Optional<CustomerDao> customerOptional = customerRepository.findById(
+        request.getCustomerId());
+    if (customerOptional.isEmpty())
+      throw new IllegalArgumentException(
+          "Customer not found with ID: " + request.getCustomerId());
+
+    CustomerDao customer = customerOptional.get();
+    order.setCustomer(customer);
+
     order.setNumberOfItems(request.getNumberOfItems());
     order.setOrderTime(LocalDateTime.now());
     order.setStatus(OrderStatus.PENDING.getStatus());
@@ -126,6 +147,15 @@ import java.util.Optional;
       OfferDao offerDao = offer.get();
       order.setPricePerItem(offerDao.getOfferPrice());
       order.setOffer(offerDao);
+
+      //Extract business
+      Optional<BusinessDao> businessOptional = businessRepository.findById(
+          offerDao.getBusiness().getId());
+      if (businessOptional.isEmpty())
+        throw new IllegalArgumentException(
+            "Business not found with ID: " + offerDao.getBusiness().getId());
+      BusinessDao business = businessOptional.get();
+      order.setBusiness(business);
     }
     else
     {

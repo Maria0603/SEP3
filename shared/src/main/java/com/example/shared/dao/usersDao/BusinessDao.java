@@ -7,6 +7,7 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexType;
 import org.springframework.data.mongodb.core.index.GeoSpatialIndexed;
 import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
@@ -28,8 +29,6 @@ import java.util.List;
   @Field("cvr") private String cvr;
   @Field("logo_path") private String logoPath;
   @Field("address") private AddressDao address;
-  @Field("latitude") private double latitude;
-  @Field("longitude") private double longitude;
 
   @Field("location")
   @GeoSpatialIndexed(type = GeoSpatialIndexType.GEO_2DSPHERE)
@@ -75,27 +74,6 @@ import java.util.List;
   @Override public boolean isEnabled()
   {
     return true;
-  }
-
-
-  public double getLongitude()
-  {
-    return longitude;
-  }
-
-  public void setLongitude(double longitude)
-  {
-    this.longitude = longitude;
-  }
-
-  public double getLatitude()
-  {
-    return latitude;
-  }
-
-  public void setLatitude(double latitude)
-  {
-    this.latitude = latitude;
   }
 
   public String getPhoneNumber()

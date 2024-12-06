@@ -6,30 +6,31 @@ option java_outer_classname = "OrderServiceProto";
 
 package proto;
 
-import "OfferService.proto";
 import "google/protobuf/timestamp.proto";
+import "CustomerService.proto";
 
 service OrderService {
     rpc AddOrder (AddOrderRequest) returns (OrderResponse);
     rpc GetOrderById (OrderIdRequest) returns (OrderResponse);
-    rpc GetAllOrders (EmptyMessage) returns (OrderList);
+    rpc GetAllOrders (IdRequestResponse) returns (OrderList);
     rpc UpdateOrderStatus (OrderStatusRequest) returns (OrderResponse);
 }
 
 message AddOrderRequest {
     string offerId = 1;
-    string userId = 2;
+    string customerId = 2;
     int32 numberOfItems = 3;
 }
 
 message OrderResponse {
     string id = 1;
-    string userId = 2;
+    string customerId = 2;
     string offerId = 3;
     int32 numberOfItems = 4;
     google.protobuf.Timestamp orderTime = 5;
     string status = 7;
     int32 pricePerItem = 8;
+    string businessName = 9;
 }
 
 message OrderIdRequest {
@@ -44,3 +45,4 @@ message OrderStatusRequest {
 message OrderList {
     repeated OrderResponse Orders = 1;
 }
+

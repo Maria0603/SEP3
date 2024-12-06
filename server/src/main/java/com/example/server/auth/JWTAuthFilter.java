@@ -31,6 +31,7 @@ import java.io.IOException;
     final String authHeader = request.getHeader("Authorization");
     final String jwtToken;
     final String userEmail;
+    final String userId;
     if (authHeader == null || authHeader.isBlank())
     {
       filterChain.doFilter(request, response);
@@ -38,14 +39,16 @@ import java.io.IOException;
     }
     jwtToken = authHeader.substring(7);
     userEmail = jwtUtils.extractUsername(jwtToken);
+    userId = jwtUtils.extractUserId(jwtToken);
     System.out.println("Generating JWT for....: " + userEmail);
     request.setAttribute("email", userEmail);
+    request.setAttribute("userId", userId);
+
     if (userEmail != null
         && SecurityContextHolder.getContext().getAuthentication() == null)
     {
       UserDetails userDetails = userDetailsService.loadUserByUsername(
           userEmail);
-      System.out.println("Generating JWT for: " + userDetails.getUsername());
 
       if (jwtUtils.isTokenValid(jwtToken, userDetails))
       {
