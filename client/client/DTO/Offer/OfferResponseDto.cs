@@ -16,4 +16,8 @@ public class OfferResponseDto
     public List<string> Categories { get; set; }
     public string ImagePath { get; set; }
     public string Status { get; set; }
+    public string BusinessId { get; set; }
+    public string BusinessName { get; set; }
+    public string BusinessLogoPath { get; set; }
+    public AddressDto BusinessAddress { get; set; }
 }
