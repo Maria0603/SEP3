@@ -28,7 +28,7 @@ public class DataServerStub
   }
 
   // ********************************* OFFERS *********************************
-  public SaveOfferResponse saveOffer(SaveOfferRequest request)
+  public OfferResponse saveOffer(SaveOfferRequest request)
   {
     return offerBlockingStub.saveOffer(request);
   }
