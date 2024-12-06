@@ -53,7 +53,7 @@ import java.nio.file.Paths;
     }
     catch (Exception e)
     {
-      e.printStackTrace(); // We need a logger
+//      e.printStackTrace(); // We need a logger
       return getFallbackImage();
     }
   }

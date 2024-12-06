@@ -58,24 +58,34 @@ public class OfferService : IOfferService {
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
     public async Task<List<ShortOfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
 {
-    var query = new StringBuilder();
+    var queryParameters = new List<string>();
 
     if (filterRequestDto != null)
     {
-        query.Append("/filter");
-        query.Append($"?minOfferPrice={filterRequestDto.MinOfferPrice}");
-        query.Append($"&maxOfferPrice={filterRequestDto.MaxOfferPrice}");
-        query.Append($"&pickupTimeStart={filterRequestDto.PickupTimeStart}");
-        query.Append($"&pickupTimeEnd={filterRequestDto.PickupTimeEnd}");
+        // Add query parameters only if they have values
+        if (filterRequestDto.MinOfferPrice.HasValue)
+            queryParameters.Add($"minOfferPrice={filterRequestDto.MinOfferPrice}");
 
-        foreach (var category in filterRequestDto.Categories)
+        if (filterRequestDto.MaxOfferPrice.HasValue)
+            queryParameters.Add($"maxOfferPrice={filterRequestDto.MaxOfferPrice}");
+
+        if (filterRequestDto.PickupTimeStart.HasValue)
+            queryParameters.Add($"pickupTimeStart={filterRequestDto.PickupTimeStart:O}"); // ISO 8601 format for DateTime
+
+        if (filterRequestDto.PickupTimeEnd.HasValue)
+            queryParameters.Add($"pickupTimeEnd={filterRequestDto.PickupTimeEnd:O}");
+
+        if (filterRequestDto.Categories != null && filterRequestDto.Categories.Any())
         {
-            query.Append($"&categories={category}");
+            queryParameters.AddRange(filterRequestDto.Categories.Select(category => $"categories={category}"));
         }
     }
 
-    Console.WriteLine(query.ToString());
-    var response = await client.GetAsync($"offers{query}");
+    // Combine query parameters with '&'
+    var queryString = queryParameters.Any() ? "?" + string.Join("&", queryParameters) : string.Empty;
+
+    Console.WriteLine(queryString);
+    var response = await client.GetAsync($"offers{queryString}");
     var json = await response.Content.ReadAsStringAsync();
     var offers = JsonSerializer.Deserialize<List<ShortOfferResponseDto>>(
         json,

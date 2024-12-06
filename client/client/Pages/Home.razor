@@ -11,7 +11,7 @@
 
 
 <div class="search-bar-container">
-    <SearchBarComponent/>
+    <SearchBarComponent OnFilterApply="OnFilterApply" />
 </div>
 
 <div class="container">
@@ -31,26 +31,38 @@
 
 @code {
     private List<ShortOfferResponseDto>? offers;
+    
 
     protected override async Task OnInitializedAsync() {
-        // Call the service to get the offers
+        // Call the offers retrieval method
+        await RetrieveOffersAsync(null);
+    }
+
+    private async Task RetrieveOffersAsync(FilterRequestDto filterRequestDto) {
         try {
-            FilterRequestDto filterRequestDto = null;
+            // Call the service to get the offers
             offers = await OfferService.GetOffersAsync(filterRequestDto);
-            if (offers != null) {
+
+            if (offers != null && offers.Any()) {
                 foreach (var offer in offers) {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
-            }
-            else {
+            } else {
                 Console.WriteLine("Offers are empty");
             }
-        }
-        catch (Exception ex) {
+        } catch (Exception ex) {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<ShortOfferResponseDto>(); // Ensure the UI does not break
         }
     }
+
+    public async Task OnFilterApply(FilterRequestDto filterRequestDto) {
+        // Trigger offer retrieval logic with updated filter criteria
+        await RetrieveOffersAsync(filterRequestDto);
+    }
+
+    
+    
 
 }

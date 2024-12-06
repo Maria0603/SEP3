@@ -92,9 +92,9 @@
     <div class="offer__bottom">
         <h3 class="offer__bottom--name">@OfferDto.Title</h3>
         <div class="offer__bottom--pickup">
-            Collect on <em>@OfferDto.PickupTimeStart:dd/MM/yyyy</em>,
-            from <em>@OfferDto.PickupTimeStart:HH:mm</em>
-            to <em>@OfferDto.PickupTimeEnd:HH:mm</em>
+            Collect on <em>@OfferDto.PickupTimeStart.ToString("dd/MM/yyyy")</em>,
+            from <em>@OfferDto.PickupTimeStart.ToString("HH:mm")</em>
+            to <em>@OfferDto.PickupTimeEnd.ToString("HH:mm")</em>
         </div>
         <div class="offer__bottom--stats">
             <div class="offer__bottom--stats__rating">

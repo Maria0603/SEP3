@@ -4,6 +4,8 @@
 @using Syncfusion.Blazor
 
 @code {
+    [Parameter]
+    public EventCallback<FilterRequestDto> OnFilterApply { get; set; }
     private bool showFilterPopup = false;
     private int[] priceRange = { 10, 100 };
 
@@ -27,7 +29,7 @@
         showFilterPopup = !showFilterPopup;
     }
 
-    private void ApplyFilters()
+    private async Task ApplyFilters()
     {
         showFilterPopup = false;
         Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}");
@@ -39,6 +41,7 @@
             PickupTimeStart = pickupDateStart,
             PickupTimeEnd = pickupDateEnd
         };
+        await OnFilterApply.InvokeAsync(filterRequestDto);
     }
 
     private void ClearFilters()
