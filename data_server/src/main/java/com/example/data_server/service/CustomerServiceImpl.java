@@ -81,6 +81,9 @@ import java.util.Optional;
 
     customerRepository.updateLocationById(request.getCustomerId(),
         request.getLatitude(), request.getLongitude(), request.getRadius());
+    System.out.println(
+        "Customer location updated: " + customerRepository.findById(
+            request.getCustomerId()).get().getSearchRadius());
 
     double radiusRadians = request.getRadius() / GeoUtils.EARTH_RADIUS_KM;
 

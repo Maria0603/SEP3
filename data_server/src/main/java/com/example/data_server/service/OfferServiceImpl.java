@@ -153,6 +153,7 @@ import java.util.Optional;
     Optional<CustomerDao> customer = customerRepository.findById(
         request.getUserId());
 
+    // Extract the radius from the customer, if they have one
     CustomerDao customerDao;
     boolean hasLocationFilter;
     if (customer.isPresent())
@@ -164,6 +165,7 @@ import java.util.Optional;
     }
     else
     {
+      //If the user is not a customer, it must be business, and they don't have a radius
       customerDao = null;
       hasLocationFilter = false;
     }
@@ -191,6 +193,10 @@ import java.util.Optional;
                 customerDao.getLatitude(), customerDao.getLongitude(),
                 business.getLocation().getCoordinates().getLast(),
                 business.getLocation().getCoordinates().getFirst());
+            System.out.println("Business: " + business.getId());
+            System.out.println("Customer: " + customerDao.getId() + " radius: " + customer.get().getSearchRadius());
+
+            System.out.println("Distance: " + distance + " for ID " + item.getId());
             return distance <= customerDao.getSearchRadius();
           }
           return true; // If no location filter, include all offers
