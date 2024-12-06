@@ -6,7 +6,7 @@
         <select id="categories" @bind="selectedCategoryName" class="form-control category-dropdown">
             @if (AvailableCategories != null)
             {
-                @foreach (var category in AvailableCategories)
+                @foreach (Category category in AvailableCategories)
                 {
                     <option value="@category.Name">@category.Name</option>
                 }
@@ -18,7 +18,7 @@
     <div class="selected-categories mt-2">
         @if (SelectedCategories != null)
         {
-            @foreach (var category in SelectedCategories)
+            @foreach (Category category in SelectedCategories)
             {
                 <div class="category-box">
                     <span class="category-text">@category.Name</span>
@@ -57,7 +57,8 @@
             return;
         }
 
-        var category = AvailableCategories.FirstOrDefault(c => c.Name == selectedCategoryName);
+        
+        Category category = AvailableCategories.FirstOrDefault(c => c.Name == selectedCategoryName);
         if (category == null)
         {
             Console.WriteLine("Selected category not found in available categories.");
