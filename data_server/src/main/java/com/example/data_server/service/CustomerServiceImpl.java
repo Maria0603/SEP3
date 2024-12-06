@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
+import static converters.CustomerEntityGrpcConverter.*;
+
 @GrpcService public class CustomerServiceImpl
     extends CustomerServiceGrpc.CustomerServiceImplBase
 {
@@ -109,35 +111,5 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  private BusinessOnMap buildBusinessOnMap(Business business)
-  {
-    return BusinessOnMap.newBuilder().setBusinessId(business.getId())
-        .setBusinessName(business.getBusinessName()).setBusinessEmail(business.getEmail())
-        .setLogoPath(business.getLogoPath())
-        .setLatitude(business.getLocation().getCoordinates().getLast())
-        .setLongitude(business.getLocation().getCoordinates().getFirst()).build();
-  }
-
-  private CustomerResponse buildCustomerResponse(Customer customer)
-  {
-    return CustomerResponse.newBuilder().setFirstName(customer.getFirstName())
-        .setLastName(customer.getLastName()).setEmail(customer.getEmail())
-        .setPhoneNumber(customer.getPhoneNumber())
-        .setHashedPassword(customer.getPassword()).setId(customer.getId())
-        .setRole(customer.getRole()).build();
-  }
-
-  private Customer generateCustomerFromRegisterCustomerRequest(
-      RegisterCustomerRequest request)
-  {
-    Customer customer = new Customer();
-    customer.setFirstName(request.getFirstName());
-    customer.setLastName(request.getLastName());
-    customer.setEmail(request.getEmail());
-    customer.setPassword(request.getHashedPassword());
-    customer.setPhoneNumber(request.getPhoneNumber());
-    customer.setRole(request.getRole());
-    return customer;
-  }
 
 }

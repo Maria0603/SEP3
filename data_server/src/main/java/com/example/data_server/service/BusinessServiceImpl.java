@@ -15,6 +15,8 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import java.util.List;
 import java.util.Optional;
 
+import static converters.BusinessEntityGrpcConverter.*;
+
 @GrpcService public class BusinessServiceImpl
     extends BusinessServiceGrpc.BusinessServiceImplBase
 {
@@ -90,43 +92,5 @@ import java.util.Optional;
 
   }
 
-  private BusinessResponse buildBusinessResponse(Business business)
-  {
-    return BusinessResponse.newBuilder()
-        .setBusinessName(business.getBusinessName()).setAddress(
-            AddressConverter.convertAddressToGrpcAddress(
-                business.getAddress())).setEmail(business.getEmail())
-        .setCvr(business.getCvr()).setHashedPassword(business.getPassword())
-        .setId(business.getId()).setLogoPath(business.getLogoPath())
-        .setPhoneNumber(business.getPhoneNumber()).setRole(business.getRole())
-        .build();
-  }
-
-  private Business generateBusinessFromRegisterBusinessRequest(
-      RegisterBusinessRequest request)
-  {
-    Business business = new Business();
-    business.setBusinessName(request.getBusinessName());
-    business.setCvr(request.getCvr());
-    business.setEmail(request.getEmail());
-    business.setPassword(request.getHashedPassword());
-    business.setPhoneNumber(request.getPhoneNumber());
-    business.setLogoPath(request.getLogoPath());
-    business.setRole(request.getRole());
-    business.setAddress(
-        AddressConverter.convertGrpcAddressToAddress(request.getAddress()));
-    business.setLocation(
-        new GeoJsonPoint(request.getLongitude(), request.getLatitude()));
-    return business;
-  }
-
-  private BusinessOnMap buildBusinessOnMap(Business business)
-  {
-    return BusinessOnMap.newBuilder().setBusinessId(business.getId())
-        .setBusinessName(business.getBusinessName()).setBusinessEmail(business.getEmail())
-        .setLogoPath(business.getLogoPath())
-        .setLongitude(business.getLocation().getCoordinates().getFirst())
-        .setLatitude(business.getLocation().getCoordinates().getLast()).build();
-  }
 
 }

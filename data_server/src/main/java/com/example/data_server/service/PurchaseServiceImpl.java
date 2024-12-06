@@ -20,6 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
+import static converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
+import static converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
+
 @GrpcService public class PurchaseServiceImpl
     extends PurchaseServiceGrpc.PurchaseServiceImplBase
 {
@@ -45,19 +48,40 @@ import java.util.Optional;
   {
     System.out.println("Request to add Purchase");
 
-    Purchase purchase = generatePurchaseFromCreatePurchaseRequest(request);
     Offer offer = offerRepository.findById(request.getOfferId()).get();
 
-    if(offer.getNumberOfAvailableItems() == request.getNumberOfItems())
-      offerRepository.updateStatus(offer.getId(), OfferStatus.RESERVED.getStatus());
+    //Extract business
+    Optional<Business> businessOptional = businessRepository.findById(
+        offer.getBusiness().getId());
+    if (businessOptional.isEmpty())
+      throw new IllegalArgumentException(
+          "Business not found with ID: " + offer.getBusiness().getId());
+    Business business = businessOptional.get();
+
+    // Extract customer
+    Optional<Customer> customerOptional = customerRepository.findById(
+        request.getCustomerId());
+    if (customerOptional.isEmpty())
+      throw new IllegalArgumentException(
+          "Customer not found with ID: " + request.getCustomerId());
+
+    Customer customer = customerOptional.get();
+
+    Purchase purchase = generatePurchaseFromCreatePurchaseRequest(request, offer, customer, business);
+
+    if (offer.getNumberOfAvailableItems() == request.getNumberOfItems())
+      offerRepository.updateStatus(offer.getId(),
+          OfferStatus.RESERVED.getStatus());
 
     offerRepository.updateNumberOfAvailableItems(offer.getId(),
         offer.getNumberOfAvailableItems() - request.getNumberOfItems());
 
-
     Purchase createdPurchase = purchaseRepository.save(purchase);
 
-    buildPurchaseResponseFromPurchase(responseObserver, createdPurchase);
+    PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+        createdPurchase);
+    responseObserver.onNext(purchaseResponse);
+    responseObserver.onCompleted();
   }
 
   @Override public void getPurchaseById(PurchaseIdRequest request,
@@ -65,11 +89,15 @@ import java.util.Optional;
   {
     System.out.println("Request for purchase by id");
 
-    Optional<Purchase> purchaseOptional = purchaseRepository.findById(request.getId());
+    Optional<Purchase> purchaseOptional = purchaseRepository.findById(
+        request.getId());
     if (purchaseOptional.isPresent())
     {
       Purchase purchase = purchaseOptional.get();
-      buildPurchaseResponseFromPurchase(responseObserver, purchase);
+      PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+          purchase);
+      responseObserver.onNext(purchaseResponse);
+      responseObserver.onCompleted();
     }
     else
     {
@@ -89,7 +117,8 @@ import java.util.Optional;
     PurchaseListResponse.Builder PurchaseListBuilder = PurchaseListResponse.newBuilder();
     for (Purchase purchase : Purchases)
     {
-      PurchaseResponse response = generatePurchaseResponseFromPurchase(purchase);
+      PurchaseResponse response = generatePurchaseResponseFromPurchase(
+          purchase);
       PurchaseListBuilder.addPurchases(response);
     }
 
@@ -98,82 +127,23 @@ import java.util.Optional;
     responseObserver.onCompleted();
   }
 
-  @Override public void updatePurchaseStatus(PurchaseStatusRequest purchaseStatusRequest,
+  @Override public void updatePurchaseStatus(
+      PurchaseStatusRequest purchaseStatusRequest,
       StreamObserver<PurchaseResponse> responseObserver)
   {
     System.out.println("Request to update purchase status.");
 
-    Purchase purchase = purchaseRepository.findById(purchaseStatusRequest.getId())
+    Purchase purchase = purchaseRepository.findById(
+            purchaseStatusRequest.getId())
         .orElseThrow(() -> new IllegalArgumentException("purchase not found"));
 
     purchase.setStatus(purchaseStatusRequest.getStatus());
     purchaseRepository.save(purchase);
 
-    buildPurchaseResponseFromPurchase(responseObserver, purchase);
-  }
-
-  private void buildPurchaseResponseFromPurchase(
-      StreamObserver<PurchaseResponse> responseObserver, Purchase purchase)
-  {
-    PurchaseResponse response = generatePurchaseResponseFromPurchase(purchase);
-
-    responseObserver.onNext(response);
+    PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+        purchase);
+    responseObserver.onNext(purchaseResponse);
     responseObserver.onCompleted();
-  }
-
-  private PurchaseResponse generatePurchaseResponseFromPurchase(Purchase purchase)
-  {
-    return PurchaseResponse.newBuilder().setId(purchase.getId())
-        .setCustomerId(purchase.getCustomer().getId())
-        .setOfferId(purchase.getOffer().getId())
-        .setNumberOfItems(purchase.getNumberOfItems()).setPurchaseTime(
-            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                purchase.getPurchaseTime())).setStatus(purchase.getStatus())
-        .setPricePerItem(purchase.getPricePerItem())
-        .setBusinessName(purchase.getBusiness().getBusinessName()).build();
-  }
-
-  private Purchase generatePurchaseFromCreatePurchaseRequest(CreatePurchaseRequest request)
-  {
-    Purchase purchase = new Purchase();
-
-    // Extract customer
-    Optional<Customer> customerOptional = customerRepository.findById(
-        request.getCustomerId());
-    if (customerOptional.isEmpty())
-      throw new IllegalArgumentException(
-          "Customer not found with ID: " + request.getCustomerId());
-
-    Customer customer = customerOptional.get();
-    purchase.setCustomer(customer);
-
-    purchase.setNumberOfItems(request.getNumberOfItems());
-    purchase.setPurchaseTime(LocalDateTime.now());
-    purchase.setStatus(PurchaseStatus.PENDING.getStatus());
-
-    Optional<Offer> offerOptional = offerRepository.findById(request.getOfferId());
-    if (offerOptional.isPresent())
-    {
-      Offer offer = offerOptional.get();
-      purchase.setPricePerItem(offer.getOfferPrice());
-      purchase.setOffer(offer);
-
-      //Extract business
-      Optional<Business> businessOptional = businessRepository.findById(
-          offer.getBusiness().getId());
-      if (businessOptional.isEmpty())
-        throw new IllegalArgumentException(
-            "Business not found with ID: " + offer.getBusiness().getId());
-      Business business = businessOptional.get();
-      purchase.setBusiness(business);
-    }
-    else
-    {
-      throw new IllegalArgumentException(
-          "Error: No offer with ID " + request.getOfferId());
-    }
-
-    return purchase;
   }
 
 }

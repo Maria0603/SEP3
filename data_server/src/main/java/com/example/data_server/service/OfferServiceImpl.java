@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import static converters.OfferEntityGrpcConverter.*;
+
 @GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase
 {
@@ -47,8 +49,16 @@ import java.util.Optional;
   {
     System.out.println("Request for save offer");
 
+    Optional<Business> businessOptional = businessRepository.findById(
+        request.getBusinessId());
+    if (businessOptional.isEmpty())
+      throw new IllegalArgumentException(
+          "Business not found with ID: " + request.getBusinessId());
+
+    Business business = businessOptional.get();
+
     // Prepare to save the offer in database
-    Offer offer = generateOfferFromCreateOfferRequest(request);
+    Offer offer = generateOfferFromCreateOfferRequest(request, business);
 
     // Save the offer
     Offer createdOffer = offerRepository.save(offer);
@@ -87,9 +97,11 @@ import java.util.Optional;
       throw new IllegalArgumentException(
           "Offer with ID " + request.getId() + " not found.");
 
+    Business business = businessRepository.findById(request.getBusinessId()).get();
+
     // Save the updated document (will replace the existing one)
     Offer updatedOffer = offerRepository.save(
-        generateOfferFromOfferResponse(request));
+        generateOfferFromOfferResponse(request, business));
     OfferResponse offerResponse = buildOfferResponse(
         updatedOffer); // method to build the response
 
@@ -106,7 +118,9 @@ import java.util.Optional;
     List<Offer> offersByCategory = offerRepository.findByCategories(
         request.getCategoriesList());
 
-    buildOfferListResponseFromOffersList(responseObserver, offersByCategory);
+    responseObserver.onNext(
+        buildOfferListResponseFromOffersList(offersByCategory));
+    responseObserver.onCompleted();
   }
 
   @Override public void getOffersByPriceRange(PriceRangeRequest request,
@@ -118,7 +132,9 @@ import java.util.Optional;
     List<Offer> offersByPriceRange = offerRepository.findByOfferPriceRange(
         request.getMinOfferPrice(), request.getMaxOfferPrice());
 
-    buildOfferListResponseFromOffersList(responseObserver, offersByPriceRange);
+    responseObserver.onNext(
+        buildOfferListResponseFromOffersList(offersByPriceRange));
+    responseObserver.onCompleted();
   }
 
   @Override public void getOffersByTime(TimeRangeRequest request,
@@ -172,7 +188,8 @@ import java.util.Optional;
     }
 
     List<Offer> filteredOffers;
-    var allAvailableOffers = offerRepository.findByStatus(OfferStatus.AVAILABLE.getStatus());
+    var allAvailableOffers = offerRepository.findByStatus(
+        OfferStatus.AVAILABLE.getStatus());
     filteredOffers = allAvailableOffers.stream().filter(
             item -> !request.hasMaxOfferPrice()
                 || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
@@ -190,8 +207,8 @@ import java.util.Optional;
           if (hasLocationFilter)
           {
             Business business = item.getBusiness();
-            double distance = GeoUtils.calculateDistance(
-                customer.getLatitude(), customer.getLongitude(),
+            double distance = GeoUtils.calculateDistance(customer.getLatitude(),
+                customer.getLongitude(),
                 business.getLocation().getCoordinates().getLast(),
                 business.getLocation().getCoordinates().getFirst());
             System.out.println("Business: " + business.getId());
@@ -215,114 +232,11 @@ import java.util.Optional;
     //            .anyMatch(request.getCategoriesList()::contains)).toList();
 
     // Build the response
-    buildOfferListResponseFromOffersList(responseObserver, filteredOffers);
-  }
+    OfferListResponse offers = buildOfferListResponseFromOffersList(filteredOffers);
+    logger.info("Sending SaveOfferResponse: {}", offers);
 
-  private Offer generateOfferFromCreateOfferRequest(
-      CreateOfferRequest request)
-  {
-    Offer offer = new Offer();
-    Optional<Business> businessOptional = businessRepository.findById(
-        request.getBusinessId());
-    if (businessOptional.isEmpty())
-      throw new IllegalArgumentException(
-          "Business not found with ID: " + request.getBusinessId());
-
-    Business business = businessOptional.get();
-    offer.setBusiness(business);
-
-    offer.setTitle(request.getTitle());
-    offer.setDescription(request.getDescription());
-    offer.setOfferPrice(request.getOfferPrice());
-    offer.setOriginalPrice(request.getOriginalPrice());
-    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-
-    offer.setPickupTimeStart(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            request.getPickupTimeStart()));
-    offer.setPickupTimeEnd(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            request.getPickupTimeEnd()));
-
-    offer.setCreationTime(LocalDateTime.now());
-
-    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-    offer.setCategories(categories);
-
-    offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setStatus(OfferStatus.AVAILABLE.getStatus());
-    offer.setImagePath(request.getImagePath());
-
-    return offer;
-  }
-
-  private Offer generateOfferFromOfferResponse(OfferResponse request)
-  {
-    Offer offer = new Offer();
-    offer.setId(request.getId());
-    offer.setTitle(request.getTitle());
-    offer.setDescription(request.getDescription());
-    offer.setOfferPrice(request.getOfferPrice());
-    offer.setOriginalPrice(request.getOriginalPrice());
-
-    offer.setPickupTimeStart(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            request.getPickupTimeStart()));
-    offer.setPickupTimeEnd(
-        DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-            request.getPickupTimeEnd()));
-
-    ArrayList<String> categories = new ArrayList<>(request.getCategoriesList());
-    offer.setCategories(categories);
-
-    offer.setNumberOfItems(request.getNumberOfItems());
-    offer.setNumberOfAvailableItems(request.getNumberOfAvailableItems());
-    System.out.println("**********************Available: "
-        + request.getNumberOfAvailableItems());
-    offer.setStatus(request.getStatus());
-    offer.setImagePath(request.getImagePath());
-    offer.setBusiness(
-        businessRepository.findById(request.getBusinessId()).get());
-
-    return offer;
-  }
-
-  private OfferResponse buildOfferResponse(Offer offer)
-  {
-    return OfferResponse.newBuilder().setId(offer.getId())
-        .setTitle(offer.getTitle()).setDescription(offer.getDescription())
-        .setStatus(offer.getStatus()).setOfferPrice(offer.getOfferPrice())
-        .setOriginalPrice(offer.getOriginalPrice())
-        .setNumberOfItems(offer.getNumberOfItems())
-        .setNumberOfAvailableItems(offer.getNumberOfAvailableItems())
-        .setPickupTimeStart(
-            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeStart())).setPickupTimeEnd(
-            DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                offer.getPickupTimeEnd()))
-        .setImagePath(offer.getImagePath())
-        .addAllCategories(offer.getCategories())
-        .setNumberOfAvailableItems(offer.getNumberOfAvailableItems())
-        .setBusinessId(offer.getBusiness().getId())
-        .setBusinessName(offer.getBusiness().getBusinessName())
-        .setBusinessLogoPath(offer.getBusiness().getLogoPath())
-        .setBusinessAddress(AddressConverter.convertAddressToGrpcAddress(
-            offer.getBusiness().getAddress())).build();
-  }
-
-  private void buildOfferListResponseFromOffersList(
-      StreamObserver<OfferListResponse> responseObserver,
-      List<Offer> offersByCategory)
-  {
-    OfferListResponse.Builder offerListBuilder = OfferListResponse.newBuilder();
-    for (Offer offer : offersByCategory)
-    {
-      offerListBuilder.addOffer(buildOfferResponse(offer));
-    }
-
-    OfferListResponse offerListResponse = offerListBuilder.build();
-    logger.info("Sending SaveOfferResponse: {}", offerListResponse);
-    responseObserver.onNext(offerListResponse);
+    responseObserver.onNext(offers);
     responseObserver.onCompleted();
   }
+
 }
