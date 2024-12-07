@@ -1,9 +1,11 @@
 @page "/profile"
+@using client.Security
 @using Microsoft.AspNetCore.Authorization
 @attribute [Authorize]
+@inject AuthStateProvider AuthStateProvider
 <PageTitle>Profile</PageTitle>
 <h3>This profile page</h3>
-
+<button @onclick="AuthStateProvider.LogoutAsync">Logout</button>
 @code {
     
     

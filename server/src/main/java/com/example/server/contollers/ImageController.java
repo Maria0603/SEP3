@@ -4,6 +4,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,6 +18,8 @@ import java.nio.file.Paths;
 {
   private static final Path IMAGE_DIR = Paths.get("server/images")
       .toAbsolutePath().normalize();
+  private static final Path FALLBACK_IMAGE = IMAGE_DIR.resolve("tempImage.jpg").normalize();
+
 
   @GetMapping("/server/images/{filename:.+}") public ResponseEntity<Resource> getImage(
       @PathVariable String filename)
@@ -50,9 +53,36 @@ import java.nio.file.Paths;
     }
     catch (Exception e)
     {
-      e.printStackTrace(); // We need a logger
-      throw new IllegalArgumentException("Couldn't retrieve the image");
+//      e.printStackTrace(); // We need a logger
+      return getFallbackImage();
+    }
+  }
+
+  private ResponseEntity<Resource> getFallbackImage() {
+    try {
+      Resource resource = new UrlResource(FALLBACK_IMAGE.toUri());
+
+      // Ensure the fallback file exists and is readable
+      if (!resource.exists() || !resource.isReadable()) {
+        throw new IllegalArgumentException("Fallback image not found.");
+      }
+
+      // Dynamically determine the content type of the fallback image
+      String contentType = Files.probeContentType(FALLBACK_IMAGE);
+      if (contentType == null)
+        contentType = "application/octet-stream"; // Fallback
+
+      // Return the fallback image
+      return ResponseEntity.ok()
+              .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"tempImage.jpg\"")
+              .header(HttpHeaders.CONTENT_TYPE, contentType)
+              .body(resource);
+    } catch (Exception fallbackException) {
+      fallbackException.printStackTrace(); // Log the fallback error
+      throw new IllegalArgumentException("Unable to retrieve fallback image.");
     }
   }
 }
+
+
 

@@ -5,6 +5,8 @@ option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "BusinessServiceProto";
 
 import "OfferService.proto";
+import "UserService.proto";
+import "CustomerService.proto";
 
 
 package proto;
@@ -13,6 +15,7 @@ service BusinessService {
   rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
   rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
   rpc GetBusinessById(BusinessIdRequest) returns (BusinessResponse);
+  rpc GetBusinessesInRadius(IdRequestResponse) returns (BusinessesInRadiusResponse);
 }
 message BusinessByEmailRequest {
   string email = 1;
@@ -32,7 +35,9 @@ message BusinessResponse {
   string businessName = 6;
   string cvr = 7;
   string logoPath = 8;
-  Address address = 9;
+  double latitude = 9;
+  double longitude = 10;
+  Address address = 11;
 }
 
 message RegisterBusinessRequest {
@@ -43,19 +48,12 @@ message RegisterBusinessRequest {
   string logoPath = 5;
   string hashedPassword = 6;
   Address address = 7;
-  string role = 8;
+  double latitude = 8;
+  double longitude = 9;
+  string role = 10;
 }
 
 
-message Address {
-  string street = 1;
-  string number = 2;
-  string city = 3;
-  string county = 4;
-  string state = 5;
-  string country = 6;
-  string postalCode = 7;
-}
 
 
 

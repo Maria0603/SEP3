@@ -1,6 +1,8 @@
 @page "/business-profile"
 @using client.DTO
 @inject NavigationManager NavigationManager
+@inject AuthStateProvider AuthStateProvider
+
 
 <h1>Edit profile (business)</h1>
 
@@ -75,11 +77,12 @@
         businessProfile.Image = memoryStream.ToArray();
     }
 
-    private void Logout()
+    private async Task Logout()
     {
-        // Clear user session or token and redirect to login page
-        NavigationManager.NavigateTo("/logout", forceLoad: true);
+        await AuthStateProvider.LogoutAsync();
+        NavigationManager.NavigateTo("/login", true);
     }
+
 
     // Mock methods for API calls - replace with real API service
     private Task<BusinessProfileDto> GetBusinessProfileAsync()

@@ -1,0 +1,187 @@
+﻿@page "/auth/registration/business"
+@using client.DTO
+@using client.DTO.Auth
+@using client.Security
+@inject NavigationManager NavigationManager
+@inject AuthStateProvider AuthStateProvider
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header text-center">
+                    <h3>Register Business</h3>
+                </div>
+                <div class="card-body">
+                    <EditForm Model="@registerModel" OnValidSubmit="HandleRegistration">
+                        <DataAnnotationsValidator/>
+                        <ValidationSummary class="text-danger"/>
+
+                        <div class="mb-3">
+                            <label for="businessName" class="form-label">Business Name:</label>
+                            <InputText id="businessName" @bind-Value="registerModel.BusinessName" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="cvr" class="form-label">CVR:</label>
+                            <InputText id="cvr" @bind-Value="registerModel.Cvr" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="email" class="form-label">Email:</label>
+                            <InputText id="email" @bind-Value="registerModel.Email" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password:</label>
+                            <InputText id="password" @bind-Value="registerModel.Password" Type="password" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="phoneNumber" class="form-label">Phone Number:</label>
+                            <InputText id="phoneNumber" @bind-Value="registerModel.PhoneNumber" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="logo" class="form-label">Logo:</label>
+                            <InputFile id="logo" OnChange="HandleLogoUpload" class="form-control"/>
+                        </div>
+
+                        <h4 class="mt-4">Address</h4>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="street" class="form-label">Street:</label>
+                                <InputText id="street" @bind-Value="registerModel.Address.Street" class="form-control"/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="number" class="form-label">Number:</label>
+                                <InputText id="number" @bind-Value="registerModel.Address.Number" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-8 mb-3">
+                                <label for="city" class="form-label">City:</label>
+                                <InputText id="city" @bind-Value="registerModel.Address.City" class="form-control"/>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label for="postalCode" class="form-label">Postal Code:</label>
+                                <InputText id="postalCode" @bind-Value="registerModel.Address.PostalCode" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="mb-3">
+                                <label for="country" class="form-label">Country:</label>
+                                <InputText id="country" @bind-Value="registerModel.Address.Country" class="form-control"/>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label for="county" class="form-label">County:</label>
+                            <InputText id="county" @bind-Value="registerModel.Address.County" class="form-control"/>
+                        </div>
+                        <div class="mb-3">
+                            <label for="state" class="form-label">State:</label>
+                            <InputText id="state" @bind-Value="registerModel.Address.State" class="form-control"/>
+                        </div>
+
+                        <div class="d-grid">
+                            <button type="submit" class="btn btn-danger">Register</button>
+                        </div>
+                    </EditForm>
+                </div>
+                @if (!string.IsNullOrEmpty(successMessage))
+                {
+                    <div class="card-footer text-success text-center">
+                        <p>@successMessage</p>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(errorMessage))
+                {
+                    <div class="card-footer text-danger text-center">
+                        <p>@errorMessage</p>
+                    </div>
+                }
+            </div>
+            <div class="text-center mt-3">
+                <p>
+                    Already registered?
+                    <a href="/auth/login" class="text-decoration-none">Click here to login</a>.
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <p style="color: green;">@successMessage</p>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+    <p style="color: red;">@errorMessage</p>
+}
+
+@code {
+
+// private RegisterBusinessRequestDto registerModel = new()
+// {
+//     Address = new AddressDto(),
+//     Logo = Array.Empty<byte>()
+// };
+
+    private RegisterBusinessRequestDto registerModel = new()
+    {
+        BusinessName = "Dummy Business Name",
+        Cvr = "12345678",
+        Email = $"dummyemail{DateTime.UtcNow:HHmmssfff}@example.com",
+        Password = "DummyPassword123!",
+        PhoneNumber = "1234567890",
+        Address = new AddressDto
+        {
+            Street = "Lister kirchweg",
+            Number = "2",
+            City = "Hanover",
+            County = "Region Hannover",
+            State = "Lower Saxony",
+            Country = "Germany",
+            PostalCode = "30165"
+        },
+        Logo = Array.Empty<byte>() // Empty array for Logo
+    };
+
+
+    private string? successMessage;
+    private string? errorMessage;
+
+    private async Task HandleRegistration()
+    {
+        try
+        {
+            errorMessage = "";
+            await AuthStateProvider.RegisterBusinessAsync(registerModel);
+
+            successMessage = "Business registered successfully!";
+            NavigationManager.NavigateTo("/offers");
+        }
+        catch (Exception e)
+        {
+            errorMessage = "Registration failed. Please check the details and try again.";
+            successMessage = "";
+        }
+    }
+
+    private async Task HandleLogoUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        using var memoryStream = new MemoryStream();
+        await file.OpenReadStream().CopyToAsync(memoryStream);
+        registerModel.Logo = memoryStream.ToArray();
+        Console.WriteLine("Logoooo : " + registerModel.Logo);
+    }
+
+/*
+    private async Task HandleLogoUpload(InputFileChangeEventArgs e)
+    {
+        var file = e.File;
+        var buffer = new byte[file.Size];
+        await file.OpenReadStream().ReadAsync(buffer);
+        registerModel.Logo = buffer;
+    }
+    */
+
+}

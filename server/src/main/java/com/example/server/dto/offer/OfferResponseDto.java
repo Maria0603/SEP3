@@ -1,5 +1,6 @@
 package com.example.server.dto.offer;
 
+import com.example.server.dto.address.AddressDto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -27,4 +28,8 @@ public class OfferResponseDto
   private List<String> categories;
   private String imagePath;
   private String status;
+  private String businessId;
+  private String businessName;
+  private String businessLogoPath;
+  private AddressDto businessAddress;
 }

@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
   @ExceptionHandler(MethodArgumentNotValidException.class) public ResponseEntity<String> handleValidationErrors(
       MethodArgumentNotValidException ex)
   {
+    ex.printStackTrace();
     String errorMessage = ex.getBindingResult().getFieldErrors().stream()
         .map(DefaultMessageSourceResolvable::getDefaultMessage)
         .collect(Collectors.joining(", "));
@@ -24,14 +25,15 @@ import java.util.stream.Collectors;
   @ExceptionHandler(IllegalArgumentException.class) public ResponseEntity<String> handleIllegalArgumentException(
       IllegalArgumentException ex)
   {
+    ex.printStackTrace();
     return ResponseEntity.badRequest().body(ex.getMessage());
   }
 
   @ExceptionHandler(Exception.class) public ResponseEntity<String> handleGeneralException(
       Exception ex)
   {
-    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-        .body("An unexpected error occurred: " + ex.getMessage());
+    ex.printStackTrace();
+    return ResponseEntity.badRequest().body("An unexpected error occurred: " + ex.getMessage());
   }
 }
 

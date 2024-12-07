@@ -2,12 +2,12 @@
 
 @using client.DTO
 @using client.DTO.Offer
-@using client.DTO.Order
+@using client.DTO.Purchase
 @using client.Models
 @using client.Services
 @using Microsoft.AspNetCore.Authorization
 @inherits Microsoft.AspNetCore.Components.LayoutComponentBase
-@inject IOrderService OrderService
+@inject IPurchaseService PurchaseService
 @inject IOfferService OfferService
 @inject NavigationManager NavigationManager
 @inject HttpClient HttpClient
@@ -19,8 +19,8 @@
 <div class="container">
     <div>
         <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
-        <img src="images/brand_logo.jpeg" alt="Logo" class="logo-image"/>
-        <header class="BusinessName">BUSINESS NAME HERE</header>
+        <img src="@(HttpClient.BaseAddress + _offer.BusinessLogoPath)" alt="Logo" class="logo-image"/>
+        <header class="BusinessName">@_offer.BusinessName</header>
         <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
             @( _offer.NumberOfAvailableItems > 0
             ? $"{_offer.NumberOfAvailableItems} Left"
@@ -76,7 +76,7 @@
         <div class="location-content">
             <div class="location-row">
                 <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
-                <p class="location-text">Vejlevej 54, 8700, Horsens, 5km</p>
+                <p class="location-text">@_offer.BusinessAddress.Street @_offer.BusinessAddress.Number, @_offer.BusinessAddress.PostalCode, @_offer.BusinessAddress.City</p>
             </div>
         </div>
     </div>
@@ -117,16 +117,15 @@ else
 
     private async Task SubmitPurchase()
     {
-        var request = new OrderRequestDto
+        var request = new PurchaseRequestDto
         {
             OfferId = id,
-            NumberOfItems = amount,
-            UserId = "123abc"
+            NumberOfItems = amount
         };
 
         try
         {
-            var response = await OrderService.PlaceOrderAsync(request);
+            var response = await PurchaseService.CreatePurchaseAsync(request);
             string sessionUrl = response.Url;
             NavigationManager.NavigateTo(sessionUrl);
         }

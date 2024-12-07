@@ -1,7 +1,7 @@
 package com.example.data_server.config;
 
-import com.example.data_server.utility.StringToTimestampConverter;
-import com.example.data_server.utility.TimestampToStringConverter;
+import com.example.shared.converters.StringToTimestampConverter;
+import com.example.shared.converters.TimestampToStringConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
