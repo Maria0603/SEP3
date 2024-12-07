@@ -45,6 +45,7 @@ public class DataServerStub
 
   public OfferListResponse getOffers(FilterRequest request)
   {
+    System.out.println("DataServerStub:" + request);
     return offerBlockingStub.getOffers(request);
   }
 

@@ -49,12 +49,12 @@
                 <InputDate id="pickupDate" @bind-Value="dateValue" class="form-control"/>
             </div>
         </div>
+
         <div class="row">
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeStart">Pickup Start Time</label>
                 <input type="time" id="pickupTimeStart" @bind="timeStart" class="form-control"/>
             </div>
-
 
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeEnd">Pickup End Time</label>
@@ -62,16 +62,18 @@
             </div>
         </div>
 
+        <!-- Categories Picker -->
         <div class="mb-3">
             <label for="categories">Categories</label>
             <div class="d-flex align-items-center">
                 <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
                     @foreach (var category in availableCategories) {
-                        <option value="@category.Name">@category.Name</option>
+                        <option value="@category">@category</option>
                     }
                 </select>
                 <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
             </div>
+
             <div class="selected-categories mt-2">
                 @foreach (var category in offerDto.Categories) {
                     <div class="category-box">
@@ -100,8 +102,8 @@
 
 else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
-@code {
 
+@code {
     private CreateOfferRequestDto offerDto = new() {
         Categories = new List<string>(),
         PickupTimeStart = new DateTime(),
@@ -153,27 +155,26 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
 
 
-    private List<Category> availableCategories = new List<Category> {
-        new Category { Name = "Bread" },
-        new Category { Name = "Vegan" },
-        new Category { Name = "Pastry" },
-        new Category { Name = "Dairy" }
+    private List<CategoryPickerComponent.Category> availableCategories = new List<CategoryPickerComponent.Category> {
+        new CategoryPickerComponent.Category() { Name = "Bread" },
+        new CategoryPickerComponent.Category { Name = "Vegan" },
+        new CategoryPickerComponent.Category { Name = "Pastry" },
+        new CategoryPickerComponent.Category { Name = "Dairy" }
     };
 
+    // private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
     private string selectedCategory;
-
+    private DateTime? dateValue = DateTime.Now.Date;
     private TimeOnly? timeStart;
     private TimeOnly? timeEnd;
-    private DateTime? dateValue;
-    private string categoriesInput = string.Empty;
     private string errorLabel = "";
     private string successLabel = "";
-
     private OfferResponseDto? createdOffer = null;
     
 
     private void AddCategory() {
-        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
+        if (!string.IsNullOrEmpty(selectedCategory) &&
+            !offerDto.Categories.Contains(selectedCategory)) {
             offerDto.Categories.Add(selectedCategory);
         }
     }
@@ -269,17 +270,11 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
             PickupTimeEnd = new DateTime(),
             NumberOfItems = 1
         };
-        categoriesInput = string.Empty;
+        selectedCategory = string.Empty;
         timeStart = null;
         timeEnd = null;
         dateValue = null;
         errorLabel = "";
         successLabel = "";
     }
-
-    public class Category {
-        public string Name { get; set; }
-        public bool IsSelected { get; set; }
-    }
-
 }

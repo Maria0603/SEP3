@@ -8,52 +8,61 @@
 @attribute [Authorize]
 <PageTitle>Home</PageTitle>
 
+
+
+<div class="search-bar-container">
+    <SearchBarComponent OnFilterApply="OnFilterApply" />
+</div>
+
 <div class="container">
-    @if (offers == null)
-    {
+    @if (offers == null) {
         <p>Loading offers...</p>
     }
-    else if (offers.Count == 0)
-    {
+    else if (offers.Count == 0) {
         <p>No offers available at the moment.</p>
     }
-    else
-    {
-        @foreach (OfferResponseDto offer in offers)
-        {
-            <OfferComponent OfferData="offer"></OfferComponent>
+    else {
+        @foreach (ShortOfferResponseDto offer in offers) {
+            <OfferComponent OfferDto="offer"></OfferComponent>
         }
     }
 </div>
 
 
-
 @code {
-    private List<OfferResponseDto>? offers;
-    protected override async Task OnInitializedAsync()
-    {
-        // Call the service to get the offers
-        try
-        {
-            offers = await OfferService.GetOffersAsync();
-            if (offers != null)
-            {
-                foreach (var offer in offers)
-                {
+    private List<ShortOfferResponseDto>? offers;
+    
+
+    protected override async Task OnInitializedAsync() {
+        // Call the offers retrieval method
+        await RetrieveOffersAsync(null);
+    }
+
+    private async Task RetrieveOffersAsync(FilterRequestDto filterRequestDto) {
+        try {
+            // Call the service to get the offers
+            offers = await OfferService.GetOffersAsync(filterRequestDto);
+
+            if (offers != null && offers.Any()) {
+                foreach (var offer in offers) {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
-            }
-            else
-            {
+            } else {
                 Console.WriteLine("Offers are empty");
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
     }
+
+    public async Task OnFilterApply(FilterRequestDto filterRequestDto) {
+        // Trigger offer retrieval logic with updated filter criteria
+        await RetrieveOffersAsync(filterRequestDto);
+    }
+
     
+    
+
 }

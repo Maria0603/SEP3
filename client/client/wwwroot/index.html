@@ -10,6 +10,10 @@
     <link rel="stylesheet" href="css/app.css"/>
     <link rel="icon" type="image/png" href="favicon.png"/>
     <link href="client.styles.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.8.1/font/bootstrap-icons.min.css">
+    <link href="_content/Syncfusion.Blazor/styles/bootstrap5.css" rel="stylesheet" />
+    <script src="_content/Syncfusion.Blazor/scripts/syncfusion-blazor.min.js"></script>
+    <script src="https://js.stripe.com/v3/"></script>
 </head>
 
 <body>
@@ -27,24 +31,6 @@
     <a class="dismiss">🗙</a>
 </div>
 <script src="_framework/blazor.webassembly.js"></script>
-<script src="https://js.stripe.com/v3/"></script>
-<script>
-    function redirectToStripeCheckout(sessionId) {
-        const stripe = Stripe('pk_test_51QLXFcEJybmJ8Dbt6aLVIXQyVWFAJ3tT0ceyJ73RClLvm25NZ45GX9uTjyCioyLPSiinwM3AiRWVkEnfYySiTGZO00xIEn9OpY'); // Replace with your public key
-        stripe.redirectToCheckout({sessionId: sessionId});
-    }
-
-    async function createStripeToken(cardElement) {
-        const stripe = Stripe('pk_test_51QLXFcEJybmJ8Dbt6aLVIXQyVWFAJ3tT0ceyJ73RClLvm25NZ45GX9uTjyCioyLPSiinwM3AiRWVkEnfYySiTGZO00xIEn9OpY');
-        const {token, error} = await stripe.createToken(cardElement);
-        if (error) {
-            return {success: false, error: error.message};
-        }
-        return {success: true, token: token.id};
-    }
-
-</script>
-
 </body>
 
 </html>

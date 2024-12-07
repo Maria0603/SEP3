@@ -224,8 +224,8 @@ import static converters.OfferEntityGrpcConverter.*;
         .toList();
 
     filteredOffers = filteredOffers.stream().sorted(
-            (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-        .toList();
+                    (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
+            .toList();
     //    var test = offerRepository.findAll();
     //    filteredOffers = test.stream().filter(
     //        offer -> offer.getCategories().stream()

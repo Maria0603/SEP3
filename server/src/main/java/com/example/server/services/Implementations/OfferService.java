@@ -76,10 +76,10 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);
   }
-  @Override public List<OfferResponseDto> getOffers(
-      Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice,
-      Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd,
-      Optional<List<String>> categories, String userId)
+  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
+      Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
+      Optional<String> pickupTimeEnd, Optional<List<String>> categories,
+                                          Optional<String> userId)
   {
     var stringConverter = new StringToTimestampConverter();
     var req = FilterRequest.newBuilder();
@@ -92,7 +92,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     pickupTimeEnd.ifPresent(
         s -> req.setPickupTimeEnd(stringConverter.convert(s)));
 
-    req.setUserId(userId);
+    userId.ifPresent(req::setUserId);
 
     OfferListResponse fullResponse = dataServerStub.getOffers(req.build());
     return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
@@ -138,4 +138,24 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return time.isAfter(LocalDateTime.now());
   }
 
-}
+  public boolean imageExists(String filePath)
+  {
+    File imageFile = new File(filePath);
+    return imageFile.exists();
+  }
+
+
+
+    //   minOfferPrice.ifPresent(req::setMinOfferPrice);
+
+    //   maxOfferPrice.ifPresent(req::setMaxOfferPrice);
+
+    //   categories.ifPresent(req::addAllCategories);
+
+    //   pickupTimeStart.ifPresent(s -> req.setPickupTimeStart(stringConverter.convert(s)));
+
+    //   pickupTimeEnd.ifPresent(s -> req.setPickupTimeEnd(stringConverter.convert(s)));
+
+    // FullOfferList fullResponse = dataServerStub.getOffers(req.build());
+    // return FullOfferListToShortOfferListConverter.convert(fullResponse);
+  }
