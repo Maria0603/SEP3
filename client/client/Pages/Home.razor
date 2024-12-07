@@ -9,20 +9,23 @@
 <PageTitle>Home</PageTitle>
 
 
-
 <div class="search-bar-container">
-    <SearchBarComponent OnFilterApply="OnFilterApply" />
+    <SearchBarComponent OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
 </div>
 
 <div class="container">
-    @if (offers == null) {
+    @if (offers == null)
+    {
         <p>Loading offers...</p>
     }
-    else if (offers.Count == 0) {
+    else if (offers.Count == 0)
+    {
         <p>No offers available at the moment.</p>
     }
-    else {
-        @foreach (OfferResponseDto offer in offers) {
+    else
+    {
+        @foreach (OfferResponseDto offer in offers)
+        {
             <OfferComponent OfferData="offer"></OfferComponent>
         }
     }
@@ -31,38 +34,52 @@
 
 @code {
     private List<OfferResponseDto>? offers;
-    
 
-    protected override async Task OnInitializedAsync() {
+
+    protected override async Task OnInitializedAsync()
+    {
         // Call the offers retrieval method
         await RetrieveOffersAsync(null);
     }
 
-    private async Task RetrieveOffersAsync(FilterRequestDto filterRequestDto) {
-        try {
+    private async Task RetrieveOffersAsync(FilterRequestDto? filterRequestDto)
+    {
+        try
+        {
             // Call the service to get the offers
             offers = await OfferService.GetOffersAsync(filterRequestDto);
 
-            if (offers != null && offers.Any()) {
-                foreach (var offer in offers) {
+            if (offers != null && offers.Any())
+            {
+                foreach (var offer in offers)
+                {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
-            } else {
+            }
+            else
+            {
                 Console.WriteLine("Offers are empty");
             }
-        } catch (Exception ex) {
+        }
+        catch (Exception ex)
+        {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
     }
 
-    public async Task OnFilterApply(FilterRequestDto filterRequestDto) {
+    public async Task OnFilterApply(FilterRequestDto filterRequestDto)
+    {
         // Trigger offer retrieval logic with updated filter criteria
         await RetrieveOffersAsync(filterRequestDto);
     }
 
-    
-    
+    public async Task OnFilterClear()
+    {
+        // Get offers without filters
+        await RetrieveOffersAsync(null);
+    }
+
 
 }

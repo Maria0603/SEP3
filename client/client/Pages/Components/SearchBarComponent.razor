@@ -6,11 +6,13 @@
 @code {
     [Parameter]
     public EventCallback<FilterRequestDto> OnFilterApply { get; set; }
+    [Parameter]
+    public EventCallback<FilterRequestDto> OnFilterClear { get; set; }
     private bool showFilterPopup = false;
     private bool showMapPopup = false;
-    private int[] priceRange = { 10, 100 };
+    private int[] priceRange = { 0, 500 };
 
-    private int[] timeRange = { 6, 16 };
+    private int[] timeRange = { 0, 24 };
 
     // Date range
     private DateTime? pickupDateStart { get; set; }
@@ -50,10 +52,12 @@
         await OnFilterApply.InvokeAsync(filterRequestDto);
     }
 
-    private void ClearFilters()
+    private async Task ClearFilters()
     {
         priceRange = new int[] { 0, 100 };
         timeRange = new int[] { 0, 24 };
+        showFilterPopup = false;
+        await OnFilterClear.InvokeAsync();
         Console.WriteLine("Filters Cleared");
     }
 
