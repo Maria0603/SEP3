@@ -5,7 +5,6 @@ import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.repository.OfferRepository;
 import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
-import com.example.shared.converters.AddressConverter;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
 import com.example.shared.entities.usersEntities.Business;
@@ -18,11 +17,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static converters.OfferEntityGrpcConverter.*;
+import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
 
 @GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase

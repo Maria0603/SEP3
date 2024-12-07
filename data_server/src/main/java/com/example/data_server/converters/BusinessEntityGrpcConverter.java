@@ -1,4 +1,4 @@
-package converters;
+package com.example.data_server.converters;
 
 import com.example.sep3.grpc.BusinessOnMap;
 import com.example.sep3.grpc.BusinessResponse;

@@ -8,20 +8,17 @@ import com.example.sep3.grpc.*;
 import com.example.shared.entities.domainEntities.Offer;
 import com.example.shared.entities.domainEntities.Purchase;
 import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.usersEntities.Customer;
 import com.example.shared.model.OfferStatus;
-import com.example.shared.model.PurchaseStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-import static converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
-import static converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
+import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
+import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
 
 @GrpcService public class PurchaseServiceImpl
     extends PurchaseServiceGrpc.PurchaseServiceImplBase

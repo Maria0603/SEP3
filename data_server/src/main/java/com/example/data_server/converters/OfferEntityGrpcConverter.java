@@ -1,4 +1,4 @@
-package converters;
+package com.example.data_server.converters;
 
 import com.example.sep3.grpc.CreateOfferRequest;
 import com.example.sep3.grpc.OfferListResponse;

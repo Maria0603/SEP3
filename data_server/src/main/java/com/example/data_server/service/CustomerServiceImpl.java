@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static converters.CustomerEntityGrpcConverter.*;
+import static com.example.data_server.converters.BusinessEntityGrpcConverter.buildBusinessOnMap;
+import static com.example.data_server.converters.CustomerEntityGrpcConverter.buildCustomerResponse;
+import static com.example.data_server.converters.CustomerEntityGrpcConverter.generateCustomerFromRegisterCustomerRequest;
 
 @GrpcService public class CustomerServiceImpl
     extends CustomerServiceGrpc.CustomerServiceImplBase

@@ -1,4 +1,4 @@
-package converters;
+package com.example.data_server.converters;
 
 import com.example.sep3.grpc.CreatePurchaseRequest;
 import com.example.sep3.grpc.PurchaseResponse;
