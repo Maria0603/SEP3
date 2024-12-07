@@ -11,6 +11,12 @@
   box-sizing: border-box;
 }
 
+@media (min-width: 1400px) {
+  .container, .container-lg, .container-md, .container-sm, .container-xl, .container-xxl {
+    max-width: 1520px;
+  }
+}
+
 @media (max-width: 768px) {
   .container > .offer {
     flex: 1 1 calc(50% - 16px); /* 2 items per row on smaller screens */
