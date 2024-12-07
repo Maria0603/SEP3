@@ -22,15 +22,15 @@
         <p>No offers available at the moment.</p>
     }
     else {
-        @foreach (ShortOfferResponseDto offer in offers) {
-            <OfferComponent OfferDto="offer"></OfferComponent>
+        @foreach (OfferResponseDto offer in offers) {
+            <OfferComponent OfferData="offer"></OfferComponent>
         }
     }
 </div>
 
 
 @code {
-    private List<ShortOfferResponseDto>? offers;
+    private List<OfferResponseDto>? offers;
     
 
     protected override async Task OnInitializedAsync() {

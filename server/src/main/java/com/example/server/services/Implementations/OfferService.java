@@ -11,7 +11,9 @@ import com.example.shared.converters.StringToTimestampConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import com.example.server.services.IOfferService;
 
+import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +21,7 @@ import java.util.Optional;
 
 import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
-@Service public class OfferService implements com.example.server.services.IOfferService
+@Service public class OfferService implements IOfferService
 {
   private final DataServerStub dataServerStub;
   private final ImageStorageStorageService imageStorageService;
@@ -76,6 +78,12 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);
   }
+
+//  @Override
+//  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd, Optional<List<String>> categories, String userId) {
+//    return List.of();
+//  }
+  @Override
   public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
       Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
       Optional<String> pickupTimeEnd, Optional<List<String>> categories,
@@ -138,11 +146,11 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return time.isAfter(LocalDateTime.now());
   }
 
-  public boolean imageExists(String filePath)
-  {
-    File imageFile = new File(filePath);
-    return imageFile.exists();
-  }
+//  public boolean imageExists(String filePath)
+//  {
+//    File imageFile = new File(filePath);
+//    return imageFile.exists();
+//  }
 
 
 

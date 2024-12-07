@@ -16,6 +16,6 @@ public interface IOfferService
   List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
       Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
       Optional<String> pickupTimeEnd, Optional<List<String>> categories,
-      String userId);
+      Optional<String> userId);
   OfferResponseDto updateOffer(UpdateOfferRequestDto updateOfferRequestDto);
 }

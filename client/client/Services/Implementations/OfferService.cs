@@ -57,7 +57,7 @@ public class OfferService : IOfferService {
     }
 
     //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
-    public async Task<List<ShortOfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
+    public async Task<List<OfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
 {
     var queryParameters = new List<string>();
 
@@ -88,7 +88,7 @@ public class OfferService : IOfferService {
     Console.WriteLine(queryString);
     var response = await client.GetAsync($"offers{queryString}");
     var json = await response.Content.ReadAsStringAsync();
-    var offers = JsonSerializer.Deserialize<List<ShortOfferResponseDto>>(
+    var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(
         json,
         new JsonSerializerOptions
         {

@@ -56,9 +56,9 @@
 @*     </div> *@
 @* } *@
 
-<div @attributes="AdditionalAttributes" class="offer" @onclick="() => ShowOfferDetails(OfferDto.Id)">
+<div @attributes="AdditionalAttributes" class="offer" @onclick="() => ShowOfferDetails(OfferData.Id)">
     <div class="offer__top">
-        <div class="offer__top--left">@OfferDto.NumberOfAvailableItems Left</div>
+        <div class="offer__top--left">@OfferData.NumberOfAvailableItems Left</div>
         <svg class="offer__top--favourite @(false ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M5 13.1371C5 18 9.01943 20.5914 11.9617 22.9109C13 23.7294 14 24.5 15 24.5C16 24.5 17 23.7294 18.0383 22.9109C20.9806 20.5914 25 18 25 13.1371C25 8.27416 19.4998 4.82546 15 9.50063C10.5002 4.82546 5 8.27416 5 13.1371Z" fill="currentColor" />
         </svg>
@@ -80,9 +80,9 @@
     </div>
 
     <div class="offer__img">
-        @if (!string.IsNullOrEmpty(OfferDto.ImagePath))
+        @if (!string.IsNullOrEmpty(OfferData.ImagePath))
         {
-        <img src="@(HttpClient.BaseAddress + OfferDto.ImagePath)" alt="Offer Image">
+        <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
         }
         else
         {
@@ -91,11 +91,11 @@
     </div>
 
     <div class="offer__bottom">
-        <h3 class="offer__bottom--name">@OfferDto.Title</h3>
+        <h3 class="offer__bottom--name">@OfferData.Title</h3>
         <div class="offer__bottom--pickup">
-            Collect on <em>@OfferDto.PickupTimeStart.ToString("dd/MM/yyyy")</em>,
-            from <em>@OfferDto.PickupTimeStart.ToString("HH:mm")</em>
-            to <em>@OfferDto.PickupTimeEnd.ToString("HH:mm")</em>
+            Collect on <em>@OfferData.PickupTimeStart.ToString("dd/MM/yyyy")</em>,
+            from <em>@OfferData.PickupTimeStart.ToString("HH:mm")</em>
+            to <em>@OfferData.PickupTimeEnd.ToString("HH:mm")</em>
         </div>
         <div class="offer__bottom--stats">
             <div class="offer__bottom--stats__rating">
@@ -106,7 +106,7 @@
             </div>
 
             <div class="offer__bottom--stats__distance">10 km</div>
-            <div class="offer__bottom--stats__price">@OfferDto.OfferPrice.ToString("0.00") kr.</div>
+            <div class="offer__bottom--stats__price">@OfferData.OfferPrice.ToString("0.00") kr.</div>
         </div>
     </div>
 </div>
@@ -120,7 +120,7 @@
     
     private void ShowOfferDetails(string offerId)
     {
-        NavigationManager.NavigateTo($"offers/{OfferDto.Id}");
+        NavigationManager.NavigateTo($"offers/{OfferData.Id}");
     }
     
     // private void ToggleFilters()
