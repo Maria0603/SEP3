@@ -1,7 +1,8 @@
-﻿@using client.DTO
-@inject IJSRuntime JSRuntime
+﻿@using System.Drawing
+@using client.DTO
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor
+
 
 @code {
     [Parameter]
@@ -11,14 +12,23 @@
     private int[] priceRange = { 10, 100 };
 
     private int[] timeRange = { 6, 16 };
-
+    
+    // Map
+    // private Map _map;
+    // private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
+    private IJSObjectReference? module;
+    private string? result;
+    
+    
     // Date range
-    private DateTime? pickupDateStart { get; set; }
-    private DateTime? pickupDateEnd { get; set; }
+    private DateTime? pickupDateStart { get; set; }= DateTime.Now;
+    private DateTime? pickupDateEnd { get; set; } = DateTime.Now.AddDays(1);
 
     private FilterRequestDto? filterRequestDto;
     private List<CategoryPickerComponent.Category>? selectedCategories = new();
-
+    
+    
+    
     private void OnSelectedCategoriesChanged(List<CategoryPickerComponent.Category> categories)
     {
         // Handle updated categories
@@ -33,6 +43,7 @@
     private void ToggleMap()
     {
         showMapPopup = !showMapPopup;
+        Console.WriteLine("Map Toggled");
     }
 
     private async Task ApplyFilters()
@@ -77,19 +88,8 @@
 
 @if (showMapPopup)
 {
-    <div class="popup-overlay">
-        <div class="popup-window">
-            <div class="popup-header">
-                <h3>Maps</h3>
-                <button class="close-button" @onclick="ToggleMap">&times;</button>
-            </div>
-            <div class="popup-body">
-               
-            </div>
-        </div>
-    </div>
+    <MapComponent ToggleMap="ToggleMap"/>
 }
-
 @if (showFilterPopup)
 {
     <div class="popup-overlay">

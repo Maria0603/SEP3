@@ -1,0 +1,89 @@
+@using client.DTO
+@implements IAsyncDisposable
+@inject IJSRuntime JSRuntime
+
+
+<div class="popup-overlay">
+    <div class="popup-window">
+        <div class="popup-header">
+            <h3>Maps</h3>
+            <button class="close-button" @onclick="ToggleMap">&times;</button>
+        </div>
+        <div class="popup-body">
+            <div id="mapContainer" >
+                @* <LeafletMap Map="_map" /> *@
+            </div>
+            <div class="map-controls">
+                <label>Circle Radius (meters):</label>
+                <input type="range" min="1" max="100" step="1" @bind="circleRadius" @bind:after="UpdateCircleRadius" />
+                <span>@circleRadius kilometers</span>
+            </div>
+            <button @onclick="ShowMapInfo" class="btn btn-danger mt-3">Search</button>
+            @if (!string.IsNullOrEmpty(mapInfo))
+            {
+            <div class="map-info mt-3">
+                <p><strong>Map Center:</strong> Latitude: @mapCenterLatitude, Longitude: @mapCenterLongitude</p>
+                <p><strong>Circle Radius:</strong> @mapRadius kilometers</p>
+            </div>
+            }
+        </div>
+
+    </div>
+</div>
+
+
+@code {
+    private int circleRadius = 25; // Default radius in meters
+    private IJSObjectReference? module;
+    private string? result;
+    private string? mapInfo;
+    private double mapCenterLatitude;
+    private double mapCenterLongitude;
+    private double mapRadius;
+    
+    [Parameter] public EventCallback ToggleMap { get; set; } 
+    
+    private async Task UpdateCircleRadius()
+    {
+        if (module != null)
+        {
+            await module.InvokeVoidAsync("update_circle_radius", circleRadius);
+        }
+    }
+    
+    private async Task ShowMapInfo()
+    {
+        if (module != null)
+        {
+            var resultMap = await module.InvokeAsync<MapCenterAndRadius>("get_map_center_and_radius");
+            Console.WriteLine(resultMap);
+            mapCenterLatitude = resultMap.Latitude;
+            mapCenterLongitude = resultMap.Longitude;
+            mapRadius = resultMap.Radius;
+
+                mapInfo = $"Center: Latitude {mapCenterLatitude}, Longitude {mapCenterLongitude}. Radius: {mapRadius} km.";
+            
+        }
+    }
+     
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
+            if (module != null)
+            {
+                result = await module.InvokeAsync<string>("load_map");
+            }
+        }
+    }
+    
+    async ValueTask IAsyncDisposable.DisposeAsync()
+    {
+        if (module != null)
+        {
+            // await module.InvokeVoidAsync("dispose");
+            await module.DisposeAsync();
+        }
+    }
+}
