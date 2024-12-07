@@ -7,6 +7,7 @@
     [Parameter]
     public EventCallback<FilterRequestDto> OnFilterApply { get; set; }
     private bool showFilterPopup = false;
+    private bool showMapPopup = false;
     private int[] priceRange = { 10, 100 };
 
     private int[] timeRange = { 6, 16 };
@@ -27,6 +28,11 @@
     private void ToggleFilters()
     {
         showFilterPopup = !showFilterPopup;
+    }
+
+    private void ToggleMap()
+    {
+        showMapPopup = !showMapPopup;
     }
 
     private async Task ApplyFilters()
@@ -55,7 +61,7 @@
 }
 
 <div class="search-bar-container">
-    <div class="map-icon">
+    <div class="map-icon" @onclick="ToggleMap">
         <i class="bi bi-geo-alt"></i>
     </div>
     <div class="search-bar">
@@ -68,6 +74,21 @@
         <i class="bi bi-sliders"></i>
     </div>
 </div>
+
+@if (showMapPopup)
+{
+    <div class="popup-overlay">
+        <div class="popup-window">
+            <div class="popup-header">
+                <h3>Maps</h3>
+                <button class="close-button" @onclick="ToggleMap">&times;</button>
+            </div>
+            <div class="popup-body">
+               
+            </div>
+        </div>
+    </div>
+}
 
 @if (showFilterPopup)
 {
@@ -110,4 +131,5 @@
             </div>
         </div>
     </div>
+
 }

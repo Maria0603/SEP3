@@ -2,6 +2,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 16px; /* Adjust the gap between items as needed */
+  justify-content: center;
 }
 .search-bar-container {
   margin-bottom: 20px; /* Adjust the value as needed */
