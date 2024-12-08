@@ -35,10 +35,10 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
 
     System.out.println("Request for business by id");
 
-    Optional<BusinessDao> business = businessRepository.findById(request.getId());
+    Optional<Business> business = businessRepository.findById(request.getId());
 
     if(business.isPresent()){
-      BusinessDao businessDao = business.get();
+      Business businessDao = business.get();
 
       BusinessResponse businessResponse = buildBusinessResponse(businessDao);
 
@@ -60,12 +60,11 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
     Business createdBusiness = businessRepository.save(business);
 
     IdRequestResponse response = IdRequestResponse.newBuilder().setId(createdBusiness.getId()).build();
-
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
-  @Override public void getBusinessByEmail(EmailRequestResponse request,
+  @Override public void getBusinessByEmail(BusinessByEmailRequest request,
       StreamObserver<BusinessResponse> responseObserver)
   {
     Optional<Business> business = businessRepository.findByEmail(

@@ -2,8 +2,10 @@ package com.example.server.contollers;
 
 
 import com.example.server.dto.business.BusinessResponseDto;
-import com.example.server.services.BusinessService;
+import com.example.server.services.IBusinessService;
+import com.example.server.services.Implementations.BusinessService;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -12,9 +14,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController @RequestMapping("/business") public class BusinessController {
 
 
-    private final BusinessService businessService;
+    private final IBusinessService businessService;
 
-    public BusinessController(BusinessService businessService) {
+    public BusinessController(IBusinessService businessService) {
         this.businessService = businessService;
     }
 

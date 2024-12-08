@@ -12,7 +12,7 @@ import "CustomerService.proto";
 package proto;
 
 service BusinessService {
-  rpc RegisterBusiness(RegisterBusinessRequest) returns (EmptyMessage);
+  rpc RegisterBusiness(RegisterBusinessRequest) returns (IdRequestResponse);
   rpc GetBusinessByEmail(BusinessByEmailRequest) returns (BusinessResponse);
   rpc GetBusinessById(BusinessIdRequest) returns (BusinessResponse);
   rpc GetBusinessesInRadius(IdRequestResponse) returns (BusinessesInRadiusResponse);
@@ -56,7 +56,9 @@ message RegisterBusinessRequest {
 
 
 
+message EmptyMessage {
 
+}
 
 
 

@@ -77,7 +77,7 @@ public class DataServerStub
     return businessBlockingStub.registerBusiness(request);
   }
 
-  public BusinessResponse getBusinessByEmail(EmailRequestResponse request)
+  public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
   {
     return businessBlockingStub.getBusinessByEmail(request);
   }
@@ -107,9 +107,6 @@ public class DataServerStub
   {
     return userBlockingStub.getUserByEmail(request);
   }
-
-
-
 
   // ****************************************************************************
   public void shutdown()
