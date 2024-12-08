@@ -19,10 +19,10 @@
 /* Business Logo */
 .logo-image {
     position: absolute;
-    top: 137px;
-    left: 17px;
-    width: 75px;
-    height: 60px;
+    top: 117px;
+    left: 25px;
+    width: 80px;
+    height:75px;
     border-radius: 20%;
     z-index: 2;
 }
