@@ -9,6 +9,7 @@
 
 /* Big Image */
 .offer-image {
+    box-shadow: 0 0.3rem 0.6rem rgba(0, 0, 0, 0.25);
     width: 100%;
     height: 200px;
     object-fit: cover;
@@ -19,10 +20,10 @@
 /* Business Logo */
 .logo-image {
     position: absolute;
-    top: 117px;
-    left: 25px;
-    width: 80px;
-    height:75px;
+    top: 137px;
+    left: 17px;
+    width: 75px;
+    height: 60px;
     border-radius: 20%;
     z-index: 2;
 }
