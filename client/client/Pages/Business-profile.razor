@@ -1,39 +1,108 @@
-@page "/business-profile"
+@page "/profile"
 @using client.DTO
 @inject NavigationManager NavigationManager
 @inject AuthStateProvider AuthStateProvider
 
+<style>
+   
+    .container {
+        display: flex;
+        justify-content: center; 
+        align-items: center; 
+       margin-top: 50px;
+        margin-right: 450px;
+      
+    }
 
-<h1>Edit profile (business)</h1>
+   
+    .buttons-column {
+        display: flex;
+        flex-direction: column; 
+        gap: 20px; 
+        align-items: flex-start; 
+        margin-bottom: 149px;
+        margin-right:100px;
+    }
 
-<EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
-    <DataAnnotationsValidator />
-    <ValidationSummary />
+    .nav-button {
+        padding: 10px 20px;
+        width: 150px; 
+        text-align: center;
+        cursor: pointer;
+        border: 1px solid lightgray;
+        box-shadow: 2px 2px 0 0 white, 4px 4px 0 0 lightgray;
+        transition-duration: 0.2s;
+        background-color: #f9f9f9;
+    }
 
-    <div class="mb-3">
-        <label for="businessName">Business Name</label>
-        <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
+    .nav-button:hover {
+        box-shadow: 3px 3px 0 0 white, 6px 6px 0 0 #d11049;
+        transform: translate(-2px, -2px);
+    }
+    .nav-button:active {
+        color: #d11049; 
+        color: white;
+        border-color: lightgray; 
+    }
+
+    
+    .form-column {
+        padding: 20px;
+        background-color: #f9f9f9;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        display: flex;
+        flex-direction: column; 
+        gap: 20px; 
+        max-width: 350px;
+        
+    }
+
+    button.btn-primary, button.btn-danger {
+        margin-top: 10px;
+        margin-left: 20px;
+        width: 120px; 
+    }
+    
+    
+</style>
+
+<h1>Edit Profile (Business)</h1>
+<div class="container">
+    <div class="buttons-column">
+        <button class="nav-button">Profile</button>
+        <button class="nav-button">Password</button>
+        <button class="nav-button">Notifications</button>
     </div>
 
-    <div class="mb-3">
-        <label for="email">Email</label>
-        <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
+    <!-- Form Column -->
+    <div class="form-column">
+        <EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div>
+                <label for="businessName">Business Name</label>
+                <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
+            </div>
+            <div>
+                <label for="phoneNumber">Phone Number</label>
+                <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
+            </div>
+            <div>
+                <label for="image">Business Image</label>
+                <InputFile id="image" OnChange="UploadImage" class="form-control" />
+            </div>
+
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+        </EditForm>
     </div>
-
-    <div class="mb-3">
-        <label for="phoneNumber">Phone Number</label>
-        <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
-    </div>
-
-    <div class="mb-3">
-        <label for="image">Business Image</label>
-        <InputFile id="image" OnChange="UploadImage" class="form-control" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Update Profile</button>
-</EditForm>
-
-<button @onclick="Logout" class="btn btn-danger mt-3">Log Out</button>
+</div>
 
 @if (!string.IsNullOrEmpty(successMessage))
 {
@@ -52,7 +121,7 @@
 
     protected override async Task OnInitializedAsync()
     {
-        // Fetch the current business profile from the API
+        
         businessProfile = await GetBusinessProfileAsync();
     }
 
@@ -83,11 +152,10 @@
         NavigationManager.NavigateTo("/login", true);
     }
 
-
-    // Mock methods for API calls - replace with real API service
+   
     private Task<BusinessProfileDto> GetBusinessProfileAsync()
     {
-        // Simulate fetching the business profile
+       
         return Task.FromResult(new BusinessProfileDto
         {
             BusinessName = "Example Business",
