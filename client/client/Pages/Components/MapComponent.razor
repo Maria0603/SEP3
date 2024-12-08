@@ -1,6 +1,8 @@
+@using client.DTO.Customer
 @using client.DTO
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
+@inject ILocationService LocationService
 
 
 <div class="popup-overlay">
@@ -10,21 +12,21 @@
             <button class="close-button" @onclick="ToggleMap">&times;</button>
         </div>
         <div class="popup-body">
-            <div id="mapContainer" >
+            <div id="mapContainer">
                 @* <LeafletMap Map="_map" /> *@
             </div>
             <div class="map-controls">
-                <label>Circle Radius (meters):</label>
-                <input type="range" min="1" max="100" step="1" @bind="circleRadius" @bind:after="UpdateCircleRadius" />
+                <label>Circle Radius (km):</label>
+                <input type="range" min="1" max="100" step="1" @bind="circleRadius" @bind:after="UpdateCircleRadius"/>
                 <span>@circleRadius kilometers</span>
             </div>
             <button @onclick="ShowMapInfo" class="btn btn-danger mt-3">Search</button>
             @if (!string.IsNullOrEmpty(mapInfo))
             {
-            <div class="map-info mt-3">
-                <p><strong>Map Center:</strong> Latitude: @mapCenterLatitude, Longitude: @mapCenterLongitude</p>
-                <p><strong>Circle Radius:</strong> @mapRadius kilometers</p>
-            </div>
+                <div class="map-info mt-3">
+                    <p><strong>Map Center:</strong> Latitude: @mapCenterLatitude, Longitude: @mapCenterLongitude</p>
+                    <p><strong>Circle Radius:</strong> @circleRadius kilometers</p>
+                </div>
             }
         </div>
 
@@ -33,16 +35,18 @@
 
 
 @code {
-    private int circleRadius = 25; // Default radius in meters
+    private int circleRadius=10; // Default radius in km
     private IJSObjectReference? module;
     private string? result;
     private string? mapInfo;
     private double mapCenterLatitude;
     private double mapCenterLongitude;
     private double mapRadius;
-    
-    [Parameter] public EventCallback ToggleMap { get; set; } 
-    
+
+    private CustomerLocationRequestResponseDto? customerLocation;
+
+    [Parameter] public EventCallback ToggleMap { get; set; }
+
     private async Task UpdateCircleRadius()
     {
         if (module != null)
@@ -50,7 +54,7 @@
             await module.InvokeVoidAsync("update_circle_radius", circleRadius);
         }
     }
-    
+
     private async Task ShowMapInfo()
     {
         if (module != null)
@@ -59,25 +63,34 @@
             Console.WriteLine(resultMap);
             mapCenterLatitude = resultMap.Latitude;
             mapCenterLongitude = resultMap.Longitude;
-            mapRadius = resultMap.Radius;
+            circleRadius = (int)resultMap.Radius;
 
-                mapInfo = $"Center: Latitude {mapCenterLatitude}, Longitude {mapCenterLongitude}. Radius: {mapRadius} km.";
-            
+            mapInfo = $"Center: Latitude {mapCenterLatitude}, Longitude {mapCenterLongitude}. Radius: {circleRadius} km.";
         }
     }
-     
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
             module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
-            if (module != null)
+            try
             {
-                result = await module.InvokeAsync<string>("load_map");
+                customerLocation = await LocationService.GetCustomerLocationAsync();
+                circleRadius = customerLocation.Radius;
+                mapCenterLatitude = customerLocation.Latitude;
+                mapCenterLongitude = customerLocation.Longitude;
+                await InitializeMap(customerLocation.Latitude, customerLocation.Longitude, customerLocation.Radius);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Error fetching location: {e.Message}");
             }
         }
     }
-    
+
+
+
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (module != null)
@@ -86,4 +99,5 @@
             await module.DisposeAsync();
         }
     }
+
 }
