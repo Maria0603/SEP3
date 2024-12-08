@@ -67,6 +67,18 @@ export function set_zoom_level(zoomLevel) {
     }
 }
 
+function fit_map_to_radius(latitude, longitude, radius) {
+    // Create a LatLngBounds for the circle that should fit the map view
+    const circleBounds = L.latLngBounds(
+        [latitude - (radius / 111.32), longitude - (radius / 111.32)],
+        [latitude + (radius / 111.32), longitude + (radius / 111.32)]
+    );
+
+    // Fit the map to this bounds
+    map.fitBounds(circleBounds);
+}
+
+
 export function get_map_center_and_radius() {
     if (map && donut) {
         const center = map.getCenter();

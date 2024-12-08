@@ -88,9 +88,18 @@
             }
         }
     }
-
-
-
+    
+    
+    private async Task InitializeMap(double latitude, double longitude, int radius)
+    {
+        if (module != null)
+        {
+            if (latitude != 0 && longitude != 0 && radius != 0) // the customer may not have a location set
+                await module.InvokeVoidAsync("load_map", latitude, longitude, radius);
+            else await module.InvokeVoidAsync("load_map");
+        }
+    }
+    
     async ValueTask IAsyncDisposable.DisposeAsync()
     {
         if (module != null)
