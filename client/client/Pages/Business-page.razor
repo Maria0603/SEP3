@@ -1,22 +1,18 @@
 @page "/business/{id}"
 @using client.DTO
 @using client.DTO.Business
-@using Microsoft.AspNetCore.Authorization
+@using client.DTO.Offer
 @inject IBusinessService BusinessService
-@attribute [Authorize]
+@inject IOfferService OfferService
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
 
 <div class="container">
-
-    
-    
-    @if (_business?.Address != null)
+    @if (_business != null)
     {
-       
-
-
-
         <div class="display-container">
-            <img src="@_business.LogoPath" alt="business-logo" class="business-logo">
+            <img src="@HttpClient.BaseAddress + @_business.LogoPath" alt="business-logo" class="business-logo">
             <div class="business-contact">
                 <h3 class="BusinessName">@_business.BusinessName</h3>
                 <p>@_business.PhoneNumber</p>
@@ -24,8 +20,6 @@
                 <p>@_business.Cvr</p>
             </div>
         </div>
-        
-
 
         <div class="location">
             <div class="location-content">
@@ -38,38 +32,38 @@
                     </p>
                 </div>
             </div>
-        </div>
+        </div>    
     }
-
-    @* TODO: Add OFFERS of the business and RATINGS on the business *@
-
+    
+    @if (offers == null){
+    <p>Loading offers...</p>
+    }
+    else if (offers.Count == 0){
+    <p>No offers available at the moment.</p>
+    }
+    else{
+    @foreach (OfferResponseDto offer in offers)
+    {
+        <OfferComponent OfferData="offer" OfferWidth="67rem" OfferMarginBottom="20px"></OfferComponent>
+    }
+    }
 </div>
 
 @code {
     [Parameter] public string id { get; set; }
-
-    private BusinessResponseDto? _business = new BusinessResponseDto()
+    private List<OfferResponseDto>? offers = new List<OfferResponseDto>();
+    private BusinessResponseDto? _business;
+    private void ShowOfferDetails(string offerId)
     {
-        Id = "655013611b06c568a91d7542",
-        Email = "sample@mail",
-        PhoneNumber = "+45545645646",
-        Cvr = "654566546",
-        LogoPath = "images/brand_logo.jpeg",
-        Address = new AddressDto()
-        {
-            City = "Horsens",
-            County = "Velavej",
-            Country = "Denmark",
-            Number = "447",
-            PostalCode = "8700",
-            State = "Denmark"
-        },
-        BusinessName = "Seven Eleven",
-        
-    };
-    
+        NavigationManager.NavigateTo($"offers/{offerId}");
+    }
+
+
     protected override async Task OnInitializedAsync()
     {
         _business = await BusinessService.GetBusinessByIdAsync(id);
+        FilterRequestDto filterRequestDto = new FilterRequestDto();
+        offers = await OfferService.GetOffersAsync(filterRequestDto);
     }
+
 }

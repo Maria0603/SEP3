@@ -1,14 +1,12 @@
 
 .container {
     position: relative;
-    background: #838485;
-    border-radius: 20%;
     max-width: 1100px;
     margin: 0 auto;
     padding: 0 15px;
 }
 p{
-    margin: 0;
+    margin-bottom: 0;
 }
 .display-container{
     display: flex;
@@ -21,17 +19,18 @@ p{
 }
 
 .business-contact{
-    
+
 }
 
 .BusinessName {
-    
+
 }
 
 .business-logo{
     width: 140px;
     height: 115px;
     border-radius: 20%;
+    border: solid 2px black;
     z-index: 2;
 }
 
@@ -39,6 +38,7 @@ p{
 /* Location Section */
 .location {
     margin-top: 20px;
+    margin-bottom: 20px;
     padding: 15px;
     background-color: #f0f0f0;
     border-radius: 10px;
@@ -70,6 +70,16 @@ p{
     font-size: 16px;
     color: #333;
     margin: 0;
+}
+.carousel-item {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: auto; // Ensures the carousel adjusts to content height
+}
+
+.offer {
+    margin: auto; // Center the offer card in the carousel
 }
 
 
