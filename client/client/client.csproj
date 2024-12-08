@@ -18,6 +18,7 @@
         <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.10" PrivateAssets="all"/>
         <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="8.0.10" />
         <PackageReference Include="Microsoft.AspNetCore.WebUtilities" Version="8.0.10" />
+        <PackageReference Include="Microsoft.JSInterop" Version="8.0.10" />
         <PackageReference Include="Stripe.net" Version="47.0.0" />
         <PackageReference Include="Syncfusion.Blazor" Version="27.2.4" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
@@ -32,6 +33,11 @@
       <None Update="Pages\Business-profile.css">
         <DependentUpon>Business-profile.razor</DependentUpon>
       </None>
+    </ItemGroup>
+
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="wwwroot\_content\Syncfusion.Blazor\scripts\syncfusion-blazor.min.js" />
+      <_ContentIncludedByDefault Remove="wwwroot\_content\Syncfusion.Blazor\styles\bootstrap5.css" />
     </ItemGroup>
 
 </Project>
