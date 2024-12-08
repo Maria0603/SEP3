@@ -1,8 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
-import com.example.server.dto.customer.CustomerLocationRequestDto;
-import com.example.server.services.Implementations.CustomerService;
+import com.example.server.dto.customer.CustomerLocationRequestResponseDto;
 import com.example.server.services.ICustomerService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +21,20 @@ import java.util.List;
   }
 
   @PostMapping("/location") public ResponseEntity<List<BusinessInRadiusResponseDto>> updateCustomerLocation(
-      @RequestBody CustomerLocationRequestDto dto, HttpServletRequest request)
+      @RequestBody CustomerLocationRequestResponseDto dto, HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
     System.out.println("Id:.................: " + userId);
     List<BusinessInRadiusResponseDto> businessesInRadius = customerService.updateCustomerLocation(
         dto, userId);
     return ResponseEntity.ok(businessesInRadius);
+  }
+  @GetMapping("/location") public ResponseEntity<CustomerLocationRequestResponseDto> getCustomerLocation(HttpServletRequest request)
+  {
+    String userId = (String) request.getAttribute("userId");
+    System.out.println("Id:.................: " + userId);
+    CustomerLocationRequestResponseDto location = customerService.getCustomerLocation(userId);
+    return ResponseEntity.ok(location);
   }
 
   @GetMapping("/radius-businesses")  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")public ResponseEntity<List<BusinessInRadiusResponseDto>> getBusinessesInRadius(HttpServletRequest request)
