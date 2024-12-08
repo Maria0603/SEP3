@@ -23,27 +23,36 @@
         margin-bottom: 149px;
         margin-right:100px;
     }
-
     .nav-button {
-        padding: 10px 20px;
-        width: 150px; 
-        text-align: center;
+        display: flex;
+        align-items: center; /* Align icon and text vertically */
+        justify-content: flex-start; /* Align items to the left */
+        padding: 10px 10px;
+        width: 150px;
+        text-align: left; /* Ensure text aligns left */
         cursor: pointer;
         border: 1px solid lightgray;
         box-shadow: 2px 2px 0 0 white, 4px 4px 0 0 lightgray;
         transition-duration: 0.2s;
         background-color: #f9f9f9;
+        gap: 10px; /* Adds space between the icon and text */
+    }
+
+    .nav-button img {
+        flex-shrink: 0; /* Prevent icons from shrinking */
     }
 
     .nav-button:hover {
         box-shadow: 3px 3px 0 0 white, 6px 6px 0 0 #d11049;
         transform: translate(-2px, -2px);
     }
+
     .nav-button:active {
-        color: #d11049; 
-        color: white;
-        border-color: lightgray; 
+        color: #d11049;
+        background-color: white;
+        border-color: lightgray;
     }
+
 
     
     .form-column {
@@ -63,6 +72,16 @@
         margin-left: 20px;
         width: 120px; 
     }
+    .icon1{
+        height: 30px;
+        }
+    .icon2{
+        height: 30px;
+    }
+    .icon3 {
+        height: 19px;
+        margin-left: 6px;
+    }
     
     
 </style>
@@ -70,9 +89,9 @@
 <h1>Edit Profile (Business)</h1>
 <div class="container">
     <div class="buttons-column">
-        <button class="nav-button">Profile</button>
-        <button class="nav-button">Password</button>
-        <button class="nav-button">Notifications</button>
+        <button class="nav-button"><img src="images/icons/User.png" class="icon1">Profile</button>
+        <button class="nav-button"><img src="images/icons/Key.png" class="icon2">Password</button>
+        <button class="nav-button"><img src="images/icons/Bell.png" class="icon3">Notifications</button>
     </div>
 
     <!-- Form Column -->
