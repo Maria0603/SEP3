@@ -4,6 +4,69 @@
 @using Syncfusion.Blazor
 
 
+<div class="search-bar-container">
+    <div class="map-icon" @onclick="ToggleMap">
+        <i class="bi bi-geo-alt"></i>
+    </div>
+    <div class="search-bar">
+        <input class="search-input" placeholder="Search..."/>
+        <div class="search-icon">
+            <i class="bi bi-search"></i>
+        </div>
+    </div>
+    <div class="filter-icon-bubble" @onclick="ToggleFilters">
+        <i class="bi bi-sliders"></i>
+    </div>
+</div>
+
+@if (showMapPopup)
+{
+<MapComponent ToggleMap="ToggleMap"/>
+}
+@if (showFilterPopup)
+{
+<div class="popup-overlay">
+    <div class="popup-window">
+        <div class="popup-header">
+            <h3>Filters</h3>
+            <button class="close-button" @onclick="ToggleFilters">&times;</button>
+        </div>
+        <div class="popup-body">
+            <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged"/>
+            <div class="filter-section">
+                <label>Collection Date</label>
+                <div class="date-range">
+                    <InputDate @bind-Value="pickupDateStart" class="form-control" Placeholder="Start Date"/>
+                    <span class="mx-2">to</span>
+                    <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
+                </div>
+            </div>
+
+
+            @* <div class="filter-section"> *@
+            @*     <label>Collection Time</label> *@
+            @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
+            @*     </SfSlider> *@
+            @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
+            @* </div> *@
+
+
+            <div class="filter-section">
+                <label>Price Range</label>
+                <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">
+                </SfSlider>
+                <p>From: @priceRange[0] To: @priceRange[1]</p>
+            </div>
+        </div>
+        <div class="popup-footer">
+            <button class="clear-button" @onclick="ClearFilters">Clear filters</button>
+            <button class="apply-button" @onclick="ApplyFilters">Apply</button>
+        </div>
+    </div>
+</div>
+
+}
+
 @code {
     [Parameter]
     public EventCallback<FilterRequestDto> OnFilterApply { get; set; }
@@ -71,69 +134,8 @@
         await OnFilterClear.InvokeAsync();
         Console.WriteLine("Filters Cleared");
     }
+    
 
 
-}
-
-<div class="search-bar-container">
-    <div class="map-icon" @onclick="ToggleMap">
-        <i class="bi bi-geo-alt"></i>
-    </div>
-    <div class="search-bar">
-        <input class="search-input" placeholder="Search..."/>
-        <div class="search-icon">
-            <i class="bi bi-search"></i>
-        </div>
-    </div>
-    <div class="filter-icon-bubble" @onclick="ToggleFilters">
-        <i class="bi bi-sliders"></i>
-    </div>
-</div>
-
-@if (showMapPopup)
-{
-    <MapComponent ToggleMap="ToggleMap"/>
-}
-@if (showFilterPopup)
-{
-    <div class="popup-overlay">
-        <div class="popup-window">
-            <div class="popup-header">
-                <h3>Filters</h3>
-                <button class="close-button" @onclick="ToggleFilters">&times;</button>
-            </div>
-            <div class="popup-body">
-                <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged"/>
-                <div class="filter-section">
-                    <label>Collection Date</label>
-                    <div class="date-range">
-                        <InputDate @bind-Value="pickupDateStart" class="form-control" Placeholder="Start Date"/>
-                        <span class="mx-2">to</span>
-                        <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
-                    </div>
-                </div>
-
-
-                @* <div class="filter-section"> *@
-                @*     <label>Collection Time</label> *@
-                @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
-                @*     </SfSlider> *@
-                @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
-                @* </div> *@
-
-
-                <div class="filter-section">
-                    <label>Price Range</label>
-                    <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">
-                    </SfSlider>
-                    <p>From: @priceRange[0] To: @priceRange[1]</p>
-                </div>
-            </div>
-            <div class="popup-footer">
-                <button class="clear-button" @onclick="ClearFilters">Clear filters</button>
-                <button class="apply-button" @onclick="ApplyFilters">Apply</button>
-            </div>
-        </div>
-    </div>
 
 }

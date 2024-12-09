@@ -105,8 +105,9 @@
         if (module != null)
         {
             // await module.InvokeVoidAsync("dispose");
+            await module.InvokeVoidAsync("cleanup_map");
             await module.DisposeAsync();
         }
     }
-
+    
 }

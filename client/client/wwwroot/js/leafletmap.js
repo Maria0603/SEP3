@@ -3,20 +3,34 @@ let donut;
 let marker;
 
 export function load_map(latitude = 56.156486066837665, longitude = 10.19591121665965, radius = 10) {
-    // Check if the map has already been initialized
-    if (map) {
-        // If the map is already initialized, just update the center and radius
-        map.setView([latitude, longitude], 10);
-        update_circle_radius(radius);
+    const container = document.getElementById('mapContainer');
+    if (!container) {
+        console.error("Map container not found!");
         return;
     }
-    
+
+    if (map) {
+        cleanup_map()
+    }
+
+
     // Initialize the map
     map = L.map('mapContainer').setView([latitude, longitude], 10);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
-        minZoom: 5
+        minZoom: 5,
     }).addTo(map);
+
+
+    /*
+     // Check if the map has already been initialized
+     if (map) {
+         // If the map is already initialized, just update the center and radius
+         map.setView([latitude, longitude], 10);
+         update_circle_radius(radius);
+         return;
+     }*/
+
     const geocoder = L.Control.geocoder({defaultMarkGeocode: false}).addTo(map);
     console.log("This message is from the leafletmap.js file");
 
@@ -50,6 +64,14 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
             marker.setLatLng(map.getCenter());
         }
     });
+}
+
+export function cleanup_map() {
+    if (map) {
+        map.off();
+        map.remove();
+        map = null;
+    }
 }
 
 export function update_circle_radius(radius) {
