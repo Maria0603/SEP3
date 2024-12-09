@@ -7,7 +7,6 @@ public class BusinessResponseDto
     public string Id { get; set; }
     public string Email { get; set; }
     public string PhoneNumber { get; set; }
-    public string HashedPassword { get; set; }
     public AddressDto Address { get; set; }
     public string Logo_path { get; set; }
     public string Cvr { get; set; }

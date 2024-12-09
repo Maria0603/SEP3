@@ -29,6 +29,7 @@ public class BusinessDtoGrpcConverter
         .setRole(UserRole.BUSINESS.getRoleName()).build();
   }
 
+  // This is to send to client, **without hashed password**
   public static BusinessResponseDto BusinessResponseGrpc_To_BusinessResponseDto(
           BusinessResponse response)
   {

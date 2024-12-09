@@ -27,7 +27,6 @@ public class BusinessService : IBusinessService
                    {
                        PropertyNameCaseInsensitive = true
                    })!;
-           Console.WriteLine("LOGOPATH: " + businessResponse.Logo_path);
            return businessResponse;
        }
        
