@@ -27,10 +27,10 @@ public class BusinessService : IBusinessService
                    {
                        PropertyNameCaseInsensitive = true
                    })!;
+           Console.WriteLine("LOGOPATH: " + businessResponse.Logo_path);
            return businessResponse;
        }
        
-       Console.WriteLine(responseContent);
        throw new Exception(responseContent);
     }
 }

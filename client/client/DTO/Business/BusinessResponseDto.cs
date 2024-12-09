@@ -9,7 +9,7 @@ public class BusinessResponseDto
     public string PhoneNumber { get; set; }
     public string HashedPassword { get; set; }
     public AddressDto Address { get; set; }
-    public string LogoPath { get; set; }
+    public string Logo_path { get; set; }
     public string Cvr { get; set; }
     public string BusinessName { get; set; }
     public string Role { get; set; }

@@ -12,7 +12,7 @@
     @if (_business != null)
     {
         <div class="display-container">
-            <img src="@HttpClient.BaseAddress + @_business.LogoPath" alt="business-logo" class="business-logo">
+            <img src="@(HttpClient.BaseAddress + _business.Logo_path)" alt="business-logo" class="business-logo">
             <div class="business-contact">
                 <h3 class="BusinessName">@_business.BusinessName</h3>
                 <p>@_business.PhoneNumber</p>
@@ -93,6 +93,7 @@
     protected override async Task OnInitializedAsync()
     {
         _business = await BusinessService.GetBusinessByIdAsync(id);
+        Console.Write(_business.Logo_path);
         FilterRequestDto filterRequestDto = new FilterRequestDto();
         offers = await OfferService.GetOffersAsync(filterRequestDto);
     }
