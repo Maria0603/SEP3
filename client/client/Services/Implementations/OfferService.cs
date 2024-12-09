@@ -55,8 +55,7 @@ public class OfferService : IOfferService {
         Console.WriteLine(responseContent);
         throw new Exception(responseContent);
     }
-
-    //  TODO: CLEANUP ˇˇˇ bellow ˇˇˇ
+    
     public async Task<List<OfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
 {
     var queryParameters = new List<string>();

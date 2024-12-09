@@ -34,7 +34,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
             request -> request.requestMatchers("/auth/**",
                     "/server/images/**") // Do we have other public features?
                 .permitAll().requestMatchers("/business/**")
-                .hasAnyAuthority("BUSINESS", "ADMIN") // Business + Admin access
+                .hasAnyAuthority("BUSINESS", "ADMIN", "CUSTOMER") // Business + Admin access
                 .requestMatchers("/customer/**")
                 .hasAnyAuthority("CUSTOMER", "ADMIN") // Customer + Admin access
                 .requestMatchers("/admin/**")

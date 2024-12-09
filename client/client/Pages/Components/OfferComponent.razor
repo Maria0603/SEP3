@@ -56,7 +56,7 @@
 @*     </div> *@
 @* } *@
 
-<div @attributes="AdditionalAttributes" class="offer" @onclick="() => ShowOfferDetails(OfferData.Id)">
+<div @attributes="AdditionalAttributes" class="offer" style="width: @OfferWidth; margin-bottom: @OfferMarginBottom;" @onclick="() => ShowOfferDetails(OfferData.Id)">
     <div class="offer__top">
         <div class="offer__top--left">@OfferData.NumberOfAvailableItems Left</div>
         <svg class="offer__top--favourite @(false ? "offer__top--favourite__active" : "")" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -115,7 +115,11 @@
 @code {
     [Parameter] 
     public OfferResponseDto OfferData { get; set; }
-    
+    [Parameter]
+    public string OfferWidth { get; set; } = "30rem"; // Default width
+    [Parameter]
+    public string OfferMarginBottom { get; set; } = "0px"; // Default margin-bottom
+
     public Dictionary<string, object> AdditionalAttributes { get; set; }
     
     private void ShowOfferDetails(string offerId)

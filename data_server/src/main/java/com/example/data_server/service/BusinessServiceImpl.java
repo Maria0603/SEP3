@@ -29,6 +29,25 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
     this.customerRepository = customerRepository;
   }
 
+  @Override public void getBusinessById(BusinessIdRequest request,
+      StreamObserver<BusinessResponse> responseObserver)
+  {
+
+    System.out.println("Request for business by id");
+
+    Optional<Business> business = businessRepository.findById(request.getId());
+
+    if(business.isPresent()){
+      Business businessDao = business.get();
+
+      BusinessResponse businessResponse = buildBusinessResponse(businessDao);
+
+      responseObserver.onNext(businessResponse);
+      responseObserver.onCompleted();
+    }
+
+  }
+
   @Override public void registerBusiness(RegisterBusinessRequest request,
       StreamObserver<IdRequestResponse> responseObserver)
   {
@@ -41,12 +60,11 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
     Business createdBusiness = businessRepository.save(business);
 
     IdRequestResponse response = IdRequestResponse.newBuilder().setId(createdBusiness.getId()).build();
-
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
-  @Override public void getBusinessByEmail(EmailRequestResponse request,
+  @Override public void getBusinessByEmail(BusinessByEmailRequest request,
       StreamObserver<BusinessResponse> responseObserver)
   {
     Optional<Business> business = businessRepository.findByEmail(
