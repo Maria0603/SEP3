@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "CustomerServiceProto";
+
+import "OfferService.proto";
+import "UserService.proto";
+
+
+package proto;
+
+service CustomerService {
+  rpc RegisterCustomer(RegisterCustomerRequest) returns (IdRequestResponse);
+  rpc GetCustomerByEmail(EmailRequestResponse) returns (CustomerResponse);
+  rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
+  rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
+}
+
+
+message IdRequestResponse {
+  string id = 1;
+}
+message EmailRequestResponse {
+  string email = 1;
+}
+
+message CustomerResponse {
+  string id = 1;
+  string email = 2;
+  string phoneNumber = 3;
+  string hashedPassword = 4;
+  string role = 5;
+  string firstName = 6;
+  string lastName = 7;
+}
+
+message RegisterCustomerRequest {
+  string firstName = 1;
+  string lastName = 2;
+  string email = 3;
+  string phoneNumber = 4;
+  string hashedPassword = 5;
+  string role = 6;
+}
+message CustomerLocationRequest {
+  double latitude = 1;
+  double longitude = 2;
+  int32 radius = 3;
+  string customerId=4;
+}
+
+message BusinessOnMap {
+  double latitude = 1;
+  double longitude = 2;
+  string logoPath = 3;
+  string businessName = 4;
+  string businessId = 5;
+  string businessEmail = 6;
+}
+
+message BusinessesInRadiusResponse {
+  repeated BusinessOnMap businesses = 1;
+}

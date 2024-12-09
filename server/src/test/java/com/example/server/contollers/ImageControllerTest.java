@@ -1,19 +1,5 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.image.UploadImageRequestDto;
-import com.example.server.services.ImageStorageService;
-import com.example.shared.model.Category;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
-
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
-
 class ImageControllerTest
 {
 

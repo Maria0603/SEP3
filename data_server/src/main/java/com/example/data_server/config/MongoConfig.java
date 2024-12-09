@@ -1,7 +1,7 @@
 package com.example.data_server.config;
 
-import com.example.data_server.utility.StringToDateDaoConverter;
-import com.example.data_server.utility.StringToTimeDaoConverter;
+import com.example.shared.converters.StringToTimestampConverter;
+import com.example.shared.converters.TimestampToStringConverter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.mongodb.core.convert.MongoCustomConversions;
@@ -14,8 +14,8 @@ public class MongoConfig
     @Bean
     public MongoCustomConversions customConversions() {
       return new MongoCustomConversions(Arrays.asList(
-          new StringToDateDaoConverter(),
-          new StringToTimeDaoConverter()
+          new StringToTimestampConverter(),
+          new TimestampToStringConverter()
       ));
     }
 }

@@ -1,13 +1,84 @@
-﻿@using client.Pages.Shared
-<Router AppAssembly="@typeof(App).Assembly">
-    <Found Context="routeData">
-        <RouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)"/>
-        <FocusOnNavigate RouteData="@routeData" Selector="h1"/>
-    </Found>
-    <NotFound>
-        <PageTitle>Not found</PageTitle>
-        <LayoutView Layout="@typeof(MainLayout)">
-            <p role="alert">Sorry, there's nothing at this address.</p>
-        </LayoutView>
-    </NotFound>
-</Router>
+﻿@using System.Security.Claims
+@using client.Pages.Shared
+@inject NavigationManager Navigation
+@inject AuthenticationStateProvider AuthProvider
+<CascadingAuthenticationState>
+    <Router AppAssembly="@typeof(App).Assembly">
+        <Found Context="routeData">
+            <AuthorizeRouteView RouteData="@routeData" DefaultLayout="@typeof(MainLayout)">
+                <NotAuthorized>
+                    <h3>Access denied</h3>
+                    @RedirectIfNotAuthorized()
+                </NotAuthorized>
+            </AuthorizeRouteView>
+        </Found>
+        <NotFound>
+            <PageTitle>Not found</PageTitle>
+            <LayoutView Layout="@typeof(MainLayout)">
+                <p role="alert">Sorry, there's nothing at this address.</p>
+            </LayoutView>
+        </NotFound>
+    </Router>
+</CascadingAuthenticationState>
+
+
+@code {
+
+    private async Task<RenderFragment> RedirectIfNotAuthorized()
+    {
+        return builder =>
+        {
+            Task.Run(async () =>
+            {
+                try
+                {
+                    var authState = await AuthProvider.GetAuthenticationStateAsync();
+                    var user = authState.User;
+
+                    // Check if the user is authenticated
+                    if (!user.Identity?.IsAuthenticated ?? true)
+                    {
+                        Console.WriteLine("User not authenticated");
+                        Navigation.NavigateTo("/auth/login", forceLoad: true);
+                    }
+                    else
+                    {
+                        Console.WriteLine("User authenticated");
+
+                        // Check user's role and redirect accordingly
+                        var roleClaim = user.FindFirst(c => c.Type == ClaimTypes.Role);
+                        if (roleClaim != null)
+                        {
+                            var role = roleClaim.Value;
+                            if (role == "BUSINESS")
+                            {
+                                Navigation.NavigateTo("/");
+                            }
+                            else if (role == "CUSTOMER")
+                            {
+                                Navigation.NavigateTo("/");
+                            }
+                            else
+                            {
+                                // Default fallback route for other roles
+                                Navigation.NavigateTo("/unauthorized");
+                            }
+                        }
+                        else
+                        {
+                            // Redirect to unauthorized if no role is found
+                            Navigation.NavigateTo("/unauthorized");
+                        }
+                    }
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e);
+                }
+            });
+        };
+
+    }
+
+}
+

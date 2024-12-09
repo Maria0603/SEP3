@@ -8,7 +8,10 @@ public class DataServerStub
 {
   private final ManagedChannel channel;
   private final OfferServiceGrpc.OfferServiceBlockingStub offerBlockingStub;
-  private final OrderServiceGrpc.OrderServiceBlockingStub orderBlockingStub;
+  private final PurchaseServiceGrpc.PurchaseServiceBlockingStub purchaseBlockingStub;
+  private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
+  private final CustomerServiceGrpc.CustomerServiceBlockingStub customerBlockingStub;
+  private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
 
   public DataServerStub(String host, int port)
   {
@@ -16,18 +19,18 @@ public class DataServerStub
         .usePlaintext().build();
 
     offerBlockingStub = OfferServiceGrpc.newBlockingStub(channel);
-    orderBlockingStub = OrderServiceGrpc.newBlockingStub(channel);
+    purchaseBlockingStub = PurchaseServiceGrpc.newBlockingStub(channel);
+    businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
+    customerBlockingStub = CustomerServiceGrpc.newBlockingStub(channel);
+    userBlockingStub = UserServiceGrpc.newBlockingStub(channel);
+
     System.out.println("DataServerStub created");
   }
 
-  public OfferList getAvailableOffers(EmptyMessage request)
+  // ********************************* OFFERS *********************************
+  public OfferResponse createOffer(CreateOfferRequest request)
   {
-    return offerBlockingStub.getAvailableOffers(request);
-  }
-
-  public SaveOfferResponse saveOffer(SaveOfferRequest request)
-  {
-    return offerBlockingStub.saveOffer(request);
+    return offerBlockingStub.createOffer(request);
   }
 
   public OfferResponse getOfferById(OfferIdRequest request)
@@ -40,29 +43,72 @@ public class DataServerStub
     return offerBlockingStub.updateOffer(request);
   }
 
-  public OrderResponse addOrder(AddOrderRequest request)
+  public OfferListResponse getOffers(FilterRequest request)
   {
-    System.out.println("addOrder called with request: " + request);
-    OrderResponse response = orderBlockingStub.addOrder(request);
-    System.out.println("Received response: " + response);
-    return response;
+    System.out.println("DataServerStub:" + request);
+    return offerBlockingStub.getOffers(request);
   }
 
-  public OrderResponse getOrderById(OrderIdRequest request)
+  // ********************************* Purchases *********************************
+  public PurchaseResponse createPurchase(CreatePurchaseRequest request)
   {
-    return orderBlockingStub.getOrderById(request);
+    return purchaseBlockingStub.createPurchase(request);
   }
 
-  public OrderList getAllOrders(EmptyMessage request)
+  public PurchaseResponse getPurchaseById(PurchaseIdRequest request)
   {
-    return orderBlockingStub.getAllOrders(request);
+    return purchaseBlockingStub.getPurchaseById(request);
   }
 
-  public OrderResponse updateOrderStatus(OrderStatusRequest request)
+  public PurchaseListResponse getPurchases(IdRequestResponse request)
   {
-    return orderBlockingStub.updateOrderStatus(request);
+    return purchaseBlockingStub.getPurchases(request);
   }
 
+  public PurchaseResponse updatePurchaseStatus(PurchaseStatusRequest request)
+  {
+    return purchaseBlockingStub.updatePurchaseStatus(request);
+  }
+
+  // ********************************* BUSINESS *********************************
+
+  public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
+  {
+    return businessBlockingStub.registerBusiness(request);
+  }
+
+  public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
+  {
+    return businessBlockingStub.getBusinessByEmail(request);
+  }
+  public BusinessesInRadiusResponse getBusinessesInRadius(IdRequestResponse request)
+  {
+    return businessBlockingStub.getBusinessesInRadius(request);
+  }
+  public BusinessResponse getBusinessById(BusinessIdRequest request)
+  {
+    return businessBlockingStub.getBusinessById(request);
+  }
+  // ******************************** CUSTOMER **************************
+
+  public IdRequestResponse registerCustomer(RegisterCustomerRequest request) { return customerBlockingStub.registerCustomer(request);}
+
+  public BusinessesInRadiusResponse updateCustomerLocation(CustomerLocationRequest request)
+  {
+    return customerBlockingStub.updateCustomerLocation(request);
+  }
+  public CustomerLocationRequest getCustomerLocation(IdRequestResponse request)
+  {
+    return customerBlockingStub.getCustomerLocation(request);
+  }
+// ******************* USER *****************
+
+  public UserResponse getUserByEmail(UserByEmailRequest request)
+  {
+    return userBlockingStub.getUserByEmail(request);
+  }
+
+  // ****************************************************************************
   public void shutdown()
   {
     channel.shutdown();

@@ -1,0 +1,30 @@
+.container {
+    max-width: 600px;
+    margin: auto;
+    padding: 20px;
+}
+
+.form-control {
+    width: 100%;
+    margin-bottom: 15px;
+}
+
+.btn {
+    display: block;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.row {
+    display: flex; /* Create a row layout */
+    gap: 20px; /* Add space between columns */
+}
+
+.column {
+    flex: 1; /* Each column takes equal space */
+    padding: 10px; /* Add padding inside columns */
+    border: 1px solid #ddd; /* Optional: Add border to columns */
+    background-color: #f9f9f9; /* Optional: Add background color */
+    border-radius: 8px; /* Optional: Add rounded corners */
+}
+

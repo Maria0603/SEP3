@@ -1,9 +1,13 @@
 @page "/offer"
 @using System.Net
 @using client.DTO
+@using client.DTO.Offer
 @using client.Services
+@using Microsoft.AspNetCore.Components.WebAssembly.Hosting
 @inject IOfferService OfferService;
 @inject HttpClient HttpClient;
+@inject NavigationManager NavigationManager
+@inject IWebAssemblyHostEnvironment Environment;
 
 @if (createdOffer is null) {
     <EditForm Model="offerDto" OnValidSubmit="SubmitOffer">
@@ -45,12 +49,12 @@
                 <InputDate id="pickupDate" @bind-Value="dateValue" class="form-control"/>
             </div>
         </div>
+
         <div class="row">
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeStart">Pickup Start Time</label>
                 <input type="time" id="pickupTimeStart" @bind="timeStart" class="form-control"/>
             </div>
-
 
             <div class="mb-3 col-sm-2">
                 <label for="pickupTimeEnd">Pickup End Time</label>
@@ -58,16 +62,18 @@
             </div>
         </div>
 
+        <!-- Categories Picker -->
         <div class="mb-3">
             <label for="categories">Categories</label>
             <div class="d-flex align-items-center">
                 <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
                     @foreach (var category in availableCategories) {
-                        <option value="@category.Name">@category.Name</option>
+                        <option value="@category">@category</option>
                     }
                 </select>
                 <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
             </div>
+
             <div class="selected-categories mt-2">
                 @foreach (var category in offerDto.Categories) {
                     <div class="category-box">
@@ -93,76 +99,82 @@
         <button type="submit" class="btn btn-danger mt-3">Submit</button>
     </EditForm>
 }
-else {
-    <div class="mt-4">
-        <h3>Offer ID #@createdOffer.Id</h3>
-        <p>
 
-            <strong>Title:</strong> @createdOffer.Title
-        </p>
-        <p>
-            <strong>Description:</strong> @createdOffer.Description
-        </p>
-        <p><strong>Original Price:</strong> @createdOffer.OriginalPrice kr</p>
-        <p><strong>Offer Price:</strong> @createdOffer.OfferPrice kr</p>
-        <p>
-            <strong>Number of Items:</strong> @createdOffer.NumberOfItems
-        </p>
-        <p><strong>Pickup Date:</strong> @createdOffer.PickupDate.Day/@createdOffer.PickupDate.Month/@createdOffer.PickupDate.Year</p>
-        <p>
-            <strong>Pickup Time:</strong> @createdOffer.PickupTimeStart.Hour:@createdOffer.PickupTimeStart.Minute -
-            @createdOffer.PickupTimeEnd.Hour:@createdOffer.PickupTimeEnd.Minute
-        </p>
-        <p>
-            <strong>Categories:</strong> @string.Join(", ", createdOffer.Categories)
-        </p>
-        <p>
-            <strong>Status:</strong> @createdOffer.Status
-        </p>
-        <div>
-            <img src="@(HttpClient.BaseAddress + createdOffer.ImagePath)" alt="Offer Image" class="img-fluid" style="max-width: 300px;"/>
-        </div>
-        <button class="btn btn-danger mt-3" @onclick="ResetForm">Create Another Offer</button>
+else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
-    </div>
-}
 
 @code {
-
     private CreateOfferRequestDto offerDto = new() {
         Categories = new List<string>(),
-        PickupDate = new DateDto(),
-        PickupTimeStart = new TimeDto(),
-        PickupTimeEnd = new TimeDto(),
+        PickupTimeStart = new DateTime(),
+        PickupTimeEnd = new DateTime(),
         NumberOfItems = 1 //Default
     };
-
-    private List<Category> availableCategories = new List<Category> {
-        new Category { Name = "Bread" },
-        new Category { Name = "Vegan" },
-        new Category { Name = "Pastry" },
-        new Category { Name = "Dairy" }
-    };
-
-    private string selectedCategory;
-
-    private TimeOnly? timeStart;
-    private TimeOnly? timeEnd;
-    private DateTime? dateValue;
-    private string categoriesInput = string.Empty;
-    private string errorLabel = "";
-    private string successLabel = "";
-
-    private OfferResponseDto? createdOffer = null;
     
-    protected override void OnInitialized() {
-        if (availableCategories.Any()) {
+    protected override void OnInitialized()
+    {
+        if (availableCategories.Any())
+        {
             selectedCategory = availableCategories.First().Name;
+        }
+
+        // Pre-fill data for development environment
+        if (Environment.Environment == "Development")
+        {
+            PrefillTestData();
         }
     }
 
+    private void PrefillTestData()
+    {
+        //used random time/date for more realistic offers view
+        
+        Random random = new Random();
+        
+        int randomDays = random.Next(1, 4); 
+        dateValue = DateTime.Now.AddDays(randomDays);
+
+       
+        int startHour = random.Next(8, 12); 
+        int startMinute = random.Next(0, 60); 
+        timeStart = new TimeOnly(startHour, startMinute);
+
+        
+        int endHour = random.Next(13, 20); 
+        int endMinute = random.Next(0, 60); 
+        timeEnd = new TimeOnly(endHour, endMinute);
+        
+        offerDto.Title = "Bread and buns";
+        offerDto.Description = "This is bread description";
+        offerDto.OriginalPrice = 100;
+        offerDto.OfferPrice = 30;
+        offerDto.NumberOfItems = 5;
+        offerDto.Categories.Add("Bread");
+        offerDto.Categories.Add("Vegan");
+    }
+
+
+
+    private List<CategoryPickerComponent.Category> availableCategories = new List<CategoryPickerComponent.Category> {
+        new CategoryPickerComponent.Category() { Name = "Bread" },
+        new CategoryPickerComponent.Category { Name = "Vegan" },
+        new CategoryPickerComponent.Category { Name = "Pastry" },
+        new CategoryPickerComponent.Category { Name = "Dairy" }
+    };
+
+    // private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
+    private string selectedCategory;
+    private DateTime? dateValue = DateTime.Now.Date;
+    private TimeOnly? timeStart;
+    private TimeOnly? timeEnd;
+    private string errorLabel = "";
+    private string successLabel = "";
+    private OfferResponseDto? createdOffer = null;
+    
+
     private void AddCategory() {
-        if (!string.IsNullOrEmpty(selectedCategory) && !offerDto.Categories.Contains(selectedCategory)) {
+        if (!string.IsNullOrEmpty(selectedCategory) &&
+            !offerDto.Categories.Contains(selectedCategory)) {
             offerDto.Categories.Add(selectedCategory);
         }
     }
@@ -180,72 +192,89 @@ else {
         offerDto.Image = memoryStream.ToArray();
     }
 
-    private async Task SubmitOffer() {
+    private async Task SubmitOffer()
+    {
         errorLabel = "";
         successLabel = "";
 
-        if (dateValue is not null) {
-            offerDto.PickupDate.Day = dateValue.Value.Day;
-            offerDto.PickupDate.Month = dateValue.Value.Month;
-            offerDto.PickupDate.Year = dateValue.Value.Year;
+        // Validate Pickup Date
+        if (dateValue is not null)
+        {
+            offerDto.PickupTimeEnd = dateValue.Value;
+            offerDto.PickupTimeStart = dateValue.Value;
         }
-        else {
+        else
+        {
             errorLabel = "Please provide pickup date.";
             return;
         }
 
-        if (timeStart is not null) {
-            offerDto.PickupTimeStart.Hour = timeStart.Value.Hour;
-            offerDto.PickupTimeStart.Minute = timeStart.Value.Minute;
+        // Validate Pickup Start Time
+        if (timeStart is not null)
+        {
+            offerDto.PickupTimeStart = new DateTime(
+                dateValue.Value.Year,
+                dateValue.Value.Month,
+                dateValue.Value.Day,
+                timeStart.Value.Hour,
+                timeStart.Value.Minute,
+                0); // Combine date and time
         }
-        else {
+        else
+        {
             errorLabel = "Please provide pickup time start.";
             return;
         }
 
-        if (timeEnd is not null) {
-            offerDto.PickupTimeEnd.Hour = timeEnd.Value.Hour;
-            offerDto.PickupTimeEnd.Minute = timeEnd.Value.Minute;
+        // Validate Pickup End Time
+        if (timeEnd is not null)
+        {
+            offerDto.PickupTimeEnd = new DateTime(
+                dateValue.Value.Year,
+                dateValue.Value.Month,
+                dateValue.Value.Day,
+                timeEnd.Value.Hour,
+                timeEnd.Value.Minute,
+                0); // Combine date and time
         }
-        else {
+        else
+        {
             errorLabel = "Please provide pickup time end.";
             return;
         }
 
-        try {
-            createdOffer = await OfferService.SaveOfferAsync(offerDto);
+        try
+        {
+            // Save Offer
+            createdOffer = await OfferService.CreateOfferAsync(offerDto);
 
-            if (createdOffer is not null) {
+            if (createdOffer is not null)
+            {
                 Console.WriteLine("Offer created successfully!");
                 successLabel = $"Offer created successfully: {createdOffer.Id}";
             }
         }
-        catch (Exception e) {
+        catch (Exception e)
+        {
             Console.WriteLine($"Error: {e.Message}");
             errorLabel = e.Message;
         }
     }
 
+
     private void ResetForm() {
         createdOffer = null;
         offerDto = new CreateOfferRequestDto {
             Categories = new List<string>(),
-            PickupDate = new DateDto(),
-            PickupTimeStart = new TimeDto(),
-            PickupTimeEnd = new TimeDto(),
+            PickupTimeStart = new DateTime(),
+            PickupTimeEnd = new DateTime(),
             NumberOfItems = 1
         };
-        categoriesInput = string.Empty;
+        selectedCategory = string.Empty;
         timeStart = null;
         timeEnd = null;
         dateValue = null;
         errorLabel = "";
         successLabel = "";
     }
-
-    public class Category {
-        public string Name { get; set; }
-        public bool IsSelected { get; set; }
-    }
-
 }

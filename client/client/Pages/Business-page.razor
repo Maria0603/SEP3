@@ -1,0 +1,101 @@
+@page "/business/{id}"
+@using client.DTO
+@using client.DTO.Business
+@using client.DTO.Offer
+@inject IBusinessService BusinessService
+@inject IOfferService OfferService
+@inject HttpClient HttpClient
+@inject NavigationManager NavigationManager
+
+
+<div class="container">
+    @if (_business != null)
+    {
+        <div class="display-container">
+            <img src="@(HttpClient.BaseAddress + _business.Logo_path)" alt="business-logo" class="business-logo">
+            <div class="business-contact">
+                <h3 class="BusinessName">@_business.BusinessName</h3>
+                <p>@_business.PhoneNumber</p>
+                <p>@_business.Email</p>
+                <p>@_business.Cvr</p>
+            </div>
+        </div>
+
+        <div class="location">
+            <div class="location-content">
+                <div class="location-row">
+                    <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                    <p class="location-text">
+                        @_business.Address.County @_business.Address.Number,
+                        @_business.Address.PostalCode,
+                        @_business.Address.City
+                    </p>
+                </div>
+            </div>
+        </div>    
+    }
+    
+    @if (offers == null){
+    <p>Loading offers...</p>
+    }
+    else if (offers.Count == 0){
+    <p>No offers available at the moment.</p>
+    }
+    else{
+    @foreach (OfferResponseDto offer in offers)
+    {
+        <OfferComponent OfferData="offer" OfferWidth="67rem" OfferMarginBottom="20px"></OfferComponent>
+    }
+
+    @*<div id="carouselExample" class="carousel slide">
+        <div class="carousel-inner">
+            @if (offers != null && offers.Count > 0)
+            {
+                @for (int i = 0; i < offers.Count; i++)
+                {
+                    var offer = offers[i];
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <img src="@HttpClient.BaseAddress + @offer.ImagePath" class="d-block w-100" alt="@offer.Title">
+                        <div class="carousel-caption d-none d-md-block">
+                            <h5>@offer.Title</h5>
+                            <p>@offer.OfferPrice.ToString("0.00") kr.</p>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <p>No offers available to display in the carousel.</p>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>*@
+    }
+</div>
+
+@code {
+    [Parameter] public string id { get; set; }
+    private List<OfferResponseDto>? offers = new List<OfferResponseDto>();
+    private BusinessResponseDto? _business;
+    private void ShowOfferDetails(string offerId)
+    {
+        NavigationManager.NavigateTo($"offers/{offerId}");
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        _business = await BusinessService.GetBusinessByIdAsync(id);
+        Console.Write(_business.Logo_path);
+        FilterRequestDto filterRequestDto = new FilterRequestDto();
+        offers = await OfferService.GetOffersAsync(filterRequestDto);
+    }
+
+}

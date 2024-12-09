@@ -9,13 +9,11 @@ import org.springframework.data.mongodb.repository.config.EnableMongoRepositorie
 
 @SpringBootApplication @EnableMongoRepositories public class DataServerApplication
 {
-  // @Autowired OfferServiceImpl offerService;
 
   public static void main(String[] args)
   {
     SpringApplication.run(DataServerApplication.class, args);
     System.out.println("Data Server running...");
-
   }
 
 }

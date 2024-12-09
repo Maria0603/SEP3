@@ -1,11 +1,17 @@
 @page "/"
 @using client.DTO
+@using client.DTO.Offer
 @using client.Models
 @using client.Pages.Components
+@using Microsoft.AspNetCore.Authorization
 @inject client.Services.IOfferService OfferService
+@attribute [Authorize]
 <PageTitle>Home</PageTitle>
 
-<h2> The main page</h2>
+
+<div class="search-bar-container">
+    <SearchBarComponent OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
+</div>
 
 <div class="container">
     @if (offers == null)
@@ -18,7 +24,7 @@
     }
     else
     {
-        @foreach (ShortOfferResponseDto offer in offers)
+        @foreach (OfferResponseDto offer in offers)
         {
             <OfferComponent OfferData="offer"></OfferComponent>
         }
@@ -26,16 +32,25 @@
 </div>
 
 
-
 @code {
-    private List<ShortOfferResponseDto>? offers;
+    private List<OfferResponseDto>? offers;
+
+
     protected override async Task OnInitializedAsync()
     {
-        // Call the service to get the offers
+        // Call the offers retrieval method
+        await RetrieveOffersAsync(null);
+    }
+
+    private async Task RetrieveOffersAsync(FilterRequestDto? filterRequestDto)
+    {
+
         try
         {
-            offers = await OfferService.GetOffersAsync();
-            if (offers != null)
+            // Call the service to get the offers
+            offers = await OfferService.GetOffersAsync(filterRequestDto);
+
+            if (offers != null && offers.Any())
             {
                 foreach (var offer in offers)
                 {
@@ -51,8 +66,21 @@
         {
             // Handle errors (e.g., log or display an error message)
             Console.WriteLine($"Error fetching offers: {ex.Message}");
-            offers = new List<ShortOfferResponseDto>(); // Ensure the UI does not break
+            offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
     }
-    
+
+    public async Task OnFilterApply(FilterRequestDto filterRequestDto)
+    {
+        // Trigger offer retrieval logic with updated filter criteria
+        await RetrieveOffersAsync(filterRequestDto);
+    }
+
+    public async Task OnFilterClear()
+    {
+        // Get offers without filters
+        await RetrieveOffersAsync(null);
+    }
+
+
 }
