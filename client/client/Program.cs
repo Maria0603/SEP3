@@ -22,6 +22,9 @@ builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<ILocationService, LocationService>();
+
+
 
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<AuthStateProvider>(); 
@@ -29,5 +32,6 @@ builder.Services.AddScoped<AuthenticationStateProvider>(provider => provider.Get
 
 builder.Services.AddBlazoredLocalStorage();
 builder.Services.AddAuthorizationCore();
+
 
 await builder.Build().RunAsync();

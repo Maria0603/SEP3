@@ -4,7 +4,7 @@ import com.example.sep3.grpc.*;
 
 import com.example.server.DataServerStub;
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
-import com.example.server.dto.customer.CustomerLocationRequestDto;
+import com.example.server.dto.customer.CustomerLocationRequestResponseDto;
 import com.example.server.services.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.server.converters.BusinessDtoGrpcConverter.generateBusinessInRadiusResponseDtoFromBusinessOnMap;
+import static com.example.server.converters.CustomerDtoGrpcConverter.CustomerLocationRequest_To_CustomerLocationRequestResponseDto;
 import static com.example.server.converters.CustomerDtoGrpcConverter.generateCustomerLocationRequestFromCustomerLocationRequestDto;
 
 @Service public class CustomerService implements ICustomerService
@@ -26,7 +27,7 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
   }
 
   @Override public List<BusinessInRadiusResponseDto> updateCustomerLocation(
-      CustomerLocationRequestDto request, String userId)
+      CustomerLocationRequestResponseDto request, String userId)
   {
     BusinessesInRadiusResponse databaseResponse = dataServerStub.updateCustomerLocation(
         generateCustomerLocationRequestFromCustomerLocationRequestDto(request,
@@ -36,11 +37,21 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
 
     for (BusinessOnMap business : databaseResponse.getBusinessesList())
     {
-      BusinessInRadiusResponseDto dto = generateBusinessInRadiusResponseDtoFromBusinessOnMap(business);
+      BusinessInRadiusResponseDto dto = generateBusinessInRadiusResponseDtoFromBusinessOnMap(
+          business);
       businessesInRadiusResponseDto.add(dto);
     }
 
     return businessesInRadiusResponseDto;
+  }
+
+  @Override public CustomerLocationRequestResponseDto getCustomerLocation(
+      String userId)
+  {
+    CustomerLocationRequest locationGrpc = dataServerStub.getCustomerLocation(
+        IdRequestResponse.newBuilder().setId(userId).build());
+
+    return CustomerLocationRequest_To_CustomerLocationRequestResponseDto(locationGrpc);
   }
 
   @Override public List<BusinessInRadiusResponseDto> getBusinessesInRadius(
@@ -52,7 +63,8 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
 
     for (BusinessOnMap business : databaseResponse.getBusinessesList())
     {
-      BusinessInRadiusResponseDto dto = generateBusinessInRadiusResponseDtoFromBusinessOnMap(business);
+      BusinessInRadiusResponseDto dto = generateBusinessInRadiusResponseDtoFromBusinessOnMap(
+          business);
       businessesInRadiusResponseDto.add(dto);
     }
 

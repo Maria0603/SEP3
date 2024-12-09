@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Data @Builder @NoArgsConstructor @AllArgsConstructor public class CustomerLocationRequestDto
+@Data @Builder @NoArgsConstructor @AllArgsConstructor public class CustomerLocationRequestResponseDto
 {
   @NotNull(message = "Latitude is required.") @Min(value = -90, message = "Latitude must be between -90 and 90.") @Max(value = 90, message = "Latitude must be between -90 and 90.") private double latitude;
 
