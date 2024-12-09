@@ -12,10 +12,11 @@ p{
     display: flex;
 
     width: 385px;
-    height: 250px;
+    height: 140px;
+    margin-top: 160px;
     justify-content: center;
     gap: 20px;
-    align-items: flex-end;
+    align-items: flex-start;
 }
 
 .business-contact{
