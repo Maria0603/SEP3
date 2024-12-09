@@ -11,6 +11,7 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
 
     if (map) {
         cleanup_map()
+        //update_circle_radius(radius);
     }
 
 
@@ -30,7 +31,7 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
          update_circle_radius(radius);
          return;
      }*/
-
+    
     const geocoder = L.Control.geocoder({defaultMarkGeocode: false}).addTo(map);
     console.log("This message is from the leafletmap.js file");
 
@@ -76,8 +77,10 @@ export function cleanup_map() {
 
 export function update_circle_radius(radius) {
     // Update the overlay with the new radius
-    if (donut)
+    if (donut) {
+        console.log("Update circle radius");
         donut.setRadius(radius * 1000); // radius in meters
+    }
     if (map && donut)
         fit_map_to_radius(map.getCenter().lat, map.getCenter().lng, radius);
 }
@@ -104,7 +107,7 @@ function fit_map_to_radius(latitude, longitude, radius) {
 export function get_map_center_and_radius() {
     if (map && donut) {
         const center = map.getCenter();
-        const radius = donut.getInnerRadius(); // Assuming inner radius is in meters
+        const radius = donut.getRadius(); // Assuming radius is in meters
         console.log("Center:", center, "Radius:", radius);
         return {
             latitude: center.lat,
