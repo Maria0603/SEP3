@@ -22,7 +22,6 @@
         <PackageReference Include="Syncfusion.Blazor" Version="27.2.4" />
         <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.2.1" />
     </ItemGroup>
-
     <ItemGroup>
       <AdditionalFiles Include="Pages\Shared\MainLayout.razor" />
       <AdditionalFiles Include="Pages\Shared\NavMenu.razor" />

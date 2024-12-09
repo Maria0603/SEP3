@@ -17,7 +17,7 @@ export function load_map() {
     });
     // Add a marker at the map center
     marker = L.marker(map.getCenter()).addTo(map);
-
+    get_user_location();
     // Check if L.donut is available
     console.log("L.donut is available:", typeof L.donut);
 
@@ -38,9 +38,39 @@ export function load_map() {
             marker.setLatLng(map.getCenter());
         }
     });
+
 }
 
+function get_user_location() {
+    console.log("Getting user location...");
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                const userLat = position.coords.latitude;
+                const userLng = position.coords.longitude;
+                console.log("User location:", userLat, userLng);
 
+                // Set map view to user's location
+                if (map) {
+                    map.setView([userLat, userLng], 12); // Adjust the zoom level as needed
+                }
+
+                // Move marker and donut to user's location
+                if (marker) {
+                    marker.setLatLng([userLat, userLng]);
+                }
+                if (donut) {
+                    donut.setLatLng([userLat, userLng]);
+                }
+            },
+            (error) => {
+                console.error("Error fetching location:", error.message);
+            }
+        );
+    } else {
+        console.error("Geolocation is not supported by this browser.");
+    }
+}
 export function update_circle_radius(radius) {
     // Update the overlay with the new radius
     if (donut) {
