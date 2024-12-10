@@ -11,4 +11,5 @@ import java.util.List;
 public interface PurchaseRepository extends MongoRepository<Purchase, String> {
 
   @Query("{ 'customer_id' : ?0 }") List<Purchase> findByCustomerId(String customerId);
+  @Query("{ 'business_id' : ?0 }") List<Purchase> findByBusinessId(String businessId);
 }
