@@ -1,0 +1,54 @@
+﻿@page "/notifications"
+@using client.DTO.Notification
+@using client.Services.Implementations
+@using Microsoft.AspNetCore.SignalR.Client
+@inject NavigationManager NavigationManager
+@inject NotificationService NotificationService
+@inject AuthStateProvider AuthStateProvider
+
+
+<div class="notification-list">
+    @foreach (NotificationResponseDto notification in Notifications)
+    {
+        <div class="notification-item">
+            @notification.Content
+        </div>
+    }
+</div>
+
+@code {
+    private List<NotificationResponseDto> Notifications = new();
+    private HubConnection? _hubConnection;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _hubConnection = new HubConnectionBuilder()
+            .WithUrl(NavigationManager.ToAbsoluteUri("/ws"))
+            .Build();
+
+        _hubConnection.On<NotificationResponseDto>("ReceiveNotification", (notification) =>
+        {
+            Notifications.Add(notification);
+            StateHasChanged();
+        });
+        
+        string? role = await AuthStateProvider.GetUserRoleAsync();
+        string? userId = await AuthStateProvider.GetUserIdAsync();
+        Console.WriteLine("Role: " + await AuthStateProvider.GetUserRoleAsync() + "Id: " + await AuthStateProvider.GetUserIdAsync());
+
+        await _hubConnection.StartAsync();
+
+        if(userId is not null && role is not null)
+            await _hubConnection.SendAsync("SubscribeToTopic", $"/topic/notifications/{role.ToLower()}/{userId}");
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_hubConnection is not null)
+        {
+            await _hubConnection.DisposeAsync();
+        }
+    }
+
+
+}

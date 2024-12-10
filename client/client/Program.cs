@@ -25,6 +25,7 @@ builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
 
+builder.Services.AddSingleton<NotificationService>();
 
 
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
