@@ -21,7 +21,8 @@ import java.util.List;
     this.purchaseService = purchaseService;
   }
 
-  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
+  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
+  public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
       @RequestBody CreatePurchaseRequestDto purchaseRequest, HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
@@ -49,7 +50,8 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')")
+  public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
     String role = (String) request.getAttribute("role");
