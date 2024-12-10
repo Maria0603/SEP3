@@ -3,6 +3,7 @@ package com.example.server.services.Implementations;
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.PurchaseDtoGrpcConverter;
+import com.example.server.dto.purchase.DetailedPurchaseResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
@@ -145,7 +146,16 @@ import java.util.stream.Collectors;
     return PurchaseDtoGrpcConverter.PurchaseResponse_To_PurchaseResponseDto(
         response);
   }
+  @Override public DetailedPurchaseResponseDto getDetailedPurchaseById(String id)
+  {
+    System.out.println("getPurchaseById method called with id: " + id);
+    PurchaseIdRequest request = PurchaseIdRequest.newBuilder().setId(id).build();
+    DetailedPurchaseResponse response = dataServerStub.getDetailedPurchaseById(request);
+    System.out.println("Received response from dataServerStub: " + response);
+    return PurchaseDtoGrpcConverter.PurchaseResponse_To_DetailedPurchaseResponseDto(
+            response);
 
+  }
   private void updatePurchaseStatus(String purchaseId, String status)
   {
     PurchaseStatusRequest updateRequest = PurchaseStatusRequest.newBuilder()

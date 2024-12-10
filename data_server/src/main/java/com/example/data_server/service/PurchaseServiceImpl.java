@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
+import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
 
 @GrpcService public class PurchaseServiceImpl
     extends PurchaseServiceGrpc.PurchaseServiceImplBase
@@ -92,6 +91,27 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
     {
       Purchase purchase = purchaseOptional.get();
       PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+          purchase);
+      responseObserver.onNext(purchaseResponse);
+      responseObserver.onCompleted();
+    }
+    else
+    {
+      responseObserver.onError(
+          new Exception("Error: No purchase with ID " + request.getId()));
+    }
+  }
+  @Override public void getDetailedPurchaseById(PurchaseIdRequest request,
+      StreamObserver<DetailedPurchaseResponse> responseObserver)
+  {
+    System.out.println("Request for detailed purchase purchase by id");
+
+    Optional<Purchase> purchaseOptional = purchaseRepository.findById(
+        request.getId());
+    if (purchaseOptional.isPresent())
+    {
+      Purchase purchase = purchaseOptional.get();
+      DetailedPurchaseResponse purchaseResponse = generateDetailedPurchaseResponseFromPurchase(
           purchase);
       responseObserver.onNext(purchaseResponse);
       responseObserver.onCompleted();

@@ -59,6 +59,10 @@ public class DataServerStub
   {
     return purchaseBlockingStub.getPurchaseById(request);
   }
+  public DetailedPurchaseResponse getDetailedPurchaseById(PurchaseIdRequest request)
+  {
+    return purchaseBlockingStub.getDetailedPurchaseById(request);
+  }
 
   public PurchaseListResponse getPurchases(IdRequestResponse request)
   {
