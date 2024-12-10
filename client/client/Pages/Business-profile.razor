@@ -1,11 +1,10 @@
 @page "/profile"
 
-@using System.Net.Http.Headers
-@using System.Text.Json
 @using client.DTO
+@using client.DTO.Business
 @inject NavigationManager NavigationManager
+@inject IBusinessService BusinessService
 @inject AuthStateProvider AuthStateProvider
-
 <style>
     .container {
         display: flex;
@@ -39,14 +38,14 @@
         gap: 10px;
     }
     .nav-button img {
-        flex-shrink: 0; 
+        flex-shrink: 0;
     }
 
     .nav-button:hover {
         box-shadow: 3px 3px 0 0 white, 6px 6px 0 0 #d11049;
         transform: translate(-2px, -2px);
-        }
-        
+    }
+
     .nav-button:active {
         color: #d11049;
         background-color: white;
@@ -70,47 +69,39 @@
         margin-left: 20px;
         width: 120px;
     }
-    
+
 </style>
 
 <h1>Edit Profile</h1>
 <div class="container">
-    <div class="buttons-column">
-        <button class="nav-button"><img src="images/icons/User.png" class="icon1">Profile</button>
-        <button class="nav-button"><img src="images/icons/Key.png" class="icon2">Password</button>
-        <button class="nav-button"><img src="images/icons/Bell.png" class="icon3">Notifications</button>
-    </div>
-
-    <div class="form-column">
-        @if (businessProfile != null)
-        {
-            <EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
-                <DataAnnotationsValidator />
-                <ValidationSummary />
-                <div>
-                    <label for="businessName">Business Name</label>
-                    <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
-                </div>
-                <div>
-                    <label for="email">Email</label>
-                    <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
-                </div>
-                <div>
-                    <label for="phoneNumber">Phone Number</label>
-                    <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
-                </div>
-                <div>
-                    <label for="image">Business Image</label>
-                    <InputFile id="image" OnChange="UploadImage" class="form-control" />
-                </div>
-                <button type="submit" class="btn btn-primary">Update</button>
-            </EditForm>
-        }
-        else
-        {
-            <p>Loading business profile...</p>
-        }
-    </div>
+    @if (businessProfile != null)
+    {
+        <EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="businessName">Business Name</label>
+                <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
+            </div>
+            <div>
+                <label for="phoneNumber">Phone Number</label>
+                <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
+            </div>
+            <div>
+                <label for="image">Business Image</label>
+                <InputFile id="image" OnChange="UploadImage" class="form-control" />
+            </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+        </EditForm>
+    }
+    else
+    {
+        <p>Loading business profile...</p>
+    }
 </div>
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -124,7 +115,7 @@
 }
 
 @code {
-    private BusinessProfileDto businessProfile = new();
+    private BusinessResponseDto businessProfile;
     private string successMessage;
     private string errorMessage;
 
@@ -132,67 +123,76 @@
     {
         try
         {
-            await LoadBusinessProfile();
+            string businessId = await GetBusinessIdAsync();
+            if (!string.IsNullOrEmpty(businessId))
+            {
+                await LoadBusinessProfile(businessId);
+            }
+            else
+            {
+                UseDummyData(); // Fallback to dummy data
+            }
         }
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
+            UseDummyData(); // Fallback to dummy data on error
         }
     }
 
-    private async Task<string> GetAccessTokenAsync()
+    private async Task<string> GetBusinessIdAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
 
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var token = user.Claims.FirstOrDefault(c => c.Type == "authToken")?.Value;
-            if (!string.IsNullOrEmpty(token))
+            var value = user.Claims.FirstOrDefault(c => c.Type == "businessId")?.Value;
+            if (!string.IsNullOrEmpty(value))
             {
-                return token;
+                return value;
             }
         }
 
-        throw new InvalidOperationException("User is not authenticated or token is missing.");
+        throw new InvalidOperationException("User is not authenticated or business ID is missing.");
     }
 
-
-    private async Task LoadBusinessProfile()
+    private async Task LoadBusinessProfile(string businessId)
     {
-        using var httpClient = new HttpClient();
-        var apiUrl = "http://localhost:5282/business/67505cd92b42f353d3a52f7f";
-
         try
         {
-            var token = await GetAccessTokenAsync();
-            httpClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+            businessProfile = await BusinessService.GetBusinessByIdAsync(businessId);
 
-            var response = await httpClient.GetAsync(apiUrl);
-            var content = await response.Content.ReadAsStringAsync();
-
-            if (!response.IsSuccessStatusCode)
+            if (businessProfile == null)
             {
-                errorMessage = $"Failed to load profile. Status Code: {response.StatusCode}. Response: {content}";
-                return;
+                throw new Exception("Business profile not found.");
             }
-
-            businessProfile = JsonSerializer.Deserialize<BusinessProfileDto>(content, new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            }) ?? new BusinessProfileDto();
         }
         catch (Exception ex)
         {
             errorMessage = $"Error loading profile: {ex.Message}";
+            UseDummyData(); 
         }
     }
 
+    private void UseDummyData()
+    {
+        businessProfile = new BusinessResponseDto
+        {
+            Id = "dummy-id",
+            BusinessName = "Hello Hello",
+            Email = "dummy@business.com",
+            PhoneNumber = "+123456789",
+            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU=" // Example base64 image
+        };
+        successMessage = "Displaying dummy data.";
+    }
 
     private async Task UpdateProfile()
     {
         try
-        {//add logic
+        {
+            // Add logic to update the profile using your business service
             successMessage = "Business profile updated successfully!";
         }
         catch (Exception ex)
@@ -203,9 +203,17 @@
 
     private async Task UploadImage(InputFileChangeEventArgs e)
     {
-        var file = e.File;
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(memoryStream);
-        businessProfile.Image = memoryStream.ToArray();
+        try
+        {
+            var file = e.File;
+            using var memoryStream = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(memoryStream);
+
+            businessProfile.Logo_path = Convert.ToBase64String(memoryStream.ToArray());
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error uploading image: {ex.Message}";
+        }
     }
 }
