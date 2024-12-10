@@ -70,6 +70,11 @@ public class DataServerStub
     return purchaseBlockingStub.updatePurchaseStatus(request);
   }
 
+  public PurchaseListResponse getPurchasesByCustomerId(IdRequestResponse request)
+  {
+    return purchaseBlockingStub.getPurchasesByCustomerId(request);
+  }
+
   // ********************************* BUSINESS *********************************
 
   public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
@@ -101,6 +106,7 @@ public class DataServerStub
   {
     return customerBlockingStub.getCustomerLocation(request);
   }
+
 // ******************* USER *****************
 
   public UserResponse getUserByEmail(UserByEmailRequest request)

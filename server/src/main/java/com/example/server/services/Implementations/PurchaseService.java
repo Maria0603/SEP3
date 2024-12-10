@@ -146,6 +146,18 @@ import java.util.stream.Collectors;
         response);
   }
 
+  @Override public List<PurchaseResponseDto> getPurchasesByCustomerId(
+      String customerId) {
+
+    System.out.println("getPurchasesByCustomerId method called with customerId: " + customerId);
+    IdRequestResponse request = IdRequestResponse.newBuilder().setId(customerId).build();
+    PurchaseListResponse response = dataServerStub.getPurchasesByCustomerId(request);
+    System.out.println("Received response from dataServerStub: " + response);
+    return response.getPurchasesList().stream()
+        .map(PurchaseDtoGrpcConverter::PurchaseResponse_To_PurchaseResponseDto)
+        .collect(Collectors.toList());
+  }
+
   private void updatePurchaseStatus(String purchaseId, String status)
   {
     PurchaseStatusRequest updateRequest = PurchaseStatusRequest.newBuilder()
