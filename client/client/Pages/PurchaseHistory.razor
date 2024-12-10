@@ -19,19 +19,19 @@
     Responsive="true">
 
     <GridColumns>
-        <GridColumn TItem="PurchaseItem" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id" TextAlignment="Alignment.Center">
+        <GridColumn TItem="PurchaseItem" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id">
             @context.Id
         </GridColumn>
-        <GridColumn TItem="PurchaseItem" HeaderText="Title" PropertyName="Title" SortKeySelector="item => item.Title" TextAlignment="Alignment.Center">
+        <GridColumn TItem="PurchaseItem" HeaderText="Title" PropertyName="Title" SortKeySelector="item => item.Title">
             @context.Title
         </GridColumn>
-        <GridColumn TItem="PurchaseItem" HeaderText="Amount" PropertyName="Amount" SortKeySelector="item => item.Amount" TextAlignment="Alignment.Center">
+        <GridColumn TItem="PurchaseItem" HeaderText="Amount" PropertyName="Amount" SortKeySelector="item => item.Amount">
             @context.Amount
         </GridColumn>
-        <GridColumn TItem="PurchaseItem" HeaderText="Date" PropertyName="Date" SortKeySelector="item => item.Date" TextAlignment="Alignment.Center">
+        <GridColumn TItem="PurchaseItem" HeaderText="Date" PropertyName="Date" SortKeySelector="item => item.Date">
             @context.Date
         </GridColumn>
-        <GridColumn TItem="PurchaseItem" HeaderText="Price" PropertyName="Price" SortKeySelector="item => item.Price" TextAlignment="Alignment.Center">
+        <GridColumn TItem="PurchaseItem" HeaderText="Price" PropertyName="Price" SortKeySelector="item => item.Price">
             @context.Price
         </GridColumn>
     </GridColumns>
@@ -39,18 +39,16 @@
 </Grid>
 
 @code {
-    private readonly IList<PurchaseItem> _purchaseItems = new List<PurchaseItem>();
 
-    protected override async Task OnInitializedAsync() {
+    private async Task<GridDataProviderResult<PurchaseItem>> PurchasesProvider(GridDataProviderRequest<PurchaseItem> request) {
         var purchases = await purchaseService.GetPurchasesAsync();
-        var offersIds = purchases.Select(purchase => purchase.OfferId);
-        var offers = await offerService.GetOffersAsync(null);
+        var purchaseItems = new List<PurchaseItem>();
 
         foreach (var purchase in purchases) {
-            var offer = offers.FirstOrDefault(offer => offer.Id == purchase.OfferId);
+            var offer = await offerService.GetOfferByIdAsync(purchase.OfferId);
             if (offer != null) {
-                _purchaseItems.Add(new PurchaseItem {
-                    Id = purchase.Id,
+                purchaseItems.Add(new PurchaseItem {
+                    Id = purchase.PurchaseId,
                     Title = offer.Title,
                     Amount = purchase.NumberOfItems,
                     Date = purchase.purchaseTime,
@@ -58,10 +56,8 @@
                 });
             }
         }
-    }
 
-    private async Task<GridDataProviderResult<PurchaseItem>> PurchasesProvider(GridDataProviderRequest<PurchaseItem> request) {
-        return await Task.FromResult(request.ApplyTo(_purchaseItems));
+        return await Task.FromResult(request.ApplyTo(purchaseItems));
     }
 
     protected class PurchaseItem {
@@ -71,4 +67,5 @@
         public DateTime Date { get; set; }
         public int Price { get; set; }
     }
+
 }

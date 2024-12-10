@@ -1,8 +1,6 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
-using client.DTO;
 using client.DTO.Purchase;
-using client.Pages;
 
 namespace client.Services.Implementations;
 

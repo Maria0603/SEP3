@@ -2,7 +2,7 @@
 
 public class PurchaseResponseDto
 {
-    public string Id { get; set; }
+    public string PurchaseId { get; set; }
     public string CustomerId { get; set; }
     public string OfferId { get; set; }
     public int NumberOfItems { get; set; }
