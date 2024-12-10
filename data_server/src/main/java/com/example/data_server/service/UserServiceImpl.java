@@ -69,8 +69,4 @@ import java.util.Optional;
         .setRole(customer.getRole()).build();
   }
 
-  public boolean checkIfBusiness(String id){
-    Optional<Business> business = businessRepository.findById(id);
-    if()
-  }
 }
