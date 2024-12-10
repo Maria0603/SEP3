@@ -4,10 +4,7 @@ option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "BusinessServiceProto";
 
-import "OfferService.proto";
-import "UserService.proto";
-import "CustomerService.proto";
-
+import "BaseTypes.proto";
 
 package proto;
 
@@ -51,13 +48,6 @@ message RegisterBusinessRequest {
   double latitude = 8;
   double longitude = 9;
   string role = 10;
-}
-
-
-
-
-message EmptyMessage {
-
 }
 
 

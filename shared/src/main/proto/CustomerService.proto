@@ -4,9 +4,7 @@ option java_multiple_files = true;
 option java_package = "com.example.sep3.grpc";
 option java_outer_classname = "CustomerServiceProto";
 
-import "OfferService.proto";
-import "UserService.proto";
-
+import "BaseTypes.proto";
 
 package proto;
 
@@ -17,13 +15,6 @@ service CustomerService {
   rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
 }
 
-
-message IdRequestResponse {
-  string id = 1;
-}
-message EmailRequestResponse {
-  string email = 1;
-}
 
 message CustomerResponse {
   string id = 1;
@@ -50,15 +41,4 @@ message CustomerLocationRequest {
   string customerId=4;
 }
 
-message BusinessOnMap {
-  double latitude = 1;
-  double longitude = 2;
-  string logoPath = 3;
-  string businessName = 4;
-  string businessId = 5;
-  string businessEmail = 6;
-}
 
-message BusinessesInRadiusResponse {
-  repeated BusinessOnMap businesses = 1;
-}

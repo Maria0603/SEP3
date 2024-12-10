@@ -7,7 +7,7 @@ option java_outer_classname = "PurchaseServiceProto";
 package proto;
 
 import "google/protobuf/timestamp.proto";
-import "CustomerService.proto";
+import "BaseTypes.proto";
 
 service PurchaseService {
   rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
