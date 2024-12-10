@@ -21,8 +21,6 @@ message NotificationRequestResponse {
   google.protobuf.Timestamp timestamp = 4;
   string subjectId = 5;
   string type = 6;
-
-  string id = 7;
 }
 
 message NotificationsRequest {

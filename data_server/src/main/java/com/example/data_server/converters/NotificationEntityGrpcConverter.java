@@ -28,7 +28,7 @@ public class NotificationEntityGrpcConverter
   public static NotificationRequestResponse generateNotificationRequestResponseFromNotification(
       Notification notification)
   {
-    return NotificationRequestResponse.newBuilder().setId(notification.getId())
+    return NotificationRequestResponse.newBuilder()
         .setUserId(notification.getUserId())
         .setSubjectId(notification.getSubjectId())
         .setContent(notification.getContent()).setTimestamp(
