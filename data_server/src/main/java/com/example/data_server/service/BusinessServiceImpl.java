@@ -124,7 +124,7 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
       newBusiness.setBusinessName(request.getBusinessName());
       newBusiness.setEmail(request.getEmail());
       newBusiness.setPhoneNumber(request.getPhoneNumber());
-      newBusiness.setLogoPath(request.getLogoPath());
+      //newBusiness.setLogoPath(request.getLogoPath());
 
       businessRepository.delete(business);
       businessRepository.save(newBusiness);

@@ -177,7 +177,7 @@
 
     private void UseDummyData()
     {
-        businessProfile = new BusinessResponseDto
+        businessProfile = new BusinessResponseDto()
         {
             Id = "dummyid12345",
             BusinessName = "Hello Hello",
@@ -191,9 +191,26 @@
     private async Task UpdateProfile()
     {
         try
+
         {
-            // Add logic to update the profile using your business service
-            successMessage = "Business profile updated successfully!";
+            BusinessUpdateRequestDto requestDto = new BusinessUpdateRequestDto()
+            {
+                Id = businessProfile.Id,
+                Email = businessProfile.Email,
+                PhoneNumber = businessProfile.PhoneNumber,
+                BusinessName = businessProfile.BusinessName,
+                //Logo_path = businessProfile.Logo_path
+            };
+            
+            
+            BusinessResponseDto responseDto = await BusinessService.UpdateBusinessProfileAsync(requestDto);
+            businessProfile.Email = requestDto.Email;
+            businessProfile.PhoneNumber = businessProfile.PhoneNumber;
+            //businessProfile.Logo_path = businessProfile.Logo_path;
+            businessProfile.BusinessName = businessProfile.BusinessName;
+            Console.WriteLine(responseDto);
+            successMessage = "The profile has been successfully updated.";
+
         }
         catch (Exception ex)
         {

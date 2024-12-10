@@ -59,7 +59,7 @@ message BusinessUpdateRequest {
   string businessName = 2;
   string email = 3;
   string phoneNumber = 4;
-  string logoPath = 5;
+  //string logoPath = 5;
 }
 
 
