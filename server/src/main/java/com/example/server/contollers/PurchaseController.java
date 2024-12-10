@@ -15,11 +15,13 @@ import java.util.List;
 {
 
   private final IPurchaseService purchaseService;
+  private final JWTUtils jwtUtils;
 
-  @Autowired public PurchaseController(IPurchaseService purchaseService)
+  @Autowired public PurchaseController(IPurchaseService purchaseService, JWTUtils jwtUtils)
   {
     System.out.println("purchase service created");
     this.purchaseService = purchaseService;
+    this.jwtUtils = jwtUtils;
   }
 
   @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
@@ -59,8 +61,7 @@ import java.util.List;
     String authHeader = request.getHeader("Authorization");
     String token = authHeader.substring(7);
 
-    JWTUtils jwtUtils = new JWTUtils();
-    String role = jwtUtils.extractRole(token).getFirst();
+    String role = jwtUtils.extractRoles(token).getFirst();
 
     try
     {
