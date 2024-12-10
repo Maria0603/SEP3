@@ -31,6 +31,10 @@ message PurchaseResponse {
   string status = 7;
   int32 pricePerItem = 8;
   string businessName = 9;
+
+  string customerEmail = 10;
+  string businessEmail = 11;
+  string businessId = 12;
 }
 
 message PurchaseIdRequest {

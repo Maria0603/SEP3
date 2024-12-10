@@ -2,13 +2,23 @@ package com.example.server.services.Implementations;
 
 import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
+import com.example.server.config.RestTemplateConfig;
+import com.example.server.converters.NotificationDtoGrpcConverter;
 import com.example.server.converters.PurchaseDtoGrpcConverter;
+import com.example.server.dto.notifications.NotificationResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
+import com.example.server.services.INotificationService;
+import com.example.server.services.IOfferService;
 import com.example.server.services.IPurchaseService;
+import com.example.server.services.auxServices.IEmailService;
 import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
+import com.example.shared.converters.DateTimeConverter;
+import com.example.shared.entities.domainEntities.Notification;
+import com.example.shared.model.NotificationType;
 import com.example.shared.model.PurchaseStatus;
+import com.example.shared.model.UserRole;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -18,6 +28,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,18 +37,23 @@ import java.util.stream.Collectors;
 @Service public class PurchaseService implements IPurchaseService
 {
   private final DataServerStub dataServerStub;
-  private final OfferService offerService;
+  private final INotificationService notificationService;
+  private final IEmailService emailService;
+  private final RestTemplateConfig restTemplateConfig;
 
   @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
   @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
   @Autowired public PurchaseService(DataServerStub dataServerStub,
-      OfferService offerService)
+      INotificationService notificationService, IEmailService emailService,
+      RestTemplateConfig restTemplateConfig)
   {
     this.dataServerStub = dataServerStub;
-    this.offerService = offerService;
+    this.notificationService = notificationService;
+    this.emailService = emailService;
     System.out.println("PurchaseService created");
+    this.restTemplateConfig = restTemplateConfig;
   }
 
   @Override public CreatePurchaseSessionResponseDto createPurchase(
@@ -49,7 +65,8 @@ import java.util.stream.Collectors;
 
     System.out.println("Request for database built");
 
-    PurchaseResponse databaseResponse = dataServerStub.createPurchase(purchaseRequest);
+    PurchaseResponse databaseResponse = dataServerStub.createPurchase(
+        purchaseRequest);
 
     /////////////////////////////////////Temporary////////////////////////////////
     updatePurchaseStatus(databaseResponse.getId(),
@@ -80,6 +97,51 @@ import java.util.stream.Collectors;
       sessionParams.put("metadata", metadata);
 
       Session session = Session.create(sessionParams);
+
+      // Notify business
+      NotificationRequestResponse businessNotification = NotificationRequestResponse.newBuilder()
+          .setContent("A new purchase has been made for your offer #"
+              + databaseResponse.getOfferId()).setTimestamp(
+              DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                  LocalDateTime.now()))
+          .setType(NotificationType.PURCHASE.getType())
+          .setUserId(databaseResponse.getBusinessId())
+          .setUserRole(UserRole.BUSINESS.getRoleName())
+          .setSubjectId(databaseResponse.getOfferId()).build();
+
+      dataServerStub.createNotification(businessNotification);
+
+      NotificationResponseDto businessDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
+          businessNotification);
+
+      notificationService.sendNotification(businessDto);
+
+      // Notify customer
+      NotificationRequestResponse customerNotification = NotificationRequestResponse.newBuilder()
+          .setContent("You made a new purchase on offer #"
+              + databaseResponse.getOfferId()).setTimestamp(
+              DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
+                  LocalDateTime.now()))
+          .setType(NotificationType.PURCHASE.getType())
+          .setUserId(databaseResponse.getCustomerId())
+          .setUserRole(UserRole.CUSTOMER.getRoleName())
+          .setSubjectId(databaseResponse.getOfferId()).build();
+
+      dataServerStub.createNotification(customerNotification);
+
+      NotificationResponseDto customerDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
+          customerNotification);
+
+      notificationService.sendNotification(customerDto);
+
+      emailService.sendNotificationEmail(databaseResponse.getBusinessEmail(),
+          "New Purchase", "A new purchase has been made for your offer #"
+              + databaseResponse.getOfferId());
+
+      emailService.sendNotificationEmail(databaseResponse.getCustomerEmail(),
+          "Purchase Confirmation",
+          "The purchase on offer #" + databaseResponse.getOfferId()
+              + " has been confirmed!");
 
       CreatePurchaseSessionResponseDto response = new CreatePurchaseSessionResponseDto();
       response.setUrl(session.getUrl());
@@ -139,7 +201,8 @@ import java.util.stream.Collectors;
   @Override public PurchaseResponseDto getPurchaseById(String id)
   {
     System.out.println("getPurchaseById method called with id: " + id);
-    PurchaseIdRequest request = PurchaseIdRequest.newBuilder().setId(id).build();
+    PurchaseIdRequest request = PurchaseIdRequest.newBuilder().setId(id)
+        .build();
     PurchaseResponse response = dataServerStub.getPurchaseById(request);
     System.out.println("Received response from dataServerStub: " + response);
     return PurchaseDtoGrpcConverter.PurchaseResponse_To_PurchaseResponseDto(
