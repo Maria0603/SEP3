@@ -1,6 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.purchase.*;
+import com.example.server.security.JWTUtils;
 import com.example.server.services.IPurchaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,7 +55,12 @@ import java.util.List;
   public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
-    String role = (String) request.getAttribute("role");
+
+    String authHeader = request.getHeader("Authorization");
+    String token = authHeader.substring(7);
+
+    JWTUtils jwtUtils = new JWTUtils();
+    String role = jwtUtils.extractRole(token).getFirst();
 
     try
     {
