@@ -15,6 +15,7 @@ service CustomerService {
   rpc GetCustomerByEmail(EmailRequestResponse) returns (CustomerResponse);
   rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
   rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
+  rpc GetCustomerById(IdRequestResponse) returns (CustomerResponse);
 }
 
 

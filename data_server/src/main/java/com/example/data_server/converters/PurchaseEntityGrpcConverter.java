@@ -1,6 +1,7 @@
 package com.example.data_server.converters;
 
 import com.example.sep3.grpc.CreatePurchaseRequest;
+import com.example.sep3.grpc.PurchaseListResponse;
 import com.example.sep3.grpc.PurchaseResponse;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
@@ -10,6 +11,7 @@ import com.example.shared.entities.usersEntities.Customer;
 import com.example.shared.model.PurchaseStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public class PurchaseEntityGrpcConverter
@@ -45,5 +47,19 @@ public class PurchaseEntityGrpcConverter
     purchase.setBusiness(business);
 
     return purchase;
+  }
+
+  public static PurchaseListResponse generatePurchaseListResponseFromPurchaseList(
+      List<Purchase> purchases) {
+    PurchaseListResponse.Builder PurchaseListBuilder = PurchaseListResponse.newBuilder();
+    for (Purchase purchase : purchases)
+    {
+      PurchaseResponse response = generatePurchaseResponseFromPurchase(
+          purchase);
+      PurchaseListBuilder.addPurchases(response);
+    }
+
+    PurchaseListResponse response = PurchaseListBuilder.build();
+    return response;
   }
 }

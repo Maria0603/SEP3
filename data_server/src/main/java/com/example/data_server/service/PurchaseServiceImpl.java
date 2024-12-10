@@ -17,8 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
+import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
 
 @GrpcService public class PurchaseServiceImpl
     extends PurchaseServiceGrpc.PurchaseServiceImplBase
@@ -109,17 +108,9 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
     System.out.println("Request for all Purchases");
 
     //TODO: only fetch the ones which match the id
-    List<Purchase> Purchases = purchaseRepository.findAll();
+    List<Purchase> purchases = purchaseRepository.findAll();
 
-    PurchaseListResponse.Builder PurchaseListBuilder = PurchaseListResponse.newBuilder();
-    for (Purchase purchase : Purchases)
-    {
-      PurchaseResponse response = generatePurchaseResponseFromPurchase(
-          purchase);
-      PurchaseListBuilder.addPurchases(response);
-    }
-
-    PurchaseListResponse response = PurchaseListBuilder.build();
+    PurchaseListResponse response = generatePurchaseListResponseFromPurchaseList(purchases);
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
@@ -142,5 +133,20 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
     responseObserver.onNext(purchaseResponse);
     responseObserver.onCompleted();
   }
+
+
+  @Override public void getPurchasesByCustomerId(IdRequestResponse request,
+      StreamObserver<PurchaseListResponse> responseObserver)
+  {
+    System.out.println("Request for all Purchases by customer id");
+
+    List<Purchase> purchases = purchaseRepository.findByCustomerId(request.getId());
+    PurchaseListResponse response = generatePurchaseListResponseFromPurchaseList(purchases);
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+
 
 }

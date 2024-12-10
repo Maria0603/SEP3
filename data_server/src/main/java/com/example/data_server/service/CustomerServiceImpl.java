@@ -114,4 +114,12 @@ import static com.example.data_server.converters.CustomerEntityGrpcConverter.gen
   }
 
 
+  @Override public void getCustomerById(IdRequestResponse request,
+      StreamObserver<CustomerResponse> responseObserver) {
+    Customer customer = customerRepository.findById(request.getId())
+        .orElseThrow();
+    CustomerResponse response = buildCustomerResponse(customer);
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
 }
