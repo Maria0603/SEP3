@@ -2,6 +2,8 @@
 
 @using client.DTO
 @using client.DTO.Business
+@using client.DTO.Customer
+@using Stripe
 @inject NavigationManager NavigationManager
 @inject IBusinessService BusinessService
 @inject AuthStateProvider AuthStateProvider
@@ -100,8 +102,8 @@
         </EditForm>
     }
     else
-    {
-        <p>Loading business profile...</p>
+    {   <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+        <p>Loading the profile...It does not exist for the customer yet...</p>
     }
 </div>
 
@@ -112,8 +114,10 @@
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
+    
     <div class="alert alert-danger mt-3">@errorMessage</div>
 }
+
 
 @code {
 
@@ -122,8 +126,10 @@
         await AuthStateProvider.LogoutAsync();
         NavigationManager.NavigateTo("/login", true);
     }
-    
+
+
     private BusinessResponseDto businessProfile;
+    private CustomerResponseDto customerProfile;
     private string successMessage;
     private string errorMessage;
 
@@ -138,13 +144,13 @@
             }
             else
             {
-                UseDummyData(); 
+                UseDummyData();
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
-            UseDummyData(); 
+            UseDummyData();
         }
     }
 
@@ -191,7 +197,7 @@
             BusinessName = "Hello Hello",
             Email = "dummy@business.com",
             PhoneNumber = "+123456789",
-            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU=" 
+            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU="
         };
         successMessage = "Displaying dummy data.";
     }
@@ -209,8 +215,8 @@
                 BusinessName = businessProfile.BusinessName,
                 //Logo_path = businessProfile.Logo_path
             };
-            
-            
+
+
             BusinessResponseDto responseDto = await BusinessService.UpdateBusinessProfileAsync(requestDto);
             businessProfile.Email = requestDto.Email;
             businessProfile.PhoneNumber = businessProfile.PhoneNumber;
@@ -241,4 +247,5 @@
             errorMessage = $"Error uploading image: {ex.Message}";
         }
     }
+
 }
