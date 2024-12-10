@@ -1,6 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.purchase.*;
+import com.example.server.security.JWTUtils;
 import com.example.server.services.IPurchaseService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,14 +15,17 @@ import java.util.List;
 {
 
   private final IPurchaseService purchaseService;
+  private final JWTUtils jwtUtils;
 
-  @Autowired public PurchaseController(IPurchaseService purchaseService)
+  @Autowired public PurchaseController(IPurchaseService purchaseService, JWTUtils jwtUtils)
   {
     System.out.println("purchase service created");
     this.purchaseService = purchaseService;
+    this.jwtUtils = jwtUtils;
   }
 
-  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
+  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
+  public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
       @RequestBody CreatePurchaseRequestDto purchaseRequest, HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
@@ -49,12 +53,19 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')")
+  public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
+
+    String authHeader = request.getHeader("Authorization");
+    String token = authHeader.substring(7);
+
+    String role = jwtUtils.extractRoles(token).getFirst();
+
     try
     {
-      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(userId);
+      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(userId, role);
       return ResponseEntity.ok(purchases);
     }
     catch (Exception e)
