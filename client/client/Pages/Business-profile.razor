@@ -96,6 +96,7 @@
                 <InputFile id="image" OnChange="UploadImage" class="form-control" />
             </div>
             <button type="submit" class="btn btn-primary">Update</button>
+            <button @onclick="Logout" class="btn btn-danger">Log Out</button>
         </EditForm>
     }
     else
@@ -115,6 +116,13 @@
 }
 
 @code {
+
+    private async Task Logout()
+    {
+        await AuthStateProvider.LogoutAsync();
+        NavigationManager.NavigateTo("/login", true);
+    }
+    
     private BusinessResponseDto businessProfile;
     private string successMessage;
     private string errorMessage;
