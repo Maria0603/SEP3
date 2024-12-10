@@ -113,4 +113,9 @@ public class DataServerStub
   {
     channel.shutdown();
   }
+
+  public BusinessResponse updateBusinessProfile(BusinessUpdateRequest request) {
+
+    return businessBlockingStub.updateBusinessProfile(request);
+  }
 }
