@@ -7,4 +7,5 @@ namespace client.Services;
 public interface IPurchaseService
 {
     public Task<PurchaseResponseDto> CreatePurchaseAsync(PurchaseRequestDto purchaseRequestDto);
+    public Task<IReadOnlyCollection<PurchaseResponseDto>> GetPurchasesAsync();
 }
