@@ -130,13 +130,13 @@
             }
             else
             {
-                UseDummyData(); // Fallback to dummy data
+                UseDummyData(); 
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
-            UseDummyData(); // Fallback to dummy data on error
+            UseDummyData(); 
         }
     }
 
@@ -147,7 +147,7 @@
 
         if (user.Identity != null && user.Identity.IsAuthenticated)
         {
-            var value = user.Claims.FirstOrDefault(c => c.Type == "businessId")?.Value;
+            var value = user.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
             if (!string.IsNullOrEmpty(value))
             {
                 return value;
@@ -165,25 +165,25 @@
 
             if (businessProfile == null)
             {
-                throw new Exception("Business profile not found.");
+                errorMessage = "Failed to load business profile.";
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"Error loading profile: {ex.Message}";
-            UseDummyData(); 
         }
     }
+
 
     private void UseDummyData()
     {
         businessProfile = new BusinessResponseDto
         {
-            Id = "dummy-id",
+            Id = "dummyid12345",
             BusinessName = "Hello Hello",
             Email = "dummy@business.com",
             PhoneNumber = "+123456789",
-            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU=" // Example base64 image
+            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU=" 
         };
         successMessage = "Displaying dummy data.";
     }
