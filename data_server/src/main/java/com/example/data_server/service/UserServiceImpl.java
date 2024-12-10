@@ -68,4 +68,9 @@ import java.util.Optional;
         .setEmail(customer.getEmail()).setHashedPassword(customer.getPassword())
         .setRole(customer.getRole()).build();
   }
+
+  public boolean checkIfBusiness(String id){
+    Optional<Business> business = businessRepository.findById(id);
+    if()
+  }
 }

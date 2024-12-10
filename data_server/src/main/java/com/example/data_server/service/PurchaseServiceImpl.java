@@ -135,7 +135,7 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
   }
 
 
-  @Override public void getPurchasesByCustomerId(IdRequestResponse request,
+  public void getPurchasesByCustomerId(IdRequestResponse request,
       StreamObserver<PurchaseListResponse> responseObserver)
   {
     System.out.println("Request for all Purchases by customer id");

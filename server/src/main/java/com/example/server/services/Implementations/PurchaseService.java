@@ -9,6 +9,7 @@ import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
 import com.example.server.services.IPurchaseService;
 import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import com.example.shared.model.PurchaseStatus;
+import com.example.shared.model.UserRole;
 import com.stripe.exception.SignatureVerificationException;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Event;
@@ -124,10 +125,12 @@ import java.util.stream.Collectors;
     }
   }
 
-  @Override public List<PurchaseResponseDto> getAllPurchases(String userId)
+  @Override public List<PurchaseResponseDto> getAllPurchases(String userId, String role)
   {
     System.out.println("getPurchases method called");
-    IdRequestResponse request = IdRequestResponse.newBuilder().setId(userId)
+    GetPurchaseRequest request = GetPurchaseRequest.newBuilder()
+        .setUserId(userId)
+        .setRole(role)
         .build();
     PurchaseListResponse response = dataServerStub.getPurchases(request);
     System.out.println("Received response from dataServerStub: " + response);
@@ -144,18 +147,6 @@ import java.util.stream.Collectors;
     System.out.println("Received response from dataServerStub: " + response);
     return PurchaseDtoGrpcConverter.PurchaseResponse_To_PurchaseResponseDto(
         response);
-  }
-
-  @Override public List<PurchaseResponseDto> getPurchasesByCustomerId(
-      String customerId) {
-
-    System.out.println("getPurchasesByCustomerId method called with customerId: " + customerId);
-    IdRequestResponse request = IdRequestResponse.newBuilder().setId(customerId).build();
-    PurchaseListResponse response = dataServerStub.getPurchasesByCustomerId(request);
-    System.out.println("Received response from dataServerStub: " + response);
-    return response.getPurchasesList().stream()
-        .map(PurchaseDtoGrpcConverter::PurchaseResponse_To_PurchaseResponseDto)
-        .collect(Collectors.toList());
   }
 
   private void updatePurchaseStatus(String purchaseId, String status)

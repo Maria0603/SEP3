@@ -49,12 +49,14 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
+    String role = (String) request.getAttribute("role");
+
     try
     {
-      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(userId);
+      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(userId, role);
       return ResponseEntity.ok(purchases);
     }
     catch (Exception e)

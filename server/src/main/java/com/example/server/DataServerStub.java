@@ -60,7 +60,7 @@ public class DataServerStub
     return purchaseBlockingStub.getPurchaseById(request);
   }
 
-  public PurchaseListResponse getPurchases(IdRequestResponse request)
+  public PurchaseListResponse getPurchases(GetPurchaseRequest request)
   {
     return purchaseBlockingStub.getPurchases(request);
   }
@@ -69,12 +69,6 @@ public class DataServerStub
   {
     return purchaseBlockingStub.updatePurchaseStatus(request);
   }
-
-  public PurchaseListResponse getPurchasesByCustomerId(IdRequestResponse request)
-  {
-    return purchaseBlockingStub.getPurchasesByCustomerId(request);
-  }
-
   // ********************************* BUSINESS *********************************
 
   public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
