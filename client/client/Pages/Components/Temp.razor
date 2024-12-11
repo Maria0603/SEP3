@@ -1,0 +1,57 @@
+﻿@page "/temp"
+@using System.Net.WebSockets
+@implements IAsyncDisposable
+@inject AuthStateProvider AuthStateProvider
+
+<h3>Notifications</h3>
+<button class="btn btn-primary" @onclick="SendMessage">Send Notification</button>
+
+<p>@notificationMessage</p>
+
+@code {
+    private ClientWebSocket _webSocket;
+    private string notificationMessage = "Waiting for notifications...";
+
+    private string userRole; 
+    private string userId; 
+
+    protected override async Task OnInitializedAsync()
+    {
+        _webSocket = new ClientWebSocket();
+// Connect to the WebSocket server (using generic URL)
+        await _webSocket.ConnectAsync(new Uri($"ws://localhost:8082/ws/notifications"), CancellationToken.None);
+
+// Start receiving messages
+        _ = ReceiveMessagesAsync();
+    }
+
+    private async Task ReceiveMessagesAsync()
+    {
+        var buffer = new byte[1024]; // Buffer to hold incoming message data
+
+        while (_webSocket.State == WebSocketState.Open)
+        {
+            var result = await _webSocket.ReceiveAsync(new ArraySegment<byte>(buffer), CancellationToken.None);
+            var message = System.Text.Encoding.UTF8.GetString(buffer, 0, result.Count);
+            notificationMessage = message;
+            StateHasChanged();
+        }
+    }
+
+    private async Task SendMessage()
+    {
+        var message = "Hello from Blazor!";
+        var buffer = System.Text.Encoding.UTF8.GetBytes(message);
+        await _webSocket.SendAsync(new ArraySegment<byte>(buffer), WebSocketMessageType.Text, true, CancellationToken.None);
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_webSocket != null && _webSocket.State == WebSocketState.Open)
+        {
+            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure, "Closed by Blazor", CancellationToken.None);
+            _webSocket.Dispose();
+        }
+    }
+
+}

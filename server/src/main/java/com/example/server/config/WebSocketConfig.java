@@ -1,23 +1,32 @@
 package com.example.server.config;
 
+import com.example.server.services.auxServices.Implementations.WebSocketHandler;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.messaging.simp.config.MessageBrokerRegistry;
-import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
-import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
-import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
+import org.springframework.web.socket.config.annotation.EnableWebSocket;
+import org.springframework.web.socket.config.annotation.WebSocketConfigurer;
+import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry;
+import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
+import org.springframework.web.socket.server.standard.ServerEndpointExporter;
+import org.springframework.web.socket.server.standard.ServletServerContainerFactoryBean;
+import org.springframework.context.annotation.Bean;
+import org.springframework.web.socket.WebSocketSession;
 
-@Configuration @EnableWebSocketMessageBroker public class WebSocketConfig
-    implements WebSocketMessageBrokerConfigurer
+@Configuration @EnableWebSocket // Enables WebSocket support in Spring Boot
+public class WebSocketConfig implements WebSocketConfigurer
 {
-  @Override public void configureMessageBroker(MessageBrokerRegistry config)
+
+  // Registers a custom WebSocket handler and endpoint
+  @Override public void registerWebSocketHandlers(
+      WebSocketHandlerRegistry registry)
   {
-    config.enableSimpleBroker("/topic");
-    config.setApplicationDestinationPrefixes("/app");
+    // Register the WebSocket handler for the '/ws' endpoint
+    registry.addHandler(new WebSocketHandler(), "/ws/notifications")
+        .setAllowedOrigins("*"); // Allows connections from any origin
   }
 
-  @Override public void registerStompEndpoints(StompEndpointRegistry registry)
+  // Bean to initialize WebSocket support with a container
+  @Bean public ServerEndpointExporter serverEndpointExporter()
   {
-    registry.addEndpoint("/ws").setAllowedOriginPatterns("*").withSockJS();
+    return new ServerEndpointExporter(); // Allows WebSocket server to be exported
   }
-
 }

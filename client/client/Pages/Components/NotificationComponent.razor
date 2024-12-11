@@ -1,10 +1,7 @@
 ﻿@page "/notifications"
-@using System.Text.Json
 @using client.DTO.Notification
 @using client.Services.Implementations
-@inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
-@inject AuthStateProvider AuthStateProvider
 
 
 <div>
@@ -29,17 +26,6 @@
     protected override async Task OnInitializedAsync()
     {
         notifications = await NotificationService.GetNotifications();
-    }
-
-    private void HandleNotification(string message)
-    {
-        _notificationButtonClass = "btn btn-warning"; // Change color on notification
-        StateHasChanged();
-    }
-
-    private void ShowNotifications()
-    {
-        _notificationButtonClass = "btn btn-default"; // Reset color
     }
 
 }
