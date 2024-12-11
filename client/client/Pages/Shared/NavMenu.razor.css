@@ -52,6 +52,16 @@
     margin-right: auto;
 }
 
+.btn-notification {
+    background-color: green;
+    color: white;
+}
+
+.btn-no-notification {
+    background-color: #D11049;
+    color: white;
+}
+
 /*.navbar-toggler {*/
 /*    background-color: rgba(255, 255, 255, 0.1);*/
 /*}*/

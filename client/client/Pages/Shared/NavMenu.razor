@@ -1,4 +1,7 @@
 ﻿@inject NavigationManager NavigationManager
+﻿@inject AuthStateProvider AuthStateProvider;
+@inject INotificationService NotificationService
+@inject IJSRuntime JS
 
 <AuthorizeView>
     <Authorized>
@@ -32,6 +35,12 @@
 
 
             </a>
+            <a class="nav__item" href="/notifications">
+                    <svg class="nav__item--svg @GetNotificationClass()" @onclick="HandleButtonClick " alt="Notifications" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M11.3518 23.2418C12.1929 24.311 13.5142 25 15 25C16.4858 25 17.8071 24.311 18.6482 23.2418C16.2264 23.57 13.7736 23.57 11.3518 23.2418Z" fill="currentColor"/>
+                        <path d="M21.7491 12V12.7041C21.7491 13.5491 21.9903 14.3752 22.4422 15.0782L23.5496 16.8012C24.5612 18.3749 23.789 20.5139 22.0296 21.0116C17.4273 22.3134 12.5727 22.3134 7.97036 21.0116C6.21105 20.5139 5.43882 18.3749 6.45036 16.8012L7.5578 15.0782C8.00972 14.3752 8.25087 13.5491 8.25087 12.7041V12C8.25087 8.13401 11.2726 5 15 5C18.7274 5 21.7491 8.13401 21.7491 12Z" fill="currentColor"/>
+                    </svg>
+                </a>
             <a class="@GetNavItemClass("/purchases")" href="/purchases">
                 <svg class="nav__item--svg" alt="Purchases" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M12.5 5C11.6716 5 11 5.67157 11 6.5V7.5C11 8.32843 11.6716 9 12.5 9H17.5C18.3284 9 19 8.32843 19 7.5V6.5C19 5.67157 18.3284 5 17.5 5H12.5Z" fill="currentColor"/>
@@ -63,29 +72,7 @@
         </nav>
     </NotAuthorized>
 </AuthorizeView>
-@* <div class="top-row ps-3 navbar navbar-dark"> *@
-@*     <div class="container-fluid"> *@
-@*         <a class="navbar-brand" href="">client</a> *@
-@*         <button title="Navigation menu" class="navbar-toggler" @onclick="ToggleNavMenu"> *@
-@*             <span class="navbar-toggler-icon"></span> *@
-@*         </button> *@
-@*     </div> *@
-@* </div> *@
-@* *@
-@* <div class="@NavMenuCssClass nav-scrollable" @onclick="ToggleNavMenu"> *@
-@*     <nav class="flex-column"> *@
-@*         <div> *@
-@*             <NavLink class="nav-link" href="foodbags/all"> *@
-@*                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Food Bags *@
-@*             </NavLink> *@
-@*         </div> *@
-@*         <div> *@
-@*             <NavLink class="nav-link" href="foodbags/add"> *@
-@*                 <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Add Food Bag *@
-@*             </NavLink> *@
-@*         </div> *@
-@*     </nav> *@
-@* </div> *@
+
 
 @code {
     
@@ -106,5 +93,56 @@
     // {
     //     collapseNavMenu = !collapseNavMenu;
     // }
+    private bool hasNewNotifications = false;  // Track new notifications
+    
+    private List<string> Notifications = new List<string>();
+    private DotNetObjectReference<NavMenu>? DotNetRef;
+    private IJSObjectReference? module;
 
+    // Simulate getting notifications status from a service or API
+    protected override async Task OnInitializedAsync()
+    {
+        hasNewNotifications = Boolean.Parse(await JS.InvokeAsync<string>("localStorage.getItem", "hasNewNotifications"));
+        StateHasChanged();  
+    }
+    
+
+    // Dynamically assign a class based on notification status
+    private string GetNotificationClass()
+    {
+        return hasNewNotifications ? "btn-notification" : "btn-no-notification";
+    }
+    
+    [JSInvokable]
+    public Task ReceiveNotification(string notification) // I'm not doing anything with it 
+    {
+        hasNewNotifications = true;
+        JS.InvokeVoidAsync("localStorage.setItem", "hasNewNotifications", "true");
+        InvokeAsync(StateHasChanged);
+        return Task.CompletedTask;
+    }
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            DotNetRef = DotNetObjectReference.Create(this);
+            module = await JS.InvokeAsync<IJSObjectReference>("import", "./js/sse.js");
+            string token = await AuthStateProvider.GetTokenAsync();
+        
+            await module.InvokeVoidAsync("connectSSE", "http://localhost:8082/notifications/stream", DotNetRef, token);
+            //await JS.InvokeVoidAsync("connectSSE", "/notifications/stream", DotNetRef);
+        }
+    }
+    public void Dispose()
+    {
+        DotNetRef?.Dispose();
+    }
+    private void HandleButtonClick()
+    {
+        hasNewNotifications = false;
+        JS.InvokeVoidAsync("localStorage.setItem", "hasNewNotifications", "false");
+        InvokeAsync(StateHasChanged);
+    }
+   
 }

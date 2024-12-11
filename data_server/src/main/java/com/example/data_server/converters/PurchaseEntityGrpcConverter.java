@@ -27,7 +27,10 @@ public class PurchaseEntityGrpcConverter
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 purchase.getPurchaseTime())).setStatus(purchase.getStatus())
         .setPricePerItem(purchase.getPricePerItem())
-        .setBusinessName(purchase.getBusiness().getBusinessName()).build();
+        .setBusinessName(purchase.getBusiness().getBusinessName())
+        .setBusinessEmail(purchase.getBusiness().getEmail())
+        .setCustomerEmail(purchase.getCustomer().getEmail())
+        .setBusinessId(purchase.getBusiness().getId()).build();
   }
 
   public static Purchase generatePurchaseFromCreatePurchaseRequest(

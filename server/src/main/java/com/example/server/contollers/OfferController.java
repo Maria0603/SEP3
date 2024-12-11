@@ -1,6 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.offer.CategoryDto;
+import com.example.server.security.JWTUtils;
 import com.example.server.services.Implementations.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
@@ -19,11 +20,12 @@ import java.util.stream.Collectors;
 {
 
   private final OfferService offerService;
+  private final JWTUtils jwtUtils;
 
-  public OfferController(OfferService offerService)
+  public OfferController(OfferService offerService, JWTUtils jwtUtils)
   {
     this.offerService = offerService;
-
+    this.jwtUtils = jwtUtils;
   }
 
   //Look at OfferTestClient to see how the request should look like

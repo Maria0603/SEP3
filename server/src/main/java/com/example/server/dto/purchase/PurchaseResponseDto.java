@@ -25,5 +25,6 @@ import java.time.LocalDateTime;
 
   @NotNull(message = "Price per item is required.") private int pricePerItem;
   private String businessName;
-
+  private String businessEmail;
+  private String customerEmail;
 }

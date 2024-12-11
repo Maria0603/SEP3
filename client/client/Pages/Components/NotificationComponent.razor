@@ -1,0 +1,38 @@
+﻿@page "/notifications"
+@using client.DTO.Notification
+@using client.Services.Implementations
+@inject INotificationService NotificationService
+
+<div>
+    @if (notifications is null)
+    {
+        <p>Loading........</p>
+    }
+    else
+    {
+        foreach (NotificationResponseDto notification in notifications)
+        {
+            <div>@notification.Content</div>
+        }
+    }
+</div>
+
+@code {
+    private string _notificationButtonClass = "btn btn-default";
+    private List<NotificationResponseDto> notifications = new List<NotificationResponseDto>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        notifications = await NotificationService.GetNotifications();
+    }
+
+    private DotNetObjectReference<NotificationComponent>? DotNetRef;
+    private IJSObjectReference? module;
+
+    public void Dispose()
+    {
+        DotNetRef?.Dispose();
+    }
+
+
+}
