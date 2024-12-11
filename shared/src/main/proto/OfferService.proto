@@ -19,6 +19,7 @@ service OfferService {
   rpc GetOffersByTime(TimeRangeRequest) returns (OfferListResponse);
   rpc GetOffersByCategory(CategoryRequest) returns (OfferListResponse);
   rpc GetOffersByPriceRange(PriceRangeRequest) returns (OfferListResponse);
+  rpc GetOffersByBusinessId(OfferIdRequest) returns (OfferListResponse);
   //////////////////////////////////////////////////////////////////////
 }
 
@@ -58,7 +59,6 @@ message CreateOfferRequest {
   int32 numberOfAvailableItems = 11;
   string businessId = 12;
 }
-
 message OfferIdRequest {
   string id = 1;
 }

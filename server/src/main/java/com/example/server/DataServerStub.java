@@ -48,6 +48,7 @@ public class DataServerStub
     System.out.println("DataServerStub:" + request);
     return offerBlockingStub.getOffers(request);
   }
+  public OfferListResponse getOffersByBusinessId(OfferIdRequest request){ return offerBlockingStub.getOffersByBusinessId(request); }
 
   // ********************************* Purchases *********************************
   public PurchaseResponse createPurchase(CreatePurchaseRequest request)

@@ -78,5 +78,17 @@ import java.util.Optional;
             Optional.ofNullable(userId));
     return ResponseEntity.ok(response);
   }
-
+  @GetMapping("/businessOffer/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getOfferByBusinessId(
+          @PathVariable String id)
+  {
+    try
+    {
+      var response = offerService.getOffersByBusinessId(id);
+      return ResponseEntity.ok(response);
+    }
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
+    }
+  }
 }

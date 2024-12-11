@@ -29,5 +29,8 @@ public interface OfferRepository extends MongoRepository<Offer, String>
 
   @Query("{ 'offer_price' : { $gte: ?0, $lte: ?1 } }")
   List<Offer> findByOfferPriceRange(int minPrice, int maxPrice);
+
+  @Query("{ 'business_id': ?0 }")
+  List<Offer> findByBusinessId(String businessId);
 }
  

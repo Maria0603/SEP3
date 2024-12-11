@@ -78,6 +78,13 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);
   }
+@Override public List<OfferResponseDto> getOffersByBusinessId(String businessId){
+    System.out.println("getOffersByBusinessId method called with businessId: " + businessId);
+    OfferIdRequest request = OfferIdRequest.newBuilder().setId(businessId).build();
+
+    OfferListResponse response = dataServerStub.getOffersByBusinessId(request);
+    return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(response);
+}
 
 //  @Override
 //  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd, Optional<List<String>> categories, String userId) {
