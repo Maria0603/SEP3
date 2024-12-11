@@ -63,26 +63,28 @@
         </div>
 
         <!-- Categories Picker -->
-        <div class="mb-3">
-            <label for="categories">Categories</label>
-            <div class="d-flex align-items-center">
-                <select id="categories" @bind="selectedCategory" class="form-control category-dropdown">
-                    @foreach (var category in availableCategories) {
-                        <option value="@category">@category</option>
-                    }
-                </select>
-                <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button>
-            </div>
+        <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged"/>
 
-            <div class="selected-categories mt-2">
-                @foreach (var category in offerDto.Categories) {
-                    <div class="category-box">
-                        <span class="category-text">@category</span>
-                        <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button>
-                    </div>
-                }
-            </div>
-        </div>
+        @* <div class="mb-3"> *@
+        @*     <label for="categories">Categories</label> *@
+        @*     <div class="d-flex align-items-center"> *@
+        @*         <select id="categories" @bind="selectedCategory" class="form-control category-dropdown"> *@
+        @*             @foreach (var category in availableCategories) { *@
+        @*                 <option value="@category">@category</option> *@
+        @*             } *@
+        @*         </select> *@
+        @*         <button type="button" @onclick="AddCategory" class="btn btn-secondary ms-2">Add</button> *@
+        @*     </div> *@
+        @* *@
+        @*     <div class="selected-categories mt-2"> *@
+        @*         @foreach (var category in offerDto.Categories) { *@
+        @*             <div class="category-box"> *@
+        @*                 <span class="category-text">@category</span> *@
+        @*                 <button type="button" @onclick="() => RemoveCategory(category)" class="btn btn-danger btn-sm">X</button> *@
+        @*             </div> *@
+        @*         } *@
+        @*     </div> *@
+        @* </div> *@
 
         <div class="mb-3">
             <label for="image">Image</label>
@@ -104,6 +106,8 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
 
 
 @code {
+    private List<CategoryDto>? selectedCategories = new();
+
     private CreateOfferRequestDto offerDto = new() {
         Categories = new List<string>(),
         PickupTimeStart = new DateTime(),
@@ -111,13 +115,14 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
         NumberOfItems = 1 //Default
     };
     
+    private void OnSelectedCategoriesChanged(List<CategoryDto> categories)
+    {
+        // Handle updated categories
+        selectedCategories = categories;
+    }
+    
     protected override void OnInitialized()
     {
-        if (availableCategories.Any())
-        {
-            selectedCategory = availableCategories.First().Name;
-        }
-
         // Pre-fill data for development environment
         if (Environment.Environment == "Development")
         {
@@ -154,16 +159,7 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
     }
 
 
-
-    private List<CategoryPickerComponent.Category> availableCategories = new List<CategoryPickerComponent.Category> {
-        new CategoryPickerComponent.Category() { Name = "Bread" },
-        new CategoryPickerComponent.Category { Name = "Vegan" },
-        new CategoryPickerComponent.Category { Name = "Pastry" },
-        new CategoryPickerComponent.Category { Name = "Dairy" }
-    };
-
-    // private readonly List<string> availableCategories = new() { "Bread", "Vegan", "Pastry", "Dairy" };
-    private string selectedCategory;
+    
     private DateTime? dateValue = DateTime.Now.Date;
     private TimeOnly? timeStart;
     private TimeOnly? timeEnd;
@@ -171,17 +167,6 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
     private string successLabel = "";
     private OfferResponseDto? createdOffer = null;
     
-
-    private void AddCategory() {
-        if (!string.IsNullOrEmpty(selectedCategory) &&
-            !offerDto.Categories.Contains(selectedCategory)) {
-            offerDto.Categories.Add(selectedCategory);
-        }
-    }
-
-    private void RemoveCategory(string category) {
-        offerDto.Categories.Remove(category);
-    }
 
     private async Task HandleImageUpload(InputFileChangeEventArgs e) {
         errorLabel = "";
@@ -270,7 +255,6 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
             PickupTimeEnd = new DateTime(),
             NumberOfItems = 1
         };
-        selectedCategory = string.Empty;
         timeStart = null;
         timeEnd = null;
         dateValue = null;

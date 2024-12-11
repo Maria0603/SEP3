@@ -65,7 +65,7 @@
 
         <div class="offer__top--business">
             <div class="offer__top--business__icon">
-                <img src="@(HttpClient.BaseAddress + "/images/" + OfferData.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image">
+                <img src="@(HttpClient.BaseAddress + "images/" + OfferData.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image">
             </div>
             <h3 class="offer__top--business__name"> @OfferData.BusinessName</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
@@ -73,7 +73,7 @@
     </div>
 
     <div class="offer__img">
-        <img src="@(HttpClient.BaseAddress + "/images/" + OfferData.ImagePath)" onerror="this.src='/images/offerPlaceholder.jpg'" alt="Offer Image">
+        <img src="@(HttpClient.BaseAddress + "images/" + OfferData.ImagePath)" onerror="this.src='/images/offerPlaceholder.jpg'" alt="Offer Image">
     </div>
 
     <div class="offer__bottom">
