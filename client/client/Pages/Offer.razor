@@ -17,7 +17,7 @@
 @if (_offer is not null)
 {
 <div class="container">
-    <div>
+    <div @onclick="() => ShowBusinessDetails(_offer.BusinessId)">
         <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
         <img src="@(HttpClient.BaseAddress + _offer.BusinessLogoPath)" alt="Logo" class="logo-image"/>
         <header class="BusinessName">@_offer.BusinessName</header>
@@ -135,5 +135,10 @@ else
         }
     }
 
+    private void ShowBusinessDetails(string businessId)
+    {
+        Console.WriteLine(businessId);
+        NavigationManager.NavigateTo($"business/{businessId}");
+    }
 }
 
