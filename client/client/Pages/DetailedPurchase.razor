@@ -2,19 +2,21 @@
 @using client.DTO.Purchase
 @using client.Services.Implementations
 @using Microsoft.AspNetCore.Authorization
-@inject PurchaseService PurchaseService;
+@inject IPurchaseService PurchaseService;
 
 
 <h3>DetailedPurchase</h3>
 
 @if (_purchase != null)
 {
-    <p>@_purchase.Title</p>
-    <p>@_purchase.Description</p>
-    <p>@_purchase.purchaseTime</p>
-    <p>@_purchase.CustomerEmail</p>
-    <p>@_purchase.CustomerFirstName</p>
-    <p>@_purchase.NumberOfPurchasedItems</p>
+    <p>(@_purchase.Id): @_purchase.Title</p>
+    <p>Description: @_purchase.Description</p>
+    <p>Number of purchased items: @_purchase.NumberOfPurchasedItems</p>
+    <p>Pickup time start: @_purchase.PickupTimeStart</p>
+    <p>Pickup time end: @_purchase.PickupTimeStart</p>
+    <br/>
+    <p>Customer: @_purchase.CustomerFirstName, @_purchase.CustomerLastName (Phone: @_purchase.CustomerPhoneNumber)</p>
+    <p>Purchased at: @_purchase.purchaseTime</p>
 }
 
 @code {
