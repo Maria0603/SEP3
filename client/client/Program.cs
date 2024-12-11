@@ -24,11 +24,7 @@ builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<ILocationService, LocationService>();
-builder.Services.AddScoped<NotificationService>();
-
-
-//builder.Services.AddSingleton<NotificationService>();
-
+builder.Services.AddScoped<INotificationService, NotificationService>();
 
 //builder.Services.AddScoped<AuthenticationStateProvider, AuthStateProvider>();
 builder.Services.AddScoped<AuthStateProvider>(); 
