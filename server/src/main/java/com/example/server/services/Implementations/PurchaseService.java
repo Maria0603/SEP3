@@ -11,7 +11,7 @@ import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
 import com.example.server.services.IPurchaseService;
 import com.example.server.services.auxServices.IEmailService;
-import com.example.server.services.auxServices.Implementations.IEventService;
+import com.example.server.services.auxServices.IEventService;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.model.NotificationType;
 import com.example.shared.model.PurchaseStatus;
