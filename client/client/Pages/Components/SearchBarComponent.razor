@@ -20,6 +20,8 @@
     </div>
 </div>
 
+<div>@filterText</div>
+
 @if (showMapPopup)
 {
 <MapComponent ToggleMap="ToggleMap"/>
@@ -78,6 +80,7 @@
     private int[] priceRange = { 0, 500 };
 
     private int[] timeRange = { 0, 24 };
+    private string filterText = "Filters";
     
     // Map
     // private Map _map;
@@ -124,6 +127,8 @@
             PickupTimeStart = pickupDateStart,
             PickupTimeEnd = pickupDateEnd
         };
+        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}, Categories: {selectedCategories.Select(c => c.Name).ToList()}");
+        filterText = $"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}, Categories: {selectedCategories.Select(c => c.Name).ToList()}";
         await OnFilterApply.InvokeAsync(filterRequestDto);
     }
 

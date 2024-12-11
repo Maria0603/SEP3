@@ -211,6 +211,16 @@ else {NavigationManager.NavigateTo($"/offers/{createdOffer.Id}"); }
             return;
         }
 
+        if (selectedCategories is not null)
+        {
+            offerDto.Categories = selectedCategories.Select(c => c.Name).ToList();
+        }
+        else
+        {
+            errorLabel = "Please provide at least one category.";
+            return;
+        }
+
         // Validate Pickup End Time
         if (timeEnd is not null)
         {
