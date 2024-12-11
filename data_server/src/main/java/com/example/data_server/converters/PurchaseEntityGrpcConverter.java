@@ -47,6 +47,7 @@ public class PurchaseEntityGrpcConverter
         .setCustomerFirstName(purchase.getCustomer().getFirstName())
         .setCustomerLastName(purchase.getCustomer().getLastName())
         .setCustomerEmail(purchase.getCustomer().getEmail())
+        .setCustomerPhoneNumber(purchase.getCustomer().getPhoneNumber())
         .setPurchaseTime(
                 DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
                 purchase.getPurchaseTime()))

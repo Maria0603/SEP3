@@ -21,7 +21,6 @@ import java.time.LocalDateTime;
 
   @NotNull(message = "Image path is required.") private String imagePath;
 
-  @NotNull(message = "Pickup date is required.") private LocalDateTime pickupDate;
   @NotNull(message = "Pickup time start is required.") private LocalDateTime pickupTimeStart;
   @NotNull(message = "Pickup time end is required.") private LocalDateTime pickupTimeEnd;
   @NotNull(message = "Customer first name is required.") private String customerFirstName;

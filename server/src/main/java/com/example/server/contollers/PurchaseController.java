@@ -76,12 +76,13 @@ import java.util.List;
     {
       throw new IllegalArgumentException(e.getMessage());
     }
-  }  @GetMapping("/detailed/{id}") public ResponseEntity<PurchaseResponseDto> getDetailedPurchaseById(
+  }  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
       @PathVariable String id)
   {
     try
     {
-      PurchaseResponseDto purchase = purchaseService.getPurchaseById(id);
+      DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
+      System.out.println(id + ", " + purchase.getCustomerPhoneNumber());
       return ResponseEntity.ok(purchase);
     }
     catch (Exception e)

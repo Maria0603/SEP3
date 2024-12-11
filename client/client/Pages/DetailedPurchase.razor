@@ -1,0 +1,29 @@
+@page "/detailedPurchase/{id}"
+@using client.DTO.Purchase
+@using client.Services.Implementations
+@using Microsoft.AspNetCore.Authorization
+@inject PurchaseService PurchaseService;
+
+
+<h3>DetailedPurchase</h3>
+
+@if (_purchase != null)
+{
+    <p>@_purchase.Title</p>
+    <p>@_purchase.Description</p>
+    <p>@_purchase.purchaseTime</p>
+    <p>@_purchase.CustomerEmail</p>
+    <p>@_purchase.CustomerFirstName</p>
+    <p>@_purchase.NumberOfPurchasedItems</p>
+}
+
+@code {
+    [Parameter] public string id { get; set; }
+    private DetailedPurchaseResponseDto? _purchase;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _purchase = await PurchaseService.GetDetailedPurchaseByIdAsync(id);
+
+    }
+}
