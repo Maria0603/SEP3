@@ -21,8 +21,9 @@
         @* <div class="logo-image"> *@
         @*     <img src="@(HttpClient.BaseAddress + "/images/" + _offer.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image"> *@
         @* </div> *@
-        <img src="@(HttpClient.BaseAddress + "/images/" + _offer.ImagePath)" onerror="this.src='images/offerPlaceholder.jpg'" alt="Offer Image" class="offer-image"/>
-        <img src="@(HttpClient.BaseAddress + "/images/" + _offer.ImagePath)" onerror="this.src='images/businessLogoPlaceholder.jpg'" alt="Logo" class="logo-image"/>
+        
+<img src="@(HttpClient.BaseAddress + "images/" + _offer.ImagePath)" onerror="this.src='images/offerPlaceholder.jpg'" alt="Offer Image" class="offer-image"/>
+        <img src="@(HttpClient.BaseAddress + "images/" + _offer.BusinessLogoPath)" onerror="this.src='images/businessLogoPlaceholder.jpg'" alt="Logo" class="logo-image"/>
         <header class="BusinessName">@_offer.BusinessName</header>
         <div class="offer__top--left @(_offer.NumberOfAvailableItems > 0 ? "" : "sold-out")">
             @(_offer.NumberOfAvailableItems > 0
@@ -113,6 +114,7 @@ else
     protected override async Task OnInitializedAsync()
     {
         _offer = await OfferService.GetOfferByIdAsync(id);
+        Console.WriteLine(HttpClient.BaseAddress + "images/" + _offer.ImagePath);
     }
 
     private void IncreaseQuantity()

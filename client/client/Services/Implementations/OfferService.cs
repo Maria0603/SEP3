@@ -38,6 +38,24 @@ public class OfferService : IOfferService {
         throw new Exception(responseContent);
     }
 
+    public async Task<List<CategoryDto>> GetCategoriesAsync()
+    {
+        HttpResponseMessage response = await client.GetAsync("offers/categories");
+        string responseContent = await response.Content.ReadAsStringAsync();
+        if (response.IsSuccessStatusCode)
+        {
+            List<CategoryDto> categories = JsonSerializer.Deserialize<List<CategoryDto>>(
+                responseContent,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                })!;
+            return categories;
+        }
+
+        throw new Exception(responseContent); 
+    }
+
     public async Task<OfferResponseDto> GetOfferByIdAsync(string id) {
         HttpResponseMessage response =
             await client.GetAsync($"offers/{id}");

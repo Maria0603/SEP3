@@ -1,4 +1,7 @@
-﻿<div class="mb-3">
+﻿@using client.DTO.Offer
+@inject IOfferService OfferService;
+
+<div class="mb-3">
     <label for="categories">Categories</label>
     <div class="d-flex align-items-center">
         <select id="categories" @bind="SelectedCategory" class="form-control category-dropdown">
@@ -23,19 +26,38 @@
 
 @code {
 
-    private List<Category> AvailableCategories { get; set; } = new()
-    {
-        new Category { Name = "Bread" },
-        new Category { Name = "Vegan" },
-        new Category { Name = "Pastry" },
-        new Category { Name = "Dairy" }
-    };
+    private List<CategoryDto> AvailableCategories { get; set; } = new();
 
     private string SelectedCategory { get; set; } ="Bread";
 
-    [Parameter] public List<Category> SelectedCategories { get; set; } = new();
+    [Parameter] public List<CategoryDto> SelectedCategories { get; set; } = new();
 
-    [Parameter] public EventCallback<List<Category>> SelectedCategoriesChanged { get; set; }
+    [Parameter] public EventCallback<List<CategoryDto>> SelectedCategoriesChanged { get; set; }
+    
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadCategoriesAsync();
+    }
+
+    private async Task LoadCategoriesAsync()
+    {
+        try
+        {
+            // Fetch categories from the API
+            AvailableCategories = await OfferService.GetCategoriesAsync();
+
+            // Set default selected category if needed
+            if (AvailableCategories.Any())
+            {
+                SelectedCategory = AvailableCategories.First().Name;
+            }
+        }
+        catch (Exception ex)
+        {
+            // Handle errors (e.g., log them or show a message)
+            Console.WriteLine($"Error loading categories: {ex.Message}");
+        }
+    }
 
     private void AddCategory()
     {
@@ -50,7 +72,7 @@
         }
     }
 
-    private void RemoveCategory(Category category)
+    private void RemoveCategory(CategoryDto category)
     {
         SelectedCategories.Remove(category);
         SelectedCategoriesChanged.InvokeAsync(SelectedCategories);

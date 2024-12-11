@@ -1,5 +1,6 @@
 ﻿@using System.Drawing
 @using client.DTO
+@using client.DTO.Offer
 @using Syncfusion.Blazor.Inputs
 @using Syncfusion.Blazor
 
@@ -90,11 +91,11 @@
     private DateTime? pickupDateEnd { get; set; } = DateTime.Now.AddDays(1);
 
     private FilterRequestDto? filterRequestDto;
-    private List<CategoryPickerComponent.Category>? selectedCategories = new();
+    private List<CategoryDto>? selectedCategories = new();
     
     
     
-    private void OnSelectedCategoriesChanged(List<CategoryPickerComponent.Category> categories)
+    private void OnSelectedCategoriesChanged(List<CategoryDto> categories)
     {
         // Handle updated categories
         selectedCategories = categories;
