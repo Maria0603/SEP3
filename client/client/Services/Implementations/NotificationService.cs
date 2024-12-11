@@ -1,36 +1,83 @@
-﻿namespace client.Services.Implementations;
+﻿using System.Text.Json;
+using client.DTO.Notification;
 
-using Microsoft.AspNetCore.SignalR.Client;
+namespace client.Services.Implementations;
+
+using System;
+using System.Net.WebSockets;
+using System.Text;
+using System.Threading;
+using System.Threading.Tasks;
 
 public class NotificationService
 {
-    public event Action<string>? OnNotificationReceived;
-    private HubConnection? _hubConnection;
+    //private ClientWebSocket _webSocket;
 
-    public async Task Connect(string userToken)
+    public event Action<string> OnMessageReceived;
+    private readonly HttpClient client;
+
+    public NotificationService(HttpClient client)
     {
-        
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl("https://your-spring-server/notifications", options =>
-            {
-                options.AccessTokenProvider = () => Task.FromResult(userToken);
-            })
-            .Build();
-
-        _hubConnection.On<string>("ReceiveNotification", (message) =>
-        {
-            OnNotificationReceived?.Invoke(message);
-        });
-
-        await _hubConnection.StartAsync();
+        this.client = client;
     }
 
-    public async Task Disconnect()
+    public async Task<List<NotificationResponseDto>> GetNotifications()
     {
-        if (_hubConnection != null)
+        HttpResponseMessage response =
+            await client.GetAsync($"notifications");
+        String responseContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseContent);
+        if (response.IsSuccessStatusCode)
         {
-            await _hubConnection.StopAsync();
-            await _hubConnection.DisposeAsync();
+            List<NotificationResponseDto> notifications =
+                JsonSerializer.Deserialize<List<NotificationResponseDto>>(
+                    responseContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })!;
+            return notifications;
+        }
+        throw new Exception(responseContent);
+    }
+/*
+    public async Task ConnectAsync(string uri)
+    {
+        _webSocket = new ClientWebSocket();
+        await _webSocket.ConnectAsync(new Uri(uri), CancellationToken.None);
+
+        // Start receiving messages
+        _ = Task.Run(ReceiveMessagesAsync);
+    }
+
+    private async Task ReceiveMessagesAsync()
+    {
+        var buffer = new byte[1024 * 4];
+        while (_webSocket.State == WebSocketState.Open)
+        {
+            var result = await _webSocket.ReceiveAsync(
+                new ArraySegment<byte>(buffer), CancellationToken.None);
+            if (result.MessageType == WebSocketMessageType.Text)
+            {
+                var message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                OnMessageReceived?.Invoke(message);
+            }
+            else if (result.MessageType == WebSocketMessageType.Close)
+            {
+                await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                    string.Empty, CancellationToken.None);
+            }
         }
     }
+
+    public async Task DisconnectAsync()
+    {
+        if (_webSocket != null && _webSocket.State == WebSocketState.Open)
+        {
+            await _webSocket.CloseAsync(WebSocketCloseStatus.NormalClosure,
+                string.Empty, CancellationToken.None);
+        }
+    }
+
+    public bool IsConnected => _webSocket?.State == WebSocketState.Open;*/
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController @RequestMapping("/notifications") public class NotificationController
@@ -39,5 +40,10 @@ import java.util.List;
     System.out.println("Roleeeeeeeeeeeee: " + userRole);
     return ResponseEntity.ok(notificationService.getNotifications(userId, userRole));
   }
+  /*@PostMapping("/send")
+  public void sendNotification(@RequestParam String userId, @RequestParam
+      String userRole) {
+    notificationService.sendNotification(new NotificationResponseDto(userId, userRole, "Heeeeey", LocalDateTime.now(), "some", "some"));
+  }*/
 }
 

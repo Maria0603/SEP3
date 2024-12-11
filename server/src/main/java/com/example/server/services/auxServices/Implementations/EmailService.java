@@ -19,7 +19,8 @@ import org.springframework.ws.mime.MimeMessage;
     this.mailSender = mailSender;
   }
 
- @Override public void sendNotificationEmail(String to, String subject, String text)
+  @Override public void sendNotificationEmail(String to, String subject,
+      String text)
   {
     SimpleMailMessage message = new SimpleMailMessage();
     message.setTo(to);
@@ -28,11 +29,12 @@ import org.springframework.ws.mime.MimeMessage;
     mailSender.send(message);
   }
 
-  public void sendTestEmail() {
+  public void sendTestEmail(String email)
+  {
     SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo("florina.coroian912@gmail.com");
-    message.setSubject("Test Email");
-    message.setText("This is a test email sent from Spring Boot.");
+    message.setTo(email);
+    message.setSubject("Wake up!");
+    message.setText("You didn't finish your tasks! EatWise is waiting, but we know where you live...");
     mailSender.send(message);
     System.out.println("Email sent successfully!");
   }

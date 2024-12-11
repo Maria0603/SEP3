@@ -114,7 +114,7 @@ import java.util.stream.Collectors;
       NotificationResponseDto businessDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
           businessNotification);
 
-      notificationService.sendNotification(businessDto);
+      //notificationService.sendNotification(businessDto);
 
       // Notify customer
       NotificationRequestResponse customerNotification = NotificationRequestResponse.newBuilder()
@@ -132,7 +132,7 @@ import java.util.stream.Collectors;
       NotificationResponseDto customerDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
           customerNotification);
 
-      notificationService.sendNotification(customerDto);
+      //notificationService.sendNotification(customerDto);
 
       emailService.sendNotificationEmail(databaseResponse.getBusinessEmail(),
           "New Purchase", "A new purchase has been made for your offer #"

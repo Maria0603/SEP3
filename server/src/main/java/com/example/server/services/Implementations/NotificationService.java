@@ -16,13 +16,12 @@ import java.util.List;
 @Service public class NotificationService implements INotificationService
 {
   private final DataServerStub dataServerStub;
-  private final SimpMessagingTemplate messagingTemplate; // For real-time WebSocket notifications
+  //private final SimpMessagingTemplate messagingTemplate; // For real-time WebSocket notifications
 
-  @Autowired public NotificationService(DataServerStub dataServerStub,
-      SimpMessagingTemplate messagingTemplate)
+  @Autowired public NotificationService(DataServerStub dataServerStub)//,SimpMessagingTemplate messagingTemplate)
   {
     this.dataServerStub = dataServerStub;
-    this.messagingTemplate = messagingTemplate;
+    //this.messagingTemplate = messagingTemplate;
     System.out.println("NotificationService created");
   }
 
@@ -34,13 +33,13 @@ import java.util.List;
             NotificationsRequest.newBuilder().setUserId(userId)
                 .setUserRole(userRole).build()));
   }
-
+/*
   @Override public void sendNotification(NotificationResponseDto notification)
   {
     System.out.println("Sending notification: " + notification.getContent());
     messagingTemplate.convertAndSend(
         "/topic/notifications/" + notification.getUserRole().toLowerCase() + "/"
             + notification.getUserId(), notification);
-  }
+  }*/
 
 }

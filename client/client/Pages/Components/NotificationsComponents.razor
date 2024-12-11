@@ -1,54 +1,45 @@
 ﻿@page "/notifications"
+@using System.Text.Json
 @using client.DTO.Notification
 @using client.Services.Implementations
-@using Microsoft.AspNetCore.SignalR.Client
 @inject NavigationManager NavigationManager
 @inject NotificationService NotificationService
 @inject AuthStateProvider AuthStateProvider
 
 
-<div class="notification-list">
-    @foreach (NotificationResponseDto notification in Notifications)
+<div>
+    @if (notifications is null)
     {
-        <div class="notification-item">
-            @notification.Content
-        </div>
+        <p>Loading........</p>
+    }
+    else
+    {
+        foreach (NotificationResponseDto notification in notifications)
+        {
+            <div>@notification.Content</div>
+        }
+
     }
 </div>
 
 @code {
-    private List<NotificationResponseDto> Notifications = new();
-    private HubConnection? _hubConnection;
+    private string _notificationButtonClass = "btn btn-default";
+    private List<NotificationResponseDto> notifications = new List<NotificationResponseDto>();
 
     protected override async Task OnInitializedAsync()
     {
-        _hubConnection = new HubConnectionBuilder()
-            .WithUrl(NavigationManager.ToAbsoluteUri("/ws"))
-            .Build();
-
-        _hubConnection.On<NotificationResponseDto>("ReceiveNotification", (notification) =>
-        {
-            Notifications.Add(notification);
-            StateHasChanged();
-        });
-        
-        string? role = await AuthStateProvider.GetUserRoleAsync();
-        string? userId = await AuthStateProvider.GetUserIdAsync();
-        Console.WriteLine("Role: " + await AuthStateProvider.GetUserRoleAsync() + "Id: " + await AuthStateProvider.GetUserIdAsync());
-
-        await _hubConnection.StartAsync();
-
-        if(userId is not null && role is not null)
-            await _hubConnection.SendAsync("SubscribeToTopic", $"/topic/notifications/{role.ToLower()}/{userId}");
+        notifications = await NotificationService.GetNotifications();
     }
 
-    public async ValueTask DisposeAsync()
+    private void HandleNotification(string message)
     {
-        if (_hubConnection is not null)
-        {
-            await _hubConnection.DisposeAsync();
-        }
+        _notificationButtonClass = "btn btn-warning"; // Change color on notification
+        StateHasChanged();
     }
 
+    private void ShowNotifications()
+    {
+        _notificationButtonClass = "btn btn-default"; // Reset color
+    }
 
 }
