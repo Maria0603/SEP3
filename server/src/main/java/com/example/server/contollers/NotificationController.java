@@ -1,35 +1,28 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.notifications.NotificationResponseDto;
-import com.example.server.security.JWTAuthFilter;
 import com.example.server.security.JWTUtils;
 import com.example.server.services.INotificationService;
-import com.example.server.services.Implementations.NotificationService;
-import com.example.server.services.Implementations.OfferService;
-import com.example.server.services.auxServices.Implementations.EventService;
+import com.example.server.services.auxServices.Implementations.IEventService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import reactor.core.publisher.Flux;
 
-import java.time.Duration;
-import java.time.Instant;
-import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController @RequestMapping("/notifications") public class NotificationController
 {
 
   private final INotificationService notificationService;
-  private final EventService eventService;
+  private final IEventService eventService;
   private JWTUtils jwtUtils;
 
   @Autowired public NotificationController(
       INotificationService notificationService, JWTUtils jwtUtils,
-      EventService eventService)
+      IEventService eventService)
   {
     this.notificationService = notificationService;
     this.eventService = eventService;
@@ -48,12 +41,6 @@ import java.util.List;
     return ResponseEntity.ok(
         notificationService.getNotifications(userId, userRole));
   }
-
- /* @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE) public Flux<String> streamNotifications()
-  {
-    return Flux.interval(Duration.ofSeconds(1))
-        .map(sequence -> "Notification " + sequence + " at " + Instant.now());
-  }*/
 
   @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE) public SseEmitter streamNotifications(
       @RequestParam String token)

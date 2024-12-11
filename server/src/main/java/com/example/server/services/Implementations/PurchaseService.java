@@ -9,14 +9,10 @@ import com.example.server.dto.notifications.NotificationResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
-import com.example.server.services.INotificationService;
-import com.example.server.services.IOfferService;
 import com.example.server.services.IPurchaseService;
 import com.example.server.services.auxServices.IEmailService;
-import com.example.server.services.auxServices.Implementations.EventService;
-import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
+import com.example.server.services.auxServices.Implementations.IEventService;
 import com.example.shared.converters.DateTimeConverter;
-import com.example.shared.entities.domainEntities.Notification;
 import com.example.shared.model.NotificationType;
 import com.example.shared.model.PurchaseStatus;
 import com.example.shared.model.UserRole;
@@ -38,7 +34,7 @@ import java.util.stream.Collectors;
 @Service public class PurchaseService implements IPurchaseService
 {
   private final DataServerStub dataServerStub;
-  private final EventService eventService;
+  private final IEventService eventService;
   private final IEmailService emailService;
   private final RestTemplateConfig restTemplateConfig;
 
@@ -47,7 +43,7 @@ import java.util.stream.Collectors;
   @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
   @Autowired public PurchaseService(DataServerStub dataServerStub,
-      EventService eventService, IEmailService emailService,
+      IEventService eventService, IEmailService emailService,
       RestTemplateConfig restTemplateConfig)
   {
     this.dataServerStub = dataServerStub;

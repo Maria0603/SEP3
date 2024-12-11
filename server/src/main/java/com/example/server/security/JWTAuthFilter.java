@@ -37,7 +37,7 @@ import java.io.IOException;
     jwtToken = authHeader.substring(7);
     userEmail = jwtUtils.extractUsername(jwtToken);
     userId = jwtUtils.extractUserId(jwtToken);
-    System.out.println("Generating JWT for....: " + userEmail);
+    System.out.println("JWT for....: " + userEmail);
     request.setAttribute("email", userEmail);
     request.setAttribute("userId", userId);
 
@@ -49,13 +49,11 @@ import java.io.IOException;
 
       if (jwtUtils.isTokenValid(jwtToken, userDetails))
       {
-        //SecurityContext securityContext = SecurityContextHolder.createEmptyContext();
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(
             userDetails, null, userDetails.getAuthorities());
         token.setDetails(
             new WebAuthenticationDetailsSource().buildDetails(request));
-        //securityContext.setAuthentication(token);
-        //SecurityContextHolder.setContext(securityContext);
+
         SecurityContextHolder.getContext().setAuthentication(token);
 
       }
