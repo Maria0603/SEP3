@@ -1,11 +1,13 @@
 package com.example.data_server.service;
 
+import com.example.data_server.converters.CustomerEntityGrpcConverter;
+import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
-import com.example.data_server.repository.BusinessRepository;
 import com.example.shared.entities.usersEntities.Business;
 import com.example.shared.entities.usersEntities.Customer;
+import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,5 +123,40 @@ import static com.example.data_server.converters.CustomerEntityGrpcConverter.gen
     CustomerResponse response = buildCustomerResponse(customer);
     responseObserver.onNext(response);
     responseObserver.onCompleted();
+  }
+
+  @Override
+  public void updateCustomerProfile(CustomerUpdateRequest request, StreamObserver<CustomerResponse> responseObserver) {
+    try {
+      System.out.println("Received update request for Customer ID: " + request.getId());
+
+      // Validate Business ID
+      if (request.getId().isEmpty()) {
+        responseObserver.onError(
+            Status.INVALID_ARGUMENT.withDescription("Customer ID is missing").asRuntimeException());
+        return;
+      }
+      Customer customer = customerRepository.findById(request.getId()).get();
+
+      Customer newCustomer = customer;
+      newCustomer.setFirstName(request.getFirstName());
+      newCustomer.setLastName(request.getLastName());
+      newCustomer.setLastName(request.getLastName());
+      newCustomer.setEmail(request.getEmail());
+      newCustomer.setPhoneNumber(request.getPhoneNumber());
+
+
+      customerRepository.delete(customer);
+      customerRepository.save(customer);
+
+      CustomerResponse response = CustomerEntityGrpcConverter.buildCustomerResponse(newCustomer);
+
+      responseObserver.onNext(response);
+      responseObserver.onCompleted();
+    } catch (Exception e) {
+      System.err.println("Error updating customer profile: " + e.getMessage());
+
+      // Prepare and send failure response
+    }
   }
 }

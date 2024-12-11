@@ -16,6 +16,7 @@ service CustomerService {
   rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
   rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
   rpc GetCustomerById(IdRequestResponse) returns (CustomerResponse);
+  rpc UpdateCustomerProfile (CustomerUpdateRequest) returns (CustomerResponse);
 }
 
 
@@ -62,4 +63,13 @@ message BusinessOnMap {
 
 message BusinessesInRadiusResponse {
   repeated BusinessOnMap businesses = 1;
+}
+
+message CustomerUpdateRequest {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string phoneNumber = 5;
+
 }

@@ -1,10 +1,12 @@
 package com.example.server.services.Implementations;
 
 import com.example.sep3.grpc.*;
-
 import com.example.server.DataServerStub;
+import com.example.server.converters.CustomerDtoGrpcConverter;
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
 import com.example.server.dto.customer.CustomerLocationRequestResponseDto;
+import com.example.server.dto.customer.CustomerResponseDto;
+import com.example.server.dto.customer.CustomerUpdateRequestDto;
 import com.example.server.services.ICustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,8 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.server.converters.BusinessDtoGrpcConverter.generateBusinessInRadiusResponseDtoFromBusinessOnMap;
-import static com.example.server.converters.CustomerDtoGrpcConverter.CustomerLocationRequest_To_CustomerLocationRequestResponseDto;
-import static com.example.server.converters.CustomerDtoGrpcConverter.generateCustomerLocationRequestFromCustomerLocationRequestDto;
+import static com.example.server.converters.CustomerDtoGrpcConverter.*;
 
 @Service public class CustomerService implements ICustomerService
 {
@@ -69,6 +70,40 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.generateCus
     }
 
     return businessesInRadiusResponseDto;
+  }
+
+  @Override
+  public CustomerResponseDto updateCustomerProfile(
+      CustomerUpdateRequestDto updatedProfile) {
+    System.out.println("updateCustomerProfile method called for ID: " + updatedProfile.getId());
+
+
+    System.out.println("Updated Profile Details:");
+    System.out.println("First Name: " + updatedProfile.getFirstName());
+    System.out.println("Last Name: " + updatedProfile.getLastName());
+    System.out.println("Email: " + updatedProfile.getEmail());
+    System.out.println("Phone Number: " + updatedProfile.getPhoneNumber());
+
+    CustomerUpdateRequest request = CustomerUpdateRequestDto_To_CustomerUpdateRequest(updatedProfile);
+
+    try {
+      CustomerResponse grpcResponse = dataServerStub.updateCustomerProfile(request);
+      return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(grpcResponse);
+    } catch (Exception e) {
+      System.out.println("Error updating business profile: " + e.getMessage());
+      // return false;
+    }
+    return null;
+  }
+
+  @Override public CustomerResponseDto getCustomerById(String id)
+  {
+    System.out.println("getCustomerId method called with id " + id);
+    IdRequestResponse request = IdRequestResponse.newBuilder().setId(id).build();
+    CustomerResponse response = dataServerStub.getCustomerById(request);
+    System.out.println("Received response from dataServerStub: " + response);
+
+    return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(response);
   }
 
 }

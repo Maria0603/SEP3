@@ -5,80 +5,15 @@
 @using client.DTO.Customer
 @using Stripe
 @inject NavigationManager NavigationManager
+@inject ICustomerService CustomerService
 @inject IBusinessService BusinessService
 @inject AuthStateProvider AuthStateProvider
-<style>
-    .container {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        margin-top: 50px;
-        margin-right: 450px;
-    }
-
-    .buttons-column {
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        align-items: flex-start;
-        margin-bottom: 149px;
-        margin-right: 100px;
-    }
-
-    .nav-button {
-        display: flex;
-        align-items: center;
-        justify-content: flex-start;
-        padding: 10px 10px;
-        width: 150px;
-        text-align: left;
-        cursor: pointer;
-        border: 1px solid lightgray;
-        box-shadow: 2px 2px 0 0 white, 4px 4px 0 0 lightgray;
-        transition-duration: 0.2s;
-        background-color: #f9f9f9;
-        gap: 10px;
-    }
-    .nav-button img {
-        flex-shrink: 0;
-    }
-
-    .nav-button:hover {
-        box-shadow: 3px 3px 0 0 white, 6px 6px 0 0 #d11049;
-        transform: translate(-2px, -2px);
-    }
-
-    .nav-button:active {
-        color: #d11049;
-        background-color: white;
-        border-color: lightgray;
-    }
-
-    .form-column {
-        padding: 20px;
-        background-color: #f9f9f9;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        max-width: 350px;
-    }
-
-    button.btn-primary,
-    button.btn-danger {
-        margin-top: 10px;
-        margin-left: 20px;
-        width: 120px;
-    }
-
-</style>
 
 <h1>Edit Profile</h1>
 <div class="container">
     @if (businessProfile != null)
     {
-        <EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
+        <EditForm Model="businessProfile" OnValidSubmit="UpdateBusinessProfile">
             <DataAnnotationsValidator />
             <ValidationSummary />
             <div>
@@ -97,6 +32,32 @@
                 <label for="image">Business Image</label>
                 <InputFile id="image" OnChange="UploadImage" class="form-control" />
             </div>
+            <button type="submit" class="btn btn-primary">Update</button>
+            <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+        </EditForm>
+    }
+    @if (customerProfile != null)
+    {
+        <EditForm Model="customerProfile" OnValidSubmit="UpdateCustomerProfile">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+            <div>
+                <label for="FirstName">First Name</label>
+                <InputText id="firstname" @bind-Value="customerProfile.FirstName" class="form-control" />
+            </div>
+            <div>
+                <label for="LastName">Last Name</label>
+                <InputText id="lastname" @bind-Value="customerProfile.LastName" class="form-control" />
+            </div>
+            <div>
+                <label for="email">Email</label>
+                <InputText id="email" @bind-Value="customerProfile.Email" type="email" class="form-control" />
+            </div>
+            <div>
+                <label for="phoneNumber">Phone Number</label>
+                <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
+            </div>
+            
             <button type="submit" class="btn btn-primary">Update</button>
             <button @onclick="Logout" class="btn btn-danger">Log Out</button>
         </EditForm>
@@ -146,6 +107,16 @@
             {
                 UseDummyData();
             }
+            
+            string customerId = await GetCustomerIdAsync();
+            if (!string.IsNullOrEmpty(customerId))
+            {
+                await LoadCustomerProfile(customerId);
+            }
+            else
+            {
+                UseDummyData();
+            }
         }
         catch (Exception ex)
         {
@@ -154,7 +125,25 @@
         }
     }
 
+
     private async Task<string> GetBusinessIdAsync()
+    {
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var value = user.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+        }
+
+        throw new InvalidOperationException("User is not authenticated or business ID is missing.");
+    }
+    
+    private async Task<string> GetCustomerIdAsync()
     {
         var authState = await AuthStateProvider.GetAuthenticationStateAsync();
         var user = authState.User;
@@ -187,6 +176,23 @@
             errorMessage = $"Error loading profile: {ex.Message}";
         }
     }
+    
+    private async Task LoadCustomerProfile(string customerId)
+    {
+        try
+        {
+            customerProfile = await CustomerService.GetCustomerByIdAsync(customerId);
+
+            if (customerProfile == null)
+            {
+                errorMessage = "Failed to load customer profile.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading profile: {ex.Message}";
+        }
+    }
 
 
     private void UseDummyData()
@@ -202,7 +208,7 @@
         successMessage = "Displaying dummy data.";
     }
 
-    private async Task UpdateProfile()
+    private async Task UpdateBusinessProfile()
     {
         try
 
@@ -232,6 +238,35 @@
         }
     }
 
+    private async Task UpdateCustomerProfile()
+    {
+        try
+
+        {
+            CustomerUpdateRequestDto requestDto = new CustomerUpdateRequestDto()
+            {
+                Id = businessProfile.Id,
+                FirstName = customerProfile.FirstName,
+                LastName = customerProfile.LastName,
+                Email = businessProfile.Email,
+                PhoneNumber = businessProfile.PhoneNumber,
+            };
+            
+            CustomerResponseDto responseDto = await CustomerService.UpdateCustomerProfileAsync(requestDto);
+            customerProfile.Email = requestDto.Email;
+            customerProfile.PhoneNumber = businessProfile.PhoneNumber;
+            customerProfile.FirstName = customerProfile.FirstName;
+            customerProfile.LastName = customerProfile.LastName;
+            
+            Console.WriteLine(responseDto);
+            successMessage = "The profile has been successfully updated.";
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating profile: {ex.Message}";
+        }
+    }
     private async Task UploadImage(InputFileChangeEventArgs e)
     {
         try

@@ -9,6 +9,8 @@ using Stripe;
 using Syncfusion.Blazor;
 using client.Services.Implementations;
 using Microsoft.AspNetCore.Components.Authorization;
+using CustomerService = client.Services.Implementations.CustomerService;
+
 Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Ngo9BigBOggjHTQxAR8/V1NDaF5cWWtCf1FpRmJGdld5fUVHYVZUTXxaS00DNHVRdkdnWH1ednRQR2VZU0N2XEU=");
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -20,6 +22,7 @@ builder.Services.AddScoped(sp => new HttpClient
     { BaseAddress = new Uri("http://localhost:8082/") });
 builder.Services.AddScoped<IOfferService, OfferService>();
 builder.Services.AddScoped<IBusinessService, BusinessService>();
+builder.Services.AddScoped<ICustomerService, CustomerService>();
 builder.Services.AddScoped<IPurchaseService, PurchaseService>();
 builder.Services.AddSyncfusionBlazor();
 builder.Services.AddScoped<IAuthService, AuthService>();
