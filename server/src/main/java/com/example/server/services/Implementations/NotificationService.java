@@ -7,8 +7,8 @@ import com.example.server.dto.notifications.NotificationResponseDto;
 import com.example.server.services.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
+
 
 @Service public class NotificationService implements INotificationService
 {

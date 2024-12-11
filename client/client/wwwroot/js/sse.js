@@ -1,10 +1,15 @@
-﻿export function connectSSE(url, dotnetHelper) {
-    const eventSource = new EventSource(url);
+﻿export function connectSSE(url, dotnetHelper, token) {
+    
+    console.log("Token to send: ", token); 
+    //const eventSource = new EventSource(url, {headers});
 
-    eventSource.onopen = (event) => {
-        console.log("SSE connection opened", event);
-    };
+    const eventSource = new EventSource(`${url}?token=${encodeURIComponent(token)}`);
 
+
+    /* eventSource.onmessage = (event) => {
+         dotnetHelper.invokeMethodAsync("ReceiveNotification", event.data);
+     };*/
+    
     eventSource.onmessage = (event) => {
         console.log("SSE message received:", event.data); // Add debugging
         dotnetHelper.invokeMethodAsync("ReceiveNotification", event.data);

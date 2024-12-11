@@ -13,6 +13,7 @@ import com.example.server.services.INotificationService;
 import com.example.server.services.IOfferService;
 import com.example.server.services.IPurchaseService;
 import com.example.server.services.auxServices.IEmailService;
+import com.example.server.services.auxServices.Implementations.EventService;
 import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Notification;
@@ -37,7 +38,7 @@ import java.util.stream.Collectors;
 @Service public class PurchaseService implements IPurchaseService
 {
   private final DataServerStub dataServerStub;
-  private final INotificationService notificationService;
+  private final EventService eventService;
   private final IEmailService emailService;
   private final RestTemplateConfig restTemplateConfig;
 
@@ -46,11 +47,11 @@ import java.util.stream.Collectors;
   @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
   @Autowired public PurchaseService(DataServerStub dataServerStub,
-      INotificationService notificationService, IEmailService emailService,
+      EventService eventService, IEmailService emailService,
       RestTemplateConfig restTemplateConfig)
   {
     this.dataServerStub = dataServerStub;
-    this.notificationService = notificationService;
+    this.eventService = eventService;
     this.emailService = emailService;
     System.out.println("PurchaseService created");
     this.restTemplateConfig = restTemplateConfig;
@@ -111,10 +112,16 @@ import java.util.stream.Collectors;
 
       dataServerStub.createNotification(businessNotification);
 
+      //I think we don't have to send anything to the client, but I'll keep these here
+      //////////////////////////////////////////////////////////////////////////
       NotificationResponseDto businessDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
           businessNotification);
+      //////////////////////////////////////////////////////////////////////////
 
-      //notificationService.sendNotification(businessDto);
+      eventService.sendNotification(
+          businessDto.getUserRole() + businessDto.getUserId(),
+          "Notification for " + businessDto.getUserRole()
+              + businessDto.getUserId());
 
       // Notify customer
       NotificationRequestResponse customerNotification = NotificationRequestResponse.newBuilder()
@@ -129,10 +136,15 @@ import java.util.stream.Collectors;
 
       dataServerStub.createNotification(customerNotification);
 
+      //////////////////////////////////////////////////////////////////////////
       NotificationResponseDto customerDto = NotificationDtoGrpcConverter.NotificationRequestResponse_To_NotificationResponseDto(
           customerNotification);
+      //////////////////////////////////////////////////////////////////////////
 
-      //notificationService.sendNotification(customerDto);
+      eventService.sendNotification(
+          customerDto.getUserRole() + customerDto.getUserId(),
+          "Notification for " + customerDto.getUserRole()
+              + customerDto.getUserId());
 
       emailService.sendNotificationEmail(databaseResponse.getBusinessEmail(),
           "New Purchase", "A new purchase has been made for your offer #"
@@ -147,7 +159,6 @@ import java.util.stream.Collectors;
       response.setUrl(session.getUrl());
       response.setSessionId(session.getId());
       return response;
-
     }
     catch (StripeException e)
 

@@ -50,6 +50,12 @@ public class AuthStateProvider : AuthenticationStateProvider
 
         return new AuthenticationState(user);
     }
+    
+    public async Task<string?> GetTokenAsync()
+    {
+        return await _localStorage.GetItemAsStringAsync(_tokenKey);
+    }
+
     // Extract user ID from the token
     public async Task<string?> GetUserIdAsync()
     {
