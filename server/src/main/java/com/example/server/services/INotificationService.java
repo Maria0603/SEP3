@@ -7,5 +7,5 @@ import java.util.List;
 public interface INotificationService
 {
   List<NotificationResponseDto> getNotifications(String userId, String userRole);
-  void sendNotification(NotificationResponseDto notification);
+  //void sendNotification(NotificationResponseDto notification);
 }

@@ -8,10 +8,13 @@ import com.example.server.services.Implementations.NotificationService;
 import com.example.server.services.Implementations.OfferService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.web.bind.annotation.*;
+import reactor.core.publisher.Flux;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -28,7 +31,6 @@ import java.util.List;
     this.jwtUtils = jwtUtils;
   }
 
-
   @GetMapping public ResponseEntity<List<NotificationResponseDto>> getNotifications(
       HttpServletRequest request)
   {
@@ -38,12 +40,14 @@ import java.util.List;
 
     String userRole = jwtUtils.extractRoles(token).getFirst();
     System.out.println("Roleeeeeeeeeeeee: " + userRole);
-    return ResponseEntity.ok(notificationService.getNotifications(userId, userRole));
+    return ResponseEntity.ok(
+        notificationService.getNotifications(userId, userRole));
   }
-  /*@PostMapping("/send")
-  public void sendNotification(@RequestParam String userId, @RequestParam
-      String userRole) {
-    notificationService.sendNotification(new NotificationResponseDto(userId, userRole, "Heeeeey", LocalDateTime.now(), "some", "some"));
-  }*/
+
+  @GetMapping(value = "/stream", produces = MediaType.TEXT_EVENT_STREAM_VALUE) public Flux<String> streamNotifications()
+  {
+    return Flux.interval(Duration.ofSeconds(1))
+        .map(sequence -> "Notification " + sequence + " at " + Instant.now());
+  }
 }
 
