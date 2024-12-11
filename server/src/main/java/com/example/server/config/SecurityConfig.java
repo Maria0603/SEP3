@@ -32,7 +32,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     httpSecurity.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults()).authorizeHttpRequests(
             request -> request.requestMatchers("/auth/**",
-                    "/server/images/**") // Do we have other public features?
+                    "/images/**") // Do we have other public features?
                 .permitAll().requestMatchers("/business/**")
                 .hasAnyAuthority("BUSINESS", "ADMIN", "CUSTOMER") // Business + Admin access
                 .requestMatchers("/customer/**")

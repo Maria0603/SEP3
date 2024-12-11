@@ -6,6 +6,8 @@ import com.example.server.converters.OfferDtoGrpcConverter;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
+import com.example.server.services.auxServices.IImageStorageService;
+import com.example.server.services.auxServices.Implementations.AzureBlobStorageService;
 import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import com.example.shared.converters.StringToTimestampConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,10 +26,10 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 @Service public class OfferService implements IOfferService
 {
   private final DataServerStub dataServerStub;
-  private final ImageStorageStorageService imageStorageService;
+  private final IImageStorageService imageStorageService;
 
   @Autowired public OfferService(DataServerStub dataServerStub,
-      ImageStorageStorageService imageStorageService)
+                                 IImageStorageService imageStorageService)
   {
     this.dataServerStub = dataServerStub;
     this.imageStorageService = imageStorageService;
@@ -45,8 +47,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     String imagePath = null;
     try
     {
-      imagePath = imageStorageService.getBaseDirectory()
-          + imageStorageService.saveImage(offerRequestDto.getImage());
+      imagePath = imageStorageService.saveImage(offerRequestDto.getImage());
       //Transform the dto to grpc message
       CreateOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
           offerRequestDto, imagePath, userId);
@@ -119,8 +120,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     String imagePath = null;
     try
     {
-      imagePath = imageStorageService.getBaseDirectory()
-          + imageStorageService.saveImage(updateOfferRequestDto.getImage());
+      imagePath = imageStorageService.saveImage(updateOfferRequestDto.getImage());
       //Transform the dto to grpc message
       OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(
           updateOfferRequestDto, imagePath);

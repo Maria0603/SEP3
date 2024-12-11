@@ -9,7 +9,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.UUID;
 
-@Service public class ImageStorageStorageService implements IImageStorageService
+public class ImageStorageStorageService implements IImageStorageService
 {
 
   private static final String BASE_DIRECTORY = "server/images/";

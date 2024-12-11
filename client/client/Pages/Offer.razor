@@ -17,14 +17,17 @@
 @if (_offer is not null)
 {
 <div class="container">
-    <div>
-        <img src="@(HttpClient.BaseAddress + _offer.ImagePath)" alt="Offer Image" class="offer-image"/>
-        <img src="@(HttpClient.BaseAddress + _offer.BusinessLogoPath)" alt="Logo" class="logo-image"/>
+    <div class="offer__info">
+        @* <div class="logo-image"> *@
+        @*     <img src="@(HttpClient.BaseAddress + "/images/" + _offer.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image"> *@
+        @* </div> *@
+        <img src="@(HttpClient.BaseAddress + "/images/" + _offer.ImagePath)" onerror="this.src='images/offerPlaceholder.jpg'" alt="Offer Image" class="offer-image"/>
+        <img src="@(HttpClient.BaseAddress + "/images/" + _offer.ImagePath)" onerror="this.src='images/businessLogoPlaceholder.jpg'" alt="Logo" class="logo-image"/>
         <header class="BusinessName">@_offer.BusinessName</header>
-        <div class="offer__top--left @( _offer.NumberOfAvailableItems > 0 ? "" : "sold-out" )">
-            @( _offer.NumberOfAvailableItems > 0
-            ? $"{_offer.NumberOfAvailableItems} Left"
-            : "Sold Out" )
+        <div class="offer__top--left @(_offer.NumberOfAvailableItems > 0 ? "" : "sold-out")">
+            @(_offer.NumberOfAvailableItems > 0
+                ? $"{_offer.NumberOfAvailableItems} Left"
+                : "Sold Out")
         </div>
     </div>
 
@@ -62,10 +65,19 @@
                     </label>
 
                     <div id="amount">
-                        <button @onclick="DecreaseQuantity">-</button>
+                        <button
+                            @onclick="DecreaseQuantity"
+                            style="visibility: @(amount > 1 ? "visible" : "hidden");">
+                            -
+                        </button>
                         <span>@amount</span>
-                        <button @onclick="IncreaseQuantity">+</button>
+                        <button
+                            @onclick="IncreaseQuantity"
+                            style="visibility: @(amount < _offer.NumberOfAvailableItems ? "visible" : "hidden");">
+                            +
+                        </button>
                     </div>
+
                     <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
                 </div>
             </div>

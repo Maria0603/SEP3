@@ -12,6 +12,7 @@ import com.example.server.dto.customer.RegisterCustomerRequestDto;
 import com.example.server.security.JWTUtils;
 import com.example.server.security.UserDetailsService;
 import com.example.server.services.IAuthService;
+import com.example.server.services.auxServices.IImageStorageService;
 import com.example.server.services.auxServices.Implementations.GeocodingService;
 import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +31,7 @@ import java.util.Map;
 {
 
   private final DataServerStub dataServerStub;
-  private final ImageStorageStorageService imageStorageService;
+  private final IImageStorageService imageStorageService;
 
   private final JWTUtils jwtUtils;
   private final PasswordEncoder passwordEncoder;
@@ -39,7 +40,7 @@ import java.util.Map;
   private final GeocodingService geocodingService;
 
   @Autowired AuthService(DataServerStub dataServerStub,
-      ImageStorageStorageService imageService, JWTUtils jwtUtils,
+                         IImageStorageService imageService, JWTUtils jwtUtils,
       PasswordEncoder passwordEncoder,
       AuthenticationManager authenticationManager,
       UserDetailsService userDetailsService, GeocodingService geocodingService)
@@ -112,8 +113,7 @@ import java.util.Map;
       throw new IllegalArgumentException("Logo cannot be null or empty");
     }
 
-    return imageStorageService.getBaseDirectory()
-        + imageStorageService.saveImage(logo);
+    return imageStorageService.saveImage(logo);
   }
 
   @Override public CredentialsResponseDto registerCustomer(

@@ -65,14 +65,7 @@
 
         <div class="offer__top--business">
             <div class="offer__top--business__icon">
-                @if (!string.IsNullOrEmpty(OfferData.BusinessLogoPath))
-                {
-                <img src="@(HttpClient.BaseAddress + OfferData.BusinessLogoPath)" alt="Offer Image">
-                }
-                else
-                {
-                <img src="images/icons/cart.jpeg" alt="Default Logo">
-                }
+                <img src="@(HttpClient.BaseAddress + "/images/" + OfferData.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image">
             </div>
             <h3 class="offer__top--business__name"> @OfferData.BusinessName</h3>
             @* <h2 class="offer__top--business__name">@OfferData.BusinessDetails.Name</h2> *@
@@ -80,14 +73,7 @@
     </div>
 
     <div class="offer__img">
-        @if (!string.IsNullOrEmpty(OfferData.ImagePath))
-        {
-        <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
-        }
-        else
-        {
-        <img src="images/icons/noimage.png" alt="Default Logo">
-        }
+        <img src="@(HttpClient.BaseAddress + "/images/" + OfferData.ImagePath)" onerror="this.src='/images/offerPlaceholder.jpg'" alt="Offer Image">
     </div>
 
     <div class="offer__bottom">
