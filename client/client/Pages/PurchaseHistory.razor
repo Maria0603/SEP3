@@ -20,7 +20,7 @@
 
     <GridColumns>
         <GridColumn TItem="PurchaseItem" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id">
-            @context.Id
+            <a href="@($"/offers/{context.Id}")">@context.Id</a>
         </GridColumn>
         <GridColumn TItem="PurchaseItem" HeaderText="Title" PropertyName="Title" SortKeySelector="item => item.Title">
             @context.Title
@@ -48,7 +48,8 @@
             var offer = await offerService.GetOfferByIdAsync(purchase.OfferId);
             if (offer != null) {
                 purchaseItems.Add(new PurchaseItem {
-                    Id = purchase.PurchaseId,
+                    //Id = purchase.PurchaseId,
+                    Id = offer.Id,
                     Title = offer.Title,
                     Amount = purchase.NumberOfItems,
                     Date = purchase.purchaseTime,
