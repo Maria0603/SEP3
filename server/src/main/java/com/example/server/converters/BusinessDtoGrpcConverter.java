@@ -1,25 +1,22 @@
 package com.example.server.converters;
 
+import com.example.sep3.grpc.BusinessOnMap;
 import com.example.sep3.grpc.BusinessResponse;
+import com.example.sep3.grpc.BusinessUpdateRequest;
 import com.example.sep3.grpc.RegisterBusinessRequest;
 import com.example.server.dto.address.AddressDto;
-import com.example.server.dto.business.BusinessResponseDto;
-import com.example.sep3.grpc.BusinessOnMap;
-import com.example.sep3.grpc.BusinessesInRadiusResponse;
-import com.example.sep3.grpc.RegisterBusinessRequest;
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
+import com.example.server.dto.business.BusinessResponseDto;
+import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.shared.model.UserRole;
 
-import java.util.ArrayList;
-import java.util.List;
+public class BusinessDtoGrpcConverter {
 
-public class BusinessDtoGrpcConverter
-{
+  // Converts RegisterBusinessRequestDto to RegisterBusinessRequest
   public static RegisterBusinessRequest RegisterBusinessRequestDto_To_RegisterBusinessRequest(
       RegisterBusinessRequestDto dto, String logoPath, double latitude,
-      double longitude, String hashedPassword)
-  {
+      double longitude, String hashedPassword) {
     return RegisterBusinessRequest.newBuilder()
         .setBusinessName(dto.getBusinessName()).setCvr(dto.getCvr()).setAddress(
             AddressConverter.convertAddressDtoToGrpcAddress(dto.getAddress()))
@@ -29,15 +26,13 @@ public class BusinessDtoGrpcConverter
         .setRole(UserRole.BUSINESS.getRoleName()).build();
   }
 
-  // This is to send to client, **without hashed password**
+  // Converts BusinessResponse (gRPC) to BusinessResponseDto (DTO)
   public static BusinessResponseDto BusinessResponseGrpc_To_BusinessResponseDto(
-          BusinessResponse response)
-  {
+      BusinessResponse response) {
     BusinessResponseDto dto = new BusinessResponseDto();
     AddressDto addressDto = new AddressDto();
 
-
-    dto.setId(dto.getId());
+    dto.setId(response.getId());
     dto.setEmail(response.getEmail());
     dto.setPhoneNumber(response.getPhoneNumber());
     dto.setLogo_path(response.getLogoPath());
@@ -56,9 +51,10 @@ public class BusinessDtoGrpcConverter
 
     return dto;
   }
+
+  // Converts BusinessOnMap (gRPC) to BusinessInRadiusResponseDto (DTO)
   public static BusinessInRadiusResponseDto generateBusinessInRadiusResponseDtoFromBusinessOnMap(
-      BusinessOnMap business)
-  {
+      BusinessOnMap business) {
     BusinessInRadiusResponseDto dto = new BusinessInRadiusResponseDto();
     dto.setLatitude(business.getLatitude());
     dto.setLongitude(business.getLongitude());
@@ -69,5 +65,41 @@ public class BusinessDtoGrpcConverter
     return dto;
   }
 
+  // Converts BusinessResponseDto (DTO) to BusinessUpdateRequest (gRPC)
+  public static BusinessUpdateRequest BusinessResponseDto_To_BusinessUpdateRequest(
+      BusinessResponseDto updatedProfile) {
+    BusinessUpdateRequest.Builder requestBuilder = BusinessUpdateRequest.newBuilder();
 
+    // Set fields only if they are non-null and non-empty
+    if (updatedProfile.getBusinessName() != null && !updatedProfile.getBusinessName().isEmpty()) {
+      requestBuilder.setBusinessName(updatedProfile.getBusinessName());
+    }
+
+    if (updatedProfile.getEmail() != null && !updatedProfile.getEmail().isEmpty()) {
+      requestBuilder.setEmail(updatedProfile.getEmail());
+    }
+
+    if (updatedProfile.getPhoneNumber() != null && !updatedProfile.getPhoneNumber().isEmpty()) {
+      requestBuilder.setPhoneNumber(updatedProfile.getPhoneNumber());
+    }
+/*
+    if (updatedProfile.getLogo_path() != null && !updatedProfile.getLogo_path().isEmpty()) {
+      requestBuilder.setLogoPath(updatedProfile.getLogo_path());
+    }*/
+
+    // Add other fields if required
+    return requestBuilder.build();
+  }
+
+  public static BusinessUpdateRequest BusinessUpdateRequestDto_To_BusinessUpdateRequest(
+      BusinessUpdateRequestDto requestDto)
+  {
+    return BusinessUpdateRequest.newBuilder()
+        .setId(requestDto.getId())
+        .setBusinessName(requestDto.getBusinessName())
+        .setEmail(requestDto.getEmail())
+        .setPhoneNumber(requestDto.getPhoneNumber())
+        //.setLogoPath(requestDto.getLogoPath())
+        .build();
+  }
 }

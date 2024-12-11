@@ -60,7 +60,7 @@ public class DataServerStub
     return purchaseBlockingStub.getPurchaseById(request);
   }
 
-  public PurchaseListResponse getPurchases(IdRequestResponse request)
+  public PurchaseListResponse getPurchases(GetPurchaseRequest request)
   {
     return purchaseBlockingStub.getPurchases(request);
   }
@@ -69,7 +69,6 @@ public class DataServerStub
   {
     return purchaseBlockingStub.updatePurchaseStatus(request);
   }
-
   // ********************************* BUSINESS *********************************
 
   public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
@@ -101,6 +100,7 @@ public class DataServerStub
   {
     return customerBlockingStub.getCustomerLocation(request);
   }
+
 // ******************* USER *****************
 
   public UserResponse getUserByEmail(UserByEmailRequest request)
@@ -112,5 +112,10 @@ public class DataServerStub
   public void shutdown()
   {
     channel.shutdown();
+  }
+
+  public BusinessResponse updateBusinessProfile(BusinessUpdateRequest request) {
+
+    return businessBlockingStub.updateBusinessProfile(request);
   }
 }

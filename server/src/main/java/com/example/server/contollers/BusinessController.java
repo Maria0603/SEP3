@@ -1,17 +1,12 @@
 package com.example.server.contollers;
 
-
 import com.example.server.dto.business.BusinessResponseDto;
+import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.services.IBusinessService;
-import com.example.server.services.Implementations.BusinessService;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-@RestController @RequestMapping("/business") public class BusinessController {
+@RestController @RequestMapping("/businesses") public class BusinessController {
 
 
     private final IBusinessService businessService;
@@ -28,8 +23,21 @@ import org.springframework.web.bind.annotation.RestController;
             return ResponseEntity.ok(business);
         }
         catch (Exception e) {
-            //  TODO: Change this to proper exception response
             return ResponseEntity.notFound().build();
+        }
+    }
+
+    @PutMapping
+    public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@RequestBody BusinessUpdateRequestDto updatedProfile) {
+
+        // Business logic
+        BusinessResponseDto responseDto = businessService.updateBusinessProfile(updatedProfile);
+        try{
+            return ResponseEntity.ok(responseDto);
+        }
+        catch (Exception e)
+        {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

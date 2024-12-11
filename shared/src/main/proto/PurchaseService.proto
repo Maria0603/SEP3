@@ -12,7 +12,7 @@ import "CustomerService.proto";
 service PurchaseService {
   rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
   rpc GetPurchaseById (PurchaseIdRequest) returns (PurchaseResponse);
-  rpc GetPurchases (IdRequestResponse) returns (PurchaseListResponse);
+  rpc GetPurchases (GetPurchaseRequest) returns (PurchaseListResponse);
   rpc UpdatePurchaseStatus (PurchaseStatusRequest) returns (PurchaseResponse);
 }
 
@@ -20,6 +20,11 @@ message CreatePurchaseRequest {
   string offerId = 1;
   string customerId = 2;
   int32 numberOfItems = 3;
+}
+
+message GetPurchaseRequest {
+  string userId = 1;
+  string role = 2;
 }
 
 message PurchaseResponse {
