@@ -86,12 +86,12 @@ public class OfferService : IOfferService {
 
         if (filterRequestDto.MaxOfferPrice.HasValue)
             queryParameters.Add($"maxOfferPrice={filterRequestDto.MaxOfferPrice}");
-
+        
         if (filterRequestDto.PickupTimeStart.HasValue)
-            queryParameters.Add($"pickupTimeStart={filterRequestDto.PickupTimeStart:O}"); // ISO 8601 format for DateTime
+            queryParameters.Add($"pickupTimeStart={filterRequestDto.PickupTimeStart.Value.ToString("yyyy-MM-ddTHH:mm:ss")}"); // ISO 8601 format for DateTime
 
         if (filterRequestDto.PickupTimeEnd.HasValue)
-            queryParameters.Add($"pickupTimeEnd={filterRequestDto.PickupTimeEnd:O}");
+            queryParameters.Add($"pickupTimeEnd={filterRequestDto.PickupTimeEnd.Value.ToString("yyyy-MM-ddTHH:mm:ss")}");
 
         if (filterRequestDto.Categories != null && filterRequestDto.Categories.Any())
         {

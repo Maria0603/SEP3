@@ -16,10 +16,10 @@ import org.springframework.stereotype.Component;
 
   @Override public void run(String... args) throws Exception
   {
-    emailService.sendTestEmail("teksas77@gmail.com");
-    emailService.sendTestEmail("aleksandra.ignatova2007@gmail.com");
-    emailService.sendTestEmail("masha.moskovko@gmail.com");
-    emailService.sendTestEmail("matej.palas@954gmail.com");
+//    emailService.sendTestEmail("teksas77@gmail.com");
+//    emailService.sendTestEmail("aleksandra.ignatova2007@gmail.com");
+//    emailService.sendTestEmail("masha.moskovko@gmail.com");
+//    emailService.sendTestEmail("matej.palas@954gmail.com");
   }
 }
 

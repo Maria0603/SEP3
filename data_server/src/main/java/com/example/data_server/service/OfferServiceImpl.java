@@ -186,8 +186,12 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
     }
 
     List<Offer> filteredOffers;
+
+
+
     var allAvailableOffers = offerRepository.findByStatus(
         OfferStatus.AVAILABLE.getStatus());
+
     filteredOffers = allAvailableOffers.stream().filter(
             item -> !request.hasMaxOfferPrice()
                 || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
@@ -220,6 +224,15 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
           return true; // If no location filter, include all offers
         })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
         .toList();
+    System.out.println("---------------------------");
+    System.out.println("Request pickup time start: "+ request.getPickupTimeStart());
+    System.out.println("Request pickup time end: "+request.getPickupTimeEnd());
+
+    for (Offer offer : filteredOffers)
+    {
+      System.out.println("Offer pickup time start: "+offer.getPickupTimeStart());
+      System.out.println("Offer pickup time end: "+offer.getPickupTimeEnd());
+    }
 
     filteredOffers = filteredOffers.stream().sorted(
                     (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
