@@ -141,7 +141,6 @@ import static com.example.data_server.converters.CustomerEntityGrpcConverter.gen
       Customer newCustomer = customer;
       newCustomer.setFirstName(request.getFirstName());
       newCustomer.setLastName(request.getLastName());
-      newCustomer.setLastName(request.getLastName());
       newCustomer.setEmail(request.getEmail());
       newCustomer.setPhoneNumber(request.getPhoneNumber());
 

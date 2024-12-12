@@ -9,63 +9,64 @@
 @inject IBusinessService BusinessService
 @inject AuthStateProvider AuthStateProvider
 
+
 <h1>Edit Profile</h1>
 <div class="container">
     @if (businessProfile != null)
     {
-        <EditForm Model="businessProfile" OnValidSubmit="UpdateBusinessProfile">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="businessName">Business Name</label>
-                <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
-            </div>
-            <div>
-                <label for="phoneNumber">Phone Number</label>
-                <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
-            </div>
-            <div>
-                <label for="image">Business Image</label>
-                <InputFile id="image" OnChange="UploadImage" class="form-control" />
-            </div>
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button @onclick="Logout" class="btn btn-danger">Log Out</button>
-        </EditForm>
+    <EditForm Model="businessProfile" OnValidSubmit="UpdateBusinessProfile">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label for="businessName">Business Name</label>
+            <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <InputText id="email" @bind-Value="businessProfile.Email" type="email" class="form-control" />
+        </div>
+        <div>
+            <label for="phoneNumber">Phone Number</label>
+            <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
+        </div>
+        <div>
+        <label for="image">Business Image</label>
+        <InputFile id="image" OnChange="UploadImage" class="form-control" />
+</div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+    </EditForm>
     }
-    @if ( customerProfile != null)
+    else if (customerProfile != null)
     {
-        <EditForm Model="customerProfile" OnValidSubmit="UpdateCustomerProfile">
-            <DataAnnotationsValidator />
-            <ValidationSummary />
-            <div>
-                <label for="FirstName">First Name</label>
-                <InputText id="firstname" @bind-Value="customerProfile.FirstName" class="form-control" />
-            </div>
-            <div>
-                <label for="LastName">Last Name</label>
-                <InputText id="lastname" @bind-Value="customerProfile.LastName" class="form-control" />
-            </div>
-            <div>
-                <label for="email">Email</label>
-                <InputText id="email" @bind-Value="customerProfile.Email" type="email" class="form-control" />
-            </div>
-            <div>
-                <label for="phoneNumber">Phone Number</label>
-                <InputText id="phoneNumber" @bind-Value="businessProfile.PhoneNumber" type="tel" class="form-control" />
-            </div>
-            
-            <button type="submit" class="btn btn-primary">Update</button>
-            <button @onclick="Logout" class="btn btn-danger">Log Out</button>
-        </EditForm>
+    <EditForm Model="customerProfile" OnValidSubmit="UpdateCustomerProfile">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+        <div>
+            <label for="FirstName">First Name</label>
+            <InputText id="firstname" @bind-Value="customerProfile.FirstName" class="form-control" />
+        </div>
+        <div>
+            <label for="LastName">Last Name</label>
+            <InputText id="lastname" @bind-Value="customerProfile.LastName" class="form-control" />
+        </div>
+        <div>
+            <label for="email">Email</label>
+            <InputText id="email" @bind-Value="customerProfile.Email" type="email" class="form-control" />
+        </div>
+        <div>
+            <label for="phoneNumber">Phone Number</label>
+            <InputText id="phoneNumber" @bind-Value="customerProfile.PhoneNumber" type="tel" class="form-control" />
+        </div>
+        <button type="submit" class="btn btn-primary">Update</button>
+        <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+    </EditForm>
     }
     else
-    {   <button @onclick="Logout" class="btn btn-danger">Log Out</button>
-        <p>Loading the profile...It does not exist for the customer yet...</p>
+    {
+    <p>Loading profile... Please wait.</p>
     }
+
 </div>
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -98,30 +99,36 @@
     {
         try
         {
-            string businessId = await GetBusinessIdAsync();
-            if (!string.IsNullOrEmpty(businessId))
+            string role = await AuthStateProvider.GetUserRoleAsync();
+
+            if (role == "BUSINESS")
             {
-                await LoadBusinessProfile(businessId);
+                string businessId = await GetBusinessIdAsync();
+                if (!string.IsNullOrEmpty(businessId))
+                {
+                    await LoadBusinessProfile(businessId);
+                }
+                
+            }
+            else if (role == "CUSTOMER")
+            {
+                string customerId = await GetCustomerIdAsync();
+                if (!string.IsNullOrEmpty(customerId))
+                {
+                    await LoadCustomerProfile(customerId);
+                }
+                
             }
             else
             {
-                UseDummyData();
-            }
-            
-            string customerId = await GetCustomerIdAsync();
-            if (!string.IsNullOrEmpty(customerId))
-            {
-                await LoadCustomerProfile(customerId);
-            }
-            else
-            {
-                UseDummyData();
+                errorMessage = "Invalid role. Unable to load profile.";
+               
             }
         }
         catch (Exception ex)
         {
             errorMessage = $"An error occurred: {ex.Message}";
-            UseDummyData();
+            
         }
     }
 
@@ -157,7 +164,7 @@
             }
         }
 
-        throw new InvalidOperationException("User is not authenticated or business ID is missing.");
+        throw new InvalidOperationException("User is not authenticated or customer ID is missing.");
     }
 
     private async Task LoadBusinessProfile(string businessId)
@@ -194,19 +201,7 @@
         }
     }
 
-
-    private void UseDummyData()
-    {
-        businessProfile = new BusinessResponseDto()
-        {
-            Id = "dummyid12345",
-            BusinessName = "Hello Hello",
-            Email = "dummy@business.com",
-            PhoneNumber = "+123456789",
-            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU="
-        };
-        successMessage = "Displaying dummy data.";
-    }
+    
 
     private async Task UpdateBusinessProfile()
     {
@@ -245,18 +240,18 @@
         {
             CustomerUpdateRequestDto requestDto = new CustomerUpdateRequestDto()
             {
-                Id = businessProfile.Id,
+                Id = customerProfile.Id,
                 FirstName = customerProfile.FirstName,
                 LastName = customerProfile.LastName,
-                Email = businessProfile.Email,
-                PhoneNumber = businessProfile.PhoneNumber,
+                Email = customerProfile.Email,
+                PhoneNumber = customerProfile.PhoneNumber,
             };
             
             CustomerResponseDto responseDto = await CustomerService.UpdateCustomerProfileAsync(requestDto);
-            customerProfile.Email = requestDto.Email;
-            customerProfile.PhoneNumber = businessProfile.PhoneNumber;
             customerProfile.FirstName = customerProfile.FirstName;
             customerProfile.LastName = customerProfile.LastName;
+            customerProfile.Email = requestDto.Email;
+            customerProfile.PhoneNumber = customerProfile.PhoneNumber;
             
             Console.WriteLine(responseDto);
             successMessage = "The profile has been successfully updated.";
@@ -282,5 +277,7 @@
             errorMessage = $"Error uploading image: {ex.Message}";
         }
     }
+    
+    
 
 }

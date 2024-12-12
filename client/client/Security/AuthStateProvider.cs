@@ -7,7 +7,9 @@ using client.Services;
 using client.DTO.Auth;
 using Microsoft.AspNetCore.Components;
 
+
 namespace client.Security;
+
 
 public class AuthStateProvider : AuthenticationStateProvider
 {
@@ -29,7 +31,7 @@ public class AuthStateProvider : AuthenticationStateProvider
 
     public override async Task<AuthenticationState>
         GetAuthenticationStateAsync()
-    {
+    { 
         // Retrieve token from local storage
         var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
         if (string.IsNullOrEmpty(token))
@@ -40,6 +42,7 @@ public class AuthStateProvider : AuthenticationStateProvider
             return new AuthenticationState(
                 new ClaimsPrincipal(new ClaimsIdentity()));
         }
+        
 
         // Validate token (add a token validation step here if needed, but I don't think so)
         var identity = new ClaimsIdentity(ParseClaimsFromJwt(token), "jwt");
@@ -139,4 +142,58 @@ public class AuthStateProvider : AuthenticationStateProvider
 
         return Convert.FromBase64String(base64);
     }
+    
+    public async Task<string> GetUserRoleAsync()
+    {
+        var authState = await GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            Console.WriteLine("User is authenticated.");
+            foreach (var claim in user.Claims)
+            {
+                Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+            }
+
+            var roleClaim = user.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+            if (!string.IsNullOrEmpty(roleClaim))
+            {
+                // Handle role claim as array
+                try
+                {
+                    var roles = JsonSerializer.Deserialize<List<string>>(roleClaim);
+                    if (roles != null && roles.Any())
+                    {
+                        var role = roles.First().ToUpper(); // Use the first role
+                        if (role == "BUSINESS" || role == "CUSTOMER")
+                        {
+                            return role;
+                        }
+                        Console.WriteLine($"Invalid role found: {role}");
+                    }
+                    else
+                    {
+                        Console.WriteLine("Role claim is empty.");
+                    }
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error parsing role claim: {ex.Message}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("Role claim is missing.");
+            }
+        }
+        else
+        {
+            Console.WriteLine("User is not authenticated.");
+        }
+
+        throw new InvalidOperationException("User is not authenticated or role is missing.");
+    }
+
+
 }

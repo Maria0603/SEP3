@@ -90,7 +90,7 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.*;
       CustomerResponse grpcResponse = dataServerStub.updateCustomerProfile(request);
       return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(grpcResponse);
     } catch (Exception e) {
-      System.out.println("Error updating business profile: " + e.getMessage());
+      System.out.println("Error updating customer profile: " + e.getMessage());
       // return false;
     }
     return null;

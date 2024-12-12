@@ -21,6 +21,7 @@ public class CustomerDtoGrpcConverter
     dto.setEmail(response.getEmail());
     dto.setPhoneNumber(response.getPhoneNumber());
     dto.setFirstName(response.getFirstName());
+    dto.setLastName(response.getLastName());
     dto.setRole(response.getRole());
 
     dto.setAddress(addressDto);
