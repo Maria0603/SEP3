@@ -71,7 +71,7 @@ public class OfferEntityGrpcConverter
     System.out.println("**********************Available: "
         + request.getNumberOfAvailableItems());
     offer.setStatus(request.getStatus());
-    offer.setImagePath("server/images/" + request.getImagePath());
+    offer.setImagePath(request.getImagePath());
     offer.setBusiness(business);
 
     return offer;

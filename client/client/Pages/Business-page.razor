@@ -34,20 +34,21 @@
             </div>
         </div>    
     }
+    <div class="wrapper">
+        @if (offers == null){
+        <p>Loading offers...</p>
+        }
+        else if (offers.Count == 0){
+        <p>No offers from this business at this page moment.</p>
+        }
+        else{
+        @foreach (OfferResponseDto offer in offers)
+        {
+        <OfferComponent OfferData="offer" OfferWidth="33rem" OfferMarginBottom="20px"></OfferComponent>
+        }
+        }    
+    </div>
     
-    @if (offers == null){
-    <p>Loading offers...</p>
-    }
-    else if (offers.Count == 0){
-    <p>No offers from this business at this page moment.</p>
-    }
-    else{
-    @foreach (OfferResponseDto offer in offers)
-    {
-        <OfferComponent OfferData="offer" OfferWidth="67rem" OfferMarginBottom="20px"></OfferComponent>
-    }
-    
-    }
 </div>
 
 @code {
