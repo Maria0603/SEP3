@@ -14,11 +14,15 @@ service BusinessService {
   rpc GetBusinessById(BusinessIdRequest) returns (BusinessResponse);
   rpc GetBusinessesInRadius(IdRequestResponse) returns (BusinessesInRadiusResponse);
   rpc UpdateBusinessProfile (BusinessUpdateRequest) returns (BusinessResponse);
+  rpc GetBusinesses(EmptyMessage) returns (BusinessListResponse);
 }
 message BusinessByEmailRequest {
   string email = 1;
 }
 
+message BusinessListResponse {
+  repeated BusinessResponse businesses = 1;
+}
 
 message BusinessIdRequest {
     string id = 1;

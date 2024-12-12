@@ -1,9 +1,10 @@
 @using client.DTO.Customer
 @using client.DTO
+@using client.DTO.Business
 @implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @inject ILocationService LocationService
-
+@inject client.Services.IBusinessService BusinessService
 
 <div class="popup-overlay">
     <div class="popup-window">
@@ -41,10 +42,13 @@
     private string? mapInfo;
     private double mapCenterLatitude = 56.156486066837665;
     private double mapCenterLongitude = 10.19591121665965;
+    
     //private double mapRadius;
 
     private CustomerLocationRequestResponseDto? customerLocation;
-
+    
+    [Parameter] public FilterRequestDto FilterRequestDto { get; set; }
+    [Parameter] public EventCallback OnFilterApply { get; set; }
     [Parameter] public EventCallback ToggleMap { get; set; }
 
     private async Task UpdateCircleRadius()
@@ -61,11 +65,21 @@
         {
             var resultMap = await module.InvokeAsync<MapCenterAndRadius>("get_map_center_and_radius");
             Console.WriteLine(resultMap);
-            mapCenterLatitude = resultMap.Latitude;
-            mapCenterLongitude = resultMap.Longitude;
-            circleRadius = (int)resultMap.Radius;
+            // mapCenterLatitude = resultMap.Latitude;
+            // mapCenterLongitude = resultMap.Longitude;
+            // circleRadius = (int)resultMap.Radius;
 
+            FilterRequestDto.Location = new LocationDto
+            {
+                Latitude = resultMap.Latitude,
+                Longitude = resultMap.Longitude,
+                Radius = resultMap.Radius
+                    
+            }; 
+            
             mapInfo = $"Center: Latitude {mapCenterLatitude}, Longitude {mapCenterLongitude}. Radius: {circleRadius} km.";
+            await OnFilterApply.InvokeAsync();
+            await ToggleMap.InvokeAsync();
         }
     }
 
@@ -93,6 +107,34 @@
             if (latitude != 0 && longitude != 0 && radius != 0) // the customer may not have a location set
                 await module.InvokeVoidAsync("load_map", latitude, longitude, radius);
             else await module.InvokeVoidAsync("load_map");
+
+            await LoadBusinessesOnMap();
+        }
+    }
+    
+    private async Task LoadBusinessesOnMap()
+    {
+        try
+        {
+            var businesses = await BusinessService.GetBusinessesAsync();
+            if (module != null && businesses != null)
+            {
+                var jsBusinesses = businesses
+                    .Where(b => b.Latitude != null && b.Longitude != null)
+                    .Select(b => new
+                    {
+                        name = b.BusinessName,
+                        latitude = b.Latitude,
+                        longitude = b.Longitude,
+                        imageUrl = b.Logo_path
+                    });
+
+                await module.InvokeVoidAsync("insertBusinesses", jsBusinesses);
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error loading businesses: {ex.Message}");
         }
     }
     

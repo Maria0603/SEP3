@@ -43,5 +43,5 @@ message Address {
 message Location {
   double latitude = 1;
   double longitude = 2;
-  int32 radius  = 3;
+  double radius = 3;
 }

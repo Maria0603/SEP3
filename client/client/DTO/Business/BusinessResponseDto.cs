@@ -11,5 +11,9 @@ public class BusinessResponseDto
     public string Logo_path { get; set; }
     public string Cvr { get; set; }
     public string BusinessName { get; set; }
+    
     public string Role { get; set; }
+    
+    public Double Latitude { get; set; }
+    public Double Longitude { get; set; }
 }

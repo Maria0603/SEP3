@@ -10,9 +10,23 @@
 
 
 <div class="search-bar-container">
-    <SearchBarComponent OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
+        <div class="map-icon" @onclick="ToggleMap">
+            <i class="bi bi-geo-alt"></i>
+        </div>
+        <SearchBarComponent></SearchBarComponent>
+        <div class="filter-icon-bubble" @onclick="ToggleFilters">
+            <i class="bi bi-sliders"></i>
+        </div>
 </div>
 
+@if (showMapPopup)
+{
+<MapComponent ToggleMap="ToggleMap" FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"/>
+}
+@if (showFilterPopup)
+{
+    <FilterComponent ToggleFilters="ToggleFilters" FilterRequestDto="FilterRequestDto"  OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
+}
 <div class="container">
     @if (offers == null)
     {
@@ -34,21 +48,25 @@
 
 @code {
     private List<OfferResponseDto>? offers;
+    private bool showFilterPopup = false;
+    private bool showMapPopup = false;
+    private FilterRequestDto? FilterRequestDto = new();
 
 
     protected override async Task OnInitializedAsync()
     {
         // Call the offers retrieval method
-        await RetrieveOffersAsync(null);
+        
+        await RetrieveOffersAsync();
     }
 
-    private async Task RetrieveOffersAsync(FilterRequestDto? filterRequestDto)
+    private async Task RetrieveOffersAsync()
     {
-
+        Console.WriteLine("Retrieving offers...");
         try
         {
             // Call the service to get the offers
-            offers = await OfferService.GetOffersAsync(filterRequestDto);
+            offers = await OfferService.GetOffersAsync(FilterRequestDto);
 
             if (offers != null && offers.Any())
             {
@@ -56,6 +74,7 @@
                 {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
+        
             }
             else
             {
@@ -68,18 +87,30 @@
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
+
     }
 
-    public async Task OnFilterApply(FilterRequestDto filterRequestDto)
+    public async Task OnFilterApply()
     {
         // Trigger offer retrieval logic with updated filter criteria
-        await RetrieveOffersAsync(filterRequestDto);
+        await RetrieveOffersAsync();
     }
 
     public async Task OnFilterClear()
     {
         // Get offers without filters
-        await RetrieveOffersAsync(null);
+        // await RetrieveOffersAsync(null);
+    }
+    
+    private void ToggleFilters()
+    {
+        showFilterPopup = !showFilterPopup;
+    }
+
+    private void ToggleMap()
+    {
+        showMapPopup = !showMapPopup;
+        Console.WriteLine("Map Toggled");
     }
 
 

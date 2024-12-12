@@ -164,26 +164,7 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
   @Override public void getOffers(FilterRequest request,
       StreamObserver<OfferListResponse> responseObserver)
   {
-
-    Optional<Customer> customerOptional = null;
-
-    // Extract the radius from the customer, if they have one
-    Customer customer;
-    boolean hasLocationFilter = false;
-//    if (customerOptional.isPresent())
-//    {
-//      customer = customerOptional.get();
-//      hasLocationFilter =
-//          customer.getLatitude() != 0 && customer.getLongitude() != 0
-//              && customer.getSearchRadius() > 0;
-//    }
-//    else
-//    {
-//      //If the user is not a customer, it must be business, and they don't have a radius
-//      customer = null;
-//      hasLocationFilter = false;
-//    }
-
+    System.out.println("Requests: " + request.toString());
     List<Offer> filteredOffers;
 
 
@@ -191,38 +172,46 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
     var allAvailableOffers = offerRepository.findByStatus(
         OfferStatus.AVAILABLE.getStatus());
 
-    filteredOffers = allAvailableOffers.stream().filter(
-            item -> !request.hasMaxOfferPrice()
-                || item.getOfferPrice() <= request.getMaxOfferPrice()).filter(
-            item -> !request.hasMinOfferPrice()
-                || item.getOfferPrice() >= request.getMinOfferPrice()).filter(
-            item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
-                .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-                    request.getPickupTimeStart()))).filter(
-            item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd().isAfter(
-                DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-                    request.getPickupTimeEnd()))).filter(
-            item -> request.getCategoriesList().isEmpty() || item.getCategories()
-                .stream().anyMatch(request.getCategoriesList()::contains))
-        .filter(item -> {
-//          if (hasLocationFilter)
-//          {
-//            Business business = item.getBusiness();
-//            double distance = GeoUtils.calculateDistance(customer.getLatitude(),
-//                customer.getLongitude(),
-//                business.getLocation().getCoordinates().getLast(),
-//                business.getLocation().getCoordinates().getFirst());
-//            System.out.println("Business: " + business.getId());
-//            System.out.println("Customer: " + customer.getId() + " radius: "
-//                + customerOptional.get().getSearchRadius());
-//
-//            System.out.println(
-//                "Distance: " + distance + " for ID " + item.getId());
-//            return distance <= customer.getSearchRadius();
-//          }
-          return true; // If no location filter, include all offers
-        })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
-        .toList();
+    filteredOffers = allAvailableOffers.stream()
+            .filter(item -> !request.hasMaxOfferPrice() || item.getOfferPrice() <= request.getMaxOfferPrice())
+            .filter(item -> !request.hasMinOfferPrice() || item.getOfferPrice() >= request.getMinOfferPrice())
+            .filter(item -> !request.hasPickupTimeStart() || !item.getPickupTimeStart()
+                    .isBefore(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeStart())))
+            .filter(item -> !request.hasPickupTimeEnd() || item.getPickupTimeEnd()
+                    .isAfter(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(request.getPickupTimeEnd())))
+            .filter(item -> request.getCategoriesList().isEmpty() || item.getCategories()
+                    .stream().anyMatch(request.getCategoriesList()::contains))
+            .filter(item -> {
+
+              if(request.hasLocation()){
+                Location location = request.getLocation();
+
+                // Extract location details from the request
+                double requestLatitude = location.getLatitude();
+                double requestLongitude = location.getLongitude();
+                double requestRadius = location.getRadius();
+
+                // Get the business location from the item
+                Business business = item.getBusiness();
+                double businessLatitude = business.getLocation().getCoordinates().getLast();
+                double businessLongitude = business.getLocation().getCoordinates().getFirst();
+
+                // Calculate the distance between the request location and business location
+                double distance = GeoUtils.calculateDistance(requestLatitude, requestLongitude, businessLatitude, businessLongitude);
+
+                System.out.println("Business: " + business.getId());
+                System.out.println("Request radius: " + requestRadius);
+                System.out.println("Distance: " + distance + " for ID " + item.getId());
+
+                // Include only businesses within the radius
+                return distance <= requestRadius;
+              }
+              return true; // If no location is provided, include all offers
+            })
+            //.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime())) // Uncomment to sort by creation time
+            .toList();
+
+
     System.out.println("---------------------------");
     System.out.println("Request pickup time start: "+ request.getPickupTimeStart());
     System.out.println("Request pickup time end: "+request.getPickupTimeEnd());

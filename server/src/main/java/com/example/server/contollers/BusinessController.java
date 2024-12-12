@@ -6,6 +6,8 @@ import com.example.server.services.IBusinessService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController @RequestMapping("/businesses") public class BusinessController {
 
 
@@ -21,6 +23,17 @@ import org.springframework.web.bind.annotation.*;
         try {
             BusinessResponseDto business = businessService.getBusinessById(id);
             return ResponseEntity.ok(business);
+        }
+        catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @GetMapping
+    public ResponseEntity<List<BusinessResponseDto>> getBusinesses() {
+        try {
+            List<BusinessResponseDto> businesses = businessService.getBusinesses();
+            return ResponseEntity.ok(businesses);
         }
         catch (Exception e) {
             return ResponseEntity.notFound().build();

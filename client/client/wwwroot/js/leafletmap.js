@@ -36,7 +36,37 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
         initialize_map(latitude, longitude, radius);
     }
 }
+export function insertBusinesses(businesses) {
+    if (!map) {
+        console.error("Map is not initialized. Please load the map first.");
+        return;
+    }
 
+    businesses.forEach(business => {
+        const { name, latitude, longitude, imageUrl } = business;
+
+        if (latitude == null || longitude == null) {
+            console.warn(`Skipping business "${name}" due to missing coordinates.`);
+            return;
+        }
+
+        // Create a custom icon for the business
+        const businessIcon = L.icon({
+            iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lidl-Logo.svg/1200px-Lidl-Logo.svg.png", // Fallback to a default icon if imageUrl is not provided
+            // iconUrl: imageUrl || 'default-icon.png', // Fallback to a default icon if imageUrl is not provided
+            iconSize: [40, 40], // Size of the icon [width, height]
+            iconAnchor: [20, 40], // Anchor point of the icon (relative to its top-left corner)
+            popupAnchor: [0, -40], // Anchor point of the popup (relative to the icon's anchor)
+        });
+
+        // Create a marker for each business
+        const businessMarker = L.marker([latitude, longitude], { icon: businessIcon })
+            .addTo(map)
+            .bindPopup(`<strong>${name}</strong>`); // Add a popup with the business name
+
+        console.log(`Added marker for business: ${name}, Lat: ${latitude}, Lng: ${longitude}`);
+    });
+}
 function initialize_map(latitude, longitude, radius) {
     // Initialize the map with the given latitude and longitude
     map = L.map('mapContainer').setView([latitude, longitude], 12);
@@ -125,7 +155,7 @@ export function get_map_center_and_radius() {
         return {
             latitude: center.lat,
             longitude: center.lng,
-            radius: radius / 1000, // Convert radius to kilometers
+            radius: radius, // Convert radius to kilometers
         };
     }
     return null; // Return null if map or donut is not initialized

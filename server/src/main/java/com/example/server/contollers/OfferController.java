@@ -1,11 +1,8 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.offer.CategoryDto;
-import com.example.server.dto.offer.FilterRequestDto;
+import com.example.server.dto.offer.*;
 import com.example.server.security.JWTUtils;
 import com.example.server.services.Implementations.OfferService;
-import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.offer.OfferResponseDto;
 import com.example.shared.model.Category;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -13,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -74,13 +72,31 @@ import java.util.stream.Collectors;
   @GetMapping
   @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
   public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
-          @ModelAttribute FilterRequestDto filterRequestDto, HttpServletRequest request) {
-    // Extract the userId from the request
-    String userId = (String) request.getAttribute("userId");
-    System.out.println("Offers for Id **********: " + userId);
+          @RequestParam(value = "minOfferPrice", required = false) Integer minOfferPrice,
+          @RequestParam(value = "maxOfferPrice", required = false) Integer maxOfferPrice,
+          @RequestParam(value = "pickupTimeStart", required = false) LocalDateTime pickupTimeStart,
+          @RequestParam(value = "pickupTimeEnd", required = false) LocalDateTime pickupTimeEnd,
+          @RequestParam(value = "categories", required = false) List<String> categories,
+          @RequestParam(value = "latitude", required = false) Double latitude,
+          @RequestParam(value = "longitude", required = false) Double longitude,
+          @RequestParam(value = "radius", required = false) Double radius,
+          HttpServletRequest request) {
 
+    // Create a FilterRequestDto
+    FilterRequestDto filterRequestDto = new FilterRequestDto();
+    filterRequestDto.setMinOfferPrice(minOfferPrice);
+    filterRequestDto.setMaxOfferPrice(maxOfferPrice);
+    filterRequestDto.setPickupTimeStart(pickupTimeStart);
+    filterRequestDto.setPickupTimeEnd(pickupTimeEnd);
+    filterRequestDto.setCategories(categories);
+
+    // Set location details
+    if (latitude != null || longitude != null || radius != null) {
+      filterRequestDto.setLocation(new LocationDto(latitude, longitude, radius));
+    }
+    System.out.println("FilterRequestDto: " + filterRequestDto);
     // Pass the FilterRequestDto to the service
-    var response = offerService.getOffers(filterRequestDto);
+    List<OfferResponseDto> response = offerService.getOffers(filterRequestDto);
 
     return ResponseEntity.ok(response);
   }

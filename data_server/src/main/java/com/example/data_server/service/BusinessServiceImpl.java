@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
 
@@ -65,6 +66,23 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
+
+  @Override
+  public void getBusinesses(EmptyMessage request, StreamObserver<BusinessListResponse> responseObserver) {
+    System.out.println("Request for all businesses");
+
+    // Retrieve all businesses from the repository
+    List<Business> businesses = businessRepository.findAll();
+
+    // Build the BusinessListResponse using the new utility method
+    BusinessListResponse response = buildBusinessListResponseFromBusinessList(businesses);
+
+    // Send the response
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+
 
   @Override public void getBusinessByEmail(BusinessByEmailRequest request,
       StreamObserver<BusinessResponse> responseObserver)
