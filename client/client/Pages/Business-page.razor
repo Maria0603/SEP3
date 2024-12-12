@@ -12,7 +12,7 @@
     @if (_business != null)
     {
         <div class="display-container">
-            <img src="@(HttpClient.BaseAddress + "images/" + _business.Logo_path)" alt="business-logo" class="business-logo">
+            <img src="@(HttpClient.BaseAddress + "images/" + _business.Logo_path)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="business-logo" class="business-logo">
             <div class="business-contact">
                 <h3 class="BusinessName">@_business.BusinessName</h3>
                 <p>@_business.PhoneNumber</p>
