@@ -53,8 +53,7 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')")
-  public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
 
@@ -81,6 +80,19 @@ import java.util.List;
     try
     {
       PurchaseResponseDto purchase = purchaseService.getPurchaseById(id);
+      return ResponseEntity.ok(purchase);
+    }
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
+    }
+  }  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
+      @PathVariable String id)
+  {
+    try
+    {
+      DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
+      System.out.println(id + ", " + purchase.getCustomerPhoneNumber());
       return ResponseEntity.ok(purchase);
     }
     catch (Exception e)

@@ -53,6 +53,52 @@ public class AuthStateProvider : AuthenticationStateProvider
 
         return new AuthenticationState(user);
     }
+    
+    public async Task<string?> GetTokenAsync()
+    {
+        return await _localStorage.GetItemAsStringAsync(_tokenKey);
+    }
+
+    // Extract user ID from the token
+    public async Task<string?> GetUserIdAsync()
+    {
+        var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
+        if (string.IsNullOrEmpty(token))
+            return null;
+
+        var claims = ParseClaimsFromJwt(token);
+        return claims.FirstOrDefault(c => c.Type == "userId")?.Value; 
+    }
+
+    // Extract user role from the token
+    public async Task<string?> GetUserRoleAsync()
+    {
+        var token = await _localStorage.GetItemAsStringAsync(_tokenKey);
+        if (string.IsNullOrEmpty(token))
+            return null;
+
+        var claims = ParseClaimsFromJwt(token);
+        var rolesClaim = claims.FirstOrDefault(c => c.Type == "role")?.Value
+            .ToString();
+
+        if (!string.IsNullOrEmpty(rolesClaim))
+        {
+            try
+            {
+                // Deserialize the role claim (it's expected to be a JSON array of roles)
+                var roles =
+                    JsonSerializer.Deserialize<List<string>>(rolesClaim);
+                return roles?.FirstOrDefault(); // Return the first role
+            }
+            catch (JsonException)
+            {
+                return
+                    null; // Not a valid JSON array
+            }
+        }
+
+        return null;
+    }
 
     public async Task LoginAsync(LoginRequestDto loginRequest)
     {
