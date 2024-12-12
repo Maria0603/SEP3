@@ -13,9 +13,19 @@ service CustomerService {
   rpc GetCustomerByEmail(EmailRequestResponse) returns (CustomerResponse);
   rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
   rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
-  rpc GetCustomerById(IdRequestResponse) returns (CustomerResponse);
+  rpc GetCustomerById(IdRequest) returns (CustomerResponse);
+  rpc UpdateCustomerProfile (CustomerUpdateRequest) returns (CustomerResponse);
 }
 
+message IdRequest{
+  string id = 1;
+}
+message IdRequestResponse {
+  string id = 1;
+}
+message EmailRequestResponse {
+  string email = 1;
+}
 
 message CustomerResponse {
   string id = 1;
@@ -43,3 +53,15 @@ message CustomerLocationRequest {
 }
 
 
+message BusinessesInRadiusResponse {
+  repeated BusinessOnMap businesses = 1;
+}
+
+message CustomerUpdateRequest {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string phoneNumber = 5;
+
+}

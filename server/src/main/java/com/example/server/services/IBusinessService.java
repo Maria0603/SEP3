@@ -6,6 +6,6 @@ import com.example.server.dto.business.BusinessUpdateRequestDto;
 public interface IBusinessService {
 
     BusinessResponseDto getBusinessById(String id);
-    BusinessResponseDto updateBusinessProfile(
+    BusinessResponseDto updateAndValidateBusinessProfile(
         BusinessUpdateRequestDto updatedProfile);
 }

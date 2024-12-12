@@ -20,11 +20,74 @@
     gap: 20px; /* Add space between columns */
 }
 
-.column {
-    flex: 1; /* Each column takes equal space */
-    padding: 10px; /* Add padding inside columns */
-    border: 1px solid #ddd; /* Optional: Add border to columns */
-    background-color: #f9f9f9; /* Optional: Add background color */
-    border-radius: 8px; /* Optional: Add rounded corners */
-}
+/*.column {*/
+/*    flex: 1; !* Each column takes equal space *!*/
+/*    padding: 10px; !* Add padding inside columns *!*/
+/*    border: 1px solid #ddd; !* Optional: Add border to columns *!*/
+/*    background-color: #f9f9f9; !* Optional: Add background color *!*/
+/*    border-radius: 8px; !* Optional: Add rounded corners *!*/
+/*}*/
 
+/*.container {*/
+/*    display: flex;*/
+/*    justify-content: center;*/
+/*    align-items: center;*/
+/*    margin-top: 50px;*/
+/*    margin-right: 450px;*/
+/*}*/
+
+/*.buttons-column {*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 20px;*/
+/*    align-items: flex-start;*/
+/*    margin-bottom: 149px;*/
+/*    margin-right: 100px;*/
+/*}*/
+
+/*.nav-button {*/
+/*    display: flex;*/
+/*    align-items: center;*/
+/*    justify-content: flex-start;*/
+/*    padding: 10px 10px;*/
+/*    width: 150px;*/
+/*    text-align: left;*/
+/*    cursor: pointer;*/
+/*    border: 1px solid lightgray;*/
+/*    box-shadow: 2px 2px 0 0 white, 4px 4px 0 0 lightgray;*/
+/*    transition-duration: 0.2s;*/
+/*    background-color: #f9f9f9;*/
+/*    gap: 10px;*/
+/*}*/
+/*.nav-button img {*/
+/*    flex-shrink: 0;*/
+/*}*/
+
+/*.nav-button:hover {*/
+/*    box-shadow: 3px 3px 0 0 white, 6px 6px 0 0 #d11049;*/
+/*    transform: translate(-2px, -2px);*/
+/*}*/
+
+/*.nav-button:active {*/
+/*    color: #d11049;*/
+/*    background-color: white;*/
+/*    border-color: lightgray;*/
+/*}*/
+
+/*.form-column {*/
+/*    padding: 20px;*/
+/*    background-color: #f9f9f9;*/
+/*    border: 1px solid #ddd;*/
+/*    border-radius: 8px;*/
+/*    display: flex;*/
+/*    flex-direction: column;*/
+/*    gap: 20px;*/
+/*    max-width: 350px;*/
+/*}*/
+
+/*button.btn-primary,*/
+/*button.btn-danger {*/
+/*    margin-top: 10px;*/
+/*    margin-left: 20px;*/
+/*    width: 120px;*/
+/*}*/

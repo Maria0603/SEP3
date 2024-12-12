@@ -3,6 +3,7 @@ package com.example.server.contollers;
 import com.example.server.dto.business.BusinessResponseDto;
 import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.services.IBusinessService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,10 +29,10 @@ import org.springframework.web.bind.annotation.*;
     }
 
     @PutMapping
-    public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@RequestBody BusinessUpdateRequestDto updatedProfile) {
+    public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@Valid @RequestBody BusinessUpdateRequestDto updatedProfile) {
 
         // Business logic
-        BusinessResponseDto responseDto = businessService.updateBusinessProfile(updatedProfile);
+        BusinessResponseDto responseDto = businessService.updateAndValidateBusinessProfile(updatedProfile);
         try{
             return ResponseEntity.ok(responseDto);
         }

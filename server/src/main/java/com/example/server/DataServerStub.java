@@ -137,4 +137,15 @@ public class DataServerStub
 
     return businessBlockingStub.updateBusinessProfile(request);
   }
+
+  public CustomerResponse updateCustomerProfile(CustomerUpdateRequest request) {
+
+    return customerBlockingStub.updateCustomerProfile(request);
+  }
+
+  public CustomerResponse getCustomerById(IdRequest request)
+  {
+    return customerBlockingStub.getCustomerById(request);
+  }
+  
 }
