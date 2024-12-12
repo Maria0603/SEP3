@@ -20,12 +20,3 @@ message UserResponse {
 }
 
 
-message Address {
-  string street = 1;
-  string number = 2;
-  string city = 3;
-  string county = 4;
-  string state = 5;
-  string country = 6;
-  string postalCode = 7;
-}

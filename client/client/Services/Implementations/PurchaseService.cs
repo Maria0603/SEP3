@@ -27,7 +27,6 @@ public class PurchaseService : IPurchaseService {
                     })!;
             return purchaseResponse;
         }
-
         throw new Exception(responseContent);
     }
 
@@ -39,5 +38,25 @@ public class PurchaseService : IPurchaseService {
             new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
         return purchases;
+
+    }
+    
+    public async Task<DetailedPurchaseResponseDto> GetDetailedPurchaseByIdAsync(string id)
+    {
+        HttpResponseMessage response = 
+            await client.GetAsync($"purchases/detailed/{id}");
+        string responseContent = await response.Content.ReadAsStringAsync();
+        Console.WriteLine(responseContent);
+        if (response.IsSuccessStatusCode)
+        {
+            DetailedPurchaseResponseDto purchaseResponseDto =
+                JsonSerializer.Deserialize<DetailedPurchaseResponseDto>(responseContent,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    })!;
+            return purchaseResponseDto;
+        }
+        throw new Exception(responseContent);
     }
 }
