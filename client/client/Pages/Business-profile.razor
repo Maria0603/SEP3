@@ -1,45 +1,46 @@
 @page "/profile"
-@using client.DTO
-@inject NavigationManager NavigationManager
-@inject AuthStateProvider AuthStateProvider
 
+@using client.DTO
+@using client.DTO.Business
+@using client.DTO.Customer
+@using Stripe
+@inject NavigationManager NavigationManager
+@inject IBusinessService BusinessService
+@inject AuthStateProvider AuthStateProvider
 <style>
-   
     .container {
         display: flex;
-        justify-content: center; 
-        align-items: center; 
-       margin-top: 50px;
+        justify-content: center;
+        align-items: center;
+        margin-top: 50px;
         margin-right: 450px;
-      
     }
 
-   
     .buttons-column {
         display: flex;
-        flex-direction: column; 
-        gap: 20px; 
-        align-items: flex-start; 
+        flex-direction: column;
+        gap: 20px;
+        align-items: flex-start;
         margin-bottom: 149px;
-        margin-right:100px;
+        margin-right: 100px;
     }
+
     .nav-button {
         display: flex;
-        align-items: center; /* Align icon and text vertically */
-        justify-content: flex-start; /* Align items to the left */
+        align-items: center;
+        justify-content: flex-start;
         padding: 10px 10px;
         width: 150px;
-        text-align: left; /* Ensure text aligns left */
+        text-align: left;
         cursor: pointer;
         border: 1px solid lightgray;
         box-shadow: 2px 2px 0 0 white, 4px 4px 0 0 lightgray;
         transition-duration: 0.2s;
         background-color: #f9f9f9;
-        gap: 10px; /* Adds space between the icon and text */
+        gap: 10px;
     }
-
     .nav-button img {
-        flex-shrink: 0; /* Prevent icons from shrinking */
+        flex-shrink: 0;
     }
 
     .nav-button:hover {
@@ -53,53 +54,33 @@
         border-color: lightgray;
     }
 
-
-    
     .form-column {
         padding: 20px;
         background-color: #f9f9f9;
         border: 1px solid #ddd;
         border-radius: 8px;
         display: flex;
-        flex-direction: column; 
-        gap: 20px; 
+        flex-direction: column;
+        gap: 20px;
         max-width: 350px;
-        
     }
 
-    button.btn-primary, button.btn-danger {
+    button.btn-primary,
+    button.btn-danger {
         margin-top: 10px;
         margin-left: 20px;
-        width: 120px; 
+        width: 120px;
     }
-    .icon1{
-        height: 30px;
-        }
-    .icon2{
-        height: 30px;
-    }
-    .icon3 {
-        height: 19px;
-        margin-left: 6px;
-    }
-    
-    
+
 </style>
 
-<h1>Edit Profile (Business)</h1>
+<h1>Edit Profile</h1>
 <div class="container">
-    <div class="buttons-column">
-        <button class="nav-button"><img src="images/icons/User.png" class="icon1">Profile</button>
-        <button class="nav-button"><img src="images/icons/Key.png" class="icon2">Password</button>
-        <button class="nav-button"><img src="images/icons/Bell.png" class="icon3">Notifications</button>
-    </div>
-
-    <!-- Form Column -->
-    <div class="form-column">
+    @if (businessProfile != null)
+    {
         <EditForm Model="businessProfile" OnValidSubmit="UpdateProfile">
             <DataAnnotationsValidator />
             <ValidationSummary />
-
             <div>
                 <label for="businessName">Business Name</label>
                 <InputText id="businessName" @bind-Value="businessProfile.BusinessName" class="form-control" />
@@ -116,11 +97,14 @@
                 <label for="image">Business Image</label>
                 <InputFile id="image" OnChange="UploadImage" class="form-control" />
             </div>
-
             <button type="submit" class="btn btn-primary">Update</button>
             <button @onclick="Logout" class="btn btn-danger">Log Out</button>
         </EditForm>
-    </div>
+    }
+    else
+    {   <button @onclick="Logout" class="btn btn-danger">Log Out</button>
+        <p>Loading the profile...It does not exist for the customer yet...</p>
+    }
 </div>
 
 @if (!string.IsNullOrEmpty(successMessage))
@@ -130,40 +114,12 @@
 
 @if (!string.IsNullOrEmpty(errorMessage))
 {
+    
     <div class="alert alert-danger mt-3">@errorMessage</div>
 }
 
+
 @code {
-    private BusinessProfileDto businessProfile = new();
-    private string successMessage;
-    private string errorMessage;
-
-    protected override async Task OnInitializedAsync()
-    {
-        
-        businessProfile = await GetBusinessProfileAsync();
-    }
-
-    private async Task UpdateProfile()
-    {
-        try
-        {
-            await SaveBusinessProfileAsync(businessProfile);
-            successMessage = "Profile updated successfully.";
-        }
-        catch (Exception ex)
-        {
-            errorMessage = "An error occurred: " + ex.Message;
-        }
-    }
-
-    private async Task UploadImage(InputFileChangeEventArgs e)
-    {
-        var file = e.File;
-        using var memoryStream = new MemoryStream();
-        await file.OpenReadStream().CopyToAsync(memoryStream);
-        businessProfile.Image = memoryStream.ToArray();
-    }
 
     private async Task Logout()
     {
@@ -171,22 +127,125 @@
         NavigationManager.NavigateTo("/login", true);
     }
 
-   
-    private Task<BusinessProfileDto> GetBusinessProfileAsync()
+
+    private BusinessResponseDto businessProfile;
+    private CustomerResponseDto customerProfile;
+    private string successMessage;
+    private string errorMessage;
+
+    protected override async Task OnInitializedAsync()
     {
-       
-        return Task.FromResult(new BusinessProfileDto
+        try
         {
-            BusinessName = "Example Business",
-            Email = "example@business.com",
-            PhoneNumber = "+1234567890",
-            Image = null
-        });
+            string businessId = await GetBusinessIdAsync();
+            if (!string.IsNullOrEmpty(businessId))
+            {
+                await LoadBusinessProfile(businessId);
+            }
+            else
+            {
+                UseDummyData();
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"An error occurred: {ex.Message}";
+            UseDummyData();
+        }
     }
 
-    private Task SaveBusinessProfileAsync(BusinessProfileDto profile)
+    private async Task<string> GetBusinessIdAsync()
     {
-        // Simulate saving the profile
-        return Task.CompletedTask;
+        var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+        var user = authState.User;
+
+        if (user.Identity != null && user.Identity.IsAuthenticated)
+        {
+            var value = user.Claims.FirstOrDefault(c => c.Type == "userId")?.Value;
+            if (!string.IsNullOrEmpty(value))
+            {
+                return value;
+            }
+        }
+
+        throw new InvalidOperationException("User is not authenticated or business ID is missing.");
     }
+
+    private async Task LoadBusinessProfile(string businessId)
+    {
+        try
+        {
+            businessProfile = await BusinessService.GetBusinessByIdAsync(businessId);
+
+            if (businessProfile == null)
+            {
+                errorMessage = "Failed to load business profile.";
+            }
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error loading profile: {ex.Message}";
+        }
+    }
+
+
+    private void UseDummyData()
+    {
+        businessProfile = new BusinessResponseDto()
+        {
+            Id = "dummyid12345",
+            BusinessName = "Hello Hello",
+            Email = "dummy@business.com",
+            PhoneNumber = "+123456789",
+            Logo_path = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAU="
+        };
+        successMessage = "Displaying dummy data.";
+    }
+
+    private async Task UpdateProfile()
+    {
+        try
+
+        {
+            BusinessUpdateRequestDto requestDto = new BusinessUpdateRequestDto()
+            {
+                Id = businessProfile.Id,
+                Email = businessProfile.Email,
+                PhoneNumber = businessProfile.PhoneNumber,
+                BusinessName = businessProfile.BusinessName,
+                //Logo_path = businessProfile.Logo_path
+            };
+
+
+            BusinessResponseDto responseDto = await BusinessService.UpdateBusinessProfileAsync(requestDto);
+            businessProfile.Email = requestDto.Email;
+            businessProfile.PhoneNumber = businessProfile.PhoneNumber;
+            //businessProfile.Logo_path = businessProfile.Logo_path;
+            businessProfile.BusinessName = businessProfile.BusinessName;
+            Console.WriteLine(responseDto);
+            successMessage = "The profile has been successfully updated.";
+
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error updating profile: {ex.Message}";
+        }
+    }
+
+    private async Task UploadImage(InputFileChangeEventArgs e)
+    {
+        try
+        {
+            var file = e.File;
+            using var memoryStream = new MemoryStream();
+            await file.OpenReadStream().CopyToAsync(memoryStream);
+
+            businessProfile.Logo_path = Convert.ToBase64String(memoryStream.ToArray());
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Error uploading image: {ex.Message}";
+        }
+    }
+
 }

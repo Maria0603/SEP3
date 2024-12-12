@@ -1,8 +1,11 @@
 package com.example.server.contollers;
 
+import com.example.server.dto.offer.CategoryDto;
+import com.example.server.security.JWTUtils;
 import com.example.server.services.Implementations.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
+import com.example.shared.model.Category;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
@@ -11,16 +14,18 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController @RequestMapping("/offers") public class OfferController
 {
 
   private final OfferService offerService;
+  private final JWTUtils jwtUtils;
 
-  public OfferController(OfferService offerService)
+  public OfferController(OfferService offerService, JWTUtils jwtUtils)
   {
     this.offerService = offerService;
-
+    this.jwtUtils = jwtUtils;
   }
 
   //Look at OfferTestClient to see how the request should look like
@@ -41,6 +46,14 @@ import java.util.Optional;
       e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
+  }
+
+  @GetMapping("/categories")
+  public List<CategoryDto> getCategories() {
+    return List.of(Category.values())
+            .stream()
+            .map(category -> new CategoryDto(category.getCategoryName(), category.getDirectoryName()))
+            .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(

@@ -7,7 +7,7 @@ option java_outer_classname = "PurchaseServiceProto";
 package proto;
 
 import "google/protobuf/timestamp.proto";
-import "CustomerService.proto";
+import "BaseTypes.proto";
 
 service PurchaseService {
   rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
@@ -15,12 +15,18 @@ service PurchaseService {
   rpc GetDetailedPurchaseById (PurchaseIdRequest) returns (DetailedPurchaseResponse);
   rpc GetPurchases (IdRequestResponse) returns (PurchaseListResponse);
   rpc UpdatePurchaseStatus (PurchaseStatusRequest) returns (PurchaseResponse);
+  rpc GetPurchases (GetPurchaseRequest) returns (PurchaseListResponse);
 }
 
 message CreatePurchaseRequest {
   string offerId = 1;
   string customerId = 2;
   int32 numberOfItems = 3;
+}
+
+message GetPurchaseRequest {
+  string userId = 1;
+  string role = 2;
 }
 
 message PurchaseResponse {
@@ -32,6 +38,10 @@ message PurchaseResponse {
   string status = 7;
   int32 pricePerItem = 8;
   string businessName = 9;
+
+  string customerEmail = 10;
+  string businessEmail = 11;
+  string businessId = 12;
 }
 
 message DetailedPurchaseResponse {

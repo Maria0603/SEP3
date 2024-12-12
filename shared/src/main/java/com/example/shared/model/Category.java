@@ -1,10 +1,8 @@
 package com.example.shared.model;
 
-import java.util.ArrayList;
-
 public enum Category
 {
-  BREAD_AND_CAKE("Bread and Cake"), VEGAN("Vegan"), VEGETARIAN(
+  BREAD("Bread"), CAKE("Cake"), VEGAN("Vegan"), VEGETARIAN(
     "Vegetarian"), MEAL("Meal"), GROCERIES("Groceries"), OTHER("Other");
 
   private final String categoryName;

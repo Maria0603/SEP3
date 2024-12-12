@@ -32,9 +32,9 @@
                 </div>
                 @if (errorMessage != null)
                 {
-                <div class="card-footer text-danger text-center">
-                    <p>@errorMessage</p>
-                </div>
+                    <div class="card-footer text-danger text-center">
+                        <p>@errorMessage</p>
+                    </div>
                 }
             </div>
             <div class="text-center mt-3">
@@ -49,27 +49,27 @@
 
 @code {
 
-private LoginRequestDto loginModel = new()
-{
-Email = string.Empty,
-Password = string.Empty
-};
+    private LoginRequestDto loginModel = new()
+    {
+        Email = string.Empty,
+        Password = string.Empty
+    };
 
-private string? errorMessage;
+    private string? errorMessage;
 
-private async Task HandleLogin()
-{
-try
-{
-errorMessage = "";
-await AuthStateProvider.LoginAsync(loginModel);
-NavigationManager.NavigateTo("/offers");
-}
-catch (Exception e)
-{
-Console.WriteLine(e);
-errorMessage = "Invalid credentials. Please try again.";
-}
-}
+    private async Task HandleLogin()
+    {
+        try
+        {
+            errorMessage = "";
+            await AuthStateProvider.LoginAsync(loginModel);
+            NavigationManager.NavigateTo("/");
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e);
+            errorMessage = "Invalid credentials. Please try again.";
+        }
+    }
 
 }

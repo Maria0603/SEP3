@@ -68,4 +68,5 @@ import java.util.Optional;
         .setEmail(customer.getEmail()).setHashedPassword(customer.getPassword())
         .setRole(customer.getRole()).build();
   }
+
 }
