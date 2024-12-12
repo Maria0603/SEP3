@@ -47,7 +47,7 @@
 
     private CustomerLocationRequestResponseDto? customerLocation;
     
-    [Parameter] public FilterRequestDto FilterRequestDto { get; set; }
+    [Parameter] public FilterRequestDto? FilterRequestDto { get; set; }
     [Parameter] public EventCallback OnFilterApply { get; set; }
     [Parameter] public EventCallback ToggleMap { get; set; }
 
@@ -91,6 +91,7 @@
             try
             {
                 await InitializeMap(mapCenterLatitude, mapCenterLongitude, circleRadius);
+                await LoadBusinessesOnMap();
             }
             catch (Exception e)
             {
@@ -108,7 +109,7 @@
                 await module.InvokeVoidAsync("load_map", latitude, longitude, radius);
             else await module.InvokeVoidAsync("load_map");
 
-            await LoadBusinessesOnMap();
+            
         }
     }
     
