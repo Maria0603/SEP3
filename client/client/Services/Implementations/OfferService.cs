@@ -55,7 +55,22 @@ public class OfferService : IOfferService {
         Console.WriteLine(responseContent);
         throw new Exception(responseContent);
     }
-    
+
+    public async Task<List<OfferResponseDto>> GetOffersByBusinessIdAsync(string id)
+    {
+        var response = await client.GetAsync($"offers/businessOffer/{id}");
+        var responseContent = await response.Content.ReadAsStringAsync();
+        
+        var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(
+            responseContent,
+            new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            })!;
+
+        return offers;    
+
+    }
     public async Task<List<OfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
 {
     var queryParameters = new List<string>();
@@ -93,7 +108,7 @@ public class OfferService : IOfferService {
         {
             PropertyNameCaseInsensitive = true
         })!;
-
+    
     return offers;
 }
 }

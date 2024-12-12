@@ -67,7 +67,7 @@
             <div class="offer__top--business__icon">
                 @if (!string.IsNullOrEmpty(OfferData.BusinessLogoPath))
                 {
-                <img src="@(HttpClient.BaseAddress + OfferData.BusinessLogoPath)" alt="Offer Image">
+                <img src="@(HttpClient.BaseAddress + "server/images/" + OfferData.BusinessLogoPath)" alt="Offer Image">
                 }
                 else
                 {
@@ -82,7 +82,7 @@
     <div class="offer__img">
         @if (!string.IsNullOrEmpty(OfferData.ImagePath))
         {
-        <img src="@(HttpClient.BaseAddress + OfferData.ImagePath)" alt="Offer Image">
+        <img src="@(HttpClient.BaseAddress + "server/images/" + OfferData.ImagePath)" alt="Offer Image">
         }
         else
         {
