@@ -50,8 +50,8 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
 
     // Create the donut overlay
     donut = L.donut([latitude, longitude], {
-        radius: radius * 1000, // Outer radius in meters
-        innerRadius: 0,     // Inner radius in meters
+        radius: 10000000, // Outer radius in meters
+        innerRadius: radius * 1000,     // Inner radius in meters
         innerRadiusAsPercent: false, // Use meters, not percent
         color: '#000',         // Outer ring color
         weight: 2,             // Border thickness
@@ -79,7 +79,7 @@ export function update_circle_radius(radius) {
     // Update the overlay with the new radius
     if (donut) {
         console.log("Update circle radius");
-        donut.setRadius(radius * 1000); // radius in meters
+        donut.setInnerRadius(radius * 1000); // radius in meters
     }
     if (map && donut)
         fit_map_to_radius(map.getCenter().lat, map.getCenter().lng, radius);
@@ -107,7 +107,7 @@ function fit_map_to_radius(latitude, longitude, radius) {
 export function get_map_center_and_radius() {
     if (map && donut) {
         const center = map.getCenter();
-        const radius = donut.getRadius(); // Assuming radius is in meters
+        const radius = donut.getInnerRadius(); // Assuming radius is in meters
         console.log("Center:", center, "Radius:", radius);
         return {
             latitude: center.lat,

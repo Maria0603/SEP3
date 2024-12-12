@@ -12,6 +12,7 @@ public class DataServerStub
   private final BusinessServiceGrpc.BusinessServiceBlockingStub businessBlockingStub;
   private final CustomerServiceGrpc.CustomerServiceBlockingStub customerBlockingStub;
   private final UserServiceGrpc.UserServiceBlockingStub userBlockingStub;
+  private final NotificationServiceGrpc.NotificationServiceBlockingStub notificationBlockingStub;
 
   public DataServerStub(String host, int port)
   {
@@ -23,6 +24,7 @@ public class DataServerStub
     businessBlockingStub = BusinessServiceGrpc.newBlockingStub(channel);
     customerBlockingStub = CustomerServiceGrpc.newBlockingStub(channel);
     userBlockingStub = UserServiceGrpc.newBlockingStub(channel);
+    notificationBlockingStub = NotificationServiceGrpc.newBlockingStub(channel);
 
     System.out.println("DataServerStub created");
   }
@@ -48,8 +50,9 @@ public class DataServerStub
     System.out.println("DataServerStub:" + request);
     return offerBlockingStub.getOffers(request);
   }
+  public OfferListResponse getOffersByBusinessId(OfferIdRequest request){ return offerBlockingStub.getOffersByBusinessId(request); }
 
-  // ********************************* Purchases *********************************
+  // ********************************* PURCHASES *********************************
   public PurchaseResponse createPurchase(CreatePurchaseRequest request)
   {
     return purchaseBlockingStub.createPurchase(request);
@@ -59,8 +62,12 @@ public class DataServerStub
   {
     return purchaseBlockingStub.getPurchaseById(request);
   }
+  public DetailedPurchaseResponse getDetailedPurchaseById(PurchaseIdRequest request)
+  {
+    return purchaseBlockingStub.getDetailedPurchaseById(request);
+  }
 
-  public PurchaseListResponse getPurchases(IdRequestResponse request)
+  public PurchaseListResponse getPurchases(GetPurchaseRequest request)
   {
     return purchaseBlockingStub.getPurchases(request);
   }
@@ -69,7 +76,6 @@ public class DataServerStub
   {
     return purchaseBlockingStub.updatePurchaseStatus(request);
   }
-
   // ********************************* BUSINESS *********************************
 
   public IdRequestResponse registerBusiness(RegisterBusinessRequest request)
@@ -101,6 +107,7 @@ public class DataServerStub
   {
     return customerBlockingStub.getCustomerLocation(request);
   }
+
 // ******************* USER *****************
 
   public UserResponse getUserByEmail(UserByEmailRequest request)
@@ -108,9 +115,26 @@ public class DataServerStub
     return userBlockingStub.getUserByEmail(request);
   }
 
+  // ******************************** NOTIFICATIONS **************************
+
+  public void createNotification(NotificationRequestResponse request)
+  {
+    notificationBlockingStub.createNotification(request);
+  }
+
+  public NotificationListResponse getNotifications(NotificationsRequest request)
+  {
+    return notificationBlockingStub.getNotifications(request);
+  }
+
   // ****************************************************************************
   public void shutdown()
   {
     channel.shutdown();
+  }
+
+  public BusinessResponse updateBusinessProfile(BusinessUpdateRequest request) {
+
+    return businessBlockingStub.updateBusinessProfile(request);
   }
 }

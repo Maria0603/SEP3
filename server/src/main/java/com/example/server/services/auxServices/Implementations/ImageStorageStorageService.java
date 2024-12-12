@@ -1,3 +1,4 @@
+/*
 package com.example.server.services.auxServices.Implementations;
 
 import com.example.server.services.auxServices.IImageStorageService;
@@ -9,7 +10,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.util.UUID;
 
-@Service public class ImageStorageStorageService implements IImageStorageService
+public class ImageStorageStorageService implements IImageStorageService
 {
 
   private static final String BASE_DIRECTORY = "server/images/";
@@ -97,7 +98,8 @@ import java.util.UUID;
 
 
   //Good methods, do not delete
-  /*
+  */
+/*
   private String saveImage(byte[] imageBytes, String offerId)
   {
     String pathToImage = null;
@@ -150,6 +152,8 @@ import java.util.UUID;
 
     }
     return null;
-  }*/
+  }*//*
+
 
 }
+*/

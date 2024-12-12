@@ -6,7 +6,9 @@ import com.example.server.converters.OfferDtoGrpcConverter;
 import com.example.server.dto.offer.CreateOfferRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
-import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
+import com.example.server.services.auxServices.IImageStorageService;
+import com.example.server.services.auxServices.Implementations.AzureBlobStorageService;
+//import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import com.example.shared.converters.StringToTimestampConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,10 +26,10 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 @Service public class OfferService implements IOfferService
 {
   private final DataServerStub dataServerStub;
-  private final ImageStorageStorageService imageStorageService;
+  private final IImageStorageService imageStorageService;
 
   @Autowired public OfferService(DataServerStub dataServerStub,
-      ImageStorageStorageService imageStorageService)
+                                 IImageStorageService imageStorageService)
   {
     this.dataServerStub = dataServerStub;
     this.imageStorageService = imageStorageService;
@@ -45,8 +47,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     String imagePath = null;
     try
     {
-      imagePath = imageStorageService.getBaseDirectory()
-          + imageStorageService.saveImage(offerRequestDto.getImage());
+      imagePath = imageStorageService.saveImage(offerRequestDto.getImage());
       //Transform the dto to grpc message
       CreateOfferRequest request = CreateOfferRequestDto_To_SaveOfferRequest(
           offerRequestDto, imagePath, userId);
@@ -78,6 +79,13 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);
   }
+@Override public List<OfferResponseDto> getOffersByBusinessId(String businessId){
+    System.out.println("getOffersByBusinessId method called with businessId: " + businessId);
+    OfferIdRequest request = OfferIdRequest.newBuilder().setId(businessId).build();
+
+    OfferListResponse response = dataServerStub.getOffersByBusinessId(request);
+    return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(response);
+}
 
 //  @Override
 //  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd, Optional<List<String>> categories, String userId) {
@@ -119,8 +127,7 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     String imagePath = null;
     try
     {
-      imagePath = imageStorageService.getBaseDirectory()
-          + imageStorageService.saveImage(updateOfferRequestDto.getImage());
+      imagePath = imageStorageService.saveImage(updateOfferRequestDto.getImage());
       //Transform the dto to grpc message
       OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(
           updateOfferRequestDto, imagePath);

@@ -17,12 +17,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseFromCreatePurchaseRequest;
-import static com.example.data_server.converters.PurchaseEntityGrpcConverter.generatePurchaseResponseFromPurchase;
+import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
 
 @GrpcService public class PurchaseServiceImpl
-    extends PurchaseServiceGrpc.PurchaseServiceImplBase
-{
+    extends PurchaseServiceGrpc.PurchaseServiceImplBase {
 
   private final PurchaseRepository purchaseRepository;
   private final OfferRepository offerRepository;
@@ -31,8 +29,7 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
 
   @Autowired public PurchaseServiceImpl(PurchaseRepository purchaseRepository,
       OfferRepository offerRepository, BusinessRepository businessRepository,
-      CustomerRepository customerRepository)
-  {
+      CustomerRepository customerRepository) {
     this.purchaseRepository = purchaseRepository;
     this.offerRepository = offerRepository;
     this.businessRepository = businessRepository;
@@ -41,8 +38,7 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
   }
 
   @Override public void createPurchase(CreatePurchaseRequest request,
-      StreamObserver<PurchaseResponse> responseObserver)
-  {
+      StreamObserver<PurchaseResponse> responseObserver) {
     System.out.println("Request to add Purchase");
 
     Offer offer = offerRepository.findById(request.getOfferId()).get();
@@ -64,7 +60,8 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
 
     Customer customer = customerOptional.get();
 
-    Purchase purchase = generatePurchaseFromCreatePurchaseRequest(request, offer, customer, business);
+    Purchase purchase = generatePurchaseFromCreatePurchaseRequest(request,
+        offer, customer, business);
 
     if (offer.getNumberOfAvailableItems() == request.getNumberOfItems())
       offerRepository.updateStatus(offer.getId(),
@@ -82,16 +79,34 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
   }
 
   @Override public void getPurchaseById(PurchaseIdRequest request,
-      StreamObserver<PurchaseResponse> responseObserver)
-  {
+      StreamObserver<PurchaseResponse> responseObserver) {
     System.out.println("Request for purchase by id");
+
+    Optional<Purchase> purchaseOptional = purchaseRepository.findById(
+        request.getId());
+    if (purchaseOptional.isPresent()) {
+      Purchase purchase = purchaseOptional.get();
+      PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+          purchase);
+      responseObserver.onNext(purchaseResponse);
+      responseObserver.onCompleted();
+    }
+    else {
+      responseObserver.onError(
+          new Exception("Error: No purchase with ID " + request.getId()));
+    }
+  }
+  @Override public void getDetailedPurchaseById(PurchaseIdRequest request,
+      StreamObserver<DetailedPurchaseResponse> responseObserver)
+  {
+    System.out.println("Request for detailed purchase purchase by id");
 
     Optional<Purchase> purchaseOptional = purchaseRepository.findById(
         request.getId());
     if (purchaseOptional.isPresent())
     {
       Purchase purchase = purchaseOptional.get();
-      PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
+      DetailedPurchaseResponse purchaseResponse = generateDetailedPurchaseResponseFromPurchase(
           purchase);
       responseObserver.onNext(purchaseResponse);
       responseObserver.onCompleted();
@@ -103,31 +118,26 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
     }
   }
 
-  @Override public void getPurchases(IdRequestResponse request,
-      StreamObserver<PurchaseListResponse> responseObserver)
-  {
+  @Override public void getPurchases(GetPurchaseRequest request,
+      StreamObserver<PurchaseListResponse> responseObserver) {
     System.out.println("Request for all Purchases");
 
-    //TODO: only fetch the ones which match the id
-    List<Purchase> Purchases = purchaseRepository.findAll();
-
-    PurchaseListResponse.Builder PurchaseListBuilder = PurchaseListResponse.newBuilder();
-    for (Purchase purchase : Purchases)
-    {
-      PurchaseResponse response = generatePurchaseResponseFromPurchase(
-          purchase);
-      PurchaseListBuilder.addPurchases(response);
+    switch (request.getRole()) {
+      case "CUSTOMER":
+        getPurchasesByCustomerId(request, responseObserver);
+        break;
+      case "BUSINESS":
+        getPurchasesByBusinessId(request, responseObserver);
+        break;
+      default:
+        getAllPurchases(responseObserver);
     }
 
-    PurchaseListResponse response = PurchaseListBuilder.build();
-    responseObserver.onNext(response);
-    responseObserver.onCompleted();
   }
 
   @Override public void updatePurchaseStatus(
       PurchaseStatusRequest purchaseStatusRequest,
-      StreamObserver<PurchaseResponse> responseObserver)
-  {
+      StreamObserver<PurchaseResponse> responseObserver) {
     System.out.println("Request to update purchase status.");
 
     Purchase purchase = purchaseRepository.findById(
@@ -140,6 +150,44 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.gen
     PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
         purchase);
     responseObserver.onNext(purchaseResponse);
+    responseObserver.onCompleted();
+  }
+
+  private void getPurchasesByCustomerId(GetPurchaseRequest request,
+      StreamObserver<PurchaseListResponse> responseObserver) {
+    System.out.println("Request for all Purchases by customer id");
+
+    List<Purchase> purchases = purchaseRepository.findByCustomerId(
+        request.getUserId());
+    PurchaseListResponse response = generatePurchaseListResponseFromPurchaseList(
+        purchases);
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+  private void getPurchasesByBusinessId(GetPurchaseRequest request,
+      StreamObserver<PurchaseListResponse> responseObserver) {
+    System.out.println("Request for all Purchases by business id");
+
+    List<Purchase> purchases = purchaseRepository.findByBusinessId(
+        request.getUserId());
+    PurchaseListResponse response = generatePurchaseListResponseFromPurchaseList(
+        purchases);
+
+    responseObserver.onNext(response);
+    responseObserver.onCompleted();
+  }
+
+  private void getAllPurchases(
+      StreamObserver<PurchaseListResponse> responseObserver) {
+    System.out.println("Request for all Purchases");
+
+    List<Purchase> purchases = purchaseRepository.findAll();
+    PurchaseListResponse response = generatePurchaseListResponseFromPurchaseList(
+        purchases);
+
+    responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 

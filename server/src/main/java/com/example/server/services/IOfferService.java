@@ -18,4 +18,5 @@ public interface IOfferService
       Optional<String> pickupTimeEnd, Optional<List<String>> categories,
       Optional<String> userId);
   OfferResponseDto updateOffer(UpdateOfferRequestDto updateOfferRequestDto);
+  List<OfferResponseDto> getOffersByBusinessId(String businessId);
 }

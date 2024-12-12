@@ -1,0 +1,40 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.example.sep3.grpc";
+option java_outer_classname = "NotificationServiceProto";
+
+import "google/protobuf/timestamp.proto";
+import "BaseTypes.proto";
+
+package proto;
+
+service NotificationService {
+  rpc CreateNotification(NotificationRequestResponse) returns (EmptyMessage);
+  rpc GetNotifications (NotificationsRequest) returns (NotificationListResponse);
+}
+
+message NotificationRequestResponse {
+  string userId = 1;
+  string userRole = 2;
+  string content = 3;
+  google.protobuf.Timestamp timestamp = 4;
+  string subjectId = 5;
+  string type = 6;
+}
+
+message NotificationsRequest {
+  string userId = 1;
+  string userRole = 2;
+}
+
+message NotificationListResponse {
+  repeated NotificationRequestResponse notifications = 1;
+}
+
+
+
+
+
+
+

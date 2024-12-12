@@ -141,7 +141,7 @@
             errorMessage = null;
             await AuthStateProvider.RegisterCustomerAsync(registerModel);
             successMessage = "Registration successful! Redirecting...";
-            NavigationManager.NavigateTo("/offers");
+            NavigationManager.NavigateTo("/");
         }
         catch (Exception ex)
         {

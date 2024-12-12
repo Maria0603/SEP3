@@ -12,7 +12,7 @@
     @if (_business != null)
     {
         <div class="display-container">
-            <img src="@(HttpClient.BaseAddress + _business.Logo_path)" alt="business-logo" class="business-logo">
+            <img src="@(HttpClient.BaseAddress + "images/" + _business.Logo_path)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="business-logo" class="business-logo">
             <div class="business-contact">
                 <h3 class="BusinessName">@_business.BusinessName</h3>
                 <p>@_business.PhoneNumber</p>
@@ -34,50 +34,21 @@
             </div>
         </div>    
     }
+    <div class="wrapper">
+        @if (offers == null){
+        <p>Loading offers...</p>
+        }
+        else if (offers.Count == 0){
+        <p>No offers from this business at this page moment.</p>
+        }
+        else{
+        @foreach (OfferResponseDto offer in offers)
+        {
+        <OfferComponent OfferData="offer" OfferWidth="33rem" OfferMarginBottom="20px"></OfferComponent>
+        }
+        }    
+    </div>
     
-    @if (offers == null){
-    <p>Loading offers...</p>
-    }
-    else if (offers.Count == 0){
-    <p>No offers available at the moment.</p>
-    }
-    else{
-    @foreach (OfferResponseDto offer in offers)
-    {
-        <OfferComponent OfferData="offer" OfferWidth="67rem" OfferMarginBottom="20px"></OfferComponent>
-    }
-
-    @*<div id="carouselExample" class="carousel slide">
-        <div class="carousel-inner">
-            @if (offers != null && offers.Count > 0)
-            {
-                @for (int i = 0; i < offers.Count; i++)
-                {
-                    var offer = offers[i];
-                    <div class="carousel-item @(i == 0 ? "active" : "")">
-                        <img src="@HttpClient.BaseAddress + @offer.ImagePath" class="d-block w-100" alt="@offer.Title">
-                        <div class="carousel-caption d-none d-md-block">
-                            <h5>@offer.Title</h5>
-                            <p>@offer.OfferPrice.ToString("0.00") kr.</p>
-                        </div>
-                    </div>
-                }
-            }
-            else
-            {
-                <p>No offers available to display in the carousel.</p>
-            }
-        </div>
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExample" data-bs-slide="prev">
-            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Previous</span>
-        </button>
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExample" data-bs-slide="next">
-            <span class="carousel-control-next-icon" aria-hidden="true"></span>
-            <span class="visually-hidden">Next</span>
-        </button>
-    </div>*@
-    }
 </div>
 
 @code {
@@ -93,9 +64,7 @@
     protected override async Task OnInitializedAsync()
     {
         _business = await BusinessService.GetBusinessByIdAsync(id);
-        Console.Write(_business.Logo_path);
-        FilterRequestDto filterRequestDto = new FilterRequestDto();
-        offers = await OfferService.GetOffersAsync(filterRequestDto);
+        offers = await OfferService.GetOffersByBusinessIdAsync(id);
     }
 
 }
