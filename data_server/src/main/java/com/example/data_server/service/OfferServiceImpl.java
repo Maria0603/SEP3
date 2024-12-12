@@ -165,25 +165,24 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
       StreamObserver<OfferListResponse> responseObserver)
   {
 
-    Optional<Customer> customerOptional = customerRepository.findById(
-        request.getUserId());
+    Optional<Customer> customerOptional = null;
 
     // Extract the radius from the customer, if they have one
     Customer customer;
-    boolean hasLocationFilter;
-    if (customerOptional.isPresent())
-    {
-      customer = customerOptional.get();
-      hasLocationFilter =
-          customer.getLatitude() != 0 && customer.getLongitude() != 0
-              && customer.getSearchRadius() > 0;
-    }
-    else
-    {
-      //If the user is not a customer, it must be business, and they don't have a radius
-      customer = null;
-      hasLocationFilter = false;
-    }
+    boolean hasLocationFilter = false;
+//    if (customerOptional.isPresent())
+//    {
+//      customer = customerOptional.get();
+//      hasLocationFilter =
+//          customer.getLatitude() != 0 && customer.getLongitude() != 0
+//              && customer.getSearchRadius() > 0;
+//    }
+//    else
+//    {
+//      //If the user is not a customer, it must be business, and they don't have a radius
+//      customer = null;
+//      hasLocationFilter = false;
+//    }
 
     List<Offer> filteredOffers;
 
@@ -206,21 +205,21 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
             item -> request.getCategoriesList().isEmpty() || item.getCategories()
                 .stream().anyMatch(request.getCategoriesList()::contains))
         .filter(item -> {
-          if (hasLocationFilter)
-          {
-            Business business = item.getBusiness();
-            double distance = GeoUtils.calculateDistance(customer.getLatitude(),
-                customer.getLongitude(),
-                business.getLocation().getCoordinates().getLast(),
-                business.getLocation().getCoordinates().getFirst());
-            System.out.println("Business: " + business.getId());
-            System.out.println("Customer: " + customer.getId() + " radius: "
-                + customerOptional.get().getSearchRadius());
-
-            System.out.println(
-                "Distance: " + distance + " for ID " + item.getId());
-            return distance <= customer.getSearchRadius();
-          }
+//          if (hasLocationFilter)
+//          {
+//            Business business = item.getBusiness();
+//            double distance = GeoUtils.calculateDistance(customer.getLatitude(),
+//                customer.getLongitude(),
+//                business.getLocation().getCoordinates().getLast(),
+//                business.getLocation().getCoordinates().getFirst());
+//            System.out.println("Business: " + business.getId());
+//            System.out.println("Customer: " + customer.getId() + " radius: "
+//                + customerOptional.get().getSearchRadius());
+//
+//            System.out.println(
+//                "Distance: " + distance + " for ID " + item.getId());
+//            return distance <= customer.getSearchRadius();
+//          }
           return true; // If no location filter, include all offers
         })//.sorted((o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
         .toList();

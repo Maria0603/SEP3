@@ -14,24 +14,37 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
         //update_circle_radius(radius);
     }
 
+    // Try to get the user's location first
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (position) => {
+                // If location is found, use the user's coordinates
+                latitude = position.coords.latitude;
+                longitude = position.coords.longitude;
 
-    // Initialize the map
-    map = L.map('mapContainer').setView([latitude, longitude], 10);
+                // Initialize the map
+                initialize_map(latitude, longitude, radius);
+            },
+            (error) => {
+                // If location is not available, fall back to default coordinates
+                console.error("Geolocation error: ", error);
+                initialize_map(latitude, longitude, radius);
+            }
+        );
+    } else {
+        // If geolocation is not supported, fall back to default coordinates
+        initialize_map(latitude, longitude, radius);
+    }
+}
+
+function initialize_map(latitude, longitude, radius) {
+    // Initialize the map with the given latitude and longitude
+    map = L.map('mapContainer').setView([latitude, longitude], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
         minZoom: 5,
     }).addTo(map);
 
-
-    /*
-     // Check if the map has already been initialized
-     if (map) {
-         // If the map is already initialized, just update the center and radius
-         map.setView([latitude, longitude], 10);
-         update_circle_radius(radius);
-         return;
-     }*/
-    
     const geocoder = L.Control.geocoder({defaultMarkGeocode: false}).addTo(map);
     console.log("This message is from the leafletmap.js file");
 

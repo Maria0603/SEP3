@@ -9,11 +9,8 @@ public class FilterRequestDto {
     public DateTime? PickupTimeEnd { get; set; }
     public List<string>? Categories { get; set; }
     
-    public CreateOfferRequestDto ToCreateOfferRequestDto() {
-        return new CreateOfferRequestDto {
-            PickupTimeStart = PickupTimeStart,
-            PickupTimeEnd = PickupTimeEnd,
-            Categories = Categories
-        };
-    }
+    public LocationDto? Location { get; set; }
+    
+    
+   
 }

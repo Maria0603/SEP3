@@ -73,45 +73,51 @@ public class OfferService : IOfferService {
         Console.WriteLine(responseContent);
         throw new Exception(responseContent);
     }
-    
     public async Task<List<OfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
-{
-    var queryParameters = new List<string>();
-
-    if (filterRequestDto != null)
     {
-        // Add query parameters only if they have values
-        if (filterRequestDto.MinOfferPrice.HasValue)
-            queryParameters.Add($"minOfferPrice={filterRequestDto.MinOfferPrice}");
-
-        if (filterRequestDto.MaxOfferPrice.HasValue)
-            queryParameters.Add($"maxOfferPrice={filterRequestDto.MaxOfferPrice}");
-        
-        if (filterRequestDto.PickupTimeStart.HasValue)
-            queryParameters.Add($"pickupTimeStart={filterRequestDto.PickupTimeStart.Value.ToString("yyyy-MM-ddTHH:mm:ss")}"); // ISO 8601 format for DateTime
-
-        if (filterRequestDto.PickupTimeEnd.HasValue)
-            queryParameters.Add($"pickupTimeEnd={filterRequestDto.PickupTimeEnd.Value.ToString("yyyy-MM-ddTHH:mm:ss")}");
-
-        if (filterRequestDto.Categories != null && filterRequestDto.Categories.Any())
-        {
-            queryParameters.AddRange(filterRequestDto.Categories.Select(category => $"categories={category}"));
-        }
+        var response = await client.PostAsJsonAsync("offers", filterRequestDto);
+        var json = await response.Content.ReadAsStringAsync();
+        var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true })!;
+        return offers;
     }
-
-    // Combine query parameters with '&'
-    var queryString = queryParameters.Any() ? "?" + string.Join("&", queryParameters) : string.Empty;
-
-    Console.WriteLine(queryString);
-    var response = await client.GetAsync($"offers{queryString}");
-    var json = await response.Content.ReadAsStringAsync();
-    var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(
-        json,
-        new JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        })!;
-
-    return offers;
-}
+//     public async Task<List<OfferResponseDto>> GetOffersAsync(FilterRequestDto? filterRequestDto)
+// {
+//     var queryParameters = new List<string>();
+//
+//     if (filterRequestDto != null)
+//     {
+//         // Add query parameters only if they have values
+//         if (filterRequestDto.MinOfferPrice.HasValue)
+//             queryParameters.Add($"minOfferPrice={filterRequestDto.MinOfferPrice}");
+//
+//         if (filterRequestDto.MaxOfferPrice.HasValue)
+//             queryParameters.Add($"maxOfferPrice={filterRequestDto.MaxOfferPrice}");
+//         
+//         if (filterRequestDto.PickupTimeStart.HasValue)
+//             queryParameters.Add($"pickupTimeStart={filterRequestDto.PickupTimeStart.Value.ToString("yyyy-MM-ddTHH:mm:ss")}"); // ISO 8601 format for DateTime
+//
+//         if (filterRequestDto.PickupTimeEnd.HasValue)
+//             queryParameters.Add($"pickupTimeEnd={filterRequestDto.PickupTimeEnd.Value.ToString("yyyy-MM-ddTHH:mm:ss")}");
+//
+//         if (filterRequestDto.Categories != null && filterRequestDto.Categories.Any())
+//         {
+//             queryParameters.AddRange(filterRequestDto.Categories.Select(category => $"categories={category}"));
+//         }
+//     }
+//
+//     // Combine query parameters with '&'
+//     var queryString = queryParameters.Any() ? "?" + string.Join("&", queryParameters) : string.Empty;
+//
+//     Console.WriteLine(queryString);
+//     var response = await client.GetAsync($"offers{queryString}");
+//     var json = await response.Content.ReadAsStringAsync();
+//     var offers = JsonSerializer.Deserialize<List<OfferResponseDto>>(
+//         json,
+//         new JsonSerializerOptions
+//         {
+//             PropertyNameCaseInsensitive = true
+//         })!;
+//
+//     return offers;
+// }
 }

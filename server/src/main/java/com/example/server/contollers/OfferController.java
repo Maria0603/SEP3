@@ -1,6 +1,7 @@
 package com.example.server.contollers;
 
 import com.example.server.dto.offer.CategoryDto;
+import com.example.server.dto.offer.FilterRequestDto;
 import com.example.server.security.JWTUtils;
 import com.example.server.services.Implementations.OfferService;
 import com.example.server.dto.offer.CreateOfferRequestDto;
@@ -70,25 +71,17 @@ import java.util.stream.Collectors;
     }
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
-      @RequestParam(required = false) Integer minOfferPrice,
-      @RequestParam(required = false) Integer maxOfferPrice,
-      @RequestParam(required = false) String pickupTimeStart,
-      @RequestParam(required = false) String pickupTimeEnd,
-      @RequestParam(required = false) List<String> categories,
-      HttpServletRequest request)
-  {
-    System.out.println("maxofferprice" + maxOfferPrice);
-
+  @GetMapping
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
+  public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
+          @ModelAttribute FilterRequestDto filterRequestDto, HttpServletRequest request) {
+    // Extract the userId from the request
     String userId = (String) request.getAttribute("userId");
-
     System.out.println("Offers for Id **********: " + userId);
 
-    var response = offerService.getOffers(Optional.ofNullable(minOfferPrice),
-        Optional.ofNullable(maxOfferPrice),
-        Optional.ofNullable(pickupTimeStart),
-        Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories),
-            Optional.ofNullable(userId));
+    // Pass the FilterRequestDto to the service
+    var response = offerService.getOffers(filterRequestDto);
+
     return ResponseEntity.ok(response);
   }
 

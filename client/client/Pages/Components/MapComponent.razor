@@ -35,12 +35,12 @@
 
 
 @code {
-    private int circleRadius; // Radius in km
+    private int circleRadius = 10; // Radius in km
     private IJSObjectReference? module;
     private string? result;
     private string? mapInfo;
-    private double mapCenterLatitude;
-    private double mapCenterLongitude;
+    private double mapCenterLatitude = 56.156486066837665;
+    private double mapCenterLongitude = 10.19591121665965;
     //private double mapRadius;
 
     private CustomerLocationRequestResponseDto? customerLocation;
@@ -76,11 +76,7 @@
             module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
             try
             {
-                customerLocation = await LocationService.GetCustomerLocationAsync();
-                circleRadius = customerLocation.Radius;
-                mapCenterLatitude = customerLocation.Latitude;
-                mapCenterLongitude = customerLocation.Longitude;
-                await InitializeMap(customerLocation.Latitude, customerLocation.Longitude, customerLocation.Radius);
+                await InitializeMap(mapCenterLatitude, mapCenterLongitude, circleRadius);
             }
             catch (Exception e)
             {

@@ -39,3 +39,9 @@ message Address {
   string country = 6;
   string postalCode = 7;
 }
+
+message Location {
+  double latitude = 1;
+  double longitude = 2;
+  int32 radius  = 3;
+}
