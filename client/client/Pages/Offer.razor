@@ -141,7 +141,7 @@ else
         {
             var response = await PurchaseService.CreatePurchaseAsync(request);
             // TODO fix this URL error
-            string sessionUrl = "response.Url";
+            string sessionUrl = response.Url;
             NavigationManager.NavigateTo(sessionUrl);
         }
         catch (Exception e)

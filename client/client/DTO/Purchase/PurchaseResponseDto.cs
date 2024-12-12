@@ -10,4 +10,5 @@ public class PurchaseResponseDto
     public DateTime purchaseTime { get; set; }
     public int PricePerItem { get; set; }
     public string BusinessName { get; set; }
+    public string Url { get; set; }
 }
