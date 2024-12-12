@@ -36,7 +36,7 @@
             <button @onclick="Logout" class="btn btn-danger">Log Out</button>
         </EditForm>
     }
-    @if (customerProfile != null)
+    @if ( customerProfile != null)
     {
         <EditForm Model="customerProfile" OnValidSubmit="UpdateCustomerProfile">
             <DataAnnotationsValidator />

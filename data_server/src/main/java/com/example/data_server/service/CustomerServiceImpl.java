@@ -116,7 +116,7 @@ import static com.example.data_server.converters.CustomerEntityGrpcConverter.gen
   }
 
 
-  @Override public void getCustomerById(IdRequestResponse request,
+  @Override public void getCustomerById(IdRequest request,
       StreamObserver<CustomerResponse> responseObserver) {
     Customer customer = customerRepository.findById(request.getId())
         .orElseThrow();

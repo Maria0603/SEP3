@@ -124,7 +124,7 @@ public class DataServerStub
     return customerBlockingStub.updateCustomerProfile(request);
   }
 
-  public CustomerResponse getCustomerById(IdRequestResponse request)
+  public CustomerResponse getCustomerById(IdRequest request)
   {
     return customerBlockingStub.getCustomerById(request);
   }

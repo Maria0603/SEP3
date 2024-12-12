@@ -33,10 +33,14 @@ public class BusinessService implements IBusinessService {
     }
 
     @Override
-    public BusinessResponseDto updateBusinessProfile(
+    public BusinessResponseDto updateAndValidateBusinessProfile(
         BusinessUpdateRequestDto updatedProfile) {
-        System.out.println("updateBusinessProfile method called for ID: " + updatedProfile.getId());
 
+        if (updatedProfile.getBusinessName().contains("invalid")) {
+            throw new IllegalArgumentException("Business name contains invalid content.");
+        }
+
+        System.out.println("updateBusinessProfile method called for ID: " + updatedProfile.getId());
 
         System.out.println("Updated Profile Details:");
         System.out.println("Business Name: " + updatedProfile.getBusinessName());
@@ -44,15 +48,18 @@ public class BusinessService implements IBusinessService {
         System.out.println("Phone Number: " + updatedProfile.getPhoneNumber());
         //System.out.println("Logo Path: " + updatedProfile.getLogoPath());
 
+
         BusinessUpdateRequest request = BusinessDtoGrpcConverter.BusinessUpdateRequestDto_To_BusinessUpdateRequest(updatedProfile);
 
         try {
+
             BusinessResponse grpcResponse = dataServerStub.updateBusinessProfile(request);
+
             return BusinessDtoGrpcConverter.BusinessResponseGrpc_To_BusinessResponseDto(grpcResponse);
         } catch (Exception e) {
             System.out.println("Error updating business profile: " + e.getMessage());
-           // return false;
+            return null; // Return null or handle error response appropriately
         }
-        return null;
     }
+
 }

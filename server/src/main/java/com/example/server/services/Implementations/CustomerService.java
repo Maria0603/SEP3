@@ -99,7 +99,7 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.*;
   @Override public CustomerResponseDto getCustomerById(String id)
   {
     System.out.println("getCustomerId method called with id " + id);
-    IdRequestResponse request = IdRequestResponse.newBuilder().setId(id).build();
+    IdRequest request = IdRequest.newBuilder().setId(id).build();
     CustomerResponse response = dataServerStub.getCustomerById(request);
     System.out.println("Received response from dataServerStub: " + response);
 
