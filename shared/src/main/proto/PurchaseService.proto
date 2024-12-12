@@ -13,7 +13,6 @@ service PurchaseService {
   rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
   rpc GetPurchaseById (PurchaseIdRequest) returns (PurchaseResponse);
   rpc GetDetailedPurchaseById (PurchaseIdRequest) returns (DetailedPurchaseResponse);
-  rpc GetPurchases (IdRequestResponse) returns (PurchaseListResponse);
   rpc UpdatePurchaseStatus (PurchaseStatusRequest) returns (PurchaseResponse);
   rpc GetPurchases (GetPurchaseRequest) returns (PurchaseListResponse);
 }
