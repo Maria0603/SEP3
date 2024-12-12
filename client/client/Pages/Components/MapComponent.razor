@@ -5,6 +5,7 @@
 @inject IJSRuntime JSRuntime
 @inject ILocationService LocationService
 @inject client.Services.IBusinessService BusinessService
+@inject HttpClient HttpClient
 
 <div class="popup-overlay">
     <div class="popup-window">
@@ -127,7 +128,7 @@
                         name = b.BusinessName,
                         latitude = b.Latitude,
                         longitude = b.Longitude,
-                        imageUrl = b.Logo_path
+                        imageUrl = HttpClient.BaseAddress +"images/"+b.Logo_path
                     });
 
                 await module.InvokeVoidAsync("insertBusinesses", jsBusinesses);

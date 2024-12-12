@@ -51,12 +51,28 @@ export function insertBusinesses(businesses) {
         }
 
         // Create a custom icon for the business
-        const businessIcon = L.icon({
-            iconUrl: "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Lidl-Logo.svg/1200px-Lidl-Logo.svg.png", // Fallback to a default icon if imageUrl is not provided
-            // iconUrl: imageUrl || 'default-icon.png', // Fallback to a default icon if imageUrl is not provided
-            iconSize: [40, 40], // Size of the icon [width, height]
-            iconAnchor: [20, 40], // Anchor point of the icon (relative to its top-left corner)
-            popupAnchor: [0, -40], // Anchor point of the popup (relative to the icon's anchor)
+        const iconHtml = `
+            <img 
+                src="${imageUrl}" 
+                style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                    object-fit: cover;
+                " 
+                onerror="this.onerror=this.src='../images/businessLogoPlaceholder.jpg';"
+                alt="${name || 'Business'}"
+            />
+        `;
+
+        const businessIcon = L.divIcon({
+            html: iconHtml,
+            className: 'custom-icon', // Optional custom class
+            iconSize: [40, 40], // Size of the container
+            iconAnchor: [20, 40], // Anchor point (centered at the bottom)
+            popupAnchor: [0, -40] // Popup position relative to the icon
         });
 
         // Create a marker for each business
