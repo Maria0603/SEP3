@@ -189,57 +189,57 @@ public class AuthStateProvider : AuthenticationStateProvider
         return Convert.FromBase64String(base64);
     }
     
-    public async Task<string> GetUserRoleAsync()
-    {
-        var authState = await GetAuthenticationStateAsync();
-        var user = authState.User;
-
-        if (user.Identity != null && user.Identity.IsAuthenticated)
-        {
-            Console.WriteLine("User is authenticated.");
-            foreach (var claim in user.Claims)
-            {
-                Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
-            }
-
-            var roleClaim = user.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
-            if (!string.IsNullOrEmpty(roleClaim))
-            {
-                // Handle role claim as array
-                try
-                {
-                    var roles = JsonSerializer.Deserialize<List<string>>(roleClaim);
-                    if (roles != null && roles.Any())
-                    {
-                        var role = roles.First().ToUpper(); // Use the first role
-                        if (role == "BUSINESS" || role == "CUSTOMER")
-                        {
-                            return role;
-                        }
-                        Console.WriteLine($"Invalid role found: {role}");
-                    }
-                    else
-                    {
-                        Console.WriteLine("Role claim is empty.");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error parsing role claim: {ex.Message}");
-                }
-            }
-            else
-            {
-                Console.WriteLine("Role claim is missing.");
-            }
-        }
-        else
-        {
-            Console.WriteLine("User is not authenticated.");
-        }
-
-        throw new InvalidOperationException("User is not authenticated or role is missing.");
-    }
+    // public async Task<string> GetUserRoleAsync()
+    // {
+    //     var authState = await GetAuthenticationStateAsync();
+    //     var user = authState.User;
+    //
+    //     if (user.Identity != null && user.Identity.IsAuthenticated)
+    //     {
+    //         Console.WriteLine("User is authenticated.");
+    //         foreach (var claim in user.Claims)
+    //         {
+    //             Console.WriteLine($"Claim: {claim.Type} = {claim.Value}");
+    //         }
+    //
+    //         var roleClaim = user.Claims.FirstOrDefault(c => c.Type == "role")?.Value;
+    //         if (!string.IsNullOrEmpty(roleClaim))
+    //         {
+    //             // Handle role claim as array
+    //             try
+    //             {
+    //                 var roles = JsonSerializer.Deserialize<List<string>>(roleClaim);
+    //                 if (roles != null && roles.Any())
+    //                 {
+    //                     var role = roles.First().ToUpper(); // Use the first role
+    //                     if (role == "BUSINESS" || role == "CUSTOMER")
+    //                     {
+    //                         return role;
+    //                     }
+    //                     Console.WriteLine($"Invalid role found: {role}");
+    //                 }
+    //                 else
+    //                 {
+    //                     Console.WriteLine("Role claim is empty.");
+    //                 }
+    //             }
+    //             catch (Exception ex)
+    //             {
+    //                 Console.WriteLine($"Error parsing role claim: {ex.Message}");
+    //             }
+    //         }
+    //         else
+    //         {
+    //             Console.WriteLine("Role claim is missing.");
+    //         }
+    //     }
+    //     else
+    //     {
+    //         Console.WriteLine("User is not authenticated.");
+    //     }
+    //
+    //     throw new InvalidOperationException("User is not authenticated or role is missing.");
+    // }
 
 
 }
