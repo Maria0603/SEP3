@@ -92,7 +92,6 @@ import java.util.List;
     try
     {
       DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
-      System.out.println(id + ", " + purchase.getCustomerPhoneNumber());
       return ResponseEntity.ok(purchase);
     }
     catch (Exception e)
