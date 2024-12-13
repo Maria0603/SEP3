@@ -191,10 +191,16 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
                 double requestLongitude = location.getLongitude();
                 double requestRadius = location.getRadius();
 
+                System.out.println("RequestLatitude: "+ requestLatitude);
+                System.out.println("RequestLongitude: "+ requestLongitude);
+
+
                 // Get the business location from the item
                 Business business = item.getBusiness();
                 double businessLatitude = business.getLocation().getCoordinates().getLast();
                 double businessLongitude = business.getLocation().getCoordinates().getFirst();
+                System.out.println("BusinessLatitude: "+ businessLatitude);
+                System.out.println("BusinessLongitude: "+ businessLongitude);
 
                 // Calculate the distance between the request location and business location
                 double distance = GeoUtils.calculateDistance(requestLatitude, requestLongitude, businessLatitude, businessLongitude);
@@ -212,15 +218,15 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
             .toList();
 
 
-    System.out.println("---------------------------");
-    System.out.println("Request pickup time start: "+ request.getPickupTimeStart());
-    System.out.println("Request pickup time end: "+request.getPickupTimeEnd());
-
-    for (Offer offer : filteredOffers)
-    {
-      System.out.println("Offer pickup time start: "+offer.getPickupTimeStart());
-      System.out.println("Offer pickup time end: "+offer.getPickupTimeEnd());
-    }
+//    System.out.println("---------------------------");
+//    System.out.println("Request pickup time start: "+ request.getPickupTimeStart());
+//    System.out.println("Request pickup time end: "+request.getPickupTimeEnd());
+//
+//    for (Offer offer : filteredOffers)
+//    {
+//      System.out.println("Offer pickup time start: "+offer.getPickupTimeStart());
+//      System.out.println("Offer pickup time end: "+offer.getPickupTimeEnd());
+//    }
 
     filteredOffers = filteredOffers.stream().sorted(
                     (o1, o2) -> o2.getCreationTime().compareTo(o1.getCreationTime()))
@@ -232,7 +238,7 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
 
     // Build the response
     OfferListResponse offers = buildOfferListResponseFromOffersList(filteredOffers);
-    logger.info("Sending SaveOfferResponse: {}", offers);
+//    logger.info("Sending SaveOfferResponse: {}", offers);
 
     responseObserver.onNext(offers);
     responseObserver.onCompleted();

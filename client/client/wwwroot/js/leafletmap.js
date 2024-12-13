@@ -2,7 +2,31 @@ let map;
 let donut;
 let marker;
 
-export function load_map(latitude = 56.156486066837665, longitude = 10.19591121665965, radius = 10) {
+export function get_user_location(fallbackCoordinates = {
+    latitude: 56.156486066837665,
+    longitude: 10.19591121665965
+}) {
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    resolve({ latitude, longitude }); // Resolve with an object
+                },
+                (error) => {
+                    console.error("Geolocation error: ", error);
+                    resolve(fallbackCoordinates); // Use fallback on error
+                }
+            );
+        } else {
+            console.warn("Geolocation is not supported by this browser.");
+            resolve(fallbackCoordinates); // Use fallback if geolocation is not supported
+        }
+    });
+}
+
+
+export function load_map(latitude, longitude, radius) {
     const container = document.getElementById('mapContainer');
     if (!container) {
         console.error("Map container not found!");
@@ -10,32 +34,14 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
     }
 
     if (map) {
-        cleanup_map()
-        //update_circle_radius(radius);
+        cleanup_map();
+        // update_circle_radius(radius);
     }
 
-    // Try to get the user's location first
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (position) => {
-                // If location is found, use the user's coordinates
-                latitude = position.coords.latitude;
-                longitude = position.coords.longitude;
-
-                // Initialize the map
-                initialize_map(latitude, longitude, radius);
-            },
-            (error) => {
-                // If location is not available, fall back to default coordinates
-                console.error("Geolocation error: ", error);
-                initialize_map(latitude, longitude, radius);
-            }
-        );
-    } else {
-        // If geolocation is not supported, fall back to default coordinates
-        initialize_map(latitude, longitude, radius);
-    }
+    // Initialize the map with provided or default coordinates
+    initialize_map(latitude, longitude, radius);
 }
+
 export function insertBusinesses(businesses) {
     if (!map) {
         console.error("Map is not initialized. Please load the map first.");
@@ -43,7 +49,7 @@ export function insertBusinesses(businesses) {
     }
 
     businesses.forEach(business => {
-        const { name, latitude, longitude, imageUrl } = business;
+        const {name, latitude, longitude, imageUrl} = business;
 
         if (latitude == null || longitude == null) {
             console.warn(`Skipping business "${name}" due to missing coordinates.`);
@@ -76,13 +82,14 @@ export function insertBusinesses(businesses) {
         });
 
         // Create a marker for each business
-        const businessMarker = L.marker([latitude, longitude], { icon: businessIcon })
+        const businessMarker = L.marker([latitude, longitude], {icon: businessIcon})
             .addTo(map)
             .bindPopup(`<strong>${name}</strong>`); // Add a popup with the business name
 
-        console.log(`Added marker for business: ${name}, Lat: ${latitude}, Lng: ${longitude}`);
+        // console.log(`Added marker for business: ${name}, Lat: ${latitude}, Lng: ${longitude}`);
     });
 }
+
 function initialize_map(latitude, longitude, radius) {
     // Initialize the map with the given latitude and longitude
     map = L.map('mapContainer').setView([latitude, longitude], 12);
@@ -171,7 +178,7 @@ export function get_map_center_and_radius() {
         return {
             latitude: center.lat,
             longitude: center.lng,
-            radius: radius, // Convert radius to kilometers
+            radius: radius / 1000, // Convert radius to kilometers
         };
     }
     return null; // Return null if map or donut is not initialized

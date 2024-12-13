@@ -25,14 +25,14 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public List<BusinessResponseDto> getBusinesses() {
-        System.out.println("getBusinesses method called");
+//        System.out.println("getBusinesses method called");
 
         // Create an EmptyMessage request (since there are no parameters)
         EmptyMessage request = EmptyMessage.newBuilder().build();
 
         // Call the gRPC method from the dataServerStub
         BusinessListResponse response = dataServerStub.getBusinesses(request);
-        System.out.println("Received response from dataServerStub: " + response);
+//        System.out.println("Received response from dataServerStub: " + response);
 
         // Map the response to a list of BusinessResponseDto objects
         return response.getBusinessesList().stream()

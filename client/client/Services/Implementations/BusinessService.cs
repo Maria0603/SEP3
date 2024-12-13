@@ -22,7 +22,7 @@ public class BusinessService : IBusinessService
             if (response.IsSuccessStatusCode)
             {
                 string responseContent = await response.Content.ReadAsStringAsync();
-                Console.WriteLine(responseContent);
+                // Console.WriteLine(responseContent);
                 return JsonSerializer.Deserialize<List<BusinessResponseDto>>(
                     responseContent,
                     new JsonSerializerOptions { PropertyNameCaseInsensitive = true }

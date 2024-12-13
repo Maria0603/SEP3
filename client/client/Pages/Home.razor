@@ -3,7 +3,9 @@
 @using client.DTO.Offer
 @using client.Models
 @using client.Pages.Components
+
 @using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
 @inject client.Services.IOfferService OfferService
 @attribute [Authorize]
 <PageTitle>Home</PageTitle>
@@ -21,7 +23,7 @@
 
 @if (showMapPopup)
 {
-<MapComponent ToggleMap="ToggleMap" FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"/>
+<MapComponent Module="Module" ToggleMap="ToggleMap" FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"/>
 }
 @if (showFilterPopup)
 {
@@ -50,19 +52,35 @@
     private List<OfferResponseDto>? offers;
     private bool showFilterPopup = false;
     private bool showMapPopup = false;
-    private FilterRequestDto? FilterRequestDto = new();
+    private FilterRequestDto FilterRequestDto = new();
+    private IJSObjectReference? Module;
 
 
     protected override async Task OnInitializedAsync()
     {
         // Call the offers retrieval method
-        
         await RetrieveOffersAsync();
+        Module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
+        var coordinates = await Module.InvokeAsync<LocationDto>("get_user_location");
+        Console.WriteLine("Getting coordinate longitude: " + coordinates.Longitude );
+        Console.WriteLine("Getting coordinates latitude: " + coordinates.Latitude );
+        FilterRequestDto.Location = new LocationDto
+        {
+            Latitude = coordinates.Latitude,
+            Longitude = coordinates.Longitude,
+        };
     }
-
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         
+    //     }
+    // }
     private async Task RetrieveOffersAsync()
     {
         Console.WriteLine("Retrieving offers...");
+        Console.WriteLine("Filtering request:" + FilterRequestDto.Location);
         try
         {
             // Call the service to get the offers

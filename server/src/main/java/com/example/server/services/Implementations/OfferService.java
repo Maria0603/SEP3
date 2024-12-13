@@ -80,11 +80,9 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
   @Override public OfferResponseDto getOfferById(String id)
   {
-    System.out.println("getOfferById method called with id: " + id);
+
     OfferIdRequest request = OfferIdRequest.newBuilder().setId(id).build();
     OfferResponse response = dataServerStub.getOfferById(request);
-
-    System.out.println("Received response from dataServerStub: " + response);
 
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);

@@ -103,14 +103,9 @@ public class OfferService : IOfferService {
         // Add location parameters if present
         if (filterRequestDto.Location != null)
         {
-            if (filterRequestDto.Location.Latitude.HasValue)
-                queryParameters.Add($"latitude={filterRequestDto.Location.Latitude.Value.ToString(CultureInfo.InvariantCulture)}");
-
-            if (filterRequestDto.Location.Longitude.HasValue)
-                queryParameters.Add($"longitude={filterRequestDto.Location.Longitude.Value.ToString(CultureInfo.InvariantCulture)}");
-
-            if (filterRequestDto.Location.Radius.HasValue)
-                queryParameters.Add($"radius={filterRequestDto.Location.Radius.Value.ToString(CultureInfo.InvariantCulture)}");
+            queryParameters.Add($"latitude={filterRequestDto.Location.Latitude.ToString(CultureInfo.InvariantCulture)}");
+            queryParameters.Add($"longitude={filterRequestDto.Location.Longitude.ToString(CultureInfo.InvariantCulture)}");
+            queryParameters.Add($"radius={filterRequestDto.Location.Radius.ToString(CultureInfo.InvariantCulture)}");
         }
     }
 

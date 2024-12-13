@@ -92,7 +92,7 @@ import java.util.stream.Collectors;
 
     // Set location details
     if (latitude != null || longitude != null || radius != null) {
-      filterRequestDto.setLocation(new LocationDto(latitude, longitude, radius));
+      filterRequestDto.setLocation(new LocationDto(longitude, latitude, radius));
     }
     System.out.println("FilterRequestDto: " + filterRequestDto);
     // Pass the FilterRequestDto to the service

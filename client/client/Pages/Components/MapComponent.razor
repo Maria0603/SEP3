@@ -1,7 +1,6 @@
 @using client.DTO.Customer
 @using client.DTO
 @using client.DTO.Business
-@implements IAsyncDisposable
 @inject IJSRuntime JSRuntime
 @inject ILocationService LocationService
 @inject client.Services.IBusinessService BusinessService
@@ -19,15 +18,15 @@
             </div>
             <div class="map-controls">
                 <label>Circle Radius (km):</label>
-                <input type="range" min="1" max="100" step="1" @bind="circleRadius" @bind:after="UpdateCircleRadius"/>
-                <span>@circleRadius kilometers</span>
+                <input type="range" min="1" max="100" step="1" @bind="@FilterRequestDto.Location.Radius" @bind:after="UpdateCircleRadius"/>
+                <span>@FilterRequestDto.Location.Radius kilometers</span>
             </div>
             <button @onclick="ShowMapInfo" class="btn btn-danger mt-3">Search</button>
             @if (!string.IsNullOrEmpty(mapInfo))
             {
                 <div class="map-info mt-3">
-                    <p><strong>Map Center:</strong> Latitude: @mapCenterLatitude, Longitude: @mapCenterLongitude</p>
-                    <p><strong>Circle Radius:</strong> @circleRadius kilometers</p>
+                    <p><strong>Map Center:</strong> Latitude: @FilterRequestDto.Location.Latitude, Longitude: @FilterRequestDto.Location.Longitude</p>
+                    <p><strong>Circle Radius:</strong> @@FilterRequestDto.Location.Radius kilometers</p>
                 </div>
             }
         </div>
@@ -37,34 +36,33 @@
 
 
 @code {
-    private int circleRadius = 10; // Radius in km
-    private IJSObjectReference? module;
+    // private int circleRadius = 10; // Radius in km
+
     private string? result;
     private string? mapInfo;
-    private double mapCenterLatitude = 56.156486066837665;
-    private double mapCenterLongitude = 10.19591121665965;
-    
+
     //private double mapRadius;
 
     private CustomerLocationRequestResponseDto? customerLocation;
-    
-    [Parameter] public FilterRequestDto? FilterRequestDto { get; set; }
+    [Parameter] public IJSObjectReference? Module { get; set; }
+    [Parameter] public FilterRequestDto FilterRequestDto { get; set; }
     [Parameter] public EventCallback OnFilterApply { get; set; }
     [Parameter] public EventCallback ToggleMap { get; set; }
 
     private async Task UpdateCircleRadius()
     {
-        if (module != null)
+        if (Module != null)
         {
-            await module.InvokeVoidAsync("update_circle_radius", circleRadius);
+            await Module.InvokeVoidAsync("update_circle_radius", FilterRequestDto.Location.Radius);
         }
     }
 
+
     private async Task ShowMapInfo()
     {
-        if (module != null)
+        if (Module != null)
         {
-            var resultMap = await module.InvokeAsync<MapCenterAndRadius>("get_map_center_and_radius");
+            var resultMap = await Module.InvokeAsync<MapCenterAndRadius>("get_map_center_and_radius");
             Console.WriteLine(resultMap);
             // mapCenterLatitude = resultMap.Latitude;
             // mapCenterLongitude = resultMap.Longitude;
@@ -75,51 +73,46 @@
                 Latitude = resultMap.Latitude,
                 Longitude = resultMap.Longitude,
                 Radius = resultMap.Radius
-                    
-            }; 
-            
-            mapInfo = $"Center: Latitude {mapCenterLatitude}, Longitude {mapCenterLongitude}. Radius: {circleRadius} km.";
+            };
+
             await OnFilterApply.InvokeAsync();
             await ToggleMap.InvokeAsync();
         }
     }
 
+
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
-            try
-            {
-                await InitializeMap(mapCenterLatitude, mapCenterLongitude, circleRadius);
-                await LoadBusinessesOnMap();
-            }
-            catch (Exception e)
-            {
-                Console.WriteLine($"Error fetching location: {e.Message}");
-            }
-        }
-    }
-    
-    
-    private async Task InitializeMap(double latitude, double longitude, int radius)
-    {
-        if (module != null)
-        {
-            if (latitude != 0 && longitude != 0 && radius != 0) // the customer may not have a location set
-                await module.InvokeVoidAsync("load_map", latitude, longitude, radius);
-            else await module.InvokeVoidAsync("load_map");
-
+            FilterRequestDto.Location ??= new LocationDto()
+                {
+                    Latitude = 56.156486066837665,
+                    Longitude = 10.19591121665965,
+                    Radius = 10
+                };
             
+            await InitializeMap(FilterRequestDto.Location.Latitude, FilterRequestDto.Location.Longitude, FilterRequestDto.Location.Radius);
+            await LoadBusinessesOnMap();
         }
     }
-    
+
+
+    private async Task InitializeMap(double latitude = 56.156486066837665, double longitude = 10.19591121665965, double radius = 10)
+    {
+        if (Module != null)
+        {
+            await Module.InvokeVoidAsync("load_map", latitude, longitude, radius);
+        }
+    }
+
+
     private async Task LoadBusinessesOnMap()
     {
         try
         {
             var businesses = await BusinessService.GetBusinessesAsync();
-            if (module != null && businesses != null)
+            if (Module != null && businesses != null)
             {
                 var jsBusinesses = businesses
                     .Where(b => b.Latitude != null && b.Longitude != null)
@@ -128,10 +121,10 @@
                         name = b.BusinessName,
                         latitude = b.Latitude,
                         longitude = b.Longitude,
-                        imageUrl = HttpClient.BaseAddress +"images/"+b.Logo_path
+                        imageUrl = HttpClient.BaseAddress + "images/" + b.Logo_path
                     });
 
-                await module.InvokeVoidAsync("insertBusinesses", jsBusinesses);
+                await Module.InvokeVoidAsync("insertBusinesses", jsBusinesses);
             }
         }
         catch (Exception ex)
@@ -139,15 +132,7 @@
             Console.WriteLine($"Error loading businesses: {ex.Message}");
         }
     }
-    
-    async ValueTask IAsyncDisposable.DisposeAsync()
-    {
-        if (module != null)
-        {
-            // await module.InvokeVoidAsync("dispose");
-            await module.InvokeVoidAsync("cleanup_map");
-            await module.DisposeAsync();
-        }
-    }
-    
+
+   
+
 }

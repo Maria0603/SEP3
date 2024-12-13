@@ -43,6 +43,11 @@
     <ItemGroup>
       <_ContentIncludedByDefault Remove="wwwroot\_content\Syncfusion.Blazor\scripts\syncfusion-blazor.min.js" />
       <_ContentIncludedByDefault Remove="wwwroot\_content\Syncfusion.Blazor\styles\bootstrap5.css" />
+      <_ContentIncludedByDefault Remove="Layout\Pages\AddFoodBag.razor" />
+      <_ContentIncludedByDefault Remove="Layout\Pages\FilterFoodBags.razor" />
+      <_ContentIncludedByDefault Remove="Layout\Pages\FoodBagCard.razor" />
+      <_ContentIncludedByDefault Remove="Layout\Pages\Home.razor" />
+      <_ContentIncludedByDefault Remove="Layout\Pages\Reservation.razor" />
     </ItemGroup>
 
 </Project>
