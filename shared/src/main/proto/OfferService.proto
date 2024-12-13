@@ -29,6 +29,7 @@ message FilterRequest {
   optional  google.protobuf.Timestamp pickupTimeStart = 4;
   optional  google.protobuf.Timestamp pickupTimeEnd = 5;
   optional Location location = 6;
+  optional string textSearch = 7;
 }
 
 //////////////////////////////////////////////////////////

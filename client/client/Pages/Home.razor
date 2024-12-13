@@ -15,7 +15,7 @@
         <div class="map-icon" @onclick="ToggleMap">
             <i class="bi bi-geo-alt"></i>
         </div>
-        <SearchBarComponent></SearchBarComponent>
+        <SearchBarComponent FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"></SearchBarComponent>
         <div class="filter-icon-bubble" @onclick="ToggleFilters">
             <i class="bi bi-sliders"></i>
         </div>
@@ -80,12 +80,12 @@
     private async Task RetrieveOffersAsync()
     {
         Console.WriteLine("Retrieving offers...");
-        Console.WriteLine("Filtering request:" + FilterRequestDto.Location);
+        Console.WriteLine("Filtering request:" + FilterRequestDto.TextSearch);
         try
         {
             // Call the service to get the offers
             offers = await OfferService.GetOffersAsync(FilterRequestDto);
-
+        
             if (offers != null && offers.Any())
             {
                 foreach (var offer in offers)

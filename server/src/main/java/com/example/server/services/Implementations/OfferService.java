@@ -139,7 +139,7 @@ public List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto) {
                           .setNanos(end.getNano())
                           .build())
   );
-
+  Optional.ofNullable(filterRequestDto.getTextSearch()).ifPresent(req::setTextSearch);
   // Handle location if present
   Optional.ofNullable(filterRequestDto.getLocation()).ifPresent(location -> {
     var locationBuilder = Location.newBuilder();

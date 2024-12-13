@@ -99,6 +99,11 @@ public class OfferService : IOfferService {
             queryParameters.AddRange(filterRequestDto.Categories.Select(category => $"categories={category}"));
         }
 
+        if (filterRequestDto.TextSearch != null)
+        {
+            queryParameters.Add($"textSearch={filterRequestDto.TextSearch}");
+        }
+
         // Console.WriteLine("Location: " + filterRequestDto.Location.ToString()); // Debugging purposes
         // Add location parameters if present
         if (filterRequestDto.Location != null)

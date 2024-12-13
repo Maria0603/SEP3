@@ -80,6 +80,7 @@ import java.util.stream.Collectors;
           @RequestParam(value = "latitude", required = false) Double latitude,
           @RequestParam(value = "longitude", required = false) Double longitude,
           @RequestParam(value = "radius", required = false) Double radius,
+          @RequestParam(value = "textSearch", required = false) String textSearch,
           HttpServletRequest request) {
 
     // Create a FilterRequestDto
@@ -89,6 +90,7 @@ import java.util.stream.Collectors;
     filterRequestDto.setPickupTimeStart(pickupTimeStart);
     filterRequestDto.setPickupTimeEnd(pickupTimeEnd);
     filterRequestDto.setCategories(categories);
+    filterRequestDto.setTextSearch(textSearch);
 
     // Set location details
     if (latitude != null || longitude != null || radius != null) {

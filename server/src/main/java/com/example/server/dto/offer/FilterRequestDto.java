@@ -13,4 +13,5 @@ public class FilterRequestDto {
     private LocalDateTime pickupTimeEnd;
     private List<String> categories;
     private LocationDto location;
+    public String textSearch;
 }

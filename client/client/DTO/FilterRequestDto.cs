@@ -11,6 +11,8 @@ public class FilterRequestDto {
     
     public LocationDto? Location { get; set; }
     
+    public String? TextSearch { get; set; }
+    
     
    
 }
