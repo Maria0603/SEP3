@@ -1,144 +1,44 @@
-﻿@using System.Drawing
-@using client.DTO
-@using client.DTO.Offer
-@using Syncfusion.Blazor.Inputs
-@using Syncfusion.Blazor
-
-
-<div class="search-bar-container">
-    <div class="map-icon" @onclick="ToggleMap">
-        <i class="bi bi-geo-alt"></i>
-    </div>
-    <div class="search-bar">
-        <input class="search-input" placeholder="Search..."/>
-        <div class="search-icon">
-            <i class="bi bi-search"></i>
-        </div>
-    </div>
-    <div class="filter-icon-bubble" @onclick="ToggleFilters">
-        <i class="bi bi-sliders"></i>
+﻿@using client.DTO
+<div class="search-bar">
+    <input
+        class="search-input"
+        placeholder="Search..."
+        value="@FilterRequestDto.TextSearch"
+        @oninput="HandleTextSearchChange" />
+    <div class="search-icon">
+        <i class="bi bi-search"></i>
     </div>
 </div>
-
-
-@if (showMapPopup)
-{
-<MapComponent ToggleMap="ToggleMap"/>
-}
-@if (showFilterPopup)
-{
-<div class="popup-overlay">
-    <div class="popup-window">
-        <div class="popup-header">
-            <h3>Filters</h3>
-            <button class="close-button" @onclick="ToggleFilters">&times;</button>
-        </div>
-        <div class="popup-body">
-            <CategoryPickerComponent SelectedCategories="selectedCategories" SelectedCategoriesChanged="OnSelectedCategoriesChanged"/>
-            <div class="filter-section">
-                <label>Collection Date</label>
-                <div class="date-range">
-                    <InputDate @bind-Value="pickupDateStart" class="form-control" Placeholder="Start Date"/>
-                    <span class="mx-2">to</span>
-                    <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
-                </div>
-            </div>
-
-
-            @* <div class="filter-section"> *@
-            @*     <label>Collection Time</label> *@
-            @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
-            @*     </SfSlider> *@
-            @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
-            @* </div> *@
-
-
-            <div class="filter-section">
-                <label>Price Range</label>
-                <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">
-                </SfSlider>
-                <p>From: @priceRange[0] To: @priceRange[1]</p>
-            </div>
-        </div>
-        <div class="popup-footer">
-            <button class="clear-button" @onclick="ClearFilters">Clear filters</button>
-            <button class="apply-button" @onclick="ApplyFilters">Apply</button>
-        </div>
-    </div>
-</div>
-
-}
 
 @code {
-    [Parameter]
-    public EventCallback<FilterRequestDto> OnFilterApply { get; set; }
-    [Parameter]
-    public EventCallback<FilterRequestDto> OnFilterClear { get; set; }
-    private bool showFilterPopup = false;
-    private bool showMapPopup = false;
-    private int[] priceRange = { 0, 500 };
+    [Parameter] public FilterRequestDto FilterRequestDto { get; set; } = new FilterRequestDto();
+    [Parameter] public EventCallback OnFilterApply { get; set; }
 
-    private int[] timeRange = { 0, 24 };
-    
-    // Map
-    // private Map _map;
-    // private PointF _startAt = new PointF(47.5574007f, 16.3918687f);
-    private IJSObjectReference? module;
-    private string? result;
-    
-    
-    // Date range
-    private DateTime? pickupDateStart { get; set; }= DateTime.Now;
-    private DateTime? pickupDateEnd { get; set; } = DateTime.Now.AddDays(1);
+    private CancellationTokenSource? debounceCts;
 
-    private FilterRequestDto? filterRequestDto;
-    private List<CategoryDto>? selectedCategories = new();
-    
-    
-    
-    private void OnSelectedCategoriesChanged(List<CategoryDto> categories)
+    private async Task HandleTextSearchChange(ChangeEventArgs e)
     {
-        // Handle updated categories
-        selectedCategories = categories;
-    }
+        // Update the TextSearch property in FilterRequestDto
+        FilterRequestDto.TextSearch = e.Value?.ToString();
 
-    private void ToggleFilters()
-    {
-        showFilterPopup = !showFilterPopup;
-    }
+        // Cancel the previous debounce task
+        debounceCts?.Cancel();
+        debounceCts = new CancellationTokenSource();
+        var token = debounceCts.Token;
 
-    private void ToggleMap()
-    {
-        showMapPopup = !showMapPopup;
-        Console.WriteLine("Map Toggled");
-    }
-
-    private async Task ApplyFilters()
-    {
-        showFilterPopup = false;
-        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}");
-        filterRequestDto = new FilterRequestDto
+        try
         {
-            Categories = selectedCategories.Select(c => c.Name).ToList(),
-            MinOfferPrice = priceRange[0],
-            MaxOfferPrice = priceRange[1],
-            PickupTimeStart = pickupDateStart,
-            PickupTimeEnd = pickupDateEnd
-        };
-        Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Start: {pickupDateStart} to {pickupDateEnd}, Categories: {selectedCategories.Select(c => c.Name).ToList()}");
-        await OnFilterApply.InvokeAsync(filterRequestDto);
+            // Wait 300ms before triggering the API call
+            await Task.Delay(300, token);
+
+            if (!token.IsCancellationRequested && OnFilterApply.HasDelegate)
+            {
+                await OnFilterApply.InvokeAsync();
+            }
+        }
+        catch (TaskCanceledException)
+        {
+            // Ignore task cancellations
+        }
     }
-
-    private async Task ClearFilters()
-    {
-        priceRange = new int[] { 0, 100 };
-        timeRange = new int[] { 0, 24 };
-        showFilterPopup = false;
-        await OnFilterClear.InvokeAsync();
-        Console.WriteLine("Filters Cleared");
-    }
-    
-
-
-
 }

@@ -4,6 +4,7 @@ import com.example.sep3.grpc.*;
 import com.example.server.DataServerStub;
 import com.example.server.converters.OfferDtoGrpcConverter;
 import com.example.server.dto.offer.CreateOfferRequestDto;
+import com.example.server.dto.offer.FilterRequestDto;
 import com.example.server.dto.offer.OfferResponseDto;
 import com.example.server.dto.offer.UpdateOfferRequestDto;
 import com.example.server.services.auxServices.IImageStorageService;
@@ -17,6 +18,7 @@ import com.example.server.services.IOfferService;
 
 import java.io.File;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -68,13 +70,19 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 
   }
 
+  // Helper method to convert LocalDateTime to gRPC Timestamp
+//  private Timestamp convertToTimestamp(LocalDateTime dateTime) {
+//    return Timestamp.newBuilder()
+//            .setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC))
+//            .setNanos(dateTime.getNano())
+//            .build();
+//  }
+
   @Override public OfferResponseDto getOfferById(String id)
   {
-    System.out.println("getOfferById method called with id: " + id);
+
     OfferIdRequest request = OfferIdRequest.newBuilder().setId(id).build();
     OfferResponse response = dataServerStub.getOfferById(request);
-
-    System.out.println("Received response from dataServerStub: " + response);
 
     return OfferDtoGrpcConverter.OfferResponseGrpc_To_OfferResponseDto(
         response);
@@ -91,31 +99,69 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
 //  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd, Optional<List<String>> categories, String userId) {
 //    return List.of();
 //  }
-  @Override
-  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
-      Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
-      Optional<String> pickupTimeEnd, Optional<List<String>> categories,
-                                          Optional<String> userId)
-  {
-    var stringConverter = new StringToTimestampConverter();
-    var req = FilterRequest.newBuilder();
+//  @Override
+//  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
+//      Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
+//      Optional<String> pickupTimeEnd, Optional<List<String>> categories,
+//                                          Optional<String> userId)
+//  {
+//    var stringConverter = new StringToTimestampConverter();
+//    var req = FilterRequest.newBuilder();
+//
+//    minOfferPrice.ifPresent(req::setMinOfferPrice);
+//    maxOfferPrice.ifPresent(req::setMaxOfferPrice);
+//    categories.ifPresent(req::addAllCategories);
+//    pickupTimeStart.ifPresent(
+//        s -> req.setPickupTimeStart(stringConverter.convert(s)));
+//    pickupTimeEnd.ifPresent(
+//        s -> req.setPickupTimeEnd(stringConverter.convert(s)));
+//
+//    userId.ifPresent(req::setUserId);
+//
+//    OfferListResponse fullResponse = dataServerStub.getOffers(req.build());
+//    return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
+//    //    return response.getOfferList().stream()
+//    //        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
+//  }
 
-    minOfferPrice.ifPresent(req::setMinOfferPrice);
-    maxOfferPrice.ifPresent(req::setMaxOfferPrice);
-    categories.ifPresent(req::addAllCategories);
-    pickupTimeStart.ifPresent(
-        s -> req.setPickupTimeStart(stringConverter.convert(s)));
-    pickupTimeEnd.ifPresent(
-        s -> req.setPickupTimeEnd(stringConverter.convert(s)));
+@Override
+public List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto) {
+  var req = FilterRequest.newBuilder();
 
-    userId.ifPresent(req::setUserId);
+  // Populate fields directly from FilterRequestDto
+  Optional.ofNullable(filterRequestDto.getMinOfferPrice()).ifPresent(req::setMinOfferPrice);
+  Optional.ofNullable(filterRequestDto.getMaxOfferPrice()).ifPresent(req::setMaxOfferPrice);
+  Optional.ofNullable(filterRequestDto.getCategories()).ifPresent(req::addAllCategories);
+  Optional.ofNullable(filterRequestDto.getPickupTimeStart()).ifPresent(
+          start -> req.setPickupTimeStart(
+                  com.google.protobuf.Timestamp.newBuilder()
+                          .setSeconds(start.toEpochSecond(java.time.ZoneOffset.UTC))
+                          .setNanos(start.getNano())
+                          .build())
+  );
+  Optional.ofNullable(filterRequestDto.getPickupTimeEnd()).ifPresent(
+          end -> req.setPickupTimeEnd(
+                  com.google.protobuf.Timestamp.newBuilder()
+                          .setSeconds(end.toEpochSecond(java.time.ZoneOffset.UTC))
+                          .setNanos(end.getNano())
+                          .build())
+  );
+  Optional.ofNullable(filterRequestDto.getTextSearch()).ifPresent(req::setTextSearch);
+  // Handle location if present
+  Optional.ofNullable(filterRequestDto.getLocation()).ifPresent(location -> {
+    var locationBuilder = Location.newBuilder();
+    Optional.ofNullable(location.getLatitude()).ifPresent(locationBuilder::setLatitude);
+    Optional.ofNullable(location.getLongitude()).ifPresent(locationBuilder::setLongitude);
+    Optional.ofNullable(location.getRadius()).ifPresent(locationBuilder::setRadius);
+    req.setLocation(locationBuilder.build());
+  });
 
-    OfferListResponse fullResponse = dataServerStub.getOffers(req.build());
-    return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
-    //    return response.getOfferList().stream()
-    //        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
-  }
+  // Send gRPC request
+  OfferListResponse fullResponse = dataServerStub.getOffers(req.build());
 
+  // Convert gRPC response to DTOs
+  return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
+}
 
   @Override public OfferResponseDto updateOffer(
       UpdateOfferRequestDto updateOfferRequestDto)

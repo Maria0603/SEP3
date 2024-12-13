@@ -83,6 +83,11 @@ public class DataServerStub
     return businessBlockingStub.registerBusiness(request);
   }
 
+  public BusinessListResponse getBusinesses(EmptyMessage request)
+  {
+    return businessBlockingStub.getBusinesses(request);
+  }
+
   public BusinessResponse getBusinessByEmail(BusinessByEmailRequest request)
   {
     return businessBlockingStub.getBusinessByEmail(request);
@@ -137,4 +142,15 @@ public class DataServerStub
 
     return businessBlockingStub.updateBusinessProfile(request);
   }
+
+  public CustomerResponse updateCustomerProfile(CustomerUpdateRequest request) {
+
+    return customerBlockingStub.updateCustomerProfile(request);
+  }
+
+  public CustomerResponse getCustomerById(IdRequest request)
+  {
+    return customerBlockingStub.getCustomerById(request);
+  }
+  
 }

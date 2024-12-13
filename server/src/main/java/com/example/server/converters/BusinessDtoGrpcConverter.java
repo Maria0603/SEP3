@@ -9,6 +9,7 @@ import com.example.server.dto.business.BusinessInRadiusResponseDto;
 import com.example.server.dto.business.BusinessResponseDto;
 import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
+import com.example.server.dto.offer.LocationDto;
 import com.example.shared.model.UserRole;
 
 public class BusinessDtoGrpcConverter {
@@ -26,12 +27,17 @@ public class BusinessDtoGrpcConverter {
         .setRole(UserRole.BUSINESS.getRoleName()).build();
   }
 
+
+
+
   // Converts BusinessResponse (gRPC) to BusinessResponseDto (DTO)
   public static BusinessResponseDto BusinessResponseGrpc_To_BusinessResponseDto(
-      BusinessResponse response) {
+          BusinessResponse response) {
     BusinessResponseDto dto = new BusinessResponseDto();
     AddressDto addressDto = new AddressDto();
+    LocationDto locationDto = new LocationDto();
 
+    // Map basic fields
     dto.setId(response.getId());
     dto.setEmail(response.getEmail());
     dto.setPhoneNumber(response.getPhoneNumber());
@@ -40,6 +46,7 @@ public class BusinessDtoGrpcConverter {
     dto.setBusinessName(response.getBusinessName());
     dto.setRole(response.getRole());
 
+    // Map address
     addressDto.setStreet(response.getAddress().getStreet());
     addressDto.setNumber(response.getAddress().getNumber());
     addressDto.setCity(response.getAddress().getCity());
@@ -48,6 +55,9 @@ public class BusinessDtoGrpcConverter {
     addressDto.setCountry(response.getAddress().getCountry());
     addressDto.setPostalCode(response.getAddress().getPostalCode());
     dto.setAddress(addressDto);
+
+    dto.setLatitude(response.getLatitude());
+    dto.setLongitude(response.getLongitude());
 
     return dto;
   }

@@ -13,7 +13,31 @@ public class BusinessService : IBusinessService
     {
         this.client = client;
     }
-    
+
+    public async Task<List<BusinessResponseDto>> GetBusinessesAsync()
+    {
+        try
+        {
+            HttpResponseMessage response = await client.GetAsync("businesses");
+            if (response.IsSuccessStatusCode)
+            {
+                string responseContent = await response.Content.ReadAsStringAsync();
+                // Console.WriteLine(responseContent);
+                return JsonSerializer.Deserialize<List<BusinessResponseDto>>(
+                    responseContent,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+                )!;
+            }
+            else
+            {
+                throw new Exception($"API call failed with status code {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error calling API: {ex.Message}");
+        }
+    }
     public async Task<BusinessResponseDto> GetBusinessByIdAsync(string id)
     {
         try

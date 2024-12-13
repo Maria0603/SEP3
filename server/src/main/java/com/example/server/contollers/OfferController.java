@@ -1,10 +1,8 @@
 package com.example.server.contollers;
 
-import com.example.server.dto.offer.CategoryDto;
+import com.example.server.dto.offer.*;
 import com.example.server.security.JWTUtils;
 import com.example.server.services.Implementations.OfferService;
-import com.example.server.dto.offer.CreateOfferRequestDto;
-import com.example.server.dto.offer.OfferResponseDto;
 import com.example.shared.model.Category;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -12,6 +10,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -70,25 +69,37 @@ import java.util.stream.Collectors;
     }
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
-      @RequestParam(required = false) Integer minOfferPrice,
-      @RequestParam(required = false) Integer maxOfferPrice,
-      @RequestParam(required = false) String pickupTimeStart,
-      @RequestParam(required = false) String pickupTimeEnd,
-      @RequestParam(required = false) List<String> categories,
-      HttpServletRequest request)
-  {
-    System.out.println("maxofferprice" + maxOfferPrice);
+  @GetMapping
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
+  public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
+          @RequestParam(value = "minOfferPrice", required = false) Integer minOfferPrice,
+          @RequestParam(value = "maxOfferPrice", required = false) Integer maxOfferPrice,
+          @RequestParam(value = "pickupTimeStart", required = false) LocalDateTime pickupTimeStart,
+          @RequestParam(value = "pickupTimeEnd", required = false) LocalDateTime pickupTimeEnd,
+          @RequestParam(value = "categories", required = false) List<String> categories,
+          @RequestParam(value = "latitude", required = false) Double latitude,
+          @RequestParam(value = "longitude", required = false) Double longitude,
+          @RequestParam(value = "radius", required = false) Double radius,
+          @RequestParam(value = "textSearch", required = false) String textSearch,
+          HttpServletRequest request) {
 
-    String userId = (String) request.getAttribute("userId");
+    // Create a FilterRequestDto
+    FilterRequestDto filterRequestDto = new FilterRequestDto();
+    filterRequestDto.setMinOfferPrice(minOfferPrice);
+    filterRequestDto.setMaxOfferPrice(maxOfferPrice);
+    filterRequestDto.setPickupTimeStart(pickupTimeStart);
+    filterRequestDto.setPickupTimeEnd(pickupTimeEnd);
+    filterRequestDto.setCategories(categories);
+    filterRequestDto.setTextSearch(textSearch);
 
-    System.out.println("Offers for Id **********: " + userId);
+    // Set location details
+    if (latitude != null || longitude != null || radius != null) {
+      filterRequestDto.setLocation(new LocationDto(longitude, latitude, radius));
+    }
+    System.out.println("FilterRequestDto: " + filterRequestDto);
+    // Pass the FilterRequestDto to the service
+    List<OfferResponseDto> response = offerService.getOffers(filterRequestDto);
 
-    var response = offerService.getOffers(Optional.ofNullable(minOfferPrice),
-        Optional.ofNullable(maxOfferPrice),
-        Optional.ofNullable(pickupTimeStart),
-        Optional.ofNullable(pickupTimeEnd), Optional.ofNullable(categories),
-            Optional.ofNullable(userId));
     return ResponseEntity.ok(response);
   }
   @GetMapping("/businessOffer/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getOfferByBusinessId(

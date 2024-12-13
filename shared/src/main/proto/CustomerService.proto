@@ -13,10 +13,13 @@ service CustomerService {
   rpc GetCustomerByEmail(EmailRequestResponse) returns (CustomerResponse);
   rpc UpdateCustomerLocation(CustomerLocationRequest) returns (BusinessesInRadiusResponse);
   rpc GetCustomerLocation(IdRequestResponse) returns (CustomerLocationRequest);
-  rpc GetCustomerById(IdRequestResponse) returns (CustomerResponse);
+  rpc GetCustomerById(IdRequest) returns (CustomerResponse);
+  rpc UpdateCustomerProfile (CustomerUpdateRequest) returns (CustomerResponse);
 }
 
-
+message IdRequest {
+  string id = 1;
+}
 message CustomerResponse {
   string id = 1;
   string email = 2;
@@ -40,6 +43,14 @@ message CustomerLocationRequest {
   double longitude = 2;
   int32 radius = 3;
   string customerId=4;
+}
+message CustomerUpdateRequest{
+
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string phoneNumber = 5;
 }
 
 

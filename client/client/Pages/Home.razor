@@ -3,16 +3,32 @@
 @using client.DTO.Offer
 @using client.Models
 @using client.Pages.Components
+
 @using Microsoft.AspNetCore.Authorization
+@inject IJSRuntime JSRuntime
 @inject client.Services.IOfferService OfferService
 @attribute [Authorize]
 <PageTitle>Home</PageTitle>
 
 
 <div class="search-bar-container">
-    <SearchBarComponent OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
+        <div class="map-icon" @onclick="ToggleMap">
+            <i class="bi bi-geo-alt"></i>
+        </div>
+        <SearchBarComponent FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"></SearchBarComponent>
+        <div class="filter-icon-bubble" @onclick="ToggleFilters">
+            <i class="bi bi-sliders"></i>
+        </div>
 </div>
 
+@if (showMapPopup)
+{
+<MapComponent Module="Module" ToggleMap="ToggleMap" FilterRequestDto="FilterRequestDto" OnFilterApply="OnFilterApply"/>
+}
+@if (showFilterPopup)
+{
+    <FilterComponent ToggleFilters="ToggleFilters" FilterRequestDto="FilterRequestDto"  OnFilterApply="OnFilterApply" OnFilterClear="OnFilterClear"/>
+}
 <div class="container">
     @if (offers == null)
     {
@@ -34,28 +50,49 @@
 
 @code {
     private List<OfferResponseDto>? offers;
+    private bool showFilterPopup = false;
+    private bool showMapPopup = false;
+    private FilterRequestDto FilterRequestDto = new();
+    private IJSObjectReference? Module;
 
 
     protected override async Task OnInitializedAsync()
     {
         // Call the offers retrieval method
-        await RetrieveOffersAsync(null);
+        await RetrieveOffersAsync();
+        Module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
+        var coordinates = await Module.InvokeAsync<LocationDto>("get_user_location");
+        Console.WriteLine("Getting coordinate longitude: " + coordinates.Longitude );
+        Console.WriteLine("Getting coordinates latitude: " + coordinates.Latitude );
+        FilterRequestDto.Location = new LocationDto
+        {
+            Latitude = coordinates.Latitude,
+            Longitude = coordinates.Longitude,
+        };
     }
-
-    private async Task RetrieveOffersAsync(FilterRequestDto? filterRequestDto)
+    // protected override async Task OnAfterRenderAsync(bool firstRender)
+    // {
+    //     if (firstRender)
+    //     {
+    //         
+    //     }
+    // }
+    private async Task RetrieveOffersAsync()
     {
-
+        Console.WriteLine("Retrieving offers...");
+        Console.WriteLine("Filtering request:" + FilterRequestDto.TextSearch);
         try
         {
             // Call the service to get the offers
-            offers = await OfferService.GetOffersAsync(filterRequestDto);
-
+            offers = await OfferService.GetOffersAsync(FilterRequestDto);
+        
             if (offers != null && offers.Any())
             {
                 foreach (var offer in offers)
                 {
                     Console.WriteLine($"Offer ID: {offer.Id}, Name: {offer.Title}, Price: {offer.OfferPrice}: [{offer.ImagePath}]");
                 }
+        
             }
             else
             {
@@ -68,18 +105,30 @@
             Console.WriteLine($"Error fetching offers: {ex.Message}");
             offers = new List<OfferResponseDto>(); // Ensure the UI does not break
         }
+
     }
 
-    public async Task OnFilterApply(FilterRequestDto filterRequestDto)
+    public async Task OnFilterApply()
     {
         // Trigger offer retrieval logic with updated filter criteria
-        await RetrieveOffersAsync(filterRequestDto);
+        await RetrieveOffersAsync();
     }
 
     public async Task OnFilterClear()
     {
         // Get offers without filters
-        await RetrieveOffersAsync(null);
+        // await RetrieveOffersAsync(null);
+    }
+    
+    private void ToggleFilters()
+    {
+        showFilterPopup = !showFilterPopup;
+    }
+
+    private void ToggleMap()
+    {
+        showMapPopup = !showMapPopup;
+        Console.WriteLine("Map Toggled");
     }
 
 

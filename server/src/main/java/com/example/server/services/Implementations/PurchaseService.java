@@ -196,13 +196,13 @@ import java.util.stream.Collectors;
 
   @Override public List<PurchaseResponseDto> getAllPurchases(String userId, String role)
   {
-    System.out.println("getPurchases method called");
+//    System.out.println("getPurchases method called");
     GetPurchaseRequest request = GetPurchaseRequest.newBuilder()
         .setUserId(userId)
         .setRole(role)
         .build();
     PurchaseListResponse response = dataServerStub.getPurchases(request);
-    System.out.println("Received response from dataServerStub: " + response);
+//    System.out.println("Received response from dataServerStub: " + response);
     return response.getPurchasesList().stream()
         .map(PurchaseDtoGrpcConverter::PurchaseResponse_To_PurchaseResponseDto)
         .collect(Collectors.toList());
@@ -210,11 +210,11 @@ import java.util.stream.Collectors;
 
   @Override public PurchaseResponseDto getPurchaseById(String id)
   {
-    System.out.println("getPurchaseById method called with id: " + id);
+//    System.out.println("getPurchaseById method called with id: " + id);
     PurchaseIdRequest request = PurchaseIdRequest.newBuilder().setId(id)
         .build();
     PurchaseResponse response = dataServerStub.getPurchaseById(request);
-    System.out.println("Received response from dataServerStub: " + response);
+//    System.out.println("Received response from dataServerStub: " + response);
     return PurchaseDtoGrpcConverter.PurchaseResponse_To_PurchaseResponseDto(
         response);
   }

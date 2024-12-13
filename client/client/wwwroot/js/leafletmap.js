@@ -2,7 +2,31 @@ let map;
 let donut;
 let marker;
 
-export function load_map(latitude = 56.156486066837665, longitude = 10.19591121665965, radius = 10) {
+export function get_user_location(fallbackCoordinates = {
+    latitude: 56.156486066837665,
+    longitude: 10.19591121665965
+}) {
+    return new Promise((resolve, reject) => {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(
+                (position) => {
+                    const { latitude, longitude } = position.coords;
+                    resolve({ latitude, longitude }); // Resolve with an object
+                },
+                (error) => {
+                    console.error("Geolocation error: ", error);
+                    resolve(fallbackCoordinates); // Use fallback on error
+                }
+            );
+        } else {
+            console.warn("Geolocation is not supported by this browser.");
+            resolve(fallbackCoordinates); // Use fallback if geolocation is not supported
+        }
+    });
+}
+
+
+export function load_map(latitude, longitude, radius) {
     const container = document.getElementById('mapContainer');
     if (!container) {
         console.error("Map container not found!");
@@ -10,28 +34,70 @@ export function load_map(latitude = 56.156486066837665, longitude = 10.195911216
     }
 
     if (map) {
-        cleanup_map()
-        //update_circle_radius(radius);
+        cleanup_map();
+        // update_circle_radius(radius);
     }
 
+    // Initialize the map with provided or default coordinates
+    initialize_map(latitude, longitude, radius);
+}
 
-    // Initialize the map
-    map = L.map('mapContainer').setView([latitude, longitude], 10);
+export function insertBusinesses(businesses) {
+    if (!map) {
+        console.error("Map is not initialized. Please load the map first.");
+        return;
+    }
+
+    businesses.forEach(business => {
+        const {name, latitude, longitude, imageUrl} = business;
+
+        if (latitude == null || longitude == null) {
+            console.warn(`Skipping business "${name}" due to missing coordinates.`);
+            return;
+        }
+
+        // Create a custom icon for the business
+        const iconHtml = `
+            <img 
+                src="${imageUrl}" 
+                style="
+                    width: 40px;
+                    height: 40px;
+                    border-radius: 50%;
+                    border: 2px solid white;
+                    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+                    object-fit: cover;
+                " 
+                onerror="this.onerror=this.src='../images/businessLogoPlaceholder.jpg';"
+                alt="${name || 'Business'}"
+            />
+        `;
+
+        const businessIcon = L.divIcon({
+            html: iconHtml,
+            className: 'custom-icon', // Optional custom class
+            iconSize: [40, 40], // Size of the container
+            iconAnchor: [20, 40], // Anchor point (centered at the bottom)
+            popupAnchor: [0, -40] // Popup position relative to the icon
+        });
+
+        // Create a marker for each business
+        const businessMarker = L.marker([latitude, longitude], {icon: businessIcon})
+            .addTo(map)
+            .bindPopup(`<strong>${name}</strong>`); // Add a popup with the business name
+
+        // console.log(`Added marker for business: ${name}, Lat: ${latitude}, Lng: ${longitude}`);
+    });
+}
+
+function initialize_map(latitude, longitude, radius) {
+    // Initialize the map with the given latitude and longitude
+    map = L.map('mapContainer').setView([latitude, longitude], 12);
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 17,
         minZoom: 5,
     }).addTo(map);
 
-
-    /*
-     // Check if the map has already been initialized
-     if (map) {
-         // If the map is already initialized, just update the center and radius
-         map.setView([latitude, longitude], 10);
-         update_circle_radius(radius);
-         return;
-     }*/
-    
     const geocoder = L.Control.geocoder({defaultMarkGeocode: false}).addTo(map);
     console.log("This message is from the leafletmap.js file");
 

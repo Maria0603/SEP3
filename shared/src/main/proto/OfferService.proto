@@ -29,7 +29,8 @@ message FilterRequest {
   optional int32 maxOfferPrice = 3;
   optional  google.protobuf.Timestamp pickupTimeStart = 4;
   optional  google.protobuf.Timestamp pickupTimeEnd = 5;
-  optional string userId = 6;
+  optional Location location = 6;
+  optional string textSearch = 7;
 }
 
 //////////////////////////////////////////////////////////

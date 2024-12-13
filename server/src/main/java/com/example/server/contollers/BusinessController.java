@@ -3,8 +3,11 @@ package com.example.server.contollers;
 import com.example.server.dto.business.BusinessResponseDto;
 import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.services.IBusinessService;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController @RequestMapping("/businesses") public class BusinessController {
 
@@ -27,11 +30,22 @@ import org.springframework.web.bind.annotation.*;
         }
     }
 
+    @GetMapping
+    public ResponseEntity<List<BusinessResponseDto>> getBusinesses() {
+        try {
+            List<BusinessResponseDto> businesses = businessService.getBusinesses();
+            return ResponseEntity.ok(businesses);
+        }
+        catch (Exception e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @PutMapping
-    public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@RequestBody BusinessUpdateRequestDto updatedProfile) {
+    public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@Valid @RequestBody BusinessUpdateRequestDto updatedProfile) {
 
         // Business logic
-        BusinessResponseDto responseDto = businessService.updateBusinessProfile(updatedProfile);
+        BusinessResponseDto responseDto = businessService.updateAndValidateBusinessProfile(updatedProfile);
         try{
             return ResponseEntity.ok(responseDto);
         }

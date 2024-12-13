@@ -1,26 +1,43 @@
 package com.example.data_server.converters;
 
-import com.example.sep3.grpc.BusinessOnMap;
-import com.example.sep3.grpc.BusinessResponse;
-import com.example.sep3.grpc.RegisterBusinessRequest;
+import com.example.sep3.grpc.*;
 import com.example.shared.converters.AddressConverter;
 import com.example.shared.entities.usersEntities.Business;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
+import java.util.List;
+
 public class BusinessEntityGrpcConverter
 {
 
-  public static BusinessResponse buildBusinessResponse(Business business)
-  {
+  public static BusinessResponse buildBusinessResponse(Business business) {
     return BusinessResponse.newBuilder()
-        .setBusinessName(business.getBusinessName()).setAddress(
-            AddressConverter.convertAddressToGrpcAddress(
-                business.getAddress())).setEmail(business.getEmail())
-        .setCvr(business.getCvr()).setHashedPassword(business.getPassword())
-        .setId(business.getId()).setLogoPath(business.getLogoPath())
-        .setPhoneNumber(business.getPhoneNumber()).setRole(business.getRole())
-        .build();
+            .setBusinessName(business.getBusinessName())
+            .setAddress(AddressConverter.convertAddressToGrpcAddress(business.getAddress()))
+            .setEmail(business.getEmail())
+            .setCvr(business.getCvr())
+            .setHashedPassword(business.getPassword())
+            .setId(business.getId())
+            .setLogoPath(business.getLogoPath())
+            .setPhoneNumber(business.getPhoneNumber())
+            .setRole(business.getRole())
+            .setLatitude(business.getLocation().getY())
+            .setLongitude(business.getLocation().getX())
+            .build();
   }
+
+  public static BusinessListResponse buildBusinessListResponseFromBusinessList(
+          List<Business> businessList) {
+    BusinessListResponse.Builder businessListBuilder = BusinessListResponse.newBuilder();
+
+    for (Business business : businessList) {
+      businessListBuilder.addBusinesses(buildBusinessResponse(business));
+    }
+
+    return businessListBuilder.build();
+  }
+
+
 
   public static Business generateBusinessFromRegisterBusinessRequest(
       RegisterBusinessRequest request)
