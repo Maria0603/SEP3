@@ -86,6 +86,18 @@ import java.util.List;
     {
       throw new IllegalArgumentException(e.getMessage());
     }
+  }  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
+      @PathVariable String id)
+  {
+    try
+    {
+      DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
+      return ResponseEntity.ok(purchase);
+    }
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
+    }
   }
 
 }

@@ -50,6 +50,7 @@ public class DataServerStub
     System.out.println("DataServerStub:" + request);
     return offerBlockingStub.getOffers(request);
   }
+  public OfferListResponse getOffersByBusinessId(OfferIdRequest request){ return offerBlockingStub.getOffersByBusinessId(request); }
 
   // ********************************* PURCHASES *********************************
   public PurchaseResponse createPurchase(CreatePurchaseRequest request)
@@ -60,6 +61,10 @@ public class DataServerStub
   public PurchaseResponse getPurchaseById(PurchaseIdRequest request)
   {
     return purchaseBlockingStub.getPurchaseById(request);
+  }
+  public DetailedPurchaseResponse getDetailedPurchaseById(PurchaseIdRequest request)
+  {
+    return purchaseBlockingStub.getDetailedPurchaseById(request);
   }
 
   public PurchaseListResponse getPurchases(GetPurchaseRequest request)
@@ -137,4 +142,15 @@ public class DataServerStub
 
     return businessBlockingStub.updateBusinessProfile(request);
   }
+
+  public CustomerResponse updateCustomerProfile(CustomerUpdateRequest request) {
+
+    return customerBlockingStub.updateCustomerProfile(request);
+  }
+
+  public CustomerResponse getCustomerById(IdRequest request)
+  {
+    return customerBlockingStub.getCustomerById(request);
+  }
+  
 }

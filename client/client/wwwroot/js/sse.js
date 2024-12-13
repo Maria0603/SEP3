@@ -17,22 +17,3 @@
         eventSource.close();
     };
 }
-/*
-
-// sse.js
-window.connectSSE = (url, dotNetRef, token) => {
-    const eventSource = new EventSource(`${url}?token=${encodeURIComponent(token)}`);
-
-    eventSource.onmessage = function (event) {
-        const notification = event.data;
-        // Call the .NET method to handle the notification
-        dotNetRef.invokeMethodAsync('ReceiveNotification', notification)
-            .catch(err => console.error(err));
-    };
-
-    eventSource.onerror = function (error) {
-        console.error('Error with SSE connection:', error);
-    };
-};
-*/
-

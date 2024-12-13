@@ -12,8 +12,9 @@ import "BaseTypes.proto";
 service PurchaseService {
   rpc CreatePurchase (CreatePurchaseRequest) returns (PurchaseResponse);
   rpc GetPurchaseById (PurchaseIdRequest) returns (PurchaseResponse);
-  rpc GetPurchases (GetPurchaseRequest) returns (PurchaseListResponse);
+  rpc GetDetailedPurchaseById (PurchaseIdRequest) returns (DetailedPurchaseResponse);
   rpc UpdatePurchaseStatus (PurchaseStatusRequest) returns (PurchaseResponse);
+  rpc GetPurchases (GetPurchaseRequest) returns (PurchaseListResponse);
 }
 
 message CreatePurchaseRequest {
@@ -40,6 +41,25 @@ message PurchaseResponse {
   string customerEmail = 10;
   string businessEmail = 11;
   string businessId = 12;
+}
+
+message DetailedPurchaseResponse {
+  string id = 1;
+  string title = 2;
+  string description = 3;
+  int32 numberOfItems = 4;
+  string imagePath = 5;
+  google.protobuf.Timestamp pickupTimeStart = 6;
+  google.protobuf.Timestamp pickupTimeEnd = 7;
+  string customerFirstName = 8;
+  string customerLastName = 9;
+  string customerEmail = 10;
+  string customerPhoneNumber = 11;
+  google.protobuf.Timestamp purchaseTime = 12;
+  string customerId = 13;
+  string businessId = 14;
+  string businessEmail = 15;
+
 }
 
 message PurchaseIdRequest {

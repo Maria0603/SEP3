@@ -1,3 +1,4 @@
+/*
 package com.example.server.services.auxServices.Implementations;
 
 import com.example.server.services.auxServices.IImageStorageService;
@@ -97,7 +98,8 @@ public class ImageStorageStorageService implements IImageStorageService
 
 
   //Good methods, do not delete
-  /*
+  */
+/*
   private String saveImage(byte[] imageBytes, String offerId)
   {
     String pathToImage = null;
@@ -150,6 +152,8 @@ public class ImageStorageStorageService implements IImageStorageService
 
     }
     return null;
-  }*/
+  }*//*
+
 
 }
+*/

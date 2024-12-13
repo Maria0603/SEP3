@@ -17,7 +17,7 @@
 @if (_offer is not null)
 {
 <div class="container">
-    <div class="offer__info">
+    <div class="offer__info" @onclick="() => ShowBusinessDetails(_offer.BusinessId)">
         @* <div class="logo-image"> *@
         @*     <img src="@(HttpClient.BaseAddress + "/images/" + _offer.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image"> *@
         @* </div> *@
@@ -140,6 +140,7 @@ else
         try
         {
             var response = await PurchaseService.CreatePurchaseAsync(request);
+            // TODO fix this URL error
             string sessionUrl = response.Url;
             NavigationManager.NavigateTo(sessionUrl);
         }
@@ -149,5 +150,10 @@ else
         }
     }
 
+    private void ShowBusinessDetails(string businessId)
+    {
+        Console.WriteLine(businessId);
+        NavigationManager.NavigateTo($"business/{businessId}");
+    }
 }
 

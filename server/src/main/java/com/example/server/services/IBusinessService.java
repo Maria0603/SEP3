@@ -9,7 +9,7 @@ import java.util.List;
 public interface IBusinessService {
 
     BusinessResponseDto getBusinessById(String id);
-    BusinessResponseDto updateBusinessProfile(
+    BusinessResponseDto updateAndValidateBusinessProfile(
         BusinessUpdateRequestDto updatedProfile);
     List<BusinessResponseDto> getBusinesses();
 }

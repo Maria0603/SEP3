@@ -96,6 +96,27 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
           new Exception("Error: No purchase with ID " + request.getId()));
     }
   }
+  @Override public void getDetailedPurchaseById(PurchaseIdRequest request,
+      StreamObserver<DetailedPurchaseResponse> responseObserver)
+  {
+    System.out.println("Request for detailed purchase purchase by id");
+
+    Optional<Purchase> purchaseOptional = purchaseRepository.findById(
+        request.getId());
+    if (purchaseOptional.isPresent())
+    {
+      Purchase purchase = purchaseOptional.get();
+      DetailedPurchaseResponse purchaseResponse = generateDetailedPurchaseResponseFromPurchase(
+          purchase);
+      responseObserver.onNext(purchaseResponse);
+      responseObserver.onCompleted();
+    }
+    else
+    {
+      responseObserver.onError(
+          new Exception("Error: No purchase with ID " + request.getId()));
+    }
+  }
 
   @Override public void getPurchases(GetPurchaseRequest request,
       StreamObserver<PurchaseListResponse> responseObserver) {

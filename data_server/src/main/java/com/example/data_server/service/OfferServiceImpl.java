@@ -28,6 +28,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
+import static com.example.data_server.converters.OfferEntityGrpcConverter.buildOfferListResponseFromOffersList;
 
 @GrpcService public class OfferServiceImpl
     extends OfferServiceGrpc.OfferServiceImplBase
@@ -93,7 +94,6 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
       responseObserver.onNext(offerResponse);
       responseObserver.onCompleted();
     }
-
   }
 
   @Override public void updateOffer(OfferResponse request,
@@ -129,7 +129,19 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.*;
         buildOfferListResponseFromOffersList(offersByCategory));
     responseObserver.onCompleted();
   }
+  @Override public void getOffersByBusinessId(OfferIdRequest request,
+        StreamObserver<OfferListResponse> responseObserver){
+    logger.info("Request for offers by id: {}", request);
 
+    List<Offer> offersByBusinessId = offerRepository.findByBusinessId(
+        request.getId());
+
+    System.out.println(offersByBusinessId.getFirst());
+    responseObserver.onNext(
+        buildOfferListResponseFromOffersList(offersByBusinessId));
+    responseObserver.onCompleted();
+
+  }
   @Override public void getOffersByPriceRange(PriceRangeRequest request,
       StreamObserver<OfferListResponse> responseObserver)
   {

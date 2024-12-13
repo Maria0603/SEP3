@@ -1,0 +1,63 @@
+@page "/detailedPurchase/{id}"
+@using client.DTO.Purchase
+@using client.Services.Implementations
+@using Microsoft.AspNetCore.Authorization
+@inject IPurchaseService PurchaseService;
+@inject HttpClient HttpClient
+@if (_purchase != null)
+{
+
+<div class="container">
+    <h3>DetailedPurchase</h3>
+    @if (_purchase.ImagePath != null)
+    {
+        <div class="offer__img"> 
+            <img src="@(HttpClient.BaseAddress + "images/" + _purchase.ImagePath)" onerror="this.src='/images/offerPlaceholder.jpg'" alt="Offer Image"> 
+        </div> 
+    }
+    
+    <div class="wrapper">
+        <div class="row">
+            <div class="col-md-4 col-12">
+                <h4>Offer</h4>
+                                
+            </div>
+            <div class="col-md-8 col-12">
+                <p>Offer Name: <b>@_purchase.Title</b></p>
+                <p>Description: <b>@_purchase.Description</b></p>
+                <p>Number of purchased items: <b>@_purchase.NumberOfPurchasedItems</b></p>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-4 col-12">
+                <h4>Pickup info</h4>
+            </div>
+            <div class="col-md-8 col-12">
+                <p>Pickup time start: <b>@_purchase.PickupTimeStart</b></p>
+                <p>Pickup time end: <b>@_purchase.PickupTimeStart</b></p>
+                <p>Purchased at: <b>@_purchase.purchaseTime</b></p>
+            </div>
+        </div>
+        <div class="row" style="border-bottom: 0px solid black">
+            <div class="col-md-4 col-12">
+                <h4>Customer</h4>
+            </div>
+            <div class="col-md-8 col-12">
+                <p>Full name: <b>@_purchase.CustomerFirstName @_purchase.CustomerLastName</b></p>
+                <p>Phone: <b>@_purchase.CustomerPhoneNumber</b></p>
+            </div>
+        </div>
+    </div>
+ 
+</div>
+}
+@code {
+    [Parameter] public string id { get; set; }
+    private DetailedPurchaseResponseDto? _purchase;
+    
+    protected override async Task OnInitializedAsync()
+    {
+        _purchase = await PurchaseService.GetDetailedPurchaseByIdAsync(id);
+        Console.WriteLine(_purchase.ImagePath);
+    }
+}

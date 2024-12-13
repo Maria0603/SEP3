@@ -1,5 +1,6 @@
 package com.example.server.services;
 
+import com.example.server.dto.purchase.DetailedPurchaseResponseDto;
 import com.example.sep3.grpc.PurchaseListResponse;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
@@ -16,4 +17,5 @@ public interface IPurchaseService
   void refinePurchase(String payload, String sigHeader);
   List<PurchaseResponseDto> getAllPurchases(String userId, String role);
   PurchaseResponseDto getPurchaseById(String id);
+  DetailedPurchaseResponseDto getDetailedPurchaseById(String id);
 }

@@ -14,7 +14,7 @@ import com.example.server.security.UserDetailsService;
 import com.example.server.services.IAuthService;
 import com.example.server.services.auxServices.IImageStorageService;
 import com.example.server.services.auxServices.Implementations.GeocodingService;
-import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
+//import com.example.server.services.auxServices.Implementations.ImageStorageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

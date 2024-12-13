@@ -37,9 +37,9 @@
                 </a>
             }
             <a class="@GetNavItemClass("/notifications")" href="/notifications">
-                <svg class="nav__item--svg @GetNotificationClass()" @onclick="HandleButtonClick" alt="Notifications" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M11.3518 23.2418C12.1929 24.311 13.5142 25 15 25C16.4858 25 17.8071 24.311 18.6482 23.2418C16.2264 23.57 13.7736 23.57 11.3518 23.2418Z" fill="white"/>
-                    <path d="M21.7491 12V12.7041C21.7491 13.5491 21.9903 14.3752 22.4422 15.0782L23.5496 16.8012C24.5612 18.3749 23.789 20.5139 22.0296 21.0116C17.4273 22.3134 12.5727 22.3134 7.97036 21.0116C6.21105 20.5139 5.43882 18.3749 6.45036 16.8012L7.5578 15.0782C8.00972 14.3752 8.25087 13.5491 8.25087 12.7041V12C8.25087 8.13401 11.2726 5 15 5C18.7274 5 21.7491 8.13401 21.7491 12Z" fill="white"/>
+                <svg class="nav__item--svg" @onclick="HandleButtonClick" alt="Notifications" width="30" height="30" viewBox="0 0 30 30" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M11.3518 23.2418C12.1929 24.311 13.5142 25 15 25C16.4858 25 17.8071 24.311 18.6482 23.2418C16.2264 23.57 13.7736 23.57 11.3518 23.2418Z" fill="@FillColor()"/>
+                    <path d="M21.7491 12V12.7041C21.7491 13.5491 21.9903 14.3752 22.4422 15.0782L23.5496 16.8012C24.5612 18.3749 23.789 20.5139 22.0296 21.0116C17.4273 22.3134 12.5727 22.3134 7.97036 21.0116C6.21105 20.5139 5.43882 18.3749 6.45036 16.8012L7.5578 15.0782C8.00972 14.3752 8.25087 13.5491 8.25087 12.7041V12C8.25087 8.13401 11.2726 5 15 5C18.7274 5 21.7491 8.13401 21.7491 12Z" fill="@FillColor()"/>
                 </svg>
 
             </a>
@@ -87,6 +87,11 @@
         return currentUri.Contains(href, StringComparison.OrdinalIgnoreCase) ? "nav__item nav__item--active" : "nav__item";
     }
 
+    private string FillColor()
+    {
+        return hasNewNotifications ? "green" : "white";
+    }
+
 
     // private bool collapseNavMenu = true;
     //
@@ -98,18 +103,15 @@
     // }
     private bool hasNewNotifications = false; // Track new notifications
 
-    private List<string> Notifications = new List<string>();
     private DotNetObjectReference<NavMenu>? DotNetRef;
     private IJSObjectReference? module;
 
     // Simulate getting notifications status from a service or API
     protected override async Task OnInitializedAsync()
     {
-        string storedValue = await JS.InvokeAsync<string>("localStorage.getItem", "hasNewNotifications");
-        
         userHasRole = await AuthStateProvider.GetUserRoleAsync() == "BUSINESS" || await AuthStateProvider.GetUserRoleAsync() == "ADMIN"; 
-        
-        // Safely parse the value and provide a default if null or invalid
+
+        string storedValue = await JS.InvokeAsync<string>("localStorage.getItem", "hasNewNotifications");
         bool.TryParse(storedValue, out hasNewNotifications);
         NavigationManager.LocationChanged += HandleLocationChanged;
         StateHasChanged();
@@ -120,12 +122,7 @@
         // Trigger re-render when the URI changes
         StateHasChanged();
     }
-
-    // Dynamically assign a class based on notification status
-    private string GetNotificationClass()
-    {
-        return hasNewNotifications ? "btn-notification" : "btn-no-notification";
-    }
+    
 
     [JSInvokable]
     public Task ReceiveNotification(string notification) // I'm not doing anything with it 

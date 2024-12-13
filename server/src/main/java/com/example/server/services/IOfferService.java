@@ -20,4 +20,5 @@ public interface IOfferService
 //      Optional<String> userId);
 List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto);
   OfferResponseDto updateOffer(UpdateOfferRequestDto updateOfferRequestDto);
+  List<OfferResponseDto> getOffersByBusinessId(String businessId);
 }

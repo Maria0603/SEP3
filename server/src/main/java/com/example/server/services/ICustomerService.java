@@ -1,15 +1,11 @@
 package com.example.server.services;
 
-import com.example.sep3.grpc.BusinessOnMap;
-import com.example.sep3.grpc.BusinessesInRadiusResponse;
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
 import com.example.server.dto.customer.CustomerLocationRequestResponseDto;
+import com.example.server.dto.customer.CustomerResponseDto;
+import com.example.server.dto.customer.CustomerUpdateRequestDto;
 
-import java.util.ArrayList;
 import java.util.List;
-
-import static com.example.server.converters.BusinessDtoGrpcConverter.generateBusinessInRadiusResponseDtoFromBusinessOnMap;
-import static com.example.server.converters.CustomerDtoGrpcConverter.generateCustomerLocationRequestFromCustomerLocationRequestDto;
 
 public interface ICustomerService
 {
@@ -17,4 +13,7 @@ public interface ICustomerService
       CustomerLocationRequestResponseDto request, String userId);
   List<BusinessInRadiusResponseDto> getBusinessesInRadius(String userId);
   CustomerLocationRequestResponseDto getCustomerLocation(String userId);
+  CustomerResponseDto updateCustomerProfile(CustomerUpdateRequestDto updatedProfile);
+  CustomerResponseDto getCustomerById(String id);
+ 
 }
