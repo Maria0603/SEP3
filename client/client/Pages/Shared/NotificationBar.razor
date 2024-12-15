@@ -10,11 +10,15 @@
             <div class="notification-item" @onclick="() => NavigateToDetail(notification.SubjectId)">
                 @* <img src="@GetLogo(notification.Type)" alt="@notification.Type" class="logo"/> *@
                 <div class="notification-details">
-                    <strong>@notification.UserRole</strong>
+                    <strong class="notification-header">@notification.UserRole</strong>
                     <div class="content">@notification.Content</div>
                     <div class="time">@GetTimeAgo(notification.Timestamp)</div>
                 </div>
             </div>
+        }
+        @if(notifications.Count == 0)
+        {
+            <p>No notifications available.</p>
         }
     </div>
 </div>
@@ -27,18 +31,26 @@
     protected override async Task OnInitializedAsync()
     {
         notifications = await NotificationService.GetNotifications();
+        Console.WriteLine("Notifications count: " +notifications.Count);
     }
 
     // Helper to format time ago
     private string GetTimeAgo(DateTime timestamp)
     {
-        var timeSpan = DateTime.UtcNow - timestamp;
+        Console.WriteLine("Timestamp: " + timestamp);
+        // Ensure everything is compared in UTC+1 (add 1 hour to UTC)
+        var localTime = timestamp.ToUniversalTime(); 
+        var currentTime = DateTime.UtcNow;
+
+        var timeSpan = currentTime - localTime;
+
         if (timeSpan.TotalMinutes < 60)
             return $"{(int)timeSpan.TotalMinutes}m";
         if (timeSpan.TotalHours < 24)
             return $"{(int)timeSpan.TotalHours}h";
         return $"{(int)timeSpan.TotalDays}d";
     }
+
     
     private void NavigateToDetail(string subjectId)
     {
