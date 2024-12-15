@@ -9,6 +9,7 @@
     align-items: center;
     gap: 1rem;
     z-index: -5;
+    
 }
 .nav__item{
     list-style: none;
@@ -16,6 +17,7 @@
     height: 3rem;
     position: relative;
     display: inline-block;
+    
 }
 .nav__item--svg{
     /*width: ;*/
@@ -47,9 +49,21 @@
     transform: translate(-50%) scale(1);
     
 }
+.nav__notification{
+    position: relative;
+}
 
 .nav__logo{
     margin-right: auto;
+}
+.notification-dot {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    width: 10px;
+    height: 10px;
+    background-color: #00b6ff;
+    border-radius: 50%;
 }
 
 

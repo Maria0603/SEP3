@@ -1,0 +1,48 @@
+@using client.DTO.Notification
+@inject INotificationService NotificationService
+@inject NavigationManager NavigationManager
+
+<div class="notifications-container">
+    <h3 class="notifications-header">Notifications</h3>
+    <div class="notifications-list">
+        @foreach (var notification in notifications)
+        {
+            <div class="notification-item" @onclick="() => NavigateToDetail(notification.SubjectId)">
+                @* <img src="@GetLogo(notification.Type)" alt="@notification.Type" class="logo"/> *@
+                <div class="notification-details">
+                    <strong>@notification.UserRole</strong>
+                    <div class="content">@notification.Content</div>
+                    <div class="time">@GetTimeAgo(notification.Timestamp)</div>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@code {
+
+    // List of notifications (mock data for now, replace with API call later)
+    private List<NotificationResponseDto> notifications = new();
+    
+    protected override async Task OnInitializedAsync()
+    {
+        notifications = await NotificationService.GetNotifications();
+    }
+
+    // Helper to format time ago
+    private string GetTimeAgo(DateTime timestamp)
+    {
+        var timeSpan = DateTime.UtcNow - timestamp;
+        if (timeSpan.TotalMinutes < 60)
+            return $"{(int)timeSpan.TotalMinutes}m";
+        if (timeSpan.TotalHours < 24)
+            return $"{(int)timeSpan.TotalHours}h";
+        return $"{(int)timeSpan.TotalDays}d";
+    }
+    
+    private void NavigateToDetail(string subjectId)
+    {
+        // Navigate to detailedPurchase/{id}
+        NavigationManager.NavigateTo($"/detailedPurchase/{subjectId}");
+    }
+}
