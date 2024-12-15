@@ -137,23 +137,29 @@
 
     private DotNetObjectReference<NavMenu>? DotNetRef;
     private IJSObjectReference? module;
+    
+    private async Task UpdateUserRoleAsync()
+    {
+        userHasRole = await AuthStateProvider.GetUserRoleAsync() == "BUSINESS" || await AuthStateProvider.GetUserRoleAsync() == "ADMIN";
+        StateHasChanged();
+    }
 
     // Simulate getting notifications status from a service or API
     protected override async Task OnInitializedAsync()
     {
-        userHasRole = await AuthStateProvider.GetUserRoleAsync() == "BUSINESS" || await AuthStateProvider.GetUserRoleAsync() == "ADMIN"; 
-
+        await UpdateUserRoleAsync();
         string storedValue = await JS.InvokeAsync<string>("localStorage.getItem", "hasNewNotifications");
         bool.TryParse(storedValue, out hasNewNotifications);
         NavigationManager.LocationChanged += HandleLocationChanged;
         StateHasChanged();
     }
-
-    private void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
+    private async void HandleLocationChanged(object? sender, LocationChangedEventArgs e)
     {
-        // Trigger re-render when the URI changes
+        // Trigger role re-evaluation on location change
+        await UpdateUserRoleAsync();
         StateHasChanged();
     }
+    
     
 
     [JSInvokable]
