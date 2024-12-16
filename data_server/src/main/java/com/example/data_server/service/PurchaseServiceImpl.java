@@ -101,11 +101,11 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
   {
     System.out.println("Request for detailed purchase purchase by id");
 
-    Optional<Purchase> purchaseOptional = purchaseRepository.findById(
+    List<Purchase> purchaseOptional = purchaseRepository.findByOfferId(
         request.getId());
-    if (purchaseOptional.isPresent())
+    if (!purchaseOptional.isEmpty())
     {
-      Purchase purchase = purchaseOptional.get();
+      Purchase purchase = purchaseOptional.getFirst();
       DetailedPurchaseResponse purchaseResponse = generateDetailedPurchaseResponseFromPurchase(
           purchase);
       responseObserver.onNext(purchaseResponse);
@@ -178,6 +178,7 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
+
 
   private void getAllPurchases(
       StreamObserver<PurchaseListResponse> responseObserver) {
