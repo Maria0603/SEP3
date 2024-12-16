@@ -30,7 +30,7 @@ public class CustomerService : ICustomerService
             }
             else
             {
-                throw new Exception($"API call failed with status code {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+                throw new Exception($"API call failed with status code : {await response.Content.ReadAsStringAsync()}");
             }
         }
         catch (Exception ex)
@@ -55,12 +55,12 @@ public class CustomerService : ICustomerService
             }
             else
             {
-                throw new Exception($"API call failed with status code {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+                throw new Exception($": {await response.Content.ReadAsStringAsync()}");
             }
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error calling API: {ex.Message}");
+            throw new Exception($"{ex.Message}");
         }
     }
 }
