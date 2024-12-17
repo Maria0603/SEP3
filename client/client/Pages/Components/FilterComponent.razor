@@ -58,6 +58,24 @@
     private FilterRequestDto? filterRequestDto;
     private List<CategoryDto>? selectedCategories = new();
 
+    protected override async Task OnInitializedAsync()
+    {
+        pickupDateEnd = FilterRequestDto.PickupTimeEnd;
+        pickupDateStart = FilterRequestDto.PickupTimeStart;
+        if(FilterRequestDto.Categories != null)
+        {
+            selectedCategories = FilterRequestDto.Categories.Select(c => new CategoryDto { Name = c }).ToList();
+        }
+        if (FilterRequestDto.MinOfferPrice != null || FilterRequestDto.MaxOfferPrice != null)
+        {
+            priceRange = new int[] 
+            { 
+                FilterRequestDto.MinOfferPrice ?? 0, 
+                FilterRequestDto.MaxOfferPrice ?? 500 
+            };
+        }
+    }
+
     private async Task ApplyFilters()
     {
         showFilterPopup = false;

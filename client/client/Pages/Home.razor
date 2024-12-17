@@ -58,16 +58,18 @@
     protected override async Task OnInitializedAsync()
     {
         // Call the offers retrieval method
-        await RetrieveOffersAsync();
+       
         Module = await JSRuntime.InvokeAsync<IJSObjectReference>("import", "./js/leafletmap.js");
         var coordinates = await Module.InvokeAsync<LocationDto>("get_user_location");
-        Console.WriteLine("Getting coordinate longitude: " + coordinates.Longitude );
-        Console.WriteLine("Getting coordinates latitude: " + coordinates.Latitude );
+        // Console.WriteLine("Getting coordinate longitude: " + coordinates.Longitude );
+        // Console.WriteLine("Getting coordinates latitude: " + coordinates.Latitude );
         FilterRequestDto.Location = new LocationDto
         {
             Latitude = coordinates.Latitude,
             Longitude = coordinates.Longitude,
         };
+        
+        await RetrieveOffersAsync();
     }
     // protected override async Task OnAfterRenderAsync(bool firstRender)
     // {
