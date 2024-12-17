@@ -69,7 +69,9 @@ public class BusinessService implements IBusinessService {
         System.out.println("Email: " + updatedProfile.getEmail());
         System.out.println("Phone Number: " + updatedProfile.getPhoneNumber());
 
+        if(updatedProfile.getImage() != null){
         imageStorageService.updateImage(updatedProfile.getImageName(), updatedProfile.getImage());
+        }
         //System.out.println("Logo Path: " + updatedProfile.getLogoPath());
 
 

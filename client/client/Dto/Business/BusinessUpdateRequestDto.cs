@@ -7,7 +7,5 @@ public class BusinessUpdateRequestDto
     public string PhoneNumber { get; set; }
     public string ImageName { get; set; }
     public byte[] Image { get; set; }
-    
-    
     public string BusinessName { get; set; }
 }
