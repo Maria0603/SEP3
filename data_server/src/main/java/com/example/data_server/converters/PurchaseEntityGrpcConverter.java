@@ -45,10 +45,10 @@ public class PurchaseEntityGrpcConverter
         .setImagePath(purchase.getOffer().getImagePath())
         .setPickupTimeStart(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                purchase.getPurchaseTime()))
+                purchase.getOffer().getPickupTimeStart()))
         .setPickupTimeEnd(
             DateTimeConverter.convertLocalDateTime_To_ProtoTimestamp(
-                purchase.getPurchaseTime()))
+                purchase.getOffer().getPickupTimeEnd()))
         .setCustomerFirstName(purchase.getCustomer().getFirstName())
         .setCustomerLastName(purchase.getCustomer().getLastName())
         .setCustomerEmail(purchase.getCustomer().getEmail())
