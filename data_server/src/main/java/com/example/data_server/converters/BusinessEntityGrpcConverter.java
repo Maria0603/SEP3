@@ -2,7 +2,7 @@ package com.example.data_server.converters;
 
 import com.example.sep3.grpc.*;
 import com.example.shared.converters.AddressConverter;
-import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.userEntities.Business;
 import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 
 import java.util.List;

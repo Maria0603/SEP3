@@ -1,6 +1,6 @@
 package com.example.server.controllers;
 
-import com.example.server.dto.notifications.NotificationResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 import com.example.server.security.JWTUtils;
 import com.example.server.services.INotificationService;
 import com.example.server.services.auxServices.IEventService;

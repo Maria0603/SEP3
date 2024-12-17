@@ -2,8 +2,8 @@ package com.example.data_server.service;
 
 import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.repository.CustomerRepository;
-import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.entities.usersEntities.Customer;
+import com.example.shared.entities.userEntities.Business;
+import com.example.shared.entities.userEntities.Customer;
 import com.example.sep3.grpc.*;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;

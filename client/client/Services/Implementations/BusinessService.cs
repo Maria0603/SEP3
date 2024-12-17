@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using client.DTO.Business;
+using client.Dto.Business;
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Text.Json;

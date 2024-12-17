@@ -1,4 +1,4 @@
-﻿using client.DTO.Customer;
+﻿using client.Dto.Customer;
 
 namespace client.Services;
 

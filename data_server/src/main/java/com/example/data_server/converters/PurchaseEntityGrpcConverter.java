@@ -7,13 +7,12 @@ import com.example.sep3.grpc.PurchaseResponse;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
 import com.example.shared.entities.domainEntities.Purchase;
-import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.entities.usersEntities.Customer;
+import com.example.shared.entities.userEntities.Business;
+import com.example.shared.entities.userEntities.Customer;
 import com.example.shared.model.PurchaseStatus;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 public class PurchaseEntityGrpcConverter
 {

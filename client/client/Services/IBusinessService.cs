@@ -1,4 +1,4 @@
-using client.DTO.Business;
+using client.Dto.Business;
 
 namespace client.Services;
 

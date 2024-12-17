@@ -1,7 +1,7 @@
 using System.Net.Http;
 using System.Net.Http.Json;
 using System.Text.Json;
-using client.DTO.Customer;
+using client.Dto.Customer;
 
 namespace client.Services.Implementations;
 

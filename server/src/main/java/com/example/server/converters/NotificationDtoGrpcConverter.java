@@ -2,9 +2,7 @@ package com.example.server.converters;
 
 import com.example.sep3.grpc.NotificationListResponse;
 import com.example.sep3.grpc.NotificationRequestResponse;
-import com.example.sep3.grpc.OfferListResponse;
-import com.example.server.dto.notifications.NotificationResponseDto;
-import com.example.server.dto.offer.OfferResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 import com.example.shared.converters.DateTimeConverter;
 
 import java.util.List;

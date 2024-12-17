@@ -3,7 +3,7 @@ package com.example.server.services.Implementations;
 import com.example.sep3.grpc.NotificationsRequest;
 import com.example.server.DataServerStub;
 import com.example.server.converters.NotificationDtoGrpcConverter;
-import com.example.server.dto.notifications.NotificationResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 import com.example.server.services.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

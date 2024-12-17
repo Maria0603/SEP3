@@ -6,7 +6,7 @@ import com.example.server.config.RestTemplateConfig;
 import com.example.server.converters.NotificationDtoGrpcConverter;
 import com.example.server.converters.PurchaseDtoGrpcConverter;
 import com.example.server.dto.purchase.DetailedPurchaseResponseDto;
-import com.example.server.dto.notifications.NotificationResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;

@@ -5,8 +5,8 @@ import com.example.data_server.repository.BusinessRepository;
 import com.example.data_server.repository.CustomerRepository;
 import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
-import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.entities.usersEntities.Customer;
+import com.example.shared.entities.userEntities.Business;
+import com.example.shared.entities.userEntities.Customer;
 import io.grpc.Status;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -14,7 +14,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
 
