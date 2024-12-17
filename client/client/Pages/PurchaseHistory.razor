@@ -1,5 +1,6 @@
 ﻿@page "/purchases"
 @using BlazorBootstrap
+@using client.DTO.Offer
 @using client.DTO.Purchase
 @using Microsoft.AspNetCore.Authorization
 @inject IPurchaseService purchaseService
@@ -20,7 +21,7 @@
 
     <GridColumns>
         <GridColumn TItem="PurchaseItem" HeaderText="Id" PropertyName="Id" SortKeySelector="item => item.Id">
-            <a href="@($"/offers/{context.Id}")">@context.Id</a>
+            <a href="@($"/detailedPurchase/{context.Id}")">@context.Id</a>
         </GridColumn>
         <GridColumn TItem="PurchaseItem" HeaderText="Title" PropertyName="Title" SortKeySelector="item => item.Title">
             @context.Title
@@ -60,7 +61,7 @@
 
         return await Task.FromResult(request.ApplyTo(purchaseItems));
     }
-
+    
     protected class PurchaseItem {
         public string Id { get; set; }
         public string Title { get; set; } = string.Empty;
