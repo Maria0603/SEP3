@@ -1,4 +1,4 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
 
 import com.example.server.dto.notifications.NotificationResponseDto;
 import com.example.server.security.JWTUtils;

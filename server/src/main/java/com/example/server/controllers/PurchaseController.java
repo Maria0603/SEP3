@@ -1,4 +1,4 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
 
 import com.example.server.dto.purchase.*;
 import com.example.server.security.JWTUtils;
@@ -87,17 +87,17 @@ import java.util.List;
       throw new IllegalArgumentException(e.getMessage());
     }
   }  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
-      @PathVariable String id)
+    @PathVariable String id)
+{
+  try
   {
-    try
-    {
-      DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
-      return ResponseEntity.ok(purchase);
-    }
-    catch (Exception e)
-    {
-      throw new IllegalArgumentException(e.getMessage());
-    }
+    DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
+    return ResponseEntity.ok(purchase);
   }
+  catch (Exception e)
+  {
+    throw new IllegalArgumentException(e.getMessage());
+  }
+}
 
 }

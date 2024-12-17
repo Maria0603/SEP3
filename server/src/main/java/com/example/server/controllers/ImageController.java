@@ -1,4 +1,4 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
 
 import com.azure.storage.blob.BlobClient;
 import com.azure.storage.blob.BlobContainerClient;
@@ -30,8 +30,8 @@ public class ImageController
 
   public ImageController(AzureBlobStorageConfig azureBlobStorageConfig) {
     BlobServiceClient blobServiceClient = new BlobServiceClientBuilder()
-            .connectionString(azureBlobStorageConfig.getConnectionString())
-            .buildClient();
+        .connectionString(azureBlobStorageConfig.getConnectionString())
+        .buildClient();
     this.blobContainerClient = blobServiceClient.getBlobContainerClient(azureBlobStorageConfig.getContainerName());
   }
 
@@ -45,9 +45,9 @@ public class ImageController
       byte[] content = outputStream.toByteArray();
 
       return ResponseEntity.ok()
-              .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + blobName)
-              .contentType(MediaType.IMAGE_JPEG) // Adjust based on image type
-              .body(content);
+          .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=" + blobName)
+          .contentType(MediaType.IMAGE_JPEG) // Adjust based on image type
+          .body(content);
     } catch (Exception e) {
       return ResponseEntity.notFound().build();
     }

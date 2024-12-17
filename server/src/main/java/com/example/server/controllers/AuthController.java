@@ -1,4 +1,4 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
 
 import com.example.server.dto.auth.CredentialsResponseDto;
 import com.example.server.dto.auth.LoginRequestDto;
@@ -26,7 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
   }
 
   @PostMapping("/registration/customer") public ResponseEntity<CredentialsResponseDto> registerCustomer(
-          @Valid @RequestBody RegisterCustomerRequestDto registerRequest)
+      @Valid @RequestBody RegisterCustomerRequestDto registerRequest)
   {
     System.out.println("Request for register customer in controller");
     return ResponseEntity.ok(authService.registerCustomer(registerRequest));

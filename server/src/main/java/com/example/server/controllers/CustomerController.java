@@ -1,4 +1,5 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
+
 
 import com.example.server.dto.business.BusinessInRadiusResponseDto;
 import com.example.server.dto.customer.CustomerLocationRequestResponseDto;
@@ -29,16 +30,16 @@ import java.util.stream.Collectors;
     this.customerService = customerService;
   }
   @GetMapping("/{id}") public ResponseEntity<CustomerResponseDto> getCustomerById(
-    @PathVariable String id)
-{
-  try {
-    CustomerResponseDto customer = customerService.getCustomerById(id);
-    return ResponseEntity.ok(customer);
+      @PathVariable String id)
+  {
+    try {
+      CustomerResponseDto customer = customerService.getCustomerById(id);
+      return ResponseEntity.ok(customer);
+    }
+    catch (Exception e) {
+      return ResponseEntity.notFound().build();
+    }
   }
-  catch (Exception e) {
-    return ResponseEntity.notFound().build();
-  }
-}
 
   @PostMapping("/location") public ResponseEntity<List<BusinessInRadiusResponseDto>> updateCustomerLocation(
       @RequestBody CustomerLocationRequestResponseDto dto, HttpServletRequest request)

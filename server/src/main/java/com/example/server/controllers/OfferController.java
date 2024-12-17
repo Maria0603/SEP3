@@ -1,4 +1,4 @@
-package com.example.server.contollers;
+package com.example.server.controllers;
 
 import com.example.server.dto.offer.*;
 import com.example.server.security.JWTUtils;
@@ -50,9 +50,9 @@ import java.util.stream.Collectors;
   @GetMapping("/categories")
   public List<CategoryDto> getCategories() {
     return List.of(Category.values())
-            .stream()
-            .map(category -> new CategoryDto(category.getCategoryName(), category.getDirectoryName()))
-            .collect(Collectors.toList());
+        .stream()
+        .map(category -> new CategoryDto(category.getCategoryName(), category.getDirectoryName()))
+        .collect(Collectors.toList());
   }
 
   @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
@@ -72,16 +72,16 @@ import java.util.stream.Collectors;
   @GetMapping
   @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
   public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
-          @RequestParam(value = "minOfferPrice", required = false) Integer minOfferPrice,
-          @RequestParam(value = "maxOfferPrice", required = false) Integer maxOfferPrice,
-          @RequestParam(value = "pickupTimeStart", required = false) LocalDateTime pickupTimeStart,
-          @RequestParam(value = "pickupTimeEnd", required = false) LocalDateTime pickupTimeEnd,
-          @RequestParam(value = "categories", required = false) List<String> categories,
-          @RequestParam(value = "latitude", required = false) Double latitude,
-          @RequestParam(value = "longitude", required = false) Double longitude,
-          @RequestParam(value = "radius", required = false) Double radius,
-          @RequestParam(value = "textSearch", required = false) String textSearch,
-          HttpServletRequest request) {
+      @RequestParam(value = "minOfferPrice", required = false) Integer minOfferPrice,
+      @RequestParam(value = "maxOfferPrice", required = false) Integer maxOfferPrice,
+      @RequestParam(value = "pickupTimeStart", required = false) LocalDateTime pickupTimeStart,
+      @RequestParam(value = "pickupTimeEnd", required = false) LocalDateTime pickupTimeEnd,
+      @RequestParam(value = "categories", required = false) List<String> categories,
+      @RequestParam(value = "latitude", required = false) Double latitude,
+      @RequestParam(value = "longitude", required = false) Double longitude,
+      @RequestParam(value = "radius", required = false) Double radius,
+      @RequestParam(value = "textSearch", required = false) String textSearch,
+      HttpServletRequest request) {
 
     // Create a FilterRequestDto
     FilterRequestDto filterRequestDto = new FilterRequestDto();
@@ -103,7 +103,7 @@ import java.util.stream.Collectors;
     return ResponseEntity.ok(response);
   }
   @GetMapping("/businessOffer/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getOfferByBusinessId(
-          @PathVariable String id)
+      @PathVariable String id)
   {
     try
     {
@@ -116,3 +116,4 @@ import java.util.stream.Collectors;
     }
   }
 }
+
