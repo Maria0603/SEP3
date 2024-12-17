@@ -2,8 +2,8 @@
 using System.Net.Http.Json;
 using System.Text;
 using System.Text.Json;
-using client.DTO;
-using client.DTO.Offer;
+using client.Dto;
+using client.Dto.Offer;
 using client.Pages;
 using Microsoft.AspNetCore.Components.Sections;
 using JsonSerializer = System.Text.Json.JsonSerializer;

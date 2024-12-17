@@ -6,7 +6,7 @@ import com.example.server.config.RestTemplateConfig;
 import com.example.server.converters.NotificationDtoGrpcConverter;
 import com.example.server.converters.PurchaseDtoGrpcConverter;
 import com.example.server.dto.purchase.DetailedPurchaseResponseDto;
-import com.example.server.dto.notifications.NotificationResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
 import com.example.server.dto.purchase.CreatePurchaseSessionResponseDto;
@@ -81,7 +81,7 @@ import java.util.stream.Collectors;
       Map<String, Object> sessionParams = new HashMap<>();
       sessionParams.put("payment_method_types", List.of("card"));
       sessionParams.put("mode", "payment");
-      sessionParams.put("success_url", successUrl);
+      sessionParams.put("success_url", getDynamicSuccessUrl(requestDto.getOfferId())); // Dynamically assigning id to url in properties
       sessionParams.put("cancel_url", cancelUrl);
       sessionParams.put("line_items", List.of(Map.of("price_data",
           Map.of("currency", "dkk", "product_data", Map.of("name", "Offer"),
@@ -235,7 +235,9 @@ import java.util.stream.Collectors;
 
     dataServerStub.updatePurchaseStatus(updateRequest);
   }
-
+  private String getDynamicSuccessUrl(String id) {
+    return successUrl.replace("{id}", id);
+  }
 }
 
 

@@ -1,7 +1,7 @@
 ﻿using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Text.Json;
-using client.DTO.Auth;
+using client.Dto.Auth;
 
 namespace client.Services.Implementations;
 

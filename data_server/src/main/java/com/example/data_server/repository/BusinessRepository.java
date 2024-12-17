@@ -1,6 +1,6 @@
 package com.example.data_server.repository;
 
-import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.userEntities.Business;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 

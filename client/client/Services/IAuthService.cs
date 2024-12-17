@@ -1,4 +1,4 @@
-﻿using client.DTO.Auth;
+﻿using client.Dto.Auth;
 
 namespace client.Services;
 

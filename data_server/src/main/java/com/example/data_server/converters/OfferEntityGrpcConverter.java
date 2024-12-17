@@ -6,13 +6,12 @@ import com.example.sep3.grpc.OfferResponse;
 import com.example.shared.converters.AddressConverter;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
-import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.userEntities.Business;
 import com.example.shared.model.OfferStatus;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 public class OfferEntityGrpcConverter
 {

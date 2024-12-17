@@ -36,20 +36,28 @@ public class BusinessUpdateRequestDto {
 
   private String id;
 
+  private byte[] image; // Image in bytes
+  private String imageName; // Name of the image file
+
+
   public static BusinessUpdateRequest validateAndConvert(BusinessUpdateRequestDto requestDto) {
     // Validate the DTO programmatically if needed
     if (requestDto.getBusinessName() == null || requestDto.getBusinessName().isEmpty()) {
       throw new IllegalArgumentException("Business name cannot be empty.");
     }
+    if (requestDto.getImage() != null && requestDto.getImageName() == null) {
+      throw new IllegalArgumentException("Image name must be provided if image is included.");
+    }
 
     // Proceed with conversion
-    return BusinessUpdateRequest.newBuilder()
-        .setId(requestDto.getId())
-        .setBusinessName(requestDto.getBusinessName())
-        .setEmail(requestDto.getEmail())
-        .setPhoneNumber(requestDto.getPhoneNumber())
-        .build();
+    BusinessUpdateRequest.Builder builder = BusinessUpdateRequest.newBuilder()
+            .setId(requestDto.getId())
+            .setBusinessName(requestDto.getBusinessName())
+            .setEmail(requestDto.getEmail())
+            .setPhoneNumber(requestDto.getPhoneNumber());
+
+
+    return builder.build();
   }
-
-
 }
+

@@ -1,6 +1,6 @@
 package com.example.shared.entities.domainEntities;
 
-import com.example.shared.entities.usersEntities.Business;
+import com.example.shared.entities.userEntities.Business;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 import org.springframework.data.mongodb.core.mapping.Document;

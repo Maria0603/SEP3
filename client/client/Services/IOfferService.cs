@@ -1,5 +1,5 @@
-﻿using client.DTO;
-using client.DTO.Offer;
+﻿using client.Dto;
+using client.Dto.Offer;
 using client.Pages;
 
 namespace client.Services;

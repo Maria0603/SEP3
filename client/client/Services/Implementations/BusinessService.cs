@@ -1,5 +1,5 @@
 using System.Net.Http.Json;
-using client.DTO.Business;
+using client.Dto.Business;
 
 using JsonSerializer = System.Text.Json.JsonSerializer;
 using System.Text.Json;
@@ -30,12 +30,12 @@ public class BusinessService : IBusinessService
             }
             else
             {
-                throw new Exception($"API call failed with status code {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+                throw new Exception($": {await response.Content.ReadAsStringAsync()}");
             }
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error calling API: {ex.Message}");
+            throw new Exception($"{ex.Message}");
         }
     }
     public async Task<BusinessResponseDto> GetBusinessByIdAsync(string id)
@@ -79,12 +79,12 @@ public class BusinessService : IBusinessService
             }
             else
             {
-                throw new Exception($"API call failed with status code {response.StatusCode}: {await response.Content.ReadAsStringAsync()}");
+                throw new Exception($": {await response.Content.ReadAsStringAsync()}");
             }
         }
         catch (Exception ex)
         {
-            throw new Exception($"Error calling API: {ex.Message}");
+            throw new Exception($"{ex.Message}");
         }
     }
 }

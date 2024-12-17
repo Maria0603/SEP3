@@ -7,8 +7,7 @@ import com.example.data_server.utility.GeoUtils;
 import com.example.sep3.grpc.*;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
-import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.entities.usersEntities.Customer;
+import com.example.shared.entities.userEntities.Business;
 import com.example.shared.model.OfferStatus;
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
@@ -21,7 +20,6 @@ import org.springframework.data.mongodb.core.geo.GeoJsonPoint;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 
-import java.awt.*;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -311,10 +309,10 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.buildO
     if (request.hasTextSearch()) {
       String textSearch = request.getTextSearch();
       offerQuery.addCriteria(new Criteria().orOperator(
-              Criteria.where("title").regex(textSearch, "i") // Match in title
+              Criteria.where("title").regex(textSearch, "i"), // Match in title
 //              Criteria.where("description").regex(textSearch, "i"), // Match in description
 //              Criteria.where("categories").regex(textSearch, "i"), // Match in categories
-//              Criteria.where("business.business_name").regex(textSearch, "i") // Match in business name
+              Criteria.where("business.business_name").regex(textSearch, "i") // Match in business name
       ));
     }
 

@@ -6,6 +6,8 @@ import com.example.server.dto.auth.RefreshTokenRequest;
 import com.example.server.dto.business.RegisterBusinessRequestDto;
 import com.example.server.dto.customer.RegisterCustomerRequestDto;
 
+import java.io.IOException;
+
 public interface IAuthService
 {
   CredentialsResponseDto registerBusiness(
@@ -14,4 +16,5 @@ public interface IAuthService
       RegisterCustomerRequestDto registrationRequestDto);
   CredentialsResponseDto logIn(LoginRequestDto loginRequest);
   CredentialsResponseDto refreshToken(RefreshTokenRequest refreshTokenRequest);
+
 }

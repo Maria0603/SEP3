@@ -1,10 +1,8 @@
 package com.example.data_server.converters;
 
-import com.example.sep3.grpc.BusinessOnMap;
 import com.example.sep3.grpc.CustomerResponse;
 import com.example.sep3.grpc.RegisterCustomerRequest;
-import com.example.shared.entities.usersEntities.Business;
-import com.example.shared.entities.usersEntities.Customer;
+import com.example.shared.entities.userEntities.Customer;
 
 public class CustomerEntityGrpcConverter
 {

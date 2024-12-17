@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Blazored.LocalStorage;
 using Microsoft.AspNetCore.Components.Authorization;
 using client.Services;
-using client.DTO.Auth;
+using client.Dto.Auth;
 using Microsoft.AspNetCore.Components;
 
 

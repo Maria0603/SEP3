@@ -1,4 +1,4 @@
-﻿using client.DTO.Notification;
+﻿using client.Dto.Notification;
 
 namespace client.Services;
 

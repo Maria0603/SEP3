@@ -1,6 +1,6 @@
 package com.example.server.services;
 
-import com.example.server.dto.notifications.NotificationResponseDto;
+import com.example.server.dto.notification.NotificationResponseDto;
 
 import java.util.List;
 
