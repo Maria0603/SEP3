@@ -8,6 +8,7 @@ import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Comparator;
 import java.util.List;
 
 @GrpcService public class NotificationServiceImpl
@@ -36,20 +37,25 @@ import java.util.List;
     responseObserver.onCompleted();
   }
 
-  @Override public void getNotifications(NotificationsRequest request,
-      StreamObserver<NotificationListResponse> responseObserver)
+  @Override
+  public void getNotifications(NotificationsRequest request,
+                               StreamObserver<NotificationListResponse> responseObserver)
   {
     System.out.println("Request for getNotifications");
 
     NotificationListResponse.Builder responseBuilder = NotificationListResponse.newBuilder();
     List<Notification> notifications = notificationRepository.findByUserIdAndUserRole(
-        request.getUserId(), request.getUserRole());
+            request.getUserId(), request.getUserRole());
+
+    // Sort notifications by a specific field, e.g., `createdDate`
+    notifications.sort(Comparator.comparing(Notification::getTimestamp).reversed());
+    // Use .reversed() if you want descending order
 
     for (Notification notification : notifications)
     {
       responseBuilder.addNotifications(
-          NotificationEntityGrpcConverter.generateNotificationRequestResponseFromNotification(
-              notification));
+              NotificationEntityGrpcConverter.generateNotificationRequestResponseFromNotification(
+                      notification));
     }
     responseObserver.onNext(responseBuilder.build());
     responseObserver.onCompleted();

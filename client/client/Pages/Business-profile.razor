@@ -94,6 +94,7 @@
     private CustomerResponseDto customerProfile;
     private string successMessage;
     private string errorMessage;
+    private byte[] newImage;
 
     protected override async Task OnInitializedAsync()
     {
@@ -214,6 +215,8 @@
                 Email = businessProfile.Email,
                 PhoneNumber = businessProfile.PhoneNumber,
                 BusinessName = businessProfile.BusinessName,
+                ImageName = businessProfile.Logo_path,
+                Image = newImage
                 //Logo_path = businessProfile.Logo_path
             };
 
@@ -270,13 +273,14 @@
             using var memoryStream = new MemoryStream();
             await file.OpenReadStream().CopyToAsync(memoryStream);
 
-            businessProfile.Logo_path = Convert.ToBase64String(memoryStream.ToArray());
+            newImage = memoryStream.ToArray(); // Save the byte array from the memory stream
         }
         catch (Exception ex)
         {
             errorMessage = $"Error uploading image: {ex.Message}";
         }
     }
+
     
     
 

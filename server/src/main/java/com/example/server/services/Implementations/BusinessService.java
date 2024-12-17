@@ -6,9 +6,11 @@ import com.example.server.converters.BusinessDtoGrpcConverter;
 import com.example.server.dto.business.BusinessResponseDto;
 import com.example.server.dto.business.BusinessUpdateRequestDto;
 import com.example.server.services.IBusinessService;
+import com.example.server.services.auxServices.IImageStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -16,10 +18,12 @@ import java.util.stream.Collectors;
 public class BusinessService implements IBusinessService {
 
     private final DataServerStub dataServerStub;
+    private final IImageStorageService imageStorageService;
 
     @Autowired
-    public BusinessService(DataServerStub dataServerStub) {
+    public BusinessService(DataServerStub dataServerStub, IImageStorageService imageStorageService) {
         this.dataServerStub = dataServerStub;
+        this.imageStorageService = imageStorageService;
         System.out.println("BusinessService created");
     }
 
@@ -52,7 +56,7 @@ public class BusinessService implements IBusinessService {
 
     @Override
     public BusinessResponseDto updateAndValidateBusinessProfile(
-        BusinessUpdateRequestDto updatedProfile) {
+        BusinessUpdateRequestDto updatedProfile) throws IOException {
 
         if (updatedProfile.getBusinessName().contains("invalid")) {
             throw new IllegalArgumentException("Business name contains invalid content.");
@@ -64,6 +68,8 @@ public class BusinessService implements IBusinessService {
         System.out.println("Business Name: " + updatedProfile.getBusinessName());
         System.out.println("Email: " + updatedProfile.getEmail());
         System.out.println("Phone Number: " + updatedProfile.getPhoneNumber());
+
+        imageStorageService.updateImage(updatedProfile.getImageName(), updatedProfile.getImage());
         //System.out.println("Logo Path: " + updatedProfile.getLogoPath());
 
 

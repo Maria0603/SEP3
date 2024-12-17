@@ -62,10 +62,23 @@ import java.util.Map;
       RegisterBusinessRequestDto registrationRequestDto)
   {
 
+
+
+
     System.out.println("Request for register business in service");
     String logoPath = null;
     try
     {
+
+      UserResponse userResponse = dataServerStub.getUserByEmail(
+              UserByEmailRequest.newBuilder()
+                      .setEmail(registrationRequestDto.getEmail())
+                      .build()
+      );
+
+      if (userResponse != null && !userResponse.getId().isEmpty()) {
+        throw new IllegalArgumentException("User with email: " + registrationRequestDto.getEmail() + " already exists");
+      }
       /*logoPath = imageStorageService.getBaseDirectory()
           + imageStorageService.saveImage(registrationRequestDto.getLogo());*/
       logoPath = saveImageAndGetPath(registrationRequestDto.getLogo());
@@ -123,6 +136,18 @@ import java.util.Map;
 
     try
     {
+
+      UserResponse userResponse = dataServerStub.getUserByEmail(
+              UserByEmailRequest.newBuilder()
+                      .setEmail(registrationRequestDto.getEmail())
+                      .build()
+      );
+
+      if (userResponse != null && !userResponse.getId().isEmpty()) {
+        throw new IllegalArgumentException("User with email: " + registrationRequestDto.getEmail() + " already exists");
+      }
+
+
       // Transform the DTO into a gRPC message
       RegisterCustomerRequest grpcRequest = CustomerDtoGrpcConverter.RegisterCustomerRequestDto_To_RegisterCustomerRequest(
           registrationRequestDto,

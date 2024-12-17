@@ -311,10 +311,10 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.buildO
     if (request.hasTextSearch()) {
       String textSearch = request.getTextSearch();
       offerQuery.addCriteria(new Criteria().orOperator(
-              Criteria.where("title").regex(textSearch, "i") // Match in title
+              Criteria.where("title").regex(textSearch, "i"), // Match in title
 //              Criteria.where("description").regex(textSearch, "i"), // Match in description
 //              Criteria.where("categories").regex(textSearch, "i"), // Match in categories
-//              Criteria.where("business.business_name").regex(textSearch, "i") // Match in business name
+              Criteria.where("business.business_name").regex(textSearch, "i") // Match in business name
       ));
     }
 

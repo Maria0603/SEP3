@@ -8,4 +8,5 @@ public interface IImageStorageService
   void deleteImage(String imagePath);
   String getBaseDirectory();
   byte[] extractImage(String imagePath);
+  void updateImage(String imagePath, byte[] newImageData) throws IOException;
 }

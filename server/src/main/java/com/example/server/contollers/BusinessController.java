@@ -45,8 +45,8 @@ import java.util.List;
     public ResponseEntity<BusinessResponseDto> updateBusinessProfile(@Valid @RequestBody BusinessUpdateRequestDto updatedProfile) {
 
         // Business logic
-        BusinessResponseDto responseDto = businessService.updateAndValidateBusinessProfile(updatedProfile);
         try{
+            BusinessResponseDto responseDto = businessService.updateAndValidateBusinessProfile(updatedProfile);
             return ResponseEntity.ok(responseDto);
         }
         catch (Exception e)

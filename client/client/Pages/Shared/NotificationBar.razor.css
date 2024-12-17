@@ -1,10 +1,12 @@
 .notifications-container {
     position: absolute; /* Position relative to parent */
-    top: 100%; /* Place directly below the anchor element */
+    top: 130%; /* Place directly below the anchor element */
     left: 50%; /* Align left edge with the parent */
     transform: translateX(-50%); /* Center horizontally */
     width: 300px; /* Set width explicitly */
     min-height: 100px; /* Optional: Set minimum height */
+    max-height: calc(100vh - 10rem); /* Max height is window height minus optional spacing */
+    overflow-y: auto; /* Make content scrollable if it overflows */
     background-color: white; /* Background for visibility */
     box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); /* Dropdown shadow */
     border-radius: 5px; /* Rounded corners */
@@ -12,6 +14,7 @@
     padding: 10px; /* Padding for content */
     box-sizing: border-box; /* Ensure padding doesn’t add to width */
 }
+
 
 .notifications-header {
     color: #990033;

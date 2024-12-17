@@ -46,6 +46,24 @@ public class AzureBlobStorageService implements IImageStorageService
         // Return the blob name instead of the blob URL
         return uniqueFileName;
     }
+@Override
+    public void updateImage(String imagePath, byte[] newImageData) throws IOException {
+        if (newImageData == null || newImageData.length == 0) {
+            throw new IllegalArgumentException("Image data cannot be null or empty");
+        }
+
+        String blobName = extractBlobName(imagePath);
+        BlobClient blobClient = blobContainerClient.getBlobClient(blobName);
+
+        // Delete the existing blob (if it exists)
+        blobClient.deleteIfExists();
+
+        // Upload the new image data
+        try (ByteArrayInputStream dataStream = new ByteArrayInputStream(newImageData)) {
+            blobClient.upload(dataStream, newImageData.length, true);
+        }
+    }
+
 
     @Override
     public void deleteImage(String imagePath) {
