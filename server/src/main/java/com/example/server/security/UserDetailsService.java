@@ -4,11 +4,13 @@ import com.example.sep3.grpc.UserByEmailRequest;
 import com.example.sep3.grpc.UserResponse;
 import com.example.server.DataServerStub;
 import com.example.server.dto.auth.UserDetailsResponseDto;
+import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-@Service public class UserDetailsService
+@Service @Primary
+public class UserDetailsService
     implements org.springframework.security.core.userdetails.UserDetailsService
 {
 

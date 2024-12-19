@@ -15,21 +15,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.MockitoAnnotations;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 
-import static com.example.data_server.converters.OfferEntityGrpcConverter.generateOfferFromCreateOfferRequest;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
-//TODO: Tests are not working, need to fix them; methods should be
-// tested individually in BloomRPC
 class OfferServiceImplTest {
 
   @Mock private BusinessRepository businessRepository;
@@ -44,7 +38,8 @@ class OfferServiceImplTest {
   }
 
   @Test
-  void testAddOffer() throws IOException {
+  void Test_AddOffer_CorrectCase() throws IOException {
+    //  Mock Categories
     ArrayList<String> categories = new ArrayList<>();
     categories.add("Vegetarian");
 
@@ -58,15 +53,30 @@ class OfferServiceImplTest {
     address.setNumber("5");
     address.setStreet("Grove Street");
 
-    // Mock BusinessRepository behavior
+    // Mock Business
     Business business = new Business();
     business.setId("6761d2a58bdddb3d7617b01b");
     business.setBusinessName("testBusinessName");
     business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
     business.setAddress(address);
     business.setEmail("dummyemail193553330@example.com");
-    when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
-            .thenReturn(Optional.of(business));
+
+    // Mock Offer
+    Offer offer = new Offer();
+    offer.setId("offer123"); // Mock ID generation
+    offer.setTitle("TestTitle");
+    offer.setStatus("available");
+    offer.setDescription("This is a dummy description");
+    offer.setOriginalPrice(50);
+    offer.setOfferPrice(20);
+    offer.setNumberOfItems(5);
+    offer.setNumberOfAvailableItems(4);
+    offer.setImagePath("8762f962-3a91-44fd-98d8-800fcbaa497f");
+    offer.setBusiness(business);
+    offer.setCategories(categories);
+    offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0));
+    offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));
+    offer.setCreationTime(LocalDateTime.now());
 
     // Create the request
     CreateOfferRequest request = CreateOfferRequest.newBuilder()
@@ -81,27 +91,13 @@ class OfferServiceImplTest {
             .setBusinessId("6761d2a58bdddb3d7617b01b")
             .build();
 
-// Prepare the Offer object that will be returned by the mock repository
-    Offer offer = new Offer();
-    offer.setId("offer123"); // Mock ID generation
-    offer.setTitle("TestTitle");
-    offer.setStatus("available");
-    offer.setDescription("This is a dummy description");
-    offer.setOriginalPrice(50);
-    offer.setOfferPrice(20);
-    offer.setNumberOfItems(5);
-    offer.setNumberOfAvailableItems(4);
-    offer.setImagePath(request.getImagePath());
-    offer.setBusiness(business);
-    offer.setCategories(categories);
-    offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0)); // Use the start time from the request
-    offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));   // Use the end time from the request
-    offer.setCreationTime(LocalDateTime.now()); // Mock current timestamp as creation time
-
-
+    // Mock BusinessRepository behavior
+    when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
+            .thenReturn(Optional.of(business));
 
     // Mock OfferRepository behavior
-    when(offerRepository.save(any(Offer.class))).thenReturn(offer);
+    when(offerRepository.save(any(Offer.class)))
+            .thenReturn(offer);
 
     // Mock the response observer
     StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
@@ -120,6 +116,173 @@ class OfferServiceImplTest {
     ));
     verify(responseObserver).onCompleted();
   }
+
+/*  @Test
+  void Test_AddOffer_NoBusiness() {
+    CreateOfferRequest request = CreateOfferRequest.newBuilder()
+            .setTitle("TestTitle")
+            .setDescription("This is a dummy description")
+            .setOriginalPrice(50)
+            .setOfferPrice(20)
+            .setNumberOfItems(5)
+            .setPickupTimeStart(convertDateTime_To_TimeStamp(2024, 12, 18, 12, 0))
+            .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024, 12, 19, 12, 0))
+            .setNumberOfAvailableItems(4)
+            .setBusinessId("nonExistentBusinessId")
+            .build();
+
+    StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
+
+    when(businessRepository.findById("nonExistentBusinessId"))
+            .thenReturn(Optional.empty());
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      OfferServiceImpl.createOffer(request, responseObserver);
+    });
+
+    verify(responseObserver, never()).onNext(any());
+    verify(responseObserver, never()).onCompleted();
+  }
+  @Test
+  void Test_AddOffer_WithNullTitle() {
+    //  Mock Categories
+    ArrayList<String> categories = new ArrayList<>();
+    categories.add("Vegetarian");
+
+    // Mock Address
+    Address address = new Address();
+    address.setCity("San Francisco");
+    address.setCountry("USA");
+    address.setPostalCode("9410");
+    address.setState("CA");
+    address.setCounty("Somewhere");
+    address.setNumber("5");
+    address.setStreet("Grove Street");
+
+    // Mock Business
+    Business business = new Business();
+    business.setId("6761d2a58bdddb3d7617b01b");
+    business.setBusinessName("testBusinessName");
+    business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
+    business.setAddress(address);
+    business.setEmail("dummyemail193553330@example.com");
+
+    // Mock Offer
+    Offer offer = new Offer();
+    offer.setId("offer123"); // Mock ID generation
+    offer.setTitle("TestTitle");
+    offer.setStatus("available");
+    offer.setDescription("This is a dummy description");
+    offer.setOriginalPrice(0);
+    offer.setOfferPrice(0);
+    offer.setNumberOfItems(0);
+    offer.setNumberOfAvailableItems(4);
+    offer.setImagePath("8762f962-3a91-44fd-98d8-800fcbaa497f");
+    offer.setBusiness(business);
+    offer.setCategories(categories);
+    offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0));
+    offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));
+    offer.setCreationTime(LocalDateTime.now());
+
+    //  Mock BusinessRepository behaviour
+    when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
+            .thenReturn(Optional.of(business));
+    // Mock OfferRepository behavior
+    when(offerRepository.save(any(Offer.class)))
+            .thenReturn(offer);
+
+    CreateOfferRequest request = CreateOfferRequest.newBuilder()
+            .setTitle(null)
+            .setDescription("Boundary values")
+            .setOriginalPrice(20)  // Boundary condition
+            .setOfferPrice(5)     // Boundary condition
+            .setNumberOfItems(4)  // Boundary condition
+            .setPickupTimeStart(convertDateTime_To_TimeStamp(2024, 12, 19, 12, 0)) // Start
+            .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024, 12, 18, 12, 0))   // End before start
+            .setNumberOfAvailableItems(0) // Boundary condition
+            .setBusinessId("6761d2a58bdddb3d7617b01b")
+            .build();
+
+
+
+    StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      OfferServiceImpl.createOffer(request, responseObserver);
+    });
+
+    verify(responseObserver, never()).onNext(any());
+    verify(responseObserver, never()).onCompleted();
+  }
+  @Test
+  void Test_AddOffer_Boundary() {
+    //  Mock Categories
+    ArrayList<String> categories = new ArrayList<>();
+    categories.add("Vegetarian");
+
+    // Mock Address
+    Address address = new Address();
+    address.setCity("San Francisco");
+    address.setCountry("USA");
+    address.setPostalCode("9410");
+    address.setState("CA");
+    address.setCounty("Somewhere");
+    address.setNumber("5");
+    address.setStreet("Grove Street");
+
+    // Mock Business
+    Business business = new Business();
+    business.setId("6761d2a58bdddb3d7617b01b");
+    business.setBusinessName("testBusinessName");
+    business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
+    business.setAddress(address);
+    business.setEmail("dummyemail193553330@example.com");
+
+    // Mock Offer
+    Offer offer = new Offer();
+    offer.setId("offer123"); // Mock ID generation
+    offer.setTitle("TestTitle");
+    offer.setStatus("available");
+    offer.setDescription("This is a dummy description");
+    offer.setOriginalPrice(0);
+    offer.setOfferPrice(0);
+    offer.setNumberOfItems(0);
+    offer.setNumberOfAvailableItems(4);
+    offer.setImagePath("8762f962-3a91-44fd-98d8-800fcbaa497f");
+    offer.setBusiness(business);
+    offer.setCategories(categories);
+    offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0));
+    offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));
+    offer.setCreationTime(LocalDateTime.now());
+
+    when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
+            .thenReturn(Optional.of(business));
+
+    CreateOfferRequest request = CreateOfferRequest.newBuilder()
+            .setTitle("Boundary Test")
+            .setDescription("Boundary values")
+            .setOriginalPrice(0)  // Boundary condition
+            .setOfferPrice(0)     // Boundary condition
+            .setNumberOfItems(0)  // Boundary condition
+            .setPickupTimeStart(convertDateTime_To_TimeStamp(2024, 12, 19, 12, 0)) // Start
+            .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024, 12, 18, 12, 0))   // End before start
+            .setNumberOfAvailableItems(0) // Boundary condition
+            .setBusinessId("6761d2a58bdddb3d7617b01b")
+            .build();
+
+    // Mock OfferRepository behavior
+    when(offerRepository.save(any(Offer.class)))
+            .thenReturn(offer);
+
+    StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
+
+    assertThrows(IllegalArgumentException.class, () -> {
+      OfferServiceImpl.createOffer(request, responseObserver);
+    });
+
+    verify(responseObserver, never()).onNext(any());
+    verify(responseObserver, never()).onCompleted();
+  }*/
 
 
   private Timestamp convertDateTime_To_TimeStamp(int year, int month, int day, int hour, int minute) {
