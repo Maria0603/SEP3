@@ -154,8 +154,6 @@ import static com.example.data_server.converters.CustomerEntityGrpcConverter.gen
       responseObserver.onCompleted();
     } catch (Exception e) {
       System.err.println("Error updating customer profile: " + e.getMessage());
-
-      // Prepare and send failure response
     }
   }
 }
