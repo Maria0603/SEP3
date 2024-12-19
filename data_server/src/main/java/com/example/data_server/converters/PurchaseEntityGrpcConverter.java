@@ -4,6 +4,7 @@ import com.example.sep3.grpc.CreatePurchaseRequest;
 import com.example.sep3.grpc.DetailedPurchaseResponse;
 import com.example.sep3.grpc.PurchaseListResponse;
 import com.example.sep3.grpc.PurchaseResponse;
+import com.example.shared.converters.AddressConverter;
 import com.example.shared.converters.DateTimeConverter;
 import com.example.shared.entities.domainEntities.Offer;
 import com.example.shared.entities.domainEntities.Purchase;
@@ -57,7 +58,10 @@ public class PurchaseEntityGrpcConverter
                 purchase.getPurchaseTime()))
         .setCustomerId(purchase.getCustomer().getId())
         .setBusinessId(purchase.getBusiness().getId())
-        .setBusinessEmail(purchase.getBusiness().getEmail()).build();
+        .setBusinessEmail(purchase.getBusiness().getEmail())
+        .setBusinessPhone(purchase.getBusiness().getPhoneNumber())
+        .setBusinessAddress(AddressConverter.convertAddressToGrpcAddress(purchase.getBusiness().getAddress()))
+            .build();
   }
 
   public static Purchase generatePurchaseFromCreatePurchaseRequest(

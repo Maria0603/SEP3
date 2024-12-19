@@ -35,16 +35,27 @@
             <div class="col-md-10 col-12">
                 <p>Pickup time start: <b>@_purchase.PickupTimeStart</b></p>
                 <p>Pickup time end: <b>@_purchase.PickupTimeEnd</b></p>
-                <p>Purchased at: <b>@_purchase.purchaseTime</b></p>
+                <p>Purchased at: <b>@_purchase.PurchaseTime</b></p>
             </div>
         </div>
-        <div class="row" style="border-bottom: 0px solid black">
+        <div class="row" >
             <div class="col-md-2 col-12">
                 <h4>Customer</h4>
             </div>
             <div class="col-md-10 col-12">
                 <p>Full name: <b>@_purchase.CustomerFirstName @_purchase.CustomerLastName</b></p>
                 <p>Phone: <b>@_purchase.CustomerPhoneNumber</b></p>
+            </div>
+        </div>
+        <div class="row" >
+            <div class="col-md-2 col-12">
+                <h4>Business</h4>
+            </div>
+            <div class="col-md-10 col-12">
+                <p>Email: <b>@_purchase.BusinessEmail </b></p>
+                <p>Phone: <b>@_purchase.BusinessPhone</b></p>
+                <p>Address: <b>@_purchase.BusinessAddress.County @_purchase.BusinessAddress.Number, @_purchase.BusinessAddress.City
+                     @_purchase.BusinessAddress.PostalCode, @_purchase.BusinessAddress.Country</b></p>
             </div>
         </div>
     </div>
