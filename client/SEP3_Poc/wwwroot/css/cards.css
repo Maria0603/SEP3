@@ -1,0 +1,22 @@
+.foodbag-card {
+  width: 100%; 
+  margin: 0 auto; 
+}
+/*
+@media (min-width: 576px) {
+  .foodbag-card {
+    width: calc(50% - 0.5rem); 
+  }
+}
+
+@media (min-width: 768px) {
+  .foodbag-card {
+    width: calc(33.33% - 0.5rem); 
+  }
+}
+
+@media (min-width: 992px) {
+  .foodbag-card {
+    width: calc(25% - 0.5rem); 
+  }
+}*/

@@ -1,0 +1,69 @@
+﻿@inherits LayoutComponentBase
+<div class="page">
+    <div class="sidebar">
+        <NavMenu/>
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+            <a href="https://learn.microsoft.com/aspnet/core/" target="_blank">About</a>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+@*
+@using client.Services.Implementations
+@inherits LayoutComponentBase
+@inject NotificationService WebSocketService
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+
+    <!-- Notification Button -->
+    <div class="notification-bar">
+        <button class="@_notificationButtonClass" @onclick="ShowNotifications">
+            Notifications
+        </button>
+    </div>
+</div>
+
+@code {
+    private string _notificationButtonClass = "btn btn-default";
+
+    protected override async Task OnInitializedAsync()
+    {
+        WebSocketService.OnMessageReceived += HandleNotification;
+        await WebSocketService.ConnectAsync("ws://localhost:8082/ws");
+    }
+
+    private void HandleNotification(string message)
+    {
+        Console.WriteLine("Notification received: " + message);
+        _notificationButtonClass = "btn btn-warning"; // Highlight button when notification arrives
+        StateHasChanged();
+    }
+
+    private void ShowNotifications()
+    {
+        _notificationButtonClass = "btn btn-default"; // Reset button style
+        Console.WriteLine("Notifications viewed.");
+    }
+
+    public async Task DisposeAsync()
+    {
+        WebSocketService.OnMessageReceived -= HandleNotification;
+        await WebSocketService.DisconnectAsync();
+    }
+}
+*@
