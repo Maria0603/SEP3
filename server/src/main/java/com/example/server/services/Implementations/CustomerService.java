@@ -52,7 +52,8 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.*;
     CustomerLocationRequest locationGrpc = dataServerStub.getCustomerLocation(
         IdRequestResponse.newBuilder().setId(userId).build());
 
-    return CustomerLocationRequest_To_CustomerLocationRequestResponseDto(locationGrpc);
+    return CustomerLocationRequest_To_CustomerLocationRequestResponseDto(
+        locationGrpc);
   }
 
   @Override public List<BusinessInRadiusResponseDto> getBusinessesInRadius(
@@ -72,24 +73,24 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.*;
     return businessesInRadiusResponseDto;
   }
 
-  @Override
-  public CustomerResponseDto updateCustomerProfile(
-      CustomerUpdateRequestDto updatedProfile) {
-    System.out.println("updateCustomerProfile method called for ID: " + updatedProfile.getId());
+  @Override public CustomerResponseDto updateCustomerProfile(
+      CustomerUpdateRequestDto updatedProfile)
+  {
+    System.out.println("updateCustomerProfile method called for ID: "
+        + updatedProfile.getId());
 
+    CustomerUpdateRequest request = CustomerUpdateRequestDto_To_CustomerUpdateRequest(
+        updatedProfile);
 
-    System.out.println("Updated Profile Details:");
-    System.out.println("First Name: " + updatedProfile.getFirstName());
-    System.out.println("Last Name: " + updatedProfile.getLastName());
-    System.out.println("Email: " + updatedProfile.getEmail());
-    System.out.println("Phone Number: " + updatedProfile.getPhoneNumber());
-
-    CustomerUpdateRequest request = CustomerUpdateRequestDto_To_CustomerUpdateRequest(updatedProfile);
-
-    try {
-      CustomerResponse grpcResponse = dataServerStub.updateCustomerProfile(request);
-      return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(grpcResponse);
-    } catch (Exception e) {
+    try
+    {
+      CustomerResponse grpcResponse = dataServerStub.updateCustomerProfile(
+          request);
+      return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(
+          grpcResponse);
+    }
+    catch (Exception e)
+    {
       System.out.println("Error updating customer profile: " + e.getMessage());
       // return false;
     }
@@ -103,7 +104,8 @@ import static com.example.server.converters.CustomerDtoGrpcConverter.*;
     CustomerResponse response = dataServerStub.getCustomerById(request);
     System.out.println("Received response from dataServerStub: " + response);
 
-    return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(response);
+    return CustomerDtoGrpcConverter.CustomerResponseGrpc_To_BusinessResponseDto(
+        response);
   }
 
 }

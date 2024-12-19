@@ -12,15 +12,10 @@ package proto;
 service OfferService {
   rpc CreateOffer(CreateOfferRequest) returns (OfferResponse);
   rpc GetOfferById(OfferIdRequest) returns (OfferResponse);
-  rpc UpdateOffer(OfferResponse) returns (OfferResponse);//maybe we should rename it so we can reuse it
+  rpc UpdateOffer(OfferResponse) returns (OfferResponse);
   rpc GetOffers(FilterRequest) returns (OfferListResponse);
 
-  ///////////////////////////////////////////////////////////////////////
-  rpc GetOffersByTime(TimeRangeRequest) returns (OfferListResponse);
-  rpc GetOffersByCategory(CategoryRequest) returns (OfferListResponse);
-  rpc GetOffersByPriceRange(PriceRangeRequest) returns (OfferListResponse);
   rpc GetOffersByBusinessId(OfferIdRequest) returns (OfferListResponse);
-  //////////////////////////////////////////////////////////////////////
 }
 
 message FilterRequest {
@@ -33,19 +28,6 @@ message FilterRequest {
   optional string textSearch = 7;
 }
 
-//////////////////////////////////////////////////////////
-message TimeRangeRequest {
-  google.protobuf.Timestamp start = 1;
-  google.protobuf.Timestamp end = 2;
-}
-message CategoryRequest {
-  repeated string categories = 1;
-}
-message PriceRangeRequest {
-  int32 minOfferPrice = 1;
-  int32 maxOfferPrice = 2;
-}
-///////////////////////////////////////////////////////////
 
 message CreateOfferRequest {
   string title = 1;

@@ -24,7 +24,7 @@ import java.util.List;
     this.jwtUtils = jwtUtils;
   }
 
-  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN')")
+  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER')")
   public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
       @RequestBody CreatePurchaseRequestDto purchaseRequest, HttpServletRequest request)
   {
@@ -39,7 +39,7 @@ import java.util.List;
     catch (IllegalArgumentException e)
     {
       e.printStackTrace();
-      throw new IllegalArgumentException(e.getMessage()); // TODO: update
+      throw new IllegalArgumentException(e.getMessage());
     }
   }
 
@@ -53,7 +53,7 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'ADMIN', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
 

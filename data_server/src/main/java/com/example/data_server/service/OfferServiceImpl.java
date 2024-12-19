@@ -115,18 +115,7 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.buildO
 
   }
 
-  @Override public void getOffersByCategory(CategoryRequest request,
-      StreamObserver<OfferListResponse> responseObserver)
-  {
-    logger.info("Request for offers by category: {}", request);
 
-    List<Offer> offersByCategory = offerRepository.findByCategories(
-        request.getCategoriesList());
-
-    responseObserver.onNext(
-        buildOfferListResponseFromOffersList(offersByCategory));
-    responseObserver.onCompleted();
-  }
   @Override public void getOffersByBusinessId(OfferIdRequest request,
         StreamObserver<OfferListResponse> responseObserver){
     logger.info("Request for offers by id: {}", request);
@@ -140,46 +129,6 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.buildO
     responseObserver.onCompleted();
 
   }
-  @Override public void getOffersByPriceRange(PriceRangeRequest request,
-      StreamObserver<OfferListResponse> responseObserver)
-  {
-    logger.info("Request for offers by price range: {} - {}",
-        request.getMinOfferPrice(), request.getMaxOfferPrice());
-
-    List<Offer> offersByPriceRange = offerRepository.findByOfferPriceRange(
-        request.getMinOfferPrice(), request.getMaxOfferPrice());
-
-    responseObserver.onNext(
-        buildOfferListResponseFromOffersList(offersByPriceRange));
-    responseObserver.onCompleted();
-  }
-
-  @Override public void getOffersByTime(TimeRangeRequest request,
-      StreamObserver<OfferListResponse> responseObserver)
-  {
-    logger.info("Request for offers by time range: {} - {}", request.getStart(),
-        request.getEnd());
-
-    LocalDateTime startTime = DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-        request.getStart());
-    LocalDateTime endTime = DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(
-        request.getEnd());
-
-    List<Offer> offersByTimeRange = offerRepository.findByPickupTimeRange(
-        startTime, endTime);
-
-    OfferListResponse.Builder offerListBuilder = OfferListResponse.newBuilder();
-    for (Offer offer : offersByTimeRange)
-    {
-      offerListBuilder.addOffer(buildOfferResponse(offer));
-    }
-
-    OfferListResponse offerListResponse = offerListBuilder.build();
-    logger.info("Sending FullOfferList response: {}", offerListResponse);
-    responseObserver.onNext(offerListResponse);
-    responseObserver.onCompleted();
-  }
-
   public void getOffersNotProper(FilterRequest request, StreamObserver<OfferListResponse> responseObserver) {
     System.out.println("Requests: " + request.toString());
 
@@ -242,7 +191,6 @@ import static com.example.data_server.converters.OfferEntityGrpcConverter.buildO
     // Filter by status
     offerQuery.addCriteria(Criteria.where("status").is(OfferStatus.AVAILABLE.getStatus()));
 
-    // Filter by price range
     // Filter by price range
     if (request.hasMinOfferPrice() || request.hasMaxOfferPrice()) {
       Criteria priceCriteria = Criteria.where("offer_price");

@@ -76,14 +76,4 @@ public class AzureBlobStorageService implements IImageStorageService
         // Assuming imagePath is the blob URL, extract the blob name
         return imagePath.substring(imagePath.lastIndexOf("/") + 1);
     }
-
-    @Override
-    public String getBaseDirectory() {
-        return "";
-    }
-
-    @Override
-    public byte[] extractImage(String imagePath) {
-        return new byte[0];
-    }
 }

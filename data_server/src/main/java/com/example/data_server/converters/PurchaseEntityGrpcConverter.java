@@ -89,7 +89,6 @@ public class PurchaseEntityGrpcConverter
       PurchaseListBuilder.addPurchases(response);
     }
 
-    PurchaseListResponse response = PurchaseListBuilder.build();
-    return response;
+    return PurchaseListBuilder.build();
   }
 }

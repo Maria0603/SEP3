@@ -37,7 +37,6 @@ import java.util.List;
     String token = authHeader.substring(7);
 
     String userRole = jwtUtils.extractRoles(token).getFirst();
-    System.out.println("Roleeeeeeeeeeeee: " + userRole);
     return ResponseEntity.ok(
         notificationService.getNotifications(userId, userRole));
   }
@@ -50,7 +49,6 @@ import java.util.List;
       String userId = jwtUtils.extractUserId(token);
       String userRole = jwtUtils.extractRoles(token).getFirst();
       String user = userRole + userId;
-      System.out.println("Useeeeeeeeeer: " + user);
 
       return eventService.connectUser(user);
     }

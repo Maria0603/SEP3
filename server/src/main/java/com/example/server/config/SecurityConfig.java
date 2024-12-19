@@ -32,15 +32,12 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
     httpSecurity.csrf(AbstractHttpConfigurer::disable)
         .cors(Customizer.withDefaults()).authorizeHttpRequests(
             request -> request.requestMatchers("/auth/**",
-                    "/images/**") // Do we have other public features?
+                    "/images/**")
                 .permitAll().requestMatchers("/notifications/stream").permitAll()
                 .requestMatchers("/business/**")
-                .hasAnyAuthority("BUSINESS", "ADMIN",
-                    "CUSTOMER") // Business + Admin access
+                .hasAnyAuthority("BUSINESS") // Business access
                 .requestMatchers("/customer/**")
-                .hasAnyAuthority("CUSTOMER", "ADMIN") // Customer + Admin access
-                .requestMatchers("/admin/**")
-                .hasAuthority("ADMIN") // Strictly Admin access
+                .hasAnyAuthority("CUSTOMER") // Customer access
                 .anyRequest().authenticated()).sessionManagement(
             manager -> manager.sessionCreationPolicy(
                 SessionCreationPolicy.STATELESS))
