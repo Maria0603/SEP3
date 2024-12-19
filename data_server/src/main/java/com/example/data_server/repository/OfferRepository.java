@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 public interface OfferRepository extends MongoRepository<Offer, String>
 {
-  List<Offer> findByStatus(String status);
   @Query("{ '_id': ?0 }")
   @Update("{ $set: { 'number_of_available_items': ?1} }")
   void updateNumberOfAvailableItems(String offerId, int numberOfItems);

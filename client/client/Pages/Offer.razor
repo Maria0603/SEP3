@@ -15,90 +15,95 @@
 
 @if (_offer is not null)
 {
-<div class="container">
-    <div class="offer__info" @onclick="() => ShowBusinessDetails(_offer.BusinessId)">
-        @* <div class="logo-image"> *@
-        @*     <img src="@(HttpClient.BaseAddress + "/images/" + _offer.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image"> *@
-        @* </div> *@
-        
-<img src="@(HttpClient.BaseAddress + "images/" + _offer.ImagePath)" onerror="this.src='images/offerPlaceholder.jpg'" alt="Offer Image" class="offer-image"/>
-        <img src="@(HttpClient.BaseAddress + "images/" + _offer.BusinessLogoPath)" onerror="this.src='images/businessLogoPlaceholder.jpg'" alt="Logo" class="logo-image"/>
-        <header class="BusinessName">@_offer.BusinessName</header>
-        <div class="offer__top--left @(_offer.NumberOfAvailableItems > 0 ? "" : "sold-out")">
-            @(_offer.NumberOfAvailableItems > 0
-                ? $"{_offer.NumberOfAvailableItems} Left"
-                : "Sold Out")
-        </div>
-    </div>
+    <div class="container">
+        <div class="offer__info" @onclick="() => ShowBusinessDetails(_offer.BusinessId)">
+            @* <div class="logo-image"> *@
+            @*     <img src="@(HttpClient.BaseAddress + "/images/" + _offer.BusinessLogoPath)" onerror="this.src='/images/businessLogoPlaceholder.jpg'" alt="Offer Image"> *@
+            @* </div> *@
 
-    <div class="float-container">
-        <!-- Left -->
-        <div><h2>@_offer.Title</h2>
-            <div class="float-child">
-                <div class="row">
-                    <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
-                    <p>@string.Join(", ", _offer.Categories)</p>
-                </div>
-
-                <div class="row">
-                    <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
-                    <p>Collect @_offer.PickupTimeStart.Day/@_offer.PickupTimeStart.Month/@_offer.PickupTimeStart.Year from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
-                </div>
+            <img src="@(HttpClient.BaseAddress + "images/" + _offer.ImagePath)" onerror="this.src='images/offerPlaceholder.jpg'" alt="Offer Image" class="offer-image"/>
+            <img src="@(HttpClient.BaseAddress + "images/" + _offer.BusinessLogoPath)" onerror="this.src='images/businessLogoPlaceholder.jpg'" alt="Logo" class="logo-image"/>
+            <header class="BusinessName">@_offer.BusinessName</header>
+            <div class="offer__top--left @(_offer.NumberOfAvailableItems > 0 ? "" : "sold-out")">
+                @(_offer.NumberOfAvailableItems > 0
+                    ? $"{_offer.NumberOfAvailableItems} Left"
+                    : "Sold Out")
             </div>
         </div>
 
-        <!-- Right -->
-        <div class="float-child2">
-            <div class="crossed-row">
-                <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
-            </div>
-            <div class="row">
-                <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
-            </div>
-            <div class="row">
-                <div class="amount-reserve-container">
-                    <label for="amount">
-                        <strong>Amount:</strong>
-                    </label>
-
-                    <div id="amount">
-                        <button
-                            @onclick="DecreaseQuantity"
-                            style="visibility: @(amount > 1 ? "visible" : "hidden");">
-                            -
-                        </button>
-                        <span>@amount</span>
-                        <button
-                            @onclick="IncreaseQuantity"
-                            style="visibility: @(amount < _offer.NumberOfAvailableItems ? "visible" : "hidden");">
-                            +
-                        </button>
+        <div class="float-container">
+            <!-- Left -->
+            <div>
+                <h2>@_offer.Title</h2>
+                <div class="float-child">
+                    <div class="row">
+                        <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
+                        <p>@string.Join(", ", _offer.Categories)</p>
                     </div>
 
-                    <button @onclick="SubmitPurchase" class="reserve-button">Purchase</button>
+                    <div class="row">
+                        <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
+                        <p>
+                            Collect @_offer.PickupTimeStart.ToString("dd/MM/yyyy")
+                            from @_offer.PickupTimeStart.ToString("HH:mm")
+                            to @_offer.PickupTimeEnd.ToString("HH:mm")
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right -->
+            <div class="float-child2">
+                <div class="crossed-row">
+                    <p><strong>Old Price:</strong> @_offer.OriginalPrice dkk</p>
+                </div>
+                <div class="row">
+                    <p><strong>New Price:</strong> @_offer.OfferPrice dkk</p>
+                </div>
+                <div class="row">
+                    <div class="amount-reserve-container">
+                        <label for="amount">
+                            <strong>Amount:</strong>
+                        </label>
+
+                        <div id="amount">
+                            <button
+                                @onclick="DecreaseQuantity"
+                                style="visibility: @(amount > 1 ? "visible" : "hidden");">
+                                -
+                            </button>
+                            <span>@amount</span>
+                            <button
+                                @onclick="IncreaseQuantity"
+                                style="visibility: @(amount < _offer.NumberOfAvailableItems ? "visible" : "hidden");">
+                                +
+                            </button>
+                        </div>
+
+                        <button @onclick="SubmitPurchase" class="reserve-button">Purchase</button>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="location">
-        <div class="location-content">
-            <div class="location-row">
-                <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
-                <p class="location-text">@_offer.BusinessAddress.Street @_offer.BusinessAddress.Number, @_offer.BusinessAddress.PostalCode, @_offer.BusinessAddress.City</p>
+        <div class="location">
+            <div class="location-content">
+                <div class="location-row">
+                    <img src="images/icons/location.png" alt="location-icon" class="location-icon"/>
+                    <p class="location-text">@_offer.BusinessAddress.Street @_offer.BusinessAddress.Number, @_offer.BusinessAddress.PostalCode, @_offer.BusinessAddress.City</p>
+                </div>
             </div>
         </div>
-    </div>
 
-    <div class="description">
-        <h5>Description</h5>
-        <p>@_offer.Description</p>
+        <div class="description">
+            <h5>Description</h5>
+            <p>@_offer.Description</p>
+        </div>
     </div>
-</div>
 }
 else
 {
-<p>Loading offer...</p>
+    <p>Loading offer...</p>
 }
 
 @code {
@@ -151,5 +156,5 @@ else
         Console.WriteLine(businessId);
         NavigationManager.NavigateTo($"business/{businessId}");
     }
-}
 
+}
