@@ -5,6 +5,7 @@ import com.example.data_server.service.PurchaseServiceImpl;
 import com.example.shared.entities.domainEntities.*;
 import com.example.shared.entities.userEntities.*;
 import com.example.sep3.grpc.*;
+import com.example.shared.model.Address;
 import io.grpc.stub.StreamObserver;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -34,24 +36,64 @@ class PurchaseServiceImplTest {
 
     @Test
     void testCreatePurchase_Success() {
-        // Mock Offer
-        Offer offer = new Offer();
-        offer.setId("offer123");
-        offer.setNumberOfAvailableItems(10);
+        //  Mock Categories
+        ArrayList<String> categories = new ArrayList<>();
+        categories.add("Vegetarian");
+
+        //  Mock Address
+        com.example.shared.model.Address address = new Address();
+        address.setCity("San Francisco");
+        address.setCountry("USA");
+        address.setPostalCode("9410");
+        address.setState("CA");
+        address.setCounty("Somewhere");
+        address.setNumber("5");
+        address.setStreet("Grove Street");
 
         // Mock Business
         Business business = new Business();
-        business.setId("business123");
+        business.setId("6761d2a58bdddb3d7617b01b");
+        business.setBusinessName("testBusinessName");
+        business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
+        business.setAddress(address);
+        business.setEmail("dummyemail193553330@example.com");
 
+        // Mock Offer
+        Offer offer = new Offer();
+        offer.setId("offer123"); // Mock ID generation
+        offer.setTitle("TestTitle");
+        offer.setStatus("available");
+        offer.setDescription("This is a dummy description");
+        offer.setOriginalPrice(50);
+        offer.setOfferPrice(20);
+        offer.setNumberOfItems(5);
+        offer.setNumberOfAvailableItems(4);
+        offer.setImagePath("8762f962-3a91-44fd-98d8-800fcbaa497f");
         offer.setBusiness(business);
+        offer.setCategories(categories);
+        offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0));
+        offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));
+        offer.setCreationTime(LocalDateTime.now());
 
         // Mock Customer
         Customer customer = new Customer();
         customer.setId("customer123");
+        customer.setEmail("dummyemail193553330@example.com");
+        customer.setFirstName("TestFirstName");
+        customer.setLastName("TestLastName");
+        customer.setPhoneNumber("123456789");
+        customer.setPassword("marty");
+        customer.setRole("CUSTOMER");
 
         // Mock Purchase
         Purchase purchase = new Purchase();
         purchase.setId("purchase123");
+        purchase.setCustomer(customer);
+        purchase.setBusiness(business);
+        purchase.setOffer(offer);
+        purchase.setPurchaseTime(LocalDateTime.now());
+        purchase.setNumberOfItems(5);
+        purchase.setPricePerItem(20);
 
         // Request
         CreatePurchaseRequest request = CreatePurchaseRequest.newBuilder()
@@ -63,19 +105,20 @@ class PurchaseServiceImplTest {
         StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
 
         // Mock Repositories
-        when(offerRepository.findById("offer123")).thenReturn(Optional.of(offer));
-        when(businessRepository.findById("business123")).thenReturn(Optional.of(business));
-        when(customerRepository.findById("customer123")).thenReturn(Optional.of(customer));
+        when(offerRepository.findById("675c0e5a8b9c0b678cb3f925")).thenReturn(Optional.of(offer));
+        when(businessRepository.findById("6763e4cb289e2a312b5ce905")).thenReturn(Optional.of(business));
+        when(customerRepository.findById("67506015b74df22a32206277")).thenReturn(Optional.of(customer));
         when(purchaseRepository.save(any(Purchase.class))).thenReturn(purchase);
 
         // Execute
         purchaseServiceImpl.createPurchase(request, responseObserver);
 
         // Verify interactions
-        verify(offerRepository).updateNumberOfAvailableItems("offer123", 5);
+        verify(offerRepository).updateNumberOfAvailableItems("675c0e5a8b9c0b678cb3f925", 5);
         verify(responseObserver).onNext(argThat(response -> response.getId().equals("purchase123")));
         verify(responseObserver).onCompleted();
     }
+
 
     @Test
     void testCreatePurchase_InvalidOffer() {
