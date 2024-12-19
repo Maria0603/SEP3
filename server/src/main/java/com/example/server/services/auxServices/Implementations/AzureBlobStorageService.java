@@ -72,7 +72,7 @@ public class AzureBlobStorageService implements IImageStorageService
         blobClient.deleteIfExists();
     }
 
-    private String extractBlobName(String imagePath) {
+    public String extractBlobName(String imagePath) {
         // Assuming imagePath is the blob URL, extract the blob name
         return imagePath.substring(imagePath.lastIndexOf("/") + 1);
     }

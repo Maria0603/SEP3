@@ -1,132 +1,118 @@
-package com.example.server.contollers;
+import com.azure.storage.blob.BlobClient;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.example.server.config.AzureBlobStorageConfig;
+import com.example.server.services.auxServices.Implementations.AzureBlobStorageService;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
 
-class ImageControllerTest
-{
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.UUID;
 
-  /*private ImageStorageService imageStorageService;
-  private ImageController imageController;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-  @BeforeEach void setUp()
-  {
-    imageStorageService = mock(ImageStorageService.class);
-    imageController = new ImageController(imageStorageService);
-  }
+public class ImageControllerTest {
 
-  @Test void uploadImage_NoFileProvided_ShouldReturnInternalServerError()
-  {
-    UploadImageRequestDto requestDto = new UploadImageRequestDto();
-    requestDto.setFile(null);
-    requestDto.setCategory(Category.BREAD_AND_CAKE);
+    @Mock
+    private AzureBlobStorageConfig azureBlobStorageConfig; // Mock the configuration
 
-    ResponseEntity<String> response = imageController.uploadImage(requestDto);
+    @Mock
+    private BlobServiceClient blobServiceClient; // Mock the BlobServiceClient
 
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertTrue(response.getBody().contains("Error saving image"));
-  }
+    @Mock
+    private BlobContainerClient blobContainerClient; // Mock the BlobContainerClient
 
-  @Test void uploadImage_OneFile_ShouldReturnOk() throws IOException
-  {
-    MultipartFile file = mock(MultipartFile.class);
-    when(file.getBytes()).thenReturn("TestImageData".getBytes());
-    when(file.getOriginalFilename()).thenReturn("image.jpg");
+    @Mock
+    private BlobClient blobClient; // Mock the BlobClient
 
-    UploadImageRequestDto requestDto = new UploadImageRequestDto();
-    requestDto.setFile(file);
-    requestDto.setCategory(Category.VEGAN);
+    @InjectMocks
+    private AzureBlobStorageService azureBlobStorageService; // Inject mocks into the service
 
-    when(imageStorageService.saveImage(any(), any(), any())).thenReturn(
-        "/path/to/image.jpg");
+    private byte[] imageData;
 
-    ResponseEntity<String> response = imageController.uploadImage(requestDto);
+    @BeforeEach
+    public void setUp() {
+        // Open mocks for all mocked dependencies
+        MockitoAnnotations.openMocks(this);
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertTrue(response.getBody().contains("/path/to/image.jpg"));
+        // Mock the behavior of AzureBlobStorageConfig to return valid connection string and container name
+        when(azureBlobStorageConfig.getConnectionString()).thenReturn("DefaultEndpointsProtocol=https;AccountName=ewimagestorage;AccountKey=u115pNA/j/zBlv8l8H8VYQem6g/og99a6Gz/QmGI2tw43DfrrA35+bXmYg96QApGNvUyP5U0AI0M+ASt2pKQ7w==;EndpointSuffix=core.windows.net");
+        when(azureBlobStorageConfig.getContainerName()).thenReturn("images");
 
-    verify(imageStorageService, times(1)).saveImage(file.getBytes(),
-        Category.VEGAN, "image.jpg");
-  }
+        // Mock the BlobServiceClient to return a BlobContainerClient
+        when(blobServiceClient.getBlobContainerClient(anyString())).thenReturn(blobContainerClient);
 
-  @Test void uploadImage_ManyFiles_ShouldHandleEachCorrectly()
-      throws IOException
-  {
-    MultipartFile file1 = mock(MultipartFile.class);
-    when(file1.getBytes()).thenReturn("Image1Data".getBytes());
-    when(file1.getOriginalFilename()).thenReturn("image1.jpg");
+        // Mock the BlobContainerClient to return a BlobClient
+        when(blobContainerClient.getBlobClient(anyString())).thenReturn(blobClient);
 
-    MultipartFile file2 = mock(MultipartFile.class);
-    when(file2.getBytes()).thenReturn("Image2Data".getBytes());
-    when(file2.getOriginalFilename()).thenReturn("image2.jpg");
+        // Set up some sample image data
+        imageData = new byte[]{1, 2, 3, 4};
+    }
 
-    UploadImageRequestDto requestDto1 = new UploadImageRequestDto();
-    requestDto1.setFile(file1);
-    requestDto1.setCategory(Category.VEGETARIAN);
+    @Test
+    void saveImage_ShouldReturnBlobName_WhenImageDataIsValid() throws IOException {
+        // Arrange
+        String expectedBlobName = UUID.randomUUID().toString();
+        when(blobClient.getBlobName()).thenReturn(expectedBlobName);
 
-    UploadImageRequestDto requestDto2 = new UploadImageRequestDto();
-    requestDto2.setFile(file2);
-    requestDto2.setCategory(Category.MEAL);
+        // Act
+        String blobName = azureBlobStorageService.saveImage(imageData);
 
-    when(imageStorageService.saveImage(any(), any(), any())).thenReturn(
-        "/path/to/image1.jpg", "/path/to/image2.jpg");
+        // Assert
+        assertNotNull(blobName);
+        assertEquals(expectedBlobName, blobName);
+        // Verify that the upload method was called once with correct arguments
+        verify(blobClient, times(1)).upload(any(ByteArrayInputStream.class), eq(imageData.length), eq(true));
+    }
 
-    ResponseEntity<String> response1 = imageController.uploadImage(requestDto1);
-    ResponseEntity<String> response2 = imageController.uploadImage(requestDto2);
+    @Test
+    void updateImage_ShouldReplaceExistingImage_WhenNewImageDataIsValid() throws IOException {
+        // Arrange
+        String oldImagePath = "old-image.jpg";
+        byte[] newImageData = new byte[]{5, 6, 7, 8};
+        String blobName = "old-image.jpg";
 
-    assertEquals(HttpStatus.OK, response1.getStatusCode());
-    assertTrue(response1.getBody().contains("/path/to/image1.jpg"));
+        // Mock the behavior for BlobClient
+        when(blobContainerClient.getBlobClient(blobName)).thenReturn(blobClient);
 
-    assertEquals(HttpStatus.OK, response2.getStatusCode());
-    assertTrue(response2.getBody().contains("/path/to/image2.jpg"));
+        // Act
+        azureBlobStorageService.updateImage(oldImagePath, newImageData);
 
-    verify(imageStorageService, times(1)).saveImage(file1.getBytes(),
-        Category.VEGETARIAN, "image1.jpg");
-    verify(imageStorageService, times(1)).saveImage(file2.getBytes(),
-        Category.MEAL, "image2.jpg");
-  }
+        // Assert
+        verify(blobClient, times(1)).deleteIfExists(); // Ensure the old image is deleted
+        verify(blobClient, times(1)).upload(any(ByteArrayInputStream.class), eq(newImageData.length), eq(true)); // Ensure the new image is uploaded
+    }
 
-  @Test void uploadImage_LargeFile_ShouldHandleGracefully() throws IOException
-  {
-    MultipartFile file = mock(MultipartFile.class);
-    byte[] largeData = new byte[10 * 1024 * 1024]; // 10 MB file
-    when(file.getBytes()).thenReturn(largeData);
-    when(file.getOriginalFilename()).thenReturn("large_image.jpg");
+    @Test
+    void deleteImage_ShouldDeleteExistingImage() {
+        // Arrange
+        String imagePath = "image-to-delete.jpg";
+        String blobName = "image-to-delete.jpg";
 
-    UploadImageRequestDto requestDto = new UploadImageRequestDto();
-    requestDto.setFile(file);
-    requestDto.setCategory(Category.GROCERIES);
+        // Mock the behavior for BlobClient
+        when(blobContainerClient.getBlobClient(blobName)).thenReturn(blobClient);
 
-    when(imageStorageService.saveImage(any(), any(), any())).thenReturn(
-        "/path/to/large_image.jpg");
+        // Act
+        azureBlobStorageService.deleteImage(imagePath);
 
-    ResponseEntity<String> response = imageController.uploadImage(requestDto);
+        // Assert
+        verify(blobClient, times(1)).deleteIfExists(); // Ensure the image is deleted
+    }
 
-    assertEquals(HttpStatus.OK, response.getStatusCode());
-    assertTrue(response.getBody().contains("/path/to/large_image.jpg"));
+    @Test
+    void extractBlobName_ShouldReturnCorrectBlobName() {
+        // Arrange
+        String imagePath = "https://myaccount.blob.core.windows.net/mycontainer/old-image.jpg";
 
-    verify(imageStorageService, times(1)).saveImage(largeData,
-        Category.GROCERIES, "large_image.jpg");
-  }
+        // Act
+        String blobName = azureBlobStorageService.extractBlobName(imagePath);
 
-  @Test void uploadImage_SaveThrowsIOException_ShouldReturnInternalServerError()
-      throws IOException
-  {
-    MultipartFile file = mock(MultipartFile.class);
-    when(file.getBytes()).thenReturn("TestImageData".getBytes());
-    when(file.getOriginalFilename()).thenReturn("error_image.jpg");
-
-    UploadImageRequestDto requestDto = new UploadImageRequestDto();
-    requestDto.setFile(file);
-    requestDto.setCategory(Category.OTHER);
-
-    when(imageStorageService.saveImage(any(), any(), any())).thenThrow(
-        new IOException("Disk full"));
-
-    ResponseEntity<String> response = imageController.uploadImage(requestDto);
-
-    assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
-    assertTrue(response.getBody().contains("Disk full"));
-
-    verify(imageStorageService, times(1)).saveImage(file.getBytes(),
-        Category.OTHER, "error_image.jpg");
-  }*/
-
+        // Assert
+        assertEquals("old-image.jpg", blobName); // Assert that the blob name was extracted correctly
+    }
 }
