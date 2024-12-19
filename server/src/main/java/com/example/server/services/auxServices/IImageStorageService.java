@@ -6,7 +6,5 @@ public interface IImageStorageService
 {
   String saveImage(byte[] imageData) throws IOException;
   void deleteImage(String imagePath);
-  String getBaseDirectory();
-  byte[] extractImage(String imagePath);
   void updateImage(String imagePath, byte[] newImageData) throws IOException;
 }

@@ -19,17 +19,14 @@ import java.util.stream.Collectors;
 {
 
   private final OfferService offerService;
-  private final JWTUtils jwtUtils;
 
-  public OfferController(OfferService offerService, JWTUtils jwtUtils)
+  public OfferController(OfferService offerService)
   {
     this.offerService = offerService;
-    this.jwtUtils = jwtUtils;
   }
 
-  //Look at OfferTestClient to see how the request should look like
-  // Only accessible by BUSINESS and ADMIN
-  @PostMapping @PreAuthorize("hasAnyAuthority('BUSINESS', 'ADMIN')") public ResponseEntity<OfferResponseDto> saveOffer(
+  // Only accessible by BUSINESS
+  @PostMapping @PreAuthorize("hasAnyAuthority('BUSINESS')") public ResponseEntity<OfferResponseDto> saveOffer(
       @Valid @RequestBody CreateOfferRequestDto offerRequestDto,
       HttpServletRequest request)
   {
@@ -42,7 +39,6 @@ import java.util.stream.Collectors;
     }
     catch (Exception e)
     {
-      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
@@ -55,7 +51,7 @@ import java.util.stream.Collectors;
         .collect(Collectors.toList());
   }
 
-  @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<OfferResponseDto> getOfferById(
+  @GetMapping("/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')") public ResponseEntity<OfferResponseDto> getOfferById(
       @PathVariable String id)
   {
     try
@@ -70,7 +66,7 @@ import java.util.stream.Collectors;
   }
 
   @GetMapping
-  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')")
+  @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')")
   public ResponseEntity<List<OfferResponseDto>> getFilteredOffers(
       @RequestParam(value = "minOfferPrice", required = false) Integer minOfferPrice,
       @RequestParam(value = "maxOfferPrice", required = false) Integer maxOfferPrice,
@@ -80,8 +76,7 @@ import java.util.stream.Collectors;
       @RequestParam(value = "latitude", required = false) Double latitude,
       @RequestParam(value = "longitude", required = false) Double longitude,
       @RequestParam(value = "radius", required = false) Double radius,
-      @RequestParam(value = "textSearch", required = false) String textSearch,
-      HttpServletRequest request) {
+      @RequestParam(value = "textSearch", required = false) String textSearch) {
 
     // Create a FilterRequestDto
     FilterRequestDto filterRequestDto = new FilterRequestDto();
@@ -102,7 +97,7 @@ import java.util.stream.Collectors;
 
     return ResponseEntity.ok(response);
   }
-  @GetMapping("/businessOffer/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER', 'ADMIN')") public ResponseEntity<List<OfferResponseDto>> getOfferByBusinessId(
+  @GetMapping("/businessOffer/{id}") @PreAuthorize("hasAnyAuthority('BUSINESS', 'CUSTOMER')") public ResponseEntity<List<OfferResponseDto>> getOfferByBusinessId(
       @PathVariable String id)
   {
     try

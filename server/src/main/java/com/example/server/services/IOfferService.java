@@ -14,11 +14,6 @@ public interface IOfferService
   @Transactional OfferResponseDto createOffer(
       CreateOfferRequestDto offerRequestDto, String userId);
   OfferResponseDto getOfferById(String id);
-//  List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
-//      Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
-//      Optional<String> pickupTimeEnd, Optional<List<String>> categories,
-//      Optional<String> userId);
-List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto);
-  OfferResponseDto updateOffer(UpdateOfferRequestDto updateOfferRequestDto);
+  List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto);
   List<OfferResponseDto> getOffersByBusinessId(String businessId);
 }

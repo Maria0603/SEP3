@@ -18,16 +18,7 @@
                     <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
                 </div>
             </div>
-
-
-            @* <div class="filter-section"> *@
-            @*     <label>Collection Time</label> *@
-            @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
-            @*     </SfSlider> *@
-            @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
-            @* </div> *@
-
-
+            
             <div class="filter-section">
                 <label>Price Range</label>
                 <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">
@@ -57,6 +48,24 @@
     private DateTime? pickupDateEnd { get; set; } = DateTime.Now.AddDays(1);
     private FilterRequestDto? filterRequestDto;
     private List<CategoryDto>? selectedCategories = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        pickupDateEnd = FilterRequestDto.PickupTimeEnd;
+        pickupDateStart = FilterRequestDto.PickupTimeStart;
+        if(FilterRequestDto.Categories != null)
+        {
+            selectedCategories = FilterRequestDto.Categories.Select(c => new CategoryDto { Name = c }).ToList();
+        }
+        if (FilterRequestDto.MinOfferPrice != null || FilterRequestDto.MaxOfferPrice != null)
+        {
+            priceRange = new int[] 
+            { 
+                FilterRequestDto.MinOfferPrice ?? 0, 
+                FilterRequestDto.MaxOfferPrice ?? 500 
+            };
+        }
+    }
 
     private async Task ApplyFilters()
     {

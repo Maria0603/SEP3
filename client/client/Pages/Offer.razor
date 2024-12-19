@@ -39,10 +39,7 @@
                     <img src="images/icons/bag.png" alt="Bag icon" class="icon"/>
                     <p>@string.Join(", ", _offer.Categories)</p>
                 </div>
-                <div class="row">
-                    <img src="images/icons/star.png" alt="Star icon" class="icon"/>
-                    <p>STARS HERE</p>
-                </div>
+
                 <div class="row">
                     <img src="images/icons/clock.png" alt="Clock icon" class="icon"/>
                     <p>Collect @_offer.PickupTimeStart.Day/@_offer.PickupTimeStart.Month/@_offer.PickupTimeStart.Year from @_offer.PickupTimeStart.Hour:@_offer.PickupTimeStart.Minute to @_offer.PickupTimeEnd.Hour:@_offer.PickupTimeEnd.Minute</p>
@@ -78,7 +75,7 @@
                         </button>
                     </div>
 
-                    <button @onclick="SubmitPurchase" class="reserve-button">Reserve</button>
+                    <button @onclick="SubmitPurchase" class="reserve-button">Purchase</button>
                 </div>
             </div>
         </div>

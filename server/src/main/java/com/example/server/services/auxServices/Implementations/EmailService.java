@@ -29,15 +29,5 @@ import org.springframework.ws.mime.MimeMessage;
     mailSender.send(message);
   }
 
-  public void sendTestEmail(String email)
-  {
-    SimpleMailMessage message = new SimpleMailMessage();
-    message.setTo(email);
-    message.setSubject("Wake up!");
-    message.setText("You didn't finish your tasks! EatWise is waiting, but we know where you live...");
-    mailSender.send(message);
-    System.out.println("Email sent successfully!");
-  }
-
 }
 

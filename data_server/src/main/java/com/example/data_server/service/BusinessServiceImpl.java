@@ -39,7 +39,8 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
 
     Optional<Business> business = businessRepository.findById(request.getId());
 
-    if(business.isPresent()){
+    if (business.isPresent())
+    {
       Business businessDao = business.get();
 
       BusinessResponse businessResponse = buildBusinessResponse(businessDao);
@@ -56,32 +57,32 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
     System.out.println("Request for register business.");
 
     // Prepare to save the business details in database
-    Business business = generateBusinessFromRegisterBusinessRequest(
-        request);
+    Business business = generateBusinessFromRegisterBusinessRequest(request);
 
     Business createdBusiness = businessRepository.save(business);
 
-    IdRequestResponse response = IdRequestResponse.newBuilder().setId(createdBusiness.getId()).build();
+    IdRequestResponse response = IdRequestResponse.newBuilder()
+        .setId(createdBusiness.getId()).build();
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
 
-  @Override
-  public void getBusinesses(EmptyMessage request, StreamObserver<BusinessListResponse> responseObserver) {
+  @Override public void getBusinesses(EmptyMessage request,
+      StreamObserver<BusinessListResponse> responseObserver)
+  {
     System.out.println("Request for all businesses");
 
     // Retrieve all businesses from the repository
     List<Business> businesses = businessRepository.findAll();
 
     // Build the BusinessListResponse using the new utility method
-    BusinessListResponse response = buildBusinessListResponseFromBusinessList(businesses);
+    BusinessListResponse response = buildBusinessListResponseFromBusinessList(
+        businesses);
 
     // Send the response
     responseObserver.onNext(response);
     responseObserver.onCompleted();
   }
-
-
 
   @Override public void getBusinessByEmail(BusinessByEmailRequest request,
       StreamObserver<BusinessResponse> responseObserver)
@@ -104,18 +105,15 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
   {
     //extract the latitude, longitude and radius from customer
     System.out.println("Request for businesses by radius");
-    Optional<Customer> customer = customerRepository.findById(
-        request.getId());
+    Optional<Customer> customer = customerRepository.findById(request.getId());
     if (customer.isPresent())
     {
-      double radiusRadians = customer.get().getSearchRadius() / GeoUtils.EARTH_RADIUS_KM;
+      double radiusRadians =
+          customer.get().getSearchRadius() / GeoUtils.EARTH_RADIUS_KM;
 
       List<Business> businesses = businessRepository.findBusinessesWithinRadius(
           customer.get().getLongitude(), customer.get().getLatitude(),
           radiusRadians);
-      System.out.println("Radius: " + customer.get().getSearchRadius());
-      System.out.println("Lat: " + customer.get().getLatitude());
-      System.out.println("Long: " + customer.get().getLongitude());
 
       BusinessesInRadiusResponse.Builder builder = BusinessesInRadiusResponse.newBuilder();
       for (Business business : businesses)
@@ -125,14 +123,21 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
       responseObserver.onCompleted();
     }
   }
-  @Override
-  public void updateBusinessProfile(BusinessUpdateRequest request, StreamObserver<BusinessResponse> responseObserver) {
-    try {
-      System.out.println("Received update request for Business ID: " + request.getId());
+
+  @Override public void updateBusinessProfile(BusinessUpdateRequest request,
+      StreamObserver<BusinessResponse> responseObserver)
+  {
+    try
+    {
+      System.out.println(
+          "Received update request for Business ID: " + request.getId());
 
       // Validate Business ID
-      if (request.getId().isEmpty()) {
-        responseObserver.onError(Status.INVALID_ARGUMENT.withDescription("Business ID is missing").asRuntimeException());
+      if (request.getId().isEmpty())
+      {
+        responseObserver.onError(
+            Status.INVALID_ARGUMENT.withDescription("Business ID is missing")
+                .asRuntimeException());
         return;
       }
       Business business = businessRepository.findById(request.getId()).get();
@@ -146,14 +151,16 @@ import static com.example.data_server.converters.BusinessEntityGrpcConverter.*;
       businessRepository.delete(business);
       businessRepository.save(newBusiness);
 
-      BusinessResponse response = BusinessEntityGrpcConverter.buildBusinessResponse(newBusiness);
+      BusinessResponse response = BusinessEntityGrpcConverter.buildBusinessResponse(
+          newBusiness);
 
       responseObserver.onNext(response);
       responseObserver.onCompleted();
-    } catch (Exception e) {
+    }
+    catch (Exception e)
+    {
       System.err.println("Error updating business profile: " + e.getMessage());
 
-      // Prepare and send failure response
     }
   }
 }

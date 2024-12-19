@@ -75,31 +75,6 @@ public class BusinessDtoGrpcConverter {
     return dto;
   }
 
-  // Converts BusinessResponseDto (DTO) to BusinessUpdateRequest (gRPC)
-  public static BusinessUpdateRequest BusinessResponseDto_To_BusinessUpdateRequest(
-      BusinessResponseDto updatedProfile) {
-    BusinessUpdateRequest.Builder requestBuilder = BusinessUpdateRequest.newBuilder();
-
-    // Set fields only if they are non-null and non-empty
-    if (updatedProfile.getBusinessName() != null && !updatedProfile.getBusinessName().isEmpty()) {
-      requestBuilder.setBusinessName(updatedProfile.getBusinessName());
-    }
-
-    if (updatedProfile.getEmail() != null && !updatedProfile.getEmail().isEmpty()) {
-      requestBuilder.setEmail(updatedProfile.getEmail());
-    }
-
-    if (updatedProfile.getPhoneNumber() != null && !updatedProfile.getPhoneNumber().isEmpty()) {
-      requestBuilder.setPhoneNumber(updatedProfile.getPhoneNumber());
-    }
-/*
-    if (updatedProfile.getLogo_path() != null && !updatedProfile.getLogo_path().isEmpty()) {
-      requestBuilder.setLogoPath(updatedProfile.getLogo_path());
-    }*/
-
-    // Add other fields if required
-    return requestBuilder.build();
-  }
 
   public static BusinessUpdateRequest BusinessUpdateRequestDto_To_BusinessUpdateRequest(
       BusinessUpdateRequestDto requestDto)
