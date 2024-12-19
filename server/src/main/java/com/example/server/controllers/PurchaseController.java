@@ -17,16 +17,17 @@ import java.util.List;
   private final IPurchaseService purchaseService;
   private final JWTUtils jwtUtils;
 
-  @Autowired public PurchaseController(IPurchaseService purchaseService, JWTUtils jwtUtils)
+  @Autowired public PurchaseController(IPurchaseService purchaseService,
+      JWTUtils jwtUtils)
   {
     System.out.println("purchase service created");
     this.purchaseService = purchaseService;
     this.jwtUtils = jwtUtils;
   }
 
-  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER')")
-  public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
-      @RequestBody CreatePurchaseRequestDto purchaseRequest, HttpServletRequest request)
+  @PostMapping @PreAuthorize("hasAnyAuthority('CUSTOMER')") public ResponseEntity<CreatePurchaseSessionResponseDto> createPurchase(
+      @RequestBody CreatePurchaseRequestDto purchaseRequest,
+      HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
     System.out.println("Request for create purchase in controller.");
@@ -38,7 +39,6 @@ import java.util.List;
     }
     catch (IllegalArgumentException e)
     {
-      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
@@ -53,7 +53,8 @@ import java.util.List;
     return ResponseEntity.ok("Event received");
   }
 
-  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getOrders(HttpServletRequest request)
+  @GetMapping @PreAuthorize("hasAnyAuthority('CUSTOMER', 'BUSINESS')") public ResponseEntity<List<PurchaseResponseDto>> getPurchases(
+      HttpServletRequest request)
   {
     String userId = (String) request.getAttribute("userId");
 
@@ -64,7 +65,8 @@ import java.util.List;
 
     try
     {
-      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(userId, role);
+      List<PurchaseResponseDto> purchases = purchaseService.getAllPurchases(
+          userId, role);
       return ResponseEntity.ok(purchases);
     }
     catch (Exception e)
@@ -86,18 +88,21 @@ import java.util.List;
     {
       throw new IllegalArgumentException(e.getMessage());
     }
-  }  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
-    @PathVariable String id)
-{
-  try
-  {
-    DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(id);
-    return ResponseEntity.ok(purchase);
   }
-  catch (Exception e)
+
+  @GetMapping("/detailed/{id}") public ResponseEntity<DetailedPurchaseResponseDto> getDetailedPurchaseById(
+      @PathVariable String id)
   {
-    throw new IllegalArgumentException(e.getMessage());
+    try
+    {
+      DetailedPurchaseResponseDto purchase = purchaseService.getDetailedPurchaseById(
+          id);
+      return ResponseEntity.ok(purchase);
+    }
+    catch (Exception e)
+    {
+      throw new IllegalArgumentException(e.getMessage());
+    }
   }
-}
 
 }

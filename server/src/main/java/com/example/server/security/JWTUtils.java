@@ -17,13 +17,14 @@ import java.util.stream.Collectors;
 {
 
   private SecretKey Key;
-  private static final long EXPIRATION_TIME =864000000L; //24hours = 86400000 milliseconds, so 10 days
+  private static final long EXPIRATION_TIME = 864000000L; //24hours = 86400000 milliseconds, so 10 days
 
   public JWTUtils()
   {
     String secreteString = "843567893696976453275974432697R634976R738467TR678T34865R6834R8763T478378637664538745673865783678548735687R3";
 
-    byte[] keyBytes = Base64.getDecoder().decode(secreteString.getBytes(StandardCharsets.UTF_8));
+    byte[] keyBytes = Base64.getDecoder()
+        .decode(secreteString.getBytes(StandardCharsets.UTF_8));
 
     this.Key = new SecretKeySpec(keyBytes, "HmacSHA256");
   }
@@ -60,10 +61,10 @@ import java.util.stream.Collectors;
     return extractClaims(token, Claims::getSubject);
   }
 
-  public List<String> extractRoles(String token) {
+  public List<String> extractRoles(String token)
+  {
     return extractClaims(token, claims -> claims.get("role", List.class));
   }
-
 
   private <T> T extractClaims(String token, Function<Claims, T> claimsTFunction)
   {
@@ -71,7 +72,6 @@ import java.util.stream.Collectors;
         Jwts.parser().verifyWith(Key).build().parseSignedClaims(token)
             .getPayload());
   }
-
 
   public boolean isTokenValid(String token, UserDetails userDetails)
   {
@@ -84,7 +84,9 @@ import java.util.stream.Collectors;
   {
     return extractClaims(token, Claims::getExpiration).before(new Date());
   }
-  public String extractUserId(String token) {
+
+  public String extractUserId(String token)
+  {
     return extractClaims(token, claims -> claims.get("userId", String.class));
   }
 

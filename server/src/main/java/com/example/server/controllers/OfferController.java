@@ -19,16 +19,13 @@ import java.util.stream.Collectors;
 {
 
   private final OfferService offerService;
-  private final JWTUtils jwtUtils;
 
-  public OfferController(OfferService offerService, JWTUtils jwtUtils)
+  public OfferController(OfferService offerService)
   {
     this.offerService = offerService;
-    this.jwtUtils = jwtUtils;
   }
 
-  //Look at OfferTestClient to see how the request should look like
-  // Only accessible by BUSINESS and ADMIN
+  // Only accessible by BUSINESS
   @PostMapping @PreAuthorize("hasAnyAuthority('BUSINESS')") public ResponseEntity<OfferResponseDto> saveOffer(
       @Valid @RequestBody CreateOfferRequestDto offerRequestDto,
       HttpServletRequest request)
@@ -42,7 +39,6 @@ import java.util.stream.Collectors;
     }
     catch (Exception e)
     {
-      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }

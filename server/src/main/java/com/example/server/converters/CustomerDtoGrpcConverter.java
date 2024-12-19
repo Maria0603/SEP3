@@ -42,9 +42,6 @@ public class CustomerDtoGrpcConverter
   public static CustomerLocationRequest generateCustomerLocationRequestFromCustomerLocationRequestDto(
       CustomerLocationRequestResponseDto dto, String customerId)
   {
-    System.out.println(
-        "Customer id " + customerId + " is updating the location to "
-            + dto.getLatitude() + " " + dto.getLongitude());
     return CustomerLocationRequest.newBuilder().setCustomerId(customerId)
         .setRadius(dto.getRadius()).setLatitude(dto.getLatitude())
         .setLongitude(dto.getLongitude()).build();

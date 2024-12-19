@@ -62,7 +62,6 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     }
     catch (IOException e)
     {
-      e.printStackTrace();
       if (imagePath != null)
         imageStorageService.deleteImage(imagePath); //rollback
       throw new IllegalArgumentException("Failed to save the image");
@@ -126,37 +125,6 @@ public List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto) {
   // Convert gRPC response to DTOs
   return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
 }
-
-  @Override public OfferResponseDto updateOffer(
-      UpdateOfferRequestDto updateOfferRequestDto)
-  {
-    //First check what we couldn't check in the Dto class
-    if (!isPickupInFuture(updateOfferRequestDto.getPickupTimeStart()))
-      throw new IllegalArgumentException("Pickup time must be in the future");
-
-    String imagePath = null;
-    try
-    {
-      imagePath = imageStorageService.saveImage(updateOfferRequestDto.getImage());
-      //Transform the dto to grpc message
-      OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(
-          updateOfferRequestDto, imagePath);
-
-      //Send the request to the data server
-      OfferResponse response = dataServerStub.updateOffer(request);
-
-      //Return the offer as dto
-      return OfferResponseGrpc_To_OfferResponseDto(response);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-      if (imagePath != null)
-        imageStorageService.deleteImage(imagePath); //rollback
-      throw new IllegalArgumentException("Failed to save the image");
-    }
-
-  }
 
   private boolean isPickupInFuture(LocalDateTime time)
   {

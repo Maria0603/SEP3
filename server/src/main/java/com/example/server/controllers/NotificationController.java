@@ -18,7 +18,7 @@ import java.util.List;
 
   private final INotificationService notificationService;
   private final IEventService eventService;
-  private JWTUtils jwtUtils;
+  private final JWTUtils jwtUtils;
 
   @Autowired public NotificationController(
       INotificationService notificationService, JWTUtils jwtUtils,
