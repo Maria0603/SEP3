@@ -1,24 +1,40 @@
 /*
 package com.example.data_server.service;
 
+import com.example.data_server.repository.OfferRepository;
+import com.example.data_server.repository.PurchaseRepository;
+import com.example.shared.entities.domainEntities.Offer;
+import com.example.shared.entities.domainEntities.Purchase;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.MockitoAnnotations;
+
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 //TODO: Tests are not working, need to fix them; methods should be
 // tested individually in BloomRPC
 class OrderServiceImplTest {
 
-  @Mock private PurchaseRepository orderRepository;
-  @Mock private OfferRepository offerRepository;
+  @Mock
+  private PurchaseRepository orderRepository;
+  @Mock
+  private OfferRepository offerRepository;
 
-  @InjectMocks private PurchaseServiceImpl orderService;
-  @InjectMocks private OfferServiceImpl offerService;
+  @InjectMocks
+  private PurchaseServiceImpl orderService;
+  @InjectMocks
+  private OfferServiceImpl offerService;
 
-  @BeforeEach void setUp() {
-    MockitoAnnotations.openMocks(this);
+  @BeforeEach
+  void setUp() {
+      MockitoAnnotations.openMocks(this);
   }
 
   @Test
-void testAddOrder() {
+    void testAddOrder() {
     // Create an offer
     Offer offer = new Offer();
     offer.setOriginalPrice(100);
@@ -34,7 +50,7 @@ void testAddOrder() {
     when(orderRepository.save(any(Purchase.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
     // Create the AddOrderRequest
-    AddOrderRequest request = AddOrderRequest.newBuilder()
+    PurchaseReq request = AddOrderRequest.newBuilder()
         .setUserId("user123")
         .setNumberOfItems(2)
         .setOfferId("673704d2df30482589885cf5")
@@ -104,4 +120,5 @@ void testAddOrder() {
     verify(responseObserver).onNext(any(OrderList.class));
     verify(responseObserver).onCompleted();
   }
-}*/
+}
+*/

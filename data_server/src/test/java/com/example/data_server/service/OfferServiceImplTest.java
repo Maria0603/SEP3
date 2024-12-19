@@ -1,6 +1,8 @@
 package com.example.data_server.service;
 import com.example.data_server.repository.BusinessRepository;
+
 import com.example.shared.entities.userEntities.Business;
+import com.example.shared.model.Address;
 import com.google.protobuf.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -43,41 +45,82 @@ class OfferServiceImplTest {
 
   @Test
   void testAddOffer() throws IOException {
-    // Create a mock AddOfferRequest
-    List<String> categories = new ArrayList<>();
+    ArrayList<String> categories = new ArrayList<>();
     categories.add("Vegetarian");
 
+    //  Mock Address
+    Address address = new Address();
+    address.setCity("San Francisco");
+    address.setCountry("USA");
+    address.setPostalCode("9410");
+    address.setState("CA");
+    address.setCounty("Somewhere");
+    address.setNumber("5");
+    address.setStreet("Grove Street");
+
+    // Mock BusinessRepository behavior
     Business business = new Business();
     business.setId("6761d2a58bdddb3d7617b01b");
+    business.setBusinessName("testBusinessName");
+    business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
+    business.setAddress(address);
     business.setEmail("dummyemail193553330@example.com");
-
     when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
             .thenReturn(Optional.of(business));
 
+    // Create the request
     CreateOfferRequest request = CreateOfferRequest.newBuilder()
-              .setTitle("TestTitle")
-              .setDescription("This is a dummy description")
-              .setOriginalPrice(50)
-              .setOfferPrice(20)
-              .setNumberOfItems(5)
-              .setPickupTimeStart(convertDateTime_To_TimeStamp(2024,12,18,12,0))
-              .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024,12,19,12,0))
-              .setNumberOfAvailableItems(4)
-              .setBusinessId("6761d2a58bdddb3d7617b01b").build();
+            .setTitle("TestTitle")
+            .setDescription("This is a dummy description")
+            .setOriginalPrice(50)
+            .setOfferPrice(20)
+            .setNumberOfItems(5)
+            .setPickupTimeStart(convertDateTime_To_TimeStamp(2024, 12, 18, 12, 0))
+            .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024, 12, 19, 12, 0))
+            .setNumberOfAvailableItems(4)
+            .setBusinessId("6761d2a58bdddb3d7617b01b")
+            .build();
 
-    Offer offer = generateOfferFromCreateOfferRequest(request, business);
-    when(offerRepository.save(offer)).thenReturn(offer);
+// Prepare the Offer object that will be returned by the mock repository
+    Offer offer = new Offer();
+    offer.setId("offer123"); // Mock ID generation
+    offer.setTitle("TestTitle");
+    offer.setStatus("available");
+    offer.setDescription("This is a dummy description");
+    offer.setOriginalPrice(50);
+    offer.setOfferPrice(20);
+    offer.setNumberOfItems(5);
+    offer.setNumberOfAvailableItems(4);
+    offer.setImagePath(request.getImagePath());
+    offer.setBusiness(business);
+    offer.setCategories(categories);
+    offer.setPickupTimeStart(LocalDateTime.of(2024, 12, 18, 12, 0)); // Use the start time from the request
+    offer.setPickupTimeEnd(LocalDateTime.of(2024, 12, 19, 12, 0));   // Use the end time from the request
+    offer.setCreationTime(LocalDateTime.now()); // Mock current timestamp as creation time
+
+
+
+    // Mock OfferRepository behavior
+    when(offerRepository.save(any(Offer.class))).thenReturn(offer);
 
     // Mock the response observer
-  StreamObserver<OfferResponse> responseObserver = Mockito.mock(StreamObserver.class);
+    StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
 
-    // Call the addOffer method
+    // Call the createOffer method
     OfferServiceImpl.createOffer(request, responseObserver);
 
-    // Verify the response
-    verify(responseObserver).onNext(any(OfferResponse.class));
+    // Verify the interactions
+    verify(responseObserver).onNext(argThat(response ->
+            response.getTitle().equals("TestTitle") &&
+                    response.getDescription().equals("This is a dummy description") &&
+                    response.getOriginalPrice() == 50 &&
+                    response.getOfferPrice() == 20 &&
+                    response.getBusinessId().equals("6761d2a58bdddb3d7617b01b") &&
+                    response.getId().equals("offer123") // Verify the mocked ID
+    ));
     verify(responseObserver).onCompleted();
   }
+
 
   private Timestamp convertDateTime_To_TimeStamp(int year, int month, int day, int hour, int minute) {
       LocalDateTime dateTime = LocalDateTime.of(year, month, day, hour, minute, 0);
