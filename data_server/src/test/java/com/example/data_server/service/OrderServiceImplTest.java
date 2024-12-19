@@ -1,10 +1,10 @@
+/*
 package com.example.data_server.service;
 
 import static org.mockito.ArgumentMatchers.any;
 
 //TODO: Tests are not working, need to fix them; methods should be
 // tested individually in BloomRPC
-/*
 class OrderServiceImplTest {
 
   @Mock private PurchaseRepository orderRepository;

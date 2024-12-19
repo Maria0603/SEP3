@@ -1,5 +1,6 @@
 package com.example.data_server.service;
 import com.example.data_server.repository.BusinessRepository;
+import com.example.shared.entities.userEntities.Business;
 import com.google.protobuf.Timestamp;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
@@ -17,21 +18,24 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.any;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import static com.example.data_server.converters.OfferEntityGrpcConverter.generateOfferFromCreateOfferRequest;
+import static org.mockito.Mockito.*;
 
 //TODO: Tests are not working, need to fix them; methods should be
 // tested individually in BloomRPC
 class OfferServiceImplTest {
 
-  @InjectMocks
-  private OfferServiceImpl offerService;  // The service being tested
+  @Mock private BusinessRepository businessRepository;
+  @Mock private OfferRepository offerRepository;
 
-  @MockBean
-  private BusinessRepository businessRepository;
+  @InjectMocks
+  private OfferServiceImpl OfferServiceImpl;  // The service being tested
+
   @BeforeEach
   void setUp() {
     MockitoAnnotations.openMocks(this);
@@ -43,8 +47,14 @@ class OfferServiceImplTest {
     List<String> categories = new ArrayList<>();
     categories.add("Vegetarian");
 
+    Business business = new Business();
+    business.setId("6761d2a58bdddb3d7617b01b");
+    business.setEmail("dummyemail193553330@example.com");
 
-      CreateOfferRequest request = CreateOfferRequest.newBuilder()
+    when(businessRepository.findById("6761d2a58bdddb3d7617b01b"))
+            .thenReturn(Optional.of(business));
+
+    CreateOfferRequest request = CreateOfferRequest.newBuilder()
               .setTitle("TestTitle")
               .setDescription("This is a dummy description")
               .setOriginalPrice(50)
@@ -53,13 +63,16 @@ class OfferServiceImplTest {
               .setPickupTimeStart(convertDateTime_To_TimeStamp(2024,12,18,12,0))
               .setPickupTimeEnd(convertDateTime_To_TimeStamp(2024,12,19,12,0))
               .setNumberOfAvailableItems(4)
-              .setBusinessId("67606413c6fdf1741ded72ae").build();
+              .setBusinessId("6761d2a58bdddb3d7617b01b").build();
+
+    Offer offer = generateOfferFromCreateOfferRequest(request, business);
+    when(offerRepository.save(offer)).thenReturn(offer);
 
     // Mock the response observer
   StreamObserver<OfferResponse> responseObserver = Mockito.mock(StreamObserver.class);
 
     // Call the addOffer method
-    offerService.createOffer(request, responseObserver);
+    OfferServiceImpl.createOffer(request, responseObserver);
 
     // Verify the response
     verify(responseObserver).onNext(any(OfferResponse.class));
