@@ -3,6 +3,7 @@ package com.example.server.converters;
 import com.example.sep3.grpc.CreatePurchaseRequest;
 import com.example.sep3.grpc.DetailedPurchaseResponse;
 import com.example.sep3.grpc.PurchaseResponse;
+import com.example.server.dto.address.AddressDto;
 import com.example.server.dto.purchase.DetailedPurchaseResponseDto;
 import com.example.server.dto.purchase.PurchaseResponseDto;
 import com.example.server.dto.purchase.CreatePurchaseRequestDto;
@@ -39,6 +40,8 @@ public class PurchaseDtoGrpcConverter
           DetailedPurchaseResponse response)
   {
     DetailedPurchaseResponseDto dto = new DetailedPurchaseResponseDto();
+    AddressDto addressDto = new AddressDto();
+
     dto.setPurchaseId(response.getId());
     dto.setTitle(response.getTitle());
     dto.setDescription(response.getDescription());
@@ -51,6 +54,17 @@ public class PurchaseDtoGrpcConverter
     dto.setCustomerEmail(response.getCustomerEmail());
     dto.setCustomerPhoneNumber(response.getCustomerPhoneNumber());
     dto.setPurchaseTime(DateTimeConverter.convertProtoTimestamp_To_LocalDateTime(response.getPurchaseTime()));
+    dto.setBusinessEmail(response.getBusinessEmail());
+    dto.setBusinessPhone(response.getBusinessPhone());
+
+    addressDto.setStreet(response.getBusinessAddress().getStreet());
+    addressDto.setCountry(response.getBusinessAddress().getCountry());
+    addressDto.setCounty(response.getBusinessAddress().getCounty());
+    addressDto.setPostalCode(response.getBusinessAddress().getPostalCode());
+    addressDto.setNumber(response.getBusinessAddress().getNumber());
+    addressDto.setCity(response.getBusinessAddress().getCity());
+
+    dto.setBusinessAddress(addressDto);
     return dto;
   }
 }

@@ -59,6 +59,8 @@ message DetailedPurchaseResponse {
   string customerId = 13;
   string businessId = 14;
   string businessEmail = 15;
+  string businessPhone = 16;
+  Address businessAddress = 17;
 
 }
 
