@@ -1,8 +1,6 @@
-﻿export function connectSSE(url, dotnetHelper, token) {
+﻿//sse.js
+export function connectSSE(url, dotnetHelper, token) {
     
-    console.log("Token to send: ", token); 
-    //const eventSource = new EventSource(url, {headers});
-
     const eventSource = new EventSource(`${url}?token=${encodeURIComponent(token)}`);
     
     eventSource.onmessage = (event) => {

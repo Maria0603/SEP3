@@ -101,30 +101,4 @@
         NavigationManager.NavigateTo($"offers/{offerId}");
     }
     
-    // private void ToggleFilters()
-    // {
-    //     showFilterPopup = !showFilterPopup;
-    // }
-    //
-    // private void ApplyFilters()
-    // {
-    //     showFilterPopup = false;
-    //     Console.WriteLine($"Filters Applied - Price Range: {priceRange[0]} to {priceRange[1]}, Time Range: {timeRange[0]}:00 to {timeRange[1]}:00");
-    //
-    //     filterRequestDto = new FilterRequestDto
-    //     {
-    //         Categories = selectedCategories?.Select(c => c.Name).ToList(),
-    //         MinOfferPrice = priceRange[0],
-    //         MaxOfferPrice = priceRange[1],
-    //         PickupTimeStart = new TimeDto { Hour = timeRange[0], Minute = 0 },
-    //         PickupTimeEnd = new TimeDto { Hour = timeRange[1], Minute = 0 }
-    //     };
-    // }
-    //
-    // private void ClearFilters()
-    // {
-    //     priceRange = new int[] { 0, 500 };
-    //     timeRange = new int[] { 0, 24 };
-    //     Console.WriteLine("Filters Cleared");
-    // }
 }
