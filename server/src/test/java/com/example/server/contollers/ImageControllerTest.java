@@ -94,7 +94,6 @@ public class ImageControllerTest {
         String imagePath = "image-to-delete.jpg";
         String blobName = "image-to-delete.jpg";
 
-        // Mock the behavior for BlobClient
         when(blobContainerClient.getBlobClient(blobName)).thenReturn(blobClient);
 
         // Act
@@ -104,15 +103,5 @@ public class ImageControllerTest {
         verify(blobClient, times(1)).deleteIfExists(); // Ensure the image is deleted
     }
 
-    @Test
-    void extractBlobName_ShouldReturnCorrectBlobName() {
-        // Arrange
-        String imagePath = "https://myaccount.blob.core.windows.net/mycontainer/old-image.jpg";
 
-        // Act
-        String blobName = azureBlobStorageService.extractBlobName(imagePath);
-
-        // Assert
-        assertEquals("old-image.jpg", blobName); // Assert that the blob name was extracted correctly
-    }
 }

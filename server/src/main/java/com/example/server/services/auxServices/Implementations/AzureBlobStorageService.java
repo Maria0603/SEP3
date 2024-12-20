@@ -59,6 +59,8 @@ import java.util.UUID;
     // Delete the existing blob (if it exists)
     blobClient.deleteIfExists();
 
+
+
     // Upload the new image data
     try (ByteArrayInputStream dataStream = new ByteArrayInputStream(
         newImageData))
