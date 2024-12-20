@@ -14,7 +14,7 @@ import java.util.List;
 @GrpcService public class NotificationServiceImpl
     extends NotificationServiceGrpc.NotificationServiceImplBase
 {
-  private NotificationRepository notificationRepository;
+  private final NotificationRepository notificationRepository;
 
   @Autowired public NotificationServiceImpl(
       NotificationRepository notificationRepository)

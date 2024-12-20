@@ -42,9 +42,6 @@ public class CustomerDtoGrpcConverter
   public static CustomerLocationRequest generateCustomerLocationRequestFromCustomerLocationRequestDto(
       CustomerLocationRequestResponseDto dto, String customerId)
   {
-    System.out.println(
-        "Customer id " + customerId + " is updating the location to "
-            + dto.getLatitude() + " " + dto.getLongitude());
     return CustomerLocationRequest.newBuilder().setCustomerId(customerId)
         .setRadius(dto.getRadius()).setLatitude(dto.getLatitude())
         .setLongitude(dto.getLongitude()).build();
@@ -59,27 +56,6 @@ public class CustomerDtoGrpcConverter
     return dto;
   }
 
-  public static CustomerUpdateRequest CustomerResponseDto_To_CustomerUpdateRequest(CustomerResponseDto updatedProfile) {
-    CustomerUpdateRequest.Builder requestBuilder = CustomerUpdateRequest.newBuilder();
-
-    // Set fields only if they are non-null and non-empty
-    if (updatedProfile.getFirstName() != null && !updatedProfile.getFirstName().isEmpty()) {
-      requestBuilder.setFirstName(updatedProfile.getFirstName());
-    }
-    if (updatedProfile.getLastName() != null && !updatedProfile.getLastName().isEmpty()) {
-      requestBuilder.setLastName(updatedProfile.getLastName());
-    }
-
-    if (updatedProfile.getEmail() != null && !updatedProfile.getEmail().isEmpty()) {
-      requestBuilder.setEmail(updatedProfile.getEmail());
-    }
-
-    if (updatedProfile.getPhoneNumber() != null && !updatedProfile.getPhoneNumber().isEmpty()) {
-      requestBuilder.setPhoneNumber(updatedProfile.getPhoneNumber());
-    }
-
-    return requestBuilder.build();
-  }
 
   public static CustomerUpdateRequest CustomerUpdateRequestDto_To_CustomerUpdateRequest(
       CustomerUpdateRequestDto requestDto)

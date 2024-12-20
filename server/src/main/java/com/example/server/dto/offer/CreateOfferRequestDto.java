@@ -43,8 +43,6 @@ public class CreateOfferRequestDto
         && pickupTimeEnd.isAfter(pickupTimeStart);
   }
 
-  //  TODO: Look image client - server transmission
-  /*  Getting error: Bad Request because am not sending bytes yet*/
   //  @NotNull(message = "Image must be provided")
   private byte[] image;
 

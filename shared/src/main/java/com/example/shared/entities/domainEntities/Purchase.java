@@ -9,7 +9,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
-@Document(collection = "orders") public class Purchase
+@Document(collection = "purchases") public class Purchase
 {
   @Id private String id;
   @DBRef @Field("offer_id") private Offer offer;

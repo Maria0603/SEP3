@@ -112,26 +112,6 @@ public class OfferDtoGrpcConverter
     return dto;
   }
 
-  public static UpdateOfferRequestDto OfferResponseDto_To_UpdateOfferRequestDto(
-      OfferResponseDto offerResponseDto, byte[] image)
-  {
-    UpdateOfferRequestDto dto = new UpdateOfferRequestDto();
-
-    dto.setId(offerResponseDto.getId());
-    dto.setTitle(offerResponseDto.getTitle());
-    dto.setOriginalPrice(offerResponseDto.getOriginalPrice());
-    dto.setOfferPrice(offerResponseDto.getOfferPrice());
-    dto.setNumberOfItems(offerResponseDto.getNumberOfItems());
-    dto.setNumberOfAvailableItems(offerResponseDto.getNumberOfAvailableItems());
-    dto.setPickupTimeStart(offerResponseDto.getPickupTimeStart());
-    dto.setPickupTimeEnd(offerResponseDto.getPickupTimeEnd());
-    dto.setCategories(offerResponseDto.getCategories());
-    dto.setDescription(offerResponseDto.getDescription());
-    dto.setImage(image);
-    dto.setStatus(offerResponseDto.getStatus());
-
-    return dto;
-  }
 
   public static List<OfferResponseDto> OfferListResponse_To_ListOfferResponseDto(OfferListResponse offerList)
   {

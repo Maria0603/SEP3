@@ -18,16 +18,7 @@
                     <InputDate @bind-Value="pickupDateEnd" class="form-control" Placeholder="End Date"/>
                 </div>
             </div>
-
-
-            @* <div class="filter-section"> *@
-            @*     <label>Collection Time</label> *@
-            @*     <SfSlider TValue="int[]" @bind-Value="timeRange" Type="SliderType.Range" Min="0" Max="24" Step="1"> *@
-            @*     </SfSlider> *@
-            @*     <p>From: @timeRange[0]:00 To: @timeRange[1]:00</p> *@
-            @* </div> *@
-
-
+            
             <div class="filter-section">
                 <label>Price Range</label>
                 <SfSlider TValue="int[]" @bind-Value="priceRange" Type="SliderType.Range" Min="0" Max="500" Step="1">

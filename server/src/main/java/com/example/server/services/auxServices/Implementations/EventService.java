@@ -25,7 +25,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
     emitter.onCompletion(() -> emitters.remove(user));
     emitter.onTimeout(() -> emitters.remove(user));
-    //sendNotification(user, "You are subscribed");
 
     return emitter;
   }
@@ -60,8 +59,6 @@ import java.util.concurrent.ConcurrentHashMap;
       System.out.println("Emitter not found for user: " + user);
       return;
     }
-    System.out.println(
-        "Send notiffffffffffffffffffffffffffffffffff: " + message);
     try
     {
       emitter.send(SseEmitter.event().data(message));

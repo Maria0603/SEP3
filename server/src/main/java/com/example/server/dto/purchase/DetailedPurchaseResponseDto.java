@@ -1,5 +1,6 @@
 package com.example.server.dto.purchase;
 
+import com.example.server.dto.address.AddressDto;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,5 +29,8 @@ import java.time.LocalDateTime;
   @NotNull(message = "Customer email is required.") private String customerEmail;
   @NotNull(message = "Customer phone number is required.") private String customerPhoneNumber;
   @NotNull(message = "Purchase time is required.") private LocalDateTime purchaseTime;
+  @NotNull(message = "Business email number is required.") private String businessEmail;
+  @NotNull(message = "Business phone number is required.") private String businessPhone;
+  @NotNull(message = "Business address is required.") private AddressDto businessAddress;
 
 }

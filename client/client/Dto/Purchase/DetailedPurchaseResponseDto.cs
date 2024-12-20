@@ -1,3 +1,5 @@
+using Stripe;
+
 namespace client.Dto.Purchase;
 
 public class DetailedPurchaseResponseDto
@@ -14,5 +16,8 @@ public class DetailedPurchaseResponseDto
     public string CustomerLastName { get; set; }
     public string CustomerEmail { get; set; }
     public string CustomerPhoneNumber { get; set; }
-    public DateTime purchaseTime { get; set; }
+    public DateTime PurchaseTime { get; set; }
+    public string BusinessEmail { get; set;}
+    public string BusinessPhone { get; set; }
+    public AddressDto BusinessAddress { get; set; }
 }

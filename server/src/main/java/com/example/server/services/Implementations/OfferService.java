@@ -62,21 +62,12 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     }
     catch (IOException e)
     {
-      e.printStackTrace();
       if (imagePath != null)
         imageStorageService.deleteImage(imagePath); //rollback
       throw new IllegalArgumentException("Failed to save the image");
     }
 
   }
-
-  // Helper method to convert LocalDateTime to gRPC Timestamp
-//  private Timestamp convertToTimestamp(LocalDateTime dateTime) {
-//    return Timestamp.newBuilder()
-//            .setSeconds(dateTime.toEpochSecond(ZoneOffset.UTC))
-//            .setNanos(dateTime.getNano())
-//            .build();
-//  }
 
   @Override public OfferResponseDto getOfferById(String id)
   {
@@ -95,34 +86,6 @@ import static com.example.server.converters.OfferDtoGrpcConverter.*;
     return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(response);
 }
 
-//  @Override
-//  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice, Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart, Optional<String> pickupTimeEnd, Optional<List<String>> categories, String userId) {
-//    return List.of();
-//  }
-//  @Override
-//  public List<OfferResponseDto> getOffers(Optional<Integer> minOfferPrice,
-//      Optional<Integer> maxOfferPrice, Optional<String> pickupTimeStart,
-//      Optional<String> pickupTimeEnd, Optional<List<String>> categories,
-//                                          Optional<String> userId)
-//  {
-//    var stringConverter = new StringToTimestampConverter();
-//    var req = FilterRequest.newBuilder();
-//
-//    minOfferPrice.ifPresent(req::setMinOfferPrice);
-//    maxOfferPrice.ifPresent(req::setMaxOfferPrice);
-//    categories.ifPresent(req::addAllCategories);
-//    pickupTimeStart.ifPresent(
-//        s -> req.setPickupTimeStart(stringConverter.convert(s)));
-//    pickupTimeEnd.ifPresent(
-//        s -> req.setPickupTimeEnd(stringConverter.convert(s)));
-//
-//    userId.ifPresent(req::setUserId);
-//
-//    OfferListResponse fullResponse = dataServerStub.getOffers(req.build());
-//    return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
-//    //    return response.getOfferList().stream()
-//    //        .map(OfferDtoGrpcConverter::OfferResponseGrpc_To_OfferResponseDto).toList();
-//  }
 
 @Override
 public List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto) {
@@ -163,60 +126,9 @@ public List<OfferResponseDto> getOffers(FilterRequestDto filterRequestDto) {
   return OfferDtoGrpcConverter.OfferListResponse_To_ListOfferResponseDto(fullResponse);
 }
 
-  @Override public OfferResponseDto updateOffer(
-      UpdateOfferRequestDto updateOfferRequestDto)
-  {
-    //First check what we couldn't check in the Dto class
-    if (!isPickupInFuture(updateOfferRequestDto.getPickupTimeStart()))
-      throw new IllegalArgumentException("Pickup time must be in the future");
-
-    String imagePath = null;
-    try
-    {
-      imagePath = imageStorageService.saveImage(updateOfferRequestDto.getImage());
-      //Transform the dto to grpc message
-      OfferResponse request = UpdateOfferRequestDto_To_OfferResponse(
-          updateOfferRequestDto, imagePath);
-
-      //Send the request to the data server
-      OfferResponse response = dataServerStub.updateOffer(request);
-
-      //Return the offer as dto
-      return OfferResponseGrpc_To_OfferResponseDto(response);
-    }
-    catch (IOException e)
-    {
-      e.printStackTrace();
-      if (imagePath != null)
-        imageStorageService.deleteImage(imagePath); //rollback
-      throw new IllegalArgumentException("Failed to save the image");
-    }
-
-  }
-
   private boolean isPickupInFuture(LocalDateTime time)
   {
     return time.isAfter(LocalDateTime.now());
   }
 
-//  public boolean imageExists(String filePath)
-//  {
-//    File imageFile = new File(filePath);
-//    return imageFile.exists();
-//  }
-
-
-
-    //   minOfferPrice.ifPresent(req::setMinOfferPrice);
-
-    //   maxOfferPrice.ifPresent(req::setMaxOfferPrice);
-
-    //   categories.ifPresent(req::addAllCategories);
-
-    //   pickupTimeStart.ifPresent(s -> req.setPickupTimeStart(stringConverter.convert(s)));
-
-    //   pickupTimeEnd.ifPresent(s -> req.setPickupTimeEnd(stringConverter.convert(s)));
-
-    // FullOfferList fullResponse = dataServerStub.getOffers(req.build());
-    // return FullOfferListToShortOfferListConverter.convert(fullResponse);
   }

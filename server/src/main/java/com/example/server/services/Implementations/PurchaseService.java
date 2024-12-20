@@ -37,21 +37,18 @@ import java.util.stream.Collectors;
   private final DataServerStub dataServerStub;
   private final IEventService eventService;
   private final IEmailService emailService;
-  private final RestTemplateConfig restTemplateConfig;
 
   @Value("${stripe.success-url}") private String successUrl; // from application.properties
   @Value("${stripe.cancel-url}") private String cancelUrl;
   @Value("${stripe.signing.secret}") private String stripeSigningSecret;
 
   @Autowired public PurchaseService(DataServerStub dataServerStub,
-      IEventService eventService, IEmailService emailService,
-      RestTemplateConfig restTemplateConfig)
+      IEventService eventService, IEmailService emailService)
   {
     this.dataServerStub = dataServerStub;
     this.eventService = eventService;
     this.emailService = emailService;
     System.out.println("PurchaseService created");
-    this.restTemplateConfig = restTemplateConfig;
   }
 
   @Override public CreatePurchaseSessionResponseDto createPurchase(
@@ -160,7 +157,6 @@ import java.util.stream.Collectors;
     catch (StripeException e)
 
     {
-      e.printStackTrace();
       throw new IllegalArgumentException(e.getMessage());
     }
   }
@@ -177,7 +173,6 @@ import java.util.stream.Collectors;
     }
     catch (SignatureVerificationException e)
     {
-      e.printStackTrace();
       throw new IllegalArgumentException("Invalid Signature");
     }
 
@@ -196,13 +191,11 @@ import java.util.stream.Collectors;
 
   @Override public List<PurchaseResponseDto> getAllPurchases(String userId, String role)
   {
-//    System.out.println("getPurchases method called");
     GetPurchaseRequest request = GetPurchaseRequest.newBuilder()
         .setUserId(userId)
         .setRole(role)
         .build();
     PurchaseListResponse response = dataServerStub.getPurchases(request);
-//    System.out.println("Received response from dataServerStub: " + response);
     return response.getPurchasesList().stream()
         .map(PurchaseDtoGrpcConverter::PurchaseResponse_To_PurchaseResponseDto)
         .collect(Collectors.toList());
@@ -210,11 +203,9 @@ import java.util.stream.Collectors;
 
   @Override public PurchaseResponseDto getPurchaseById(String id)
   {
-//    System.out.println("getPurchaseById method called with id: " + id);
     PurchaseIdRequest request = PurchaseIdRequest.newBuilder().setId(id)
         .build();
     PurchaseResponse response = dataServerStub.getPurchaseById(request);
-//    System.out.println("Received response from dataServerStub: " + response);
     return PurchaseDtoGrpcConverter.PurchaseResponse_To_PurchaseResponseDto(
         response);
   }

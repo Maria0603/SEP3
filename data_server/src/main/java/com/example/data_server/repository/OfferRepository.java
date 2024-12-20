@@ -21,15 +21,6 @@ public interface OfferRepository extends MongoRepository<Offer, String>
   @Update("{ $set: { 'status': ?1} }")
   void updateStatus(String offerId, String status);
 
-  @Query("{ 'categories' : { $in: ?0 } }")
-  List<Offer> findByCategories(List<String> categories);
-
-  @Query("{ 'pickup_time_start' : { $gte: ?0 }, 'pickup_time_end' : { $lte: ?1 } }")
-  List<Offer> findByPickupTimeRange(LocalDateTime pickupTimeStart, LocalDateTime pickupTimeEnd);
-
-  @Query("{ 'offer_price' : { $gte: ?0, $lte: ?1 } }")
-  List<Offer> findByOfferPriceRange(int minPrice, int maxPrice);
-
   @Query("{ 'business_id': ?0 }")
   List<Offer> findByBusinessId(String businessId);
 }
