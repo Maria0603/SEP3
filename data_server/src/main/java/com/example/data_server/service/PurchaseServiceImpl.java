@@ -70,8 +70,11 @@ import static com.example.data_server.converters.PurchaseEntityGrpcConverter.*;
     offerRepository.updateNumberOfAvailableItems(offer.getId(),
         offer.getNumberOfAvailableItems() - request.getNumberOfItems());
 
+    System.out.println("Purchase added status: " + purchase.getId());
+
     Purchase createdPurchase = purchaseRepository.save(purchase);
 
+    System.out.println("Status: " + createdPurchase.getStatus());
     PurchaseResponse purchaseResponse = generatePurchaseResponseFromPurchase(
         createdPurchase);
     responseObserver.onNext(purchaseResponse);

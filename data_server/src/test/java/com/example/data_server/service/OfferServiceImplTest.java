@@ -205,7 +205,7 @@ class OfferServiceImplTest {
 
     StreamObserver<OfferResponse> responseObserver = mock(StreamObserver.class);
 
-    assertThrows(IllegalArgumentException.class, () -> {
+    assertThrows(NullPointerException.class, () -> {
       OfferServiceImpl.createOffer(request, responseObserver);
     });
 

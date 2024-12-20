@@ -52,7 +52,7 @@ class PurchaseServiceImplTest {
 
         // Mock Business
         Business business = new Business();
-        business.setId("6761d2a58bdddb3d7617b01b");
+        business.setId("6763e4cb289e2a312b5ce905");
         business.setBusinessName("testBusinessName");
         business.setLogoPath("6764a60b-cb96-453f-adfb-cb1b8bf5b602");
         business.setAddress(address);
@@ -60,14 +60,14 @@ class PurchaseServiceImplTest {
 
         // Mock Offer
         Offer offer = new Offer();
-        offer.setId("offer123"); // Mock ID generation
+        offer.setId("675c0e5a8b9c0b678cb3f925"); // Mock ID generation
         offer.setTitle("TestTitle");
         offer.setStatus("available");
         offer.setDescription("This is a dummy description");
         offer.setOriginalPrice(50);
         offer.setOfferPrice(20);
         offer.setNumberOfItems(5);
-        offer.setNumberOfAvailableItems(4);
+        offer.setNumberOfAvailableItems(6);
         offer.setImagePath("8762f962-3a91-44fd-98d8-800fcbaa497f");
         offer.setBusiness(business);
         offer.setCategories(categories);
@@ -77,7 +77,7 @@ class PurchaseServiceImplTest {
 
         // Mock Customer
         Customer customer = new Customer();
-        customer.setId("customer123");
+        customer.setId("67506015b74df22a32206277");
         customer.setEmail("dummyemail193553330@example.com");
         customer.setFirstName("TestFirstName");
         customer.setLastName("TestLastName");
@@ -92,14 +92,14 @@ class PurchaseServiceImplTest {
         purchase.setBusiness(business);
         purchase.setOffer(offer);
         purchase.setPurchaseTime(LocalDateTime.now());
-        purchase.setNumberOfItems(5);
+        purchase.setNumberOfItems(4);
         purchase.setPricePerItem(20);
 
         // Request
         CreatePurchaseRequest request = CreatePurchaseRequest.newBuilder()
-                .setOfferId("offer123")
-                .setCustomerId("customer123")
-                .setNumberOfItems(5)
+                .setOfferId("675c0e5a8b9c0b678cb3f925")
+                .setCustomerId("67506015b74df22a32206277")
+                .setNumberOfItems(4)
                 .build();
 
         StreamObserver<PurchaseResponse> responseObserver = mock(StreamObserver.class);
@@ -109,6 +109,7 @@ class PurchaseServiceImplTest {
         when(businessRepository.findById("6763e4cb289e2a312b5ce905")).thenReturn(Optional.of(business));
         when(customerRepository.findById("67506015b74df22a32206277")).thenReturn(Optional.of(customer));
         when(purchaseRepository.save(any(Purchase.class))).thenReturn(purchase);
+
 
         // Execute
         purchaseServiceImpl.createPurchase(request, responseObserver);
